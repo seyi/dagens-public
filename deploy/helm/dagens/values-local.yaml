@@ -1,0 +1,41 @@
+# Local k3s testing values
+replicaCount: 1
+
+image:
+  repository: docker.io/dagens/agent-server
+  tag: "local"
+  pullPolicy: Never  # Use local image
+
+# Disable features not needed for local testing
+autoscaling:
+  enabled: false
+
+pdb:
+  enabled: false
+
+networkPolicy:
+  enabled: false
+
+serviceMonitor:
+  enabled: false
+
+# Simplified resources for local testing
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Enable ingress with Traefik (k3s default)
+ingress:
+  enabled: true
+  className: traefik
+  annotations: {}
+  hosts:
+    - host: dagens.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []

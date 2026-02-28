@@ -1,0 +1,75 @@
+# Go
+*.so
+*.dylib
+*.dll
+*.exe
+*.test
+*.out
+vendor/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.venv/
+venv/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+python/bindings/*.so
+python/bindings/*.h
+python/bindings/*.dylib
+
+# Checkpoints and logs
+/tmp/
+*.log
+checkpoints/
+
+# Generated files
+pkg/rpc/*.pb.go
+zen_generated.code
+.env
+
+# Public repo hygiene rules
+.claude/
+.cursor/
+.grok/
+.quint/
+.mcp.json
+.zen_context_export.md
+.zen_continuations.md
+.gocache/
+docs/localhost:6060/
+payload*.json
+*_prompt.txt
+review_context*.txt
+state_fix*.txt
+state_snapshot.xml
+agent-server
+api_server
+dagens-api
+dagens-worker
+main
+Backpressure
+Dagens
+This
+When
+Workers
+# End public repo hygiene rules

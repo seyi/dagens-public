@@ -1,0 +1,29 @@
+# Production overrides for Dagens
+replicaCount: 3
+image:
+  tag: "latest"
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+  hosts:
+    - host: dagens.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: dagens-tls
+      hosts:
+        - dagens.example.com
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 65
+serviceMonitor:
+  enabled: true
+networkPolicy:
+  enabled: true
+pdb:
+  enabled: true
+  minAvailable: 2

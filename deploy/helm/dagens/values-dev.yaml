@@ -1,0 +1,23 @@
+# Dev overrides for Dagens
+replicaCount: 1
+image:
+  tag: "dev"
+service:
+  type: ClusterIP
+resources:
+  limits:
+    cpu: 300m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+autoscaling:
+  enabled: false
+ingress:
+  enabled: false
+pdb:
+  enabled: false
+networkPolicy:
+  enabled: false
+serviceMonitor:
+  enabled: false

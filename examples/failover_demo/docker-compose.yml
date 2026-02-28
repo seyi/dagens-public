@@ -1,0 +1,58 @@
+# Dagens Failover Demo with Full Observability
+#
+# Usage:
+#   # Without real LLM (mock responses):
+#   docker-compose up
+#
+#   # With real LLM + Guardrails:
+#   OPENROUTER_API_KEY=your-key docker-compose up
+#
+#   # View traces:
+#   Open http://localhost:16686 in your browser
+#
+# What you'll see:
+#   1. Terminal: Failover demo with sticky routing, worker failure, recovery
+#   2. Jaeger UI: All traces with worker.id, cache.hit, guardrail decisions
+
+services:
+  # Jaeger All-in-One for distributed tracing
+  jaeger:
+    image: jaegertracing/all-in-one:1.54
+    container_name: dagens-jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686"   # Jaeger UI
+      - "4317:4317"     # OTLP gRPC
+      - "4318:4318"     # OTLP HTTP
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:16686"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Failover Demo
+  failover-demo:
+    build:
+      context: ../..
+      dockerfile: examples/failover_demo/Dockerfile
+    container_name: dagens-failover-demo
+    environment:
+      # OTEL Configuration
+      - OTEL_EXPORTER_TYPE=otlp
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      # Real LLM (optional - set via CLI)
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+    depends_on:
+      jaeger:
+        condition: service_healthy
+    # Enable interactive mode for Scenario 4
+    stdin_open: true
+    tty: true
+    # Restart policy for demo
+    restart: "no"
+
+# Network for service communication
+networks:
+  default:
+    name: dagens-demo-network

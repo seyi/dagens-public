@@ -1,0 +1,58 @@
+# EKS-specific production overrides
+
+replicaCount: 3
+
+image:
+  repository: <ECR-REPO-URI>/dagens/agent-server
+  tag: "prod"
+
+serviceAccount:
+  annotations:
+    # Set to your IRSA role ARN
+    eks.amazonaws.com/role-arn: "<EKS_PROD_ROLE_ARN>"
+
+ingress:
+  enabled: true
+  className: alb
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/certificate-arn: "<ACM_CERT_ARN>"
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    # alb.ingress.kubernetes.io/group.name: dagens
+  hosts:
+    - host: dagens.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: dagens-prod-tls
+      hosts:
+        - dagens.example.com
+
+livenessProbe:
+  path: /health/live
+readinessProbe:
+  path: /health/ready
+startupProbe:
+  enabled: true
+  path: /health/ready
+
+serviceMonitor:
+  enabled: false  # set true only if Prometheus Operator CRDs exist
+  annotations: {}
+
+pdb:
+  enabled: true
+  minAvailable: 2
+
+networkPolicy:
+  enabled: true
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 65

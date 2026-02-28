@@ -1,0 +1,354 @@
+---
+# Dagens Kubernetes Deployment
+# This manifest deploys the Dagens control plane with production-oriented defaults
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dagens
+  labels:
+    app: dagens
+    component: server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dagens
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: dagens
+        component: server
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: dagens
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+      - name: dagens
+        image: dagens:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        - name: metrics
+          containerPort: 9090
+          protocol: TCP
+        env:
+        - name: ENVIRONMENT
+          value: "production"
+        - name: LOG_LEVEL
+          value: "info"
+        - name: LOG_FORMAT
+          value: "json"
+        # Redis configuration
+        - name: REDIS_ADDRESS
+          valueFrom:
+            secretKeyRef:
+              name: dagens-secrets
+              key: redis-address
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dagens-secrets
+              key: redis-password
+        # LLM Provider API Keys
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: dagens-secrets
+              key: openai-api-key
+              optional: true
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: dagens-secrets
+              key: anthropic-api-key
+              optional: true
+        # Circuit breaker settings
+        - name: CIRCUIT_BREAKER_FAILURE_THRESHOLD
+          value: "5"
+        - name: CIRCUIT_BREAKER_TIMEOUT
+          value: "30s"
+        # Rate limiting
+        - name: RATE_LIMIT_REQUESTS_PER_SECOND
+          value: "100"
+        - name: RATE_LIMIT_BURST
+          value: "200"
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "2000m"
+            memory: "2Gi"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        volumeMounts:
+        - name: config
+          mountPath: /etc/dagens
+          readOnly: true
+        - name: tmp
+          mountPath: /tmp
+      volumes:
+      - name: config
+        configMap:
+          name: dagens-config
+      - name: tmp
+        emptyDir: {}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: dagens
+              topologyKey: kubernetes.io/hostname
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app: dagens
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dagens
+  labels:
+    app: dagens
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  - name: metrics
+    port: 9090
+    targetPort: metrics
+    protocol: TCP
+  selector:
+    app: dagens
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dagens
+  labels:
+    app: dagens
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dagens-config
+  labels:
+    app: dagens
+data:
+  config.yaml: |
+    server:
+      port: 8080
+      metricsPort: 9090
+      readTimeout: 30s
+      writeTimeout: 30s
+      shutdownTimeout: 30s
+
+    agents:
+      defaultTimeout: 60s
+      maxConcurrentExecutions: 100
+
+    resilience:
+      backoff:
+        initialDelay: 100ms
+        maxDelay: 30s
+        multiplier: 2.0
+        jitterFactor: 0.1
+        maxRetries: 5
+
+      circuitBreaker:
+        failureThreshold: 5
+        successThreshold: 2
+        timeout: 30s
+        halfOpenMaxRequests: 3
+
+      rateLimiter:
+        requestsPerSecond: 100
+        burst: 200
+
+    state:
+      backend: redis
+      checkpointInterval: 5m
+      sessionTTL: 24h
+
+    observability:
+      metrics:
+        enabled: true
+        path: /metrics
+
+      logging:
+        level: info
+        format: json
+
+      tracing:
+        enabled: true
+        endpoint: jaeger-collector:14268
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dagens-secrets
+  labels:
+    app: dagens
+type: Opaque
+stringData:
+  # Replace with actual values or use external secrets management
+  redis-address: "redis:6379"
+  redis-password: ""
+  openai-api-key: ""
+  anthropic-api-key: ""
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: dagens
+  labels:
+    app: dagens
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: dagens
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Pods
+    pods:
+      metric:
+        name: spark_agent_active_requests
+      target:
+        type: AverageValue
+        averageValue: "50"
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+      - type: Pods
+        value: 4
+        periodSeconds: 15
+      selectPolicy: Max
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: dagens
+  labels:
+    app: dagens
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: dagens
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: dagens
+  labels:
+    app: dagens
+spec:
+  podSelector:
+    matchLabels:
+      app: dagens
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    - podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 9090
+  egress:
+  # Allow DNS
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow Redis
+  - to:
+    - podSelector:
+        matchLabels:
+          app: redis
+    ports:
+    - protocol: TCP
+      port: 6379
+  # Allow external HTTPS (for LLM APIs)
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+    ports:
+    - protocol: TCP
+      port: 443

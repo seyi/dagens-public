@@ -1,0 +1,34 @@
+services:
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.12
+    command:
+      - /usr/local/bin/etcd
+      - --name=etcd0
+      - --advertise-client-urls=http://0.0.0.0:2379
+      - --listen-client-urls=http://0.0.0.0:2379
+      - --listen-peer-urls=http://0.0.0.0:2380
+    ports:
+      - "2379:2379"
+
+  research-swarm:
+    image: golang:1.25.2
+    working_dir: /app
+    env_file:
+      - ../../.env
+    volumes:
+      - ../../:/app
+    command: >
+      sh -lc "export PATH=/usr/local/go/bin:$PATH &&
+      go run ./examples/research_swarm
+      --query 'What are the top 3 trends in AI agent architecture for 2026?'"
+    environment:
+      - ETCD_ENDPOINTS=etcd:2379
+      - BARRIER_KEY=/barriers/research-demo
+      - METRICS_ADDR=:2112
+      - LOG_LEVEL=debug
+      - RESEARCH_SWARM_MODEL=${RESEARCH_SWARM_MODEL:-qwen/qwen3.5-plus-02-15}
+      - RESEARCH_SWARM_REQUIRE_LLM=${RESEARCH_SWARM_REQUIRE_LLM:-true}
+    depends_on:
+      - etcd
+    ports:
+      - "2112:2112"

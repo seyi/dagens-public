@@ -1,0 +1,71 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dagens-a2a"
+version = "0.1.0"
+description = "A2A (Agent-to-Agent) protocol adapter SDK for Python agent frameworks"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+authors = [
+    { name = "Dagens Team" }
+]
+keywords = ["a2a", "agents", "orchestration", "crewai", "langgraph"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn>=0.27.0",
+    "pydantic>=2.0.0",
+    "httpx>=0.26.0",
+    "opentelemetry-api>=1.22.0",
+    "opentelemetry-sdk>=1.22.0",
+    "opentelemetry-instrumentation-fastapi>=0.43b0",
+]
+
+[project.optional-dependencies]
+crewai = ["crewai>=0.28.0"]
+langgraph = ["langgraph>=0.0.20", "langchain-core>=0.1.0"]
+all = ["crewai>=0.28.0", "langgraph>=0.0.20", "langchain-core>=0.1.0"]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.23.0",
+    "black>=24.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.8.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/seyi/dagens"
+Documentation = "https://github.com/seyi/dagens/tree/main/sdk/python/dagens_a2a"
+Repository = "https://github.com/seyi/dagens"
+
+[project.scripts]
+dagens-a2a = "dagens_a2a.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dagens_a2a"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311", "py312"]
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I", "W"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true

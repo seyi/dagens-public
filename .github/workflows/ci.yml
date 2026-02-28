@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  go-verified-subset:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Run verified Tier 1 subset
+        run: |
+          go test \
+            ./pkg/a2a \
+            ./pkg/actor \
+            ./pkg/agent \
+            ./pkg/agentic \
+            ./pkg/events \
+            ./pkg/evaluation \
+            ./pkg/registry \
+            ./pkg/resilience \
+            ./pkg/scheduler \
+            ./pkg/secrets \
+            ./pkg/state \
+            ./pkg/telemetry

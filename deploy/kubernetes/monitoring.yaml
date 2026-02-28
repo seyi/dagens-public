@@ -1,0 +1,242 @@
+---
+# Prometheus ServiceMonitor for Dagens
+# Requires Prometheus Operator to be installed
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: dagens
+  labels:
+    app: dagens
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: dagens
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 15s
+    scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+    - default
+
+---
+# PrometheusRule for alerting
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: dagens
+  labels:
+    app: dagens
+    release: prometheus
+spec:
+  groups:
+  - name: dagens
+    interval: 30s
+    rules:
+    # High error rate
+    - alert: DagensHighErrorRate
+      expr: |
+        sum(rate(spark_agent_execution_errors_total[5m])) by (agent_name)
+        /
+        sum(rate(spark_agent_executions_total[5m])) by (agent_name)
+        > 0.05
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High error rate for agent {{ $labels.agent_name }}"
+        description: "Agent {{ $labels.agent_name }} has error rate > 5% for 5 minutes"
+
+    # Very high error rate (critical)
+    - alert: DagensCriticalErrorRate
+      expr: |
+        sum(rate(spark_agent_execution_errors_total[5m])) by (agent_name)
+        /
+        sum(rate(spark_agent_executions_total[5m])) by (agent_name)
+        > 0.20
+      for: 2m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Critical error rate for agent {{ $labels.agent_name }}"
+        description: "Agent {{ $labels.agent_name }} has error rate > 20% for 2 minutes"
+
+    # Circuit breaker open
+    - alert: DagensCircuitBreakerOpen
+      expr: spark_agent_circuit_breaker_state == 1
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Circuit breaker {{ $labels.name }} is open"
+        description: "Circuit breaker {{ $labels.name }} has been open for more than 1 minute"
+
+    # High latency
+    - alert: DagensHighLatency
+      expr: |
+        histogram_quantile(0.95,
+          sum(rate(spark_agent_execution_duration_seconds_bucket[5m])) by (le, agent_name)
+        ) > 10
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High latency for agent {{ $labels.agent_name }}"
+        description: "Agent {{ $labels.agent_name }} P95 latency > 10s for 5 minutes"
+
+    # LLM rate limiting
+    - alert: DagensLLMRateLimited
+      expr: |
+        sum(rate(spark_agent_llm_rate_limit_hits_total[5m])) by (provider)
+        > 1
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "LLM provider {{ $labels.provider }} is rate limiting"
+        description: "Provider {{ $labels.provider }} hit rate limits"
+
+    # Redis down
+    - alert: DagensRedisDown
+      expr: |
+        spark_agent_state_operation_duration_seconds_count{backend="redis"} == 0
+        and
+        up{job="dagens"} == 1
+      for: 2m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Redis backend appears to be down"
+        description: "No Redis operations in the last 2 minutes"
+
+    # High memory usage
+    - alert: DagensHighMemory
+      expr: |
+        container_memory_usage_bytes{container="dagens"}
+        /
+        container_spec_memory_limit_bytes{container="dagens"}
+        > 0.85
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High memory usage for Dagens"
+        description: "Memory usage > 85% for 5 minutes"
+
+    # Pod restart
+    - alert: DagensPodRestarting
+      expr: |
+        increase(kube_pod_container_status_restarts_total{container="dagens"}[1h])
+        > 3
+      for: 0m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Dagens pod restarting frequently"
+        description: "Pod has restarted more than 3 times in the last hour"
+
+---
+# Grafana Dashboard ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dagens-dashboard
+  labels:
+    app: dagens
+    grafana_dashboard: "true"
+data:
+  dagens.json: |
+    {
+      "dashboard": {
+        "title": "Dagens",
+        "uid": "dagens",
+        "tags": ["dagens", "orchestration", "runtime"],
+        "timezone": "browser",
+        "refresh": "30s",
+        "panels": [
+          {
+            "title": "Agent Executions Rate",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+            "targets": [
+              {
+                "expr": "sum(rate(spark_agent_executions_total[5m])) by (agent_name, status)",
+                "legendFormat": "{{agent_name}} - {{status}}"
+              }
+            ]
+          },
+          {
+            "title": "Agent Execution Latency (P95)",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(spark_agent_execution_duration_seconds_bucket[5m])) by (le, agent_name))",
+                "legendFormat": "{{agent_name}}"
+              }
+            ]
+          },
+          {
+            "title": "Error Rate",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+            "targets": [
+              {
+                "expr": "sum(rate(spark_agent_execution_errors_total[5m])) by (agent_name, error_type)",
+                "legendFormat": "{{agent_name}} - {{error_type}}"
+              }
+            ]
+          },
+          {
+            "title": "Active Requests",
+            "type": "gauge",
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+            "targets": [
+              {
+                "expr": "sum(spark_agent_active_requests)",
+                "legendFormat": "Active"
+              }
+            ]
+          },
+          {
+            "title": "LLM Token Usage",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+            "targets": [
+              {
+                "expr": "sum(rate(spark_agent_llm_tokens_total[5m])) by (provider, type)",
+                "legendFormat": "{{provider}} - {{type}}"
+              }
+            ]
+          },
+          {
+            "title": "Circuit Breaker State",
+            "type": "stat",
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+            "targets": [
+              {
+                "expr": "spark_agent_circuit_breaker_state",
+                "legendFormat": "{{name}}"
+              }
+            ],
+            "options": {
+              "colorMode": "value",
+              "graphMode": "none",
+              "justifyMode": "auto"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "mappings": [
+                  {"type": "value", "options": {"0": {"text": "Closed", "color": "green"}}},
+                  {"type": "value", "options": {"1": {"text": "Open", "color": "red"}}},
+                  {"type": "value", "options": {"2": {"text": "Half-Open", "color": "yellow"}}}
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }

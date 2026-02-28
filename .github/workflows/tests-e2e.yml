@@ -1,0 +1,65 @@
+# E2E Tests - Run on every PR and push to main
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Build agent-server binary
+        run: go build -o agent-server ./cmd/agent-server
+
+      - name: Run E2E tests
+        run: |
+          go test ./tests/e2e/... -v -timeout 5m
+        env:
+          AGENT_SERVER_BINARY: ./agent-server
+
+      - name: Upload test logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-test-logs
+          path: |
+            tests/e2e/*.log
+          retention-days: 7
+
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run unit tests
+        run: go test ./... -v -short -timeout 2m
+
+      - name: Run tests with race detector
+        run: go test ./... -race -short -timeout 3m

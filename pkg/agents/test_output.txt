@@ -1,0 +1,100 @@
+=== RUN   TestAgentHierarchyBasics
+=== RUN   TestAgentHierarchyBasics/Create_hierarchy_via_config
+=== RUN   TestAgentHierarchyBasics/Add_sub-agent_dynamically
+=== RUN   TestAgentHierarchyBasics/Single_parent_rule
+--- PASS: TestAgentHierarchyBasics (0.00s)
+    --- PASS: TestAgentHierarchyBasics/Create_hierarchy_via_config (0.00s)
+    --- PASS: TestAgentHierarchyBasics/Add_sub-agent_dynamically (0.00s)
+    --- PASS: TestAgentHierarchyBasics/Single_parent_rule (0.00s)
+=== RUN   TestAgentNavigation
+=== RUN   TestAgentNavigation/FindAgent_by_name
+=== RUN   TestAgentNavigation/GetRoot
+=== RUN   TestAgentNavigation/GetPath
+=== RUN   TestAgentNavigation/GetDepth
+--- PASS: TestAgentNavigation (0.00s)
+    --- PASS: TestAgentNavigation/FindAgent_by_name (0.00s)
+    --- PASS: TestAgentNavigation/GetRoot (0.00s)
+    --- PASS: TestAgentNavigation/GetPath (0.00s)
+    --- PASS: TestAgentNavigation/GetDepth (0.00s)
+=== RUN   TestAgentAsTool
+=== RUN   TestAgentAsTool/WrapAgentAsTool
+=== RUN   TestAgentAsTool/CreateTransferTool
+=== RUN   TestAgentAsTool/CreateHierarchicalToolRegistry
+--- PASS: TestAgentAsTool (0.00s)
+    --- PASS: TestAgentAsTool/WrapAgentAsTool (0.00s)
+    --- PASS: TestAgentAsTool/CreateTransferTool (0.00s)
+    --- PASS: TestAgentAsTool/CreateHierarchicalToolRegistry (0.00s)
+=== RUN   TestAgentToolBuilder
+=== RUN   TestAgentToolBuilder/Custom_agent_tool
+--- PASS: TestAgentToolBuilder (0.00s)
+    --- PASS: TestAgentToolBuilder/Custom_agent_tool (0.00s)
+=== RUN   TestRemoveSubAgent
+--- PASS: TestRemoveSubAgent (0.00s)
+=== RUN   TestFormatAgentsForPrompt
+--- PASS: TestFormatAgentsForPrompt (0.00s)
+=== RUN   TestWithAgenticCapabilities_Success
+--- PASS: TestWithAgenticCapabilities_Success (0.00s)
+=== RUN   TestWithAgenticCapabilities_SelfHealing
+[WARN] 2026-01-02T02:26:16Z execution failed, attempting retry map[agent.id:test-2 agent.name:Retry Agent agent.type:agentic error:simulated failure max:3 retry:1]
+[WARN] 2026-01-02T02:26:16Z execution failed, attempting retry map[agent.id:test-2 agent.name:Retry Agent agent.type:agentic error:simulated failure max:3 retry:2]
+--- PASS: TestWithAgenticCapabilities_SelfHealing (0.30s)
+=== RUN   TestWithAgenticCapabilities_MaxRetriesExceeded
+[WARN] 2026-01-02T02:26:17Z execution failed, attempting retry map[agent.id:test-3 agent.name:Fail Agent agent.type:agentic error:simulated failure max:2 retry:1]
+[WARN] 2026-01-02T02:26:17Z execution failed, attempting retry map[agent.id:test-3 agent.name:Fail Agent agent.type:agentic error:simulated failure max:2 retry:2]
+[WARN] 2026-01-02T02:26:17Z execution failed, attempting retry map[agent.id:test-3 agent.name:Fail Agent agent.type:agentic error:simulated failure max:2 retry:3]
+[ERROR] 2026-01-02T02:26:17Z agent execution failed map[agent.id:test-3 agent.name:Fail Agent agent.type:agentic duration:0.300938092 error:max retries (2) exceeded: simulated failure retries:3]
+--- PASS: TestWithAgenticCapabilities_MaxRetriesExceeded (0.30s)
+=== RUN   TestWithAgenticCapabilities_DomainMetrics
+--- PASS: TestWithAgenticCapabilities_DomainMetrics (0.00s)
+=== RUN   TestWithAgenticCapabilities_Feedback
+--- PASS: TestWithAgenticCapabilities_Feedback (0.00s)
+=== RUN   TestWithAgenticCapabilities_SniperAgent
+--- PASS: TestWithAgenticCapabilities_SniperAgent (0.00s)
+=== RUN   TestWithAgenticCapabilities_LLMAgent
+[DEBUG] 2026-01-02T02:26:17Z metric recorded map[dimension:outcome metric:dagens.outcome.score value:0.87]
+--- PASS: TestWithAgenticCapabilities_LLMAgent (0.00s)
+=== RUN   TestLlmAgent
+=== RUN   TestLlmAgent/Simple_Generation
+=== RUN   TestLlmAgent/With_Temperature
+=== RUN   TestLlmAgent/ReAct_Pattern
+--- PASS: TestLlmAgent (0.00s)
+    --- PASS: TestLlmAgent/Simple_Generation (0.00s)
+    --- PASS: TestLlmAgent/With_Temperature (0.00s)
+    --- PASS: TestLlmAgent/ReAct_Pattern (0.00s)
+=== RUN   TestSequentialAgent
+=== RUN   TestSequentialAgent/Basic_Sequential
+=== RUN   TestSequentialAgent/With_Output_Passing
+=== RUN   TestSequentialAgent/Builder_API
+--- PASS: TestSequentialAgent (0.00s)
+    --- PASS: TestSequentialAgent/Basic_Sequential (0.00s)
+    --- PASS: TestSequentialAgent/With_Output_Passing (0.00s)
+    --- PASS: TestSequentialAgent/Builder_API (0.00s)
+=== RUN   TestParallelAgent
+=== RUN   TestParallelAgent/All_Aggregation
+=== RUN   TestParallelAgent/First_Aggregation
+--- FAIL: TestParallelAgent (0.01s)
+    --- PASS: TestParallelAgent/All_Aggregation (0.00s)
+    --- FAIL: TestParallelAgent/First_Aggregation (0.01s)
+panic: assignment to entry in nil map [recovered, repanicked]
+
+goroutine 51 [running]:
+testing.tRunner.func1.2({0x7d6d20, 0xb81a00})
+	/usr/local/go/src/testing/testing.go:1872 +0x237
+testing.tRunner.func1()
+	/usr/local/go/src/testing/testing.go:1875 +0x35b
+panic({0x7d6d20?, 0xb81a00?})
+	/usr/local/go/src/runtime/panic.go:783 +0x132
+github.com/seyi/dagens/pkg/agents.(*parallelExecutor).executeFirst(0xc0001b0078, {0x8f2490, 0xc0001863f0}, 0xc0001ae9c0, {0xc000180ca0?, 0x5514fb?, 0xb95200?})
+	/home/ubuntu/aiyifyproject/repos/dagens/pkg/agents/parallel_agent.go:242 +0x466
+github.com/seyi/dagens/pkg/agents.(*parallelExecutor).Execute(0xc0001b0078, {0x8f2308, 0xbb67a0}, {0x0?, 0xc00005dd28?}, 0xc0001ae9c0)
+	/home/ubuntu/aiyifyproject/repos/dagens/pkg/agents/parallel_agent.go:125 +0x287
+github.com/seyi/dagens/pkg/agent.(*BaseAgent).Execute(0xc0001c8a20, {0x8f2308, 0xbb67a0}, 0xc0001ae9c0)
+	/home/ubuntu/aiyifyproject/repos/dagens/pkg/agent/agent.go:275 +0x1f4
+github.com/seyi/dagens/pkg/agents.TestParallelAgent.func2(0xc0001ca000)
+	/home/ubuntu/aiyifyproject/repos/dagens/pkg/agents/agents_test.go:298 +0x2aa
+testing.tRunner(0xc0001ca000, 0x87b2d0)
+	/usr/local/go/src/testing/testing.go:1934 +0xea
+created by testing.(*T).Run in goroutine 46
+	/usr/local/go/src/testing/testing.go:1997 +0x465
+exit status 2
+FAIL	github.com/seyi/dagens/pkg/agents	0.621s

@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package remote;
+
+option go_package = "github.com/seyi/dagens/pkg/remote/proto";
+
+service RemoteExecutionService {
+    rpc Execute(ExecuteRequest) returns (ExecuteResponse);
+    rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+message ExecuteRequest {
+    string agent_name = 1;
+    string input_json = 2;  // JSON serialized AgentInput
+    string node_id = 3;
+    string request_id = 4;
+    map<string, string> metadata = 5;
+}
+
+message ExecuteResponse {
+    string output_json = 1;  // JSON serialized AgentOutput
+    string error = 2;
+    string node_id = 3;
+    string request_id = 4;
+    int64 duration_ms = 5;
+}
+
+message HealthCheckRequest {
+    string node_id = 1;
+}
+
+message HealthCheckResponse {
+    bool healthy = 1;
+    string node_id = 2;
+    int64 timestamp = 3;
+}
