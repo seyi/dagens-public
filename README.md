@@ -1,10 +1,17 @@
 # Dagens
 
+[![Verified CI](https://github.com/seyi/dagens-public/actions/workflows/ci.yml/badge.svg)](https://github.com/seyi/dagens-public/actions/workflows/ci.yml)
+[![Release: v0.1.0](https://img.shields.io/badge/release-v0.1.0-blue)](https://github.com/seyi/dagens-public/releases/tag/v0.1.0)
+
 **Programmable control-plane runtime for distributed agent and service orchestration.**
 
 Dagens is a distributed control plane with a dedicated execution-plane worker fabric, built in Go. It separates scheduling from execution, supports horizontal worker scaling, and includes first-class human-in-the-loop (HITL) checkpointing and resumability.
 
 Designed as enterprise infrastructure with an OSS core, Dagens runs in fixed-topology mode or becomes cluster-aware via etcd-backed registry for dynamic scaling and health-based routing.
+
+## Release Status
+
+`v0.1.x` uses a narrow public CI gate by design. The default GitHub Actions check runs only the verified Tier 1 Go subset documented in `docs/TESTING.md`. Broader recursive, E2E, and load-test workflows remain available as manual validation paths and should not be treated as the default release gate yet.
 
 ## Why Dagens?
 

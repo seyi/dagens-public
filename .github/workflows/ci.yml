@@ -1,8 +1,10 @@
-name: CI
+name: Verified CI
 
 on:
   push:
+    branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
   go-verified-subset:
@@ -15,6 +17,9 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+
+      - name: Download dependencies
+        run: go mod download
 
       - name: Run verified Tier 1 subset
         run: |
