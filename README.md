@@ -20,7 +20,7 @@ Most agent frameworks are in-process orchestration layers. Dagens is a runtime s
 This is infrastructure, not an in-process agent library. It treats orchestration as a distributed systems problem, not a local graph execution concern.
 
 Control-plane saturation model (v0.2):
-- [Backpressure Design](/data/repos/dagens/docs/BACKPRESSURE.md)
+- [Backpressure Design](docs/BACKPRESSURE.md)
 
 ## Integrations (Bring Your Own Agent Framework)
 
