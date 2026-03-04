@@ -42,10 +42,23 @@ type Metrics struct {
 	StateOperationTime *prometheus.HistogramVec
 
 	// Scheduler metrics
-	DAGStagesTotal    *prometheus.CounterVec
-	DAGStagesDuration *prometheus.HistogramVec
-	TaskQueueLength   *prometheus.GaugeVec
-	TaskExecutionTime *prometheus.HistogramVec
+	DAGStagesTotal          *prometheus.CounterVec
+	DAGStagesDuration       *prometheus.HistogramVec
+	TaskQueueLength         *prometheus.GaugeVec
+	TaskQueueConfigMax      *prometheus.GaugeVec
+	TaskQueueObservedMax    *prometheus.GaugeVec
+	TaskExecutionTime       *prometheus.HistogramVec
+	TaskDispatchRetries     prometheus.Counter
+	TasksFailedMaxDispatchAttempts prometheus.Counter
+	SchedulerAllWorkersFull prometheus.Counter
+	SchedulerDegradedMode   prometheus.Counter
+	SchedulerDispatchCooldownActivations prometheus.Counter
+	SchedulerDispatchRejections *prometheus.CounterVec
+	WorkerHeartbeatsReceived prometheus.Counter
+	WorkerHeartbeatsSucceeded prometheus.Counter
+	WorkerHeartbeatAuthFailed prometheus.Counter
+	WorkerHeartbeatInvalidPayload prometheus.Counter
+	WorkerHeartbeatProcessingTime prometheus.Histogram
 
 	// Coordination metrics
 	BarrierWaitSeconds *prometheus.HistogramVec
@@ -56,6 +69,9 @@ type Metrics struct {
 	// System metrics
 	GoroutinesActive prometheus.Gauge
 	MemoryUsageBytes prometheus.Gauge
+
+	queueDepthMu     sync.Mutex
+	queueObservedMax map[string]int
 }
 
 var (
@@ -73,7 +89,9 @@ func GetMetrics() *Metrics {
 
 // NewMetrics creates a new Metrics instance with the given namespace
 func NewMetrics(namespace string) *Metrics {
-	m := &Metrics{}
+	m := &Metrics{
+		queueObservedMax: make(map[string]int),
+	}
 
 	// Agent execution metrics
 	m.AgentExecutions = promauto.NewCounterVec(
@@ -265,6 +283,24 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"scheduler"},
 	)
 
+	m.TaskQueueConfigMax = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: namespace,
+			Name:      "task_queue_config_max",
+			Help:      "Configured maximum task queue depth",
+		},
+		[]string{"scheduler"},
+	)
+
+	m.TaskQueueObservedMax = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: namespace,
+			Name:      "task_queue_observed_max",
+			Help:      "Observed high-water mark for task queue depth over process lifetime",
+		},
+		[]string{"scheduler"},
+	)
+
 	m.TaskExecutionTime = promauto.NewHistogramVec(
 		prometheus.HistogramOpts{
 			Namespace: namespace,
@@ -273,6 +309,96 @@ func NewMetrics(namespace string) *Metrics {
 			Buckets:   []float64{0.01, 0.05, 0.1, 0.5, 1, 5, 10, 30},
 		},
 		[]string{"locality"},
+	)
+
+	m.TaskDispatchRetries = promauto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "task_dispatch_retries_total",
+			Help:      "Total number of capacity-conflict task redispatch attempts",
+		},
+	)
+
+	m.TasksFailedMaxDispatchAttempts = promauto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "tasks_failed_max_dispatch_attempts_total",
+			Help:      "Total number of tasks that failed after exhausting max dispatch attempts due to capacity conflicts",
+		},
+	)
+
+	m.SchedulerAllWorkersFull = promauto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_all_workers_full_total",
+			Help:      "Total number of times scheduling could not proceed because all healthy workers were at capacity",
+		},
+	)
+
+	m.SchedulerDegradedMode = promauto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_degraded_mode_total",
+			Help:      "Total number of times the scheduler fell back to stale capacity snapshots because no fresh-capacity worker was available",
+		},
+	)
+
+	m.SchedulerDispatchCooldownActivations = promauto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_dispatch_cooldown_activations_total",
+			Help:      "Total number of times a worker entered dispatch cooldown after a capacity-conflict style rejection",
+		},
+	)
+
+	m.SchedulerDispatchRejections = promauto.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_dispatch_rejections_total",
+			Help:      "Total number of scheduler dispatch rejections by reason",
+		},
+		[]string{"reason"},
+	)
+
+	m.WorkerHeartbeatsReceived = promauto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "worker_heartbeats_received_total",
+			Help:      "Total number of worker capacity heartbeat requests received",
+		},
+	)
+
+	m.WorkerHeartbeatsSucceeded = promauto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "worker_heartbeats_succeeded_total",
+			Help:      "Total number of worker capacity heartbeats processed successfully",
+		},
+	)
+
+	m.WorkerHeartbeatAuthFailed = promauto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "worker_heartbeat_auth_failed_total",
+			Help:      "Total number of worker capacity heartbeats rejected due to authentication failures",
+		},
+	)
+
+	m.WorkerHeartbeatInvalidPayload = promauto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "worker_heartbeat_invalid_payload_total",
+			Help:      "Total number of worker capacity heartbeats rejected due to invalid payloads",
+		},
+	)
+
+	m.WorkerHeartbeatProcessingTime = promauto.NewHistogram(
+		prometheus.HistogramOpts{
+			Namespace: namespace,
+			Name:      "worker_heartbeat_processing_duration_seconds",
+			Help:      "Worker capacity heartbeat processing duration in seconds",
+			Buckets:   []float64{0.0005, 0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5},
+		},
 	)
 
 	// Coordination metrics
@@ -413,6 +539,62 @@ func (m *Metrics) RecordTaskExecution(locality string, duration time.Duration) {
 	m.TaskExecutionTime.WithLabelValues(locality).Observe(duration.Seconds())
 }
 
+// RecordTaskDispatchRetry records a capacity-conflict redispatch attempt.
+func (m *Metrics) RecordTaskDispatchRetry() {
+	m.TaskDispatchRetries.Inc()
+}
+
+// RecordTaskFailedMaxDispatchAttempts records a task failing after exhausting
+// the configured dispatch retry budget.
+func (m *Metrics) RecordTaskFailedMaxDispatchAttempts() {
+	m.TasksFailedMaxDispatchAttempts.Inc()
+}
+
+// RecordSchedulerAllWorkersFull records a scheduling refusal due to no worker capacity.
+func (m *Metrics) RecordSchedulerAllWorkersFull() {
+	m.SchedulerAllWorkersFull.Inc()
+}
+
+// RecordSchedulerDegradedMode records a stale-capacity fallback selection.
+func (m *Metrics) RecordSchedulerDegradedMode() {
+	m.SchedulerDegradedMode.Inc()
+}
+
+// RecordSchedulerDispatchCooldownActivation records a worker entering cooldown.
+func (m *Metrics) RecordSchedulerDispatchCooldownActivation() {
+	m.SchedulerDispatchCooldownActivations.Inc()
+}
+
+// RecordSchedulerDispatchRejection records a dispatch rejection by reason.
+func (m *Metrics) RecordSchedulerDispatchRejection(reason string) {
+	m.SchedulerDispatchRejections.WithLabelValues(reason).Inc()
+}
+
+// RecordWorkerHeartbeatReceived records that a worker heartbeat request was received.
+func (m *Metrics) RecordWorkerHeartbeatReceived() {
+	m.WorkerHeartbeatsReceived.Inc()
+}
+
+// RecordWorkerHeartbeatSucceeded records successful processing of a worker heartbeat.
+func (m *Metrics) RecordWorkerHeartbeatSucceeded() {
+	m.WorkerHeartbeatsSucceeded.Inc()
+}
+
+// RecordWorkerHeartbeatAuthFailed records a worker heartbeat auth failure.
+func (m *Metrics) RecordWorkerHeartbeatAuthFailed() {
+	m.WorkerHeartbeatAuthFailed.Inc()
+}
+
+// RecordWorkerHeartbeatInvalidPayload records a worker heartbeat payload validation failure.
+func (m *Metrics) RecordWorkerHeartbeatInvalidPayload() {
+	m.WorkerHeartbeatInvalidPayload.Inc()
+}
+
+// RecordWorkerHeartbeatProcessing records the duration of processing a worker heartbeat request.
+func (m *Metrics) RecordWorkerHeartbeatProcessing(duration time.Duration) {
+	m.WorkerHeartbeatProcessingTime.Observe(duration.Seconds())
+}
+
 // RecordBarrierWait records time spent waiting at a barrier.
 func (m *Metrics) RecordBarrierWait(barrierKey, status string, duration time.Duration) {
 	m.BarrierWaitSeconds.WithLabelValues(barrierKey, status).Observe(duration.Seconds())
@@ -436,6 +618,21 @@ func (m *Metrics) RecordBarrierTrip(barrierKey, status string) {
 // SetTaskQueueLength sets the task queue length
 func (m *Metrics) SetTaskQueueLength(scheduler string, length int) {
 	m.TaskQueueLength.WithLabelValues(scheduler).Set(float64(length))
+}
+
+// SetTaskQueueDepths sets queue depth gauges and tracks the process-lifetime
+// observed high-water mark for a scheduler.
+func (m *Metrics) SetTaskQueueDepths(scheduler string, current, configMax int) {
+	m.TaskQueueLength.WithLabelValues(scheduler).Set(float64(current))
+	m.TaskQueueConfigMax.WithLabelValues(scheduler).Set(float64(configMax))
+
+	m.queueDepthMu.Lock()
+	defer m.queueDepthMu.Unlock()
+
+	if current > m.queueObservedMax[scheduler] {
+		m.queueObservedMax[scheduler] = current
+	}
+	m.TaskQueueObservedMax.WithLabelValues(scheduler).Set(float64(m.queueObservedMax[scheduler]))
 }
 
 // SetActiveRequests sets the number of active requests for an agent

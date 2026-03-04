@@ -92,6 +92,10 @@ func main() {
 	service := remote.NewRemoteExecutionService(distReg, agentManager, nodeID)
 	grpcHandler := remote.NewGRPCRemoteExecutionService(service)
 
+	heartbeatCtx, cancelHeartbeats := context.WithCancel(context.Background())
+	defer cancelHeartbeats()
+	startWorkerCapacityHeartbeat(heartbeatCtx, nodeID, service)
+
 	// 6. Start gRPC Server
 	// Port already parsed above
 	
@@ -116,6 +120,7 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	log.Println("Shutting down worker...")
+	cancelHeartbeats()
 	s.GracefulStop()
 	log.Println("Worker exiting")
 }
@@ -239,3 +244,80 @@ func callDeepSeek(ctx context.Context, apiKey, prompt string) (string, error) {
 	return result.Choices[0].Message.Content, nil
 }
 
+func startWorkerCapacityHeartbeat(ctx context.Context, nodeID string, service *remote.RemoteExecutionService) {
+	apiServerURL := os.Getenv("API_SERVER_URL")
+	if apiServerURL == "" {
+		apiServerURL = "http://api-server:8080"
+	}
+
+	heartbeatInterval := 2 * time.Second
+	if raw := os.Getenv("WORKER_HEARTBEAT_INTERVAL_SECONDS"); raw != "" {
+		var seconds int
+		if _, err := fmt.Sscanf(raw, "%d", &seconds); err == nil && seconds > 0 {
+			heartbeatInterval = time.Duration(seconds) * time.Second
+		}
+	}
+
+	maxConcurrency := 1
+	if raw := os.Getenv("WORKER_MAX_CONCURRENCY"); raw != "" {
+		var configured int
+		if _, err := fmt.Sscanf(raw, "%d", &configured); err == nil && configured > 0 {
+			maxConcurrency = configured
+		}
+	}
+
+	workerToken := os.Getenv("WORKER_HEARTBEAT_TOKEN")
+	client := &http.Client{Timeout: 5 * time.Second}
+	endpoint := apiServerURL + "/v1/internal/worker_capacity"
+
+	send := func() {
+		payload := map[string]interface{}{
+			"node_id":         nodeID,
+			"in_flight":       service.CurrentInFlight(),
+			"max_concurrency": maxConcurrency,
+			"report_timestamp": time.Now().UTC(),
+		}
+
+		body, err := json.Marshal(payload)
+		if err != nil {
+			log.Printf("worker heartbeat marshal failed: %v", err)
+			return
+		}
+
+		req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(body))
+		if err != nil {
+			log.Printf("worker heartbeat request build failed: %v", err)
+			return
+		}
+		req.Header.Set("Content-Type", "application/json")
+		if workerToken != "" {
+			req.Header.Set("X-Dagens-Worker-Token", workerToken)
+		}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			log.Printf("worker heartbeat failed: %v", err)
+			return
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode >= http.StatusMultipleChoices {
+			log.Printf("worker heartbeat rejected: status=%s", resp.Status)
+		}
+	}
+
+	go func() {
+		send()
+		ticker := time.NewTicker(heartbeatInterval)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				send()
+			}
+		}
+	}()
+}

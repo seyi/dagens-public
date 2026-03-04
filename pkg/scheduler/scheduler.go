@@ -5,10 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/seyi/dagens/pkg/agent"
+	"github.com/seyi/dagens/pkg/observability"
 	"github.com/seyi/dagens/pkg/policy"
 	"github.com/seyi/dagens/pkg/registry"
 	"github.com/seyi/dagens/pkg/telemetry"
@@ -17,6 +19,18 @@ import (
 // TaskExecutor defines the interface for executing tasks on nodes
 type TaskExecutor interface {
 	ExecuteOnNode(ctx context.Context, nodeID string, agentName string, input *agent.AgentInput) (*agent.AgentOutput, error)
+}
+
+var ErrJobQueueFull = errors.New("job queue is full")
+var ErrNoWorkerCapacity = errors.New("all healthy workers are at capacity")
+
+const schedulerMetricsID = "default"
+
+type nodeCapacity struct {
+	ReservedInFlight int
+	ReportedInFlight int
+	MaxConcurrency int
+	LastUpdated    time.Time
 }
 
 // Scheduler manages the execution of jobs and their tasks
@@ -31,6 +45,8 @@ type Scheduler struct {
 	config      SchedulerConfig
 	affinityMap *AffinityMap // Sticky scheduling affinity tracking
 	nodeIndex   int          // Round-robin counter for node selection
+	nodeCapacity map[string]*nodeCapacity
+	dispatchCooldowns map[string]time.Time
 }
 
 // RegistryInterface defines the subset of registry functionality needed by the scheduler
@@ -53,7 +69,7 @@ func NewSchedulerWithConfig(reg registry.Registry, executor TaskExecutor, config
 		affinityMap = NewAffinityMap(config.AffinityTTL, config.AffinityCleanupInterval)
 	}
 
-	return &Scheduler{
+	s := &Scheduler{
 		registry:    reg,
 		executor:    executor,
 		jobs:        make(map[string]*Job),
@@ -61,7 +77,11 @@ func NewSchedulerWithConfig(reg registry.Registry, executor TaskExecutor, config
 		stopChan:    make(chan struct{}),
 		config:      config,
 		affinityMap: affinityMap,
+		nodeCapacity: make(map[string]*nodeCapacity),
+		dispatchCooldowns: make(map[string]time.Time),
 	}
+	observability.GetMetrics().SetTaskQueueDepths(schedulerMetricsID, 0, cap(s.jobQueue))
+	return s
 }
 
 // Start starts the scheduler's main loop
@@ -90,14 +110,16 @@ func (s *Scheduler) SubmitJob(job *Job) error {
 		return fmt.Errorf("job %s already exists", job.ID)
 	}
 
-	job.Status = JobPending
-	s.jobs[job.ID] = job
-
+	metrics := observability.GetMetrics()
 	select {
 	case s.jobQueue <- job:
+		job.Status = JobPending
+		s.jobs[job.ID] = job
+		metrics.SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
 		return nil
 	default:
-		return fmt.Errorf("job queue is full")
+		metrics.SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
+		return ErrJobQueueFull
 	}
 }
 
@@ -125,6 +147,37 @@ func (s *Scheduler) GetAllJobs() []*Job {
 	return jobs
 }
 
+// UpdateNodeCapacity updates the scheduler's latest capacity snapshot for a node.
+// This uses server receipt time and is kept for compatibility.
+func (s *Scheduler) UpdateNodeCapacity(nodeID string, inFlight, maxConcurrency int) {
+	s.UpdateNodeCapacityAt(nodeID, inFlight, maxConcurrency, time.Now())
+}
+
+// UpdateNodeCapacityAt updates the scheduler's latest capacity snapshot for a node
+// using the provided report time from the worker heartbeat.
+func (s *Scheduler) UpdateNodeCapacityAt(nodeID string, inFlight, maxConcurrency int, reportedAt time.Time) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	capacity := s.getOrCreateNodeCapacityLocked(nodeID)
+	if inFlight < 0 {
+		inFlight = 0
+	}
+	if maxConcurrency <= 0 {
+		maxConcurrency = s.config.DefaultWorkerMaxConcurrency
+	}
+	if maxConcurrency > s.config.MaxWorkerConcurrencyCap {
+		maxConcurrency = s.config.MaxWorkerConcurrencyCap
+	}
+	if reportedAt.IsZero() {
+		reportedAt = time.Now()
+	}
+
+	capacity.ReportedInFlight = inFlight
+	capacity.MaxConcurrency = maxConcurrency
+	capacity.LastUpdated = reportedAt
+}
+
 // run is the main scheduler loop
 func (s *Scheduler) run() {
 	defer s.wg.Done()
@@ -134,6 +187,7 @@ func (s *Scheduler) run() {
 		case <-s.stopChan:
 			return
 		case job := <-s.jobQueue:
+			observability.GetMetrics().SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
 			s.executeJob(job)
 		}
 	}
@@ -201,8 +255,15 @@ func (s *Scheduler) executeStage(ctx context.Context, stage *Stage) error {
 	errChan := make(chan error, len(stage.Tasks))
 
 	// Select nodes for each task using sticky scheduling
+	var selectionErr error
+	startedTasks := 0
 	for _, task := range stage.Tasks {
-		node, affinityResult := s.selectNodeForTask(task, nodes)
+		node, affinityResult, ok := s.selectNodeForTask(task, nodes)
+		if !ok {
+			selectionErr = ErrNoWorkerCapacity
+			break
+		}
+		startedTasks++
 
 		// Add affinity info to span
 		if affinityResult.PartitionKey != "" {
@@ -214,16 +275,31 @@ func (s *Scheduler) executeStage(ctx context.Context, stage *Stage) error {
 		wg.Add(1)
 		go func(t *Task, n registry.NodeInfo) {
 			defer wg.Done()
-
-			if err := s.executeTask(stageCtx, t, n); err != nil {
+			if err := s.executeTaskWithRetry(stageCtx, t, n, nodes); err != nil {
 				errChan <- err
 			}
 		}(task, node)
 	}
 
-	// Wait for all tasks
+	// Wait for all started tasks
 	wg.Wait()
 	close(errChan)
+
+	if selectionErr != nil {
+		observability.GetMetrics().RecordSchedulerAllWorkersFull()
+		telemetry.GetGlobalTelemetry().GetLogger().Warn("no worker capacity available", map[string]interface{}{
+			"stage_id":        stage.ID,
+			"healthy_workers": len(nodes),
+			"started_tasks":   startedTasks,
+			"pending_tasks":   len(stage.Tasks) - startedTasks,
+		})
+		span.SetAttribute("scheduler.no_worker_capacity", true)
+		span.SetAttribute("scheduler.started_tasks", startedTasks)
+		span.SetAttribute("scheduler.pending_tasks", len(stage.Tasks)-startedTasks)
+		stage.Status = JobFailed
+		span.SetStatus(telemetry.StatusError, selectionErr.Error())
+		return selectionErr
+	}
 
 	// Check for errors
 	// For V1, any task failure fails the stage
@@ -240,6 +316,42 @@ func (s *Scheduler) executeStage(ctx context.Context, stage *Stage) error {
 
 	stage.Status = JobCompleted
 	span.SetStatus(telemetry.StatusOK, "Stage completed")
+	return nil
+}
+
+func (s *Scheduler) executeTaskWithRetry(ctx context.Context, task *Task, initialNode registry.NodeInfo, healthyNodes []registry.NodeInfo) error {
+	node := initialNode
+	maxAttempts := s.config.MaxDispatchAttempts
+	if maxAttempts <= 0 {
+		maxAttempts = 1
+	}
+
+	for attempt := 1; attempt <= maxAttempts; attempt++ {
+		task.Attempts = attempt
+
+		s.reserveNodeSlot(node.ID)
+		err := s.executeTask(ctx, task, node)
+		s.releaseNodeSlot(node.ID)
+
+		if err == nil {
+			return nil
+		}
+		if !isDispatchCapacityConflict(err) {
+			return err
+		}
+		if attempt == maxAttempts {
+			observability.GetMetrics().RecordTaskFailedMaxDispatchAttempts()
+			return err
+		}
+
+		observability.GetMetrics().RecordTaskDispatchRetry()
+		nextNode, _, ok := s.selectNodeForTask(task, healthyNodes)
+		if !ok {
+			return ErrNoWorkerCapacity
+		}
+		node = nextNode
+	}
+
 	return nil
 }
 
@@ -271,6 +383,14 @@ func (s *Scheduler) executeTask(ctx context.Context, task *Task, node registry.N
 			return err // Propagation will fail the stage
 		}
 
+		if isDispatchCapacityConflict(err) {
+			observability.GetMetrics().RecordSchedulerDispatchRejection("capacity_conflict")
+			s.markDispatchCooldown(node.ID)
+			span.SetAttribute("scheduler.dispatch_cooldown", true)
+		} else {
+			observability.GetMetrics().RecordSchedulerDispatchRejection(dispatchRejectionReason(err))
+		}
+
 		task.Status = JobFailed
 		span.SetStatus(telemetry.StatusError, err.Error())
 		return fmt.Errorf("task %s failed on node %s: %w", task.ID, node.ID, err)
@@ -295,7 +415,7 @@ func (s *Scheduler) updateJobStatus(job *Job, status JobStatus) {
 // selectNodeForTask selects a node for the given task using sticky scheduling
 // If the task has a PartitionKey and stickiness is enabled, it will try to route
 // to the same node as previous tasks with the same PartitionKey.
-func (s *Scheduler) selectNodeForTask(task *Task, healthyNodes []registry.NodeInfo) (registry.NodeInfo, AffinityResult) {
+func (s *Scheduler) selectNodeForTask(task *Task, healthyNodes []registry.NodeInfo) (registry.NodeInfo, AffinityResult, bool) {
 	result := AffinityResult{
 		PartitionKey: task.PartitionKey,
 	}
@@ -308,9 +428,12 @@ func (s *Scheduler) selectNodeForTask(task *Task, healthyNodes []registry.NodeIn
 
 	// If stickiness is disabled or no partition key, use round-robin
 	if !s.config.EnableStickiness || s.affinityMap == nil || task.PartitionKey == "" {
-		node := s.roundRobinSelect(healthyNodes)
+		node, ok := s.selectNodeByCapacity(healthyNodes)
+		if !ok {
+			return registry.NodeInfo{}, result, false
+		}
 		result.NodeID = node.ID
-		return node, result
+		return node, result, true
 	}
 
 	// Check if we have an existing affinity for this partition key
@@ -319,31 +442,106 @@ func (s *Scheduler) selectNodeForTask(task *Task, healthyNodes []registry.NodeIn
 	if entry != nil {
 		// Check if the affinity node is still healthy
 		if node, healthy := healthyNodeSet[entry.NodeID]; healthy {
-			// HIT: Use the sticky node
-			s.affinityMap.Touch(task.PartitionKey)
-			result.NodeID = entry.NodeID
-			result.IsHit = true
-			log.Printf("[AFFINITY] HIT: PartitionKey=%s -> Node=%s (hits=%d)",
-				task.PartitionKey, entry.NodeID, entry.HitCount+1)
-			return node, result
+			if s.nodeHasAvailableCapacity(entry.NodeID) {
+				// HIT: Use the sticky node
+				s.affinityMap.Touch(task.PartitionKey)
+				result.NodeID = entry.NodeID
+				result.IsHit = true
+				log.Printf("[AFFINITY] HIT: PartitionKey=%s -> Node=%s (hits=%d)",
+					task.PartitionKey, entry.NodeID, entry.HitCount+1)
+				return node, result, true
+			}
+
+			log.Printf("[AFFINITY] CAPACITY_BYPASS: PartitionKey=%s, Node=%s is healthy but full, selecting alternate",
+				task.PartitionKey, entry.NodeID)
 		}
 
 		// STALE: The affinity node is no longer healthy
-		log.Printf("[AFFINITY] STALE: PartitionKey=%s, Node=%s is unhealthy, re-routing",
-			task.PartitionKey, entry.NodeID)
-		s.affinityMap.Delete(task.PartitionKey)
-		result.IsStale = true
+		if _, healthy := healthyNodeSet[entry.NodeID]; !healthy {
+			log.Printf("[AFFINITY] STALE: PartitionKey=%s, Node=%s is unhealthy, re-routing",
+				task.PartitionKey, entry.NodeID)
+			s.affinityMap.Delete(task.PartitionKey)
+			result.IsStale = true
+		}
 	}
 
 	// MISS: No valid affinity exists, create one
-	selectedNode := s.roundRobinSelect(healthyNodes)
+	selectedNode, ok := s.selectNodeByCapacity(healthyNodes)
+	if !ok {
+		return registry.NodeInfo{}, result, false
+	}
 	s.affinityMap.Set(task.PartitionKey, selectedNode.ID)
 	result.NodeID = selectedNode.ID
 
 	log.Printf("[AFFINITY] MISS: PartitionKey=%s -> Node=%s (new affinity)",
 		task.PartitionKey, selectedNode.ID)
 
-	return selectedNode, result
+	return selectedNode, result, true
+}
+
+func (s *Scheduler) selectNodeByCapacity(nodes []registry.NodeInfo) (registry.NodeInfo, bool) {
+	if len(nodes) == 1 {
+		if !s.nodeHasAvailableCapacity(nodes[0].ID) {
+			return registry.NodeInfo{}, false
+		}
+		return nodes[0], true
+	}
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	freshBestAvailable := -1
+	freshBestIndexes := make([]int, 0, len(nodes))
+	staleBestAvailable := -1
+	staleBestIndexes := make([]int, 0, len(nodes))
+
+	for i, node := range nodes {
+		if s.isInDispatchCooldownLocked(node.ID) {
+			continue
+		}
+
+		capacity := s.getOrCreateNodeCapacityLocked(node.ID)
+		available := s.availableCapacityLocked(capacity)
+		if s.isCapacityFreshLocked(capacity) {
+			if available > freshBestAvailable {
+				freshBestAvailable = available
+				freshBestIndexes = []int{i}
+				continue
+			}
+			if available == freshBestAvailable {
+				freshBestIndexes = append(freshBestIndexes, i)
+			}
+			continue
+		}
+
+		if available > staleBestAvailable {
+			staleBestAvailable = available
+			staleBestIndexes = []int{i}
+			continue
+		}
+		if available == staleBestAvailable {
+			staleBestIndexes = append(staleBestIndexes, i)
+		}
+	}
+
+	if freshBestAvailable > 0 && len(freshBestIndexes) > 0 {
+		selected := nodes[freshBestIndexes[s.nodeIndex%len(freshBestIndexes)]]
+		s.nodeIndex++
+		return selected, true
+	}
+
+	if len(freshBestIndexes) > 0 {
+		return registry.NodeInfo{}, false
+	}
+
+	if staleBestAvailable <= 0 || len(staleBestIndexes) == 0 {
+		return registry.NodeInfo{}, false
+	}
+
+	observability.GetMetrics().RecordSchedulerDegradedMode()
+	selected := nodes[staleBestIndexes[s.nodeIndex%len(staleBestIndexes)]]
+	s.nodeIndex++
+	return selected, true
 }
 
 // roundRobinSelect selects the next node in round-robin fashion
@@ -354,6 +552,111 @@ func (s *Scheduler) roundRobinSelect(nodes []registry.NodeInfo) registry.NodeInf
 	node := nodes[s.nodeIndex%len(nodes)]
 	s.nodeIndex++
 	return node
+}
+
+func (s *Scheduler) reserveNodeSlot(nodeID string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	capacity := s.getOrCreateNodeCapacityLocked(nodeID)
+	capacity.ReservedInFlight++
+	capacity.LastUpdated = time.Now()
+}
+
+func (s *Scheduler) releaseNodeSlot(nodeID string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	capacity := s.getOrCreateNodeCapacityLocked(nodeID)
+	if capacity.ReservedInFlight > 0 {
+		capacity.ReservedInFlight--
+	}
+	capacity.LastUpdated = time.Now()
+}
+
+func (s *Scheduler) getOrCreateNodeCapacityLocked(nodeID string) *nodeCapacity {
+	capacity, exists := s.nodeCapacity[nodeID]
+	if !exists {
+		capacity = &nodeCapacity{
+			MaxConcurrency: s.config.DefaultWorkerMaxConcurrency,
+			LastUpdated:    time.Now(),
+		}
+		s.nodeCapacity[nodeID] = capacity
+	}
+	return capacity
+}
+
+func (s *Scheduler) nodeHasAvailableCapacity(nodeID string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.isInDispatchCooldownLocked(nodeID) {
+		return false
+	}
+
+	capacity := s.getOrCreateNodeCapacityLocked(nodeID)
+	return s.availableCapacityLocked(capacity) > 0
+}
+
+func (s *Scheduler) availableCapacityLocked(capacity *nodeCapacity) int {
+	inUse := capacity.ReservedInFlight
+	if capacity.ReportedInFlight > inUse {
+		inUse = capacity.ReportedInFlight
+	}
+	return capacity.MaxConcurrency - inUse
+}
+
+func (s *Scheduler) isCapacityFreshLocked(capacity *nodeCapacity) bool {
+	if capacity.LastUpdated.IsZero() {
+		return false
+	}
+	return time.Since(capacity.LastUpdated) <= s.config.CapacityTTL
+}
+
+func (s *Scheduler) isInDispatchCooldownLocked(nodeID string) bool {
+	expiry, exists := s.dispatchCooldowns[nodeID]
+	if !exists {
+		return false
+	}
+	if time.Now().After(expiry) {
+		delete(s.dispatchCooldowns, nodeID)
+		return false
+	}
+	return true
+}
+
+func (s *Scheduler) markDispatchCooldown(nodeID string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	s.dispatchCooldowns[nodeID] = time.Now().Add(s.config.DispatchRejectCooldown)
+	observability.GetMetrics().RecordSchedulerDispatchCooldownActivation()
+}
+
+func isDispatchCapacityConflict(err error) bool {
+	if err == nil {
+		return false
+	}
+	lowered := strings.ToLower(err.Error())
+	return strings.Contains(lowered, "at capacity") || strings.Contains(lowered, "capacity")
+}
+
+func dispatchRejectionReason(err error) string {
+	if err == nil {
+		return "unknown"
+	}
+
+	lowered := strings.ToLower(err.Error())
+	switch {
+	case strings.Contains(lowered, "timeout"):
+		return "network_timeout"
+	case strings.Contains(lowered, "connection refused"),
+		strings.Contains(lowered, "connection reset"),
+		strings.Contains(lowered, "unavailable"):
+		return "transport_error"
+	default:
+		return "dispatch_error"
+	}
 }
 
 // GetAffinityStats returns statistics about the current affinity map (for observability)

@@ -3,19 +3,26 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/seyi/dagens/pkg/agent"
 	"github.com/seyi/dagens/pkg/graph"
+	"github.com/seyi/dagens/pkg/observability"
 	"github.com/seyi/dagens/pkg/scheduler"
 )
 
+const schedulerRetryAfterSeconds = "5"
+
 // Server provides an HTTP API for job submission and monitoring
 type Server struct {
-	scheduler *scheduler.Scheduler
-	compiler  *graph.DAGCompiler
+	scheduler            *scheduler.Scheduler
+	compiler             *graph.DAGCompiler
+	workerHeartbeatToken string
+	workerHeartbeatAuthRequired bool
 }
 
 // NewServer creates a new API server
@@ -23,6 +30,8 @@ func NewServer(sched *scheduler.Scheduler) *Server {
 	return &Server{
 		scheduler: sched,
 		compiler:  graph.NewDAGCompiler(),
+		workerHeartbeatToken: os.Getenv("WORKER_HEARTBEAT_TOKEN"),
+		workerHeartbeatAuthRequired: os.Getenv("DEV_MODE") != "true",
 	}
 }
 
@@ -118,6 +127,11 @@ func (s *Server) SubmitJobHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 3. Submit to Scheduler
 	if err := s.scheduler.SubmitJob(job); err != nil {
+		if errors.Is(err, scheduler.ErrJobQueueFull) {
+			w.Header().Set("Retry-After", schedulerRetryAfterSeconds)
+			http.Error(w, "Submission failed: job queue is full", http.StatusTooManyRequests)
+			return
+		}
 		http.Error(w, fmt.Sprintf("Submission failed: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -163,6 +177,68 @@ func (s *Server) GetJobHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(job)
 }
 
+// UpdateWorkerCapacityHandler accepts worker heartbeats with capacity snapshots.
+func (s *Server) UpdateWorkerCapacityHandler(w http.ResponseWriter, r *http.Request) {
+	metrics := observability.GetMetrics()
+	metrics.RecordWorkerHeartbeatReceived()
+	start := time.Now()
+	defer func() {
+		metrics.RecordWorkerHeartbeatProcessing(time.Since(start))
+	}()
+
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if s.workerHeartbeatAuthRequired {
+		if s.workerHeartbeatToken == "" {
+			metrics.RecordWorkerHeartbeatAuthFailed()
+			http.Error(w, "Worker heartbeat auth is not configured", http.StatusServiceUnavailable)
+			return
+		}
+		if r.Header.Get("X-Dagens-Worker-Token") != s.workerHeartbeatToken {
+			metrics.RecordWorkerHeartbeatAuthFailed()
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
+	} else if s.workerHeartbeatToken != "" && r.Header.Get("X-Dagens-Worker-Token") != s.workerHeartbeatToken {
+		metrics.RecordWorkerHeartbeatAuthFailed()
+		http.Error(w, "Forbidden", http.StatusForbidden)
+		return
+	}
+
+	var req WorkerCapacityUpdateRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		metrics.RecordWorkerHeartbeatInvalidPayload()
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+	if req.NodeID == "" {
+		metrics.RecordWorkerHeartbeatInvalidPayload()
+		http.Error(w, "node_id is required", http.StatusBadRequest)
+		return
+	}
+	if req.InFlight < 0 {
+		metrics.RecordWorkerHeartbeatInvalidPayload()
+		http.Error(w, "in_flight cannot be negative", http.StatusBadRequest)
+		return
+	}
+	reportedAt := req.ReportTimestamp
+	if reportedAt.IsZero() {
+		reportedAt = time.Now()
+	}
+	if reportedAt.After(time.Now().Add(5 * time.Second)) {
+		metrics.RecordWorkerHeartbeatInvalidPayload()
+		http.Error(w, "report_timestamp is too far in the future", http.StatusBadRequest)
+		return
+	}
+
+	s.scheduler.UpdateNodeCapacityAt(req.NodeID, req.InFlight, req.MaxConcurrency, reportedAt)
+	metrics.RecordWorkerHeartbeatSucceeded()
+	w.WriteHeader(http.StatusNoContent)
+}
+
 // Routes returns a ServeMux with configured routes
 func (s *Server) Routes() http.Handler {
 	mux := http.NewServeMux()
@@ -191,6 +267,8 @@ func (s *Server) Routes() http.Handler {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	})
+
+	mux.HandleFunc("/v1/internal/worker_capacity", s.UpdateWorkerCapacityHandler)
 
 	// Wrap in CORS middleware
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

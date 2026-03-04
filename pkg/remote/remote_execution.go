@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/seyi/dagens/pkg/agent"
@@ -21,6 +22,7 @@ type RemoteExecutionService struct {
 	registry     registry.Registry
 	localNodeID  string
 	agentManager AgentManager
+	inFlight     atomic.Int64
 }
 
 // AgentManager provides access to local agents for execution
@@ -79,6 +81,9 @@ func (s *RemoteExecutionService) Execute(ctx context.Context, request *RemoteExe
 		}, nil
 	}
 
+	s.inFlight.Add(1)
+	defer s.inFlight.Add(-1)
+
 	// Execute the agent locally
 	output, err := s.agentManager.ExecuteAgent(ctx, request.AgentName, request.Input)
 
@@ -99,6 +104,11 @@ func (s *RemoteExecutionService) Execute(ctx context.Context, request *RemoteExe
 		RequestID: request.RequestID,
 		Duration: duration,
 	}, nil
+}
+
+// CurrentInFlight returns the current number of locally executing remote tasks.
+func (s *RemoteExecutionService) CurrentInFlight() int {
+	return int(s.inFlight.Load())
 }
 
 // RemoteExecutor handles sending execution requests to remote nodes

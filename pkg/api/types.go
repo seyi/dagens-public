@@ -1,5 +1,7 @@
 package api
 
+import "time"
+
 // JobSubmissionRequest represents the payload to submit a new job
 type JobSubmissionRequest struct {
 	Name        string           `json:"name"`
@@ -75,4 +77,12 @@ type JobResponse struct {
 	Status    string `json:"status"`
 	SubmittedAt string `json:"submitted_at"`
 	Message   string `json:"message,omitempty"`
+}
+
+// WorkerCapacityUpdateRequest represents a worker heartbeat with capacity data.
+type WorkerCapacityUpdateRequest struct {
+	NodeID          string    `json:"node_id"`
+	InFlight        int       `json:"in_flight"`
+	MaxConcurrency  int       `json:"max_concurrency"`
+	ReportTimestamp time.Time `json:"report_timestamp"`
 }
