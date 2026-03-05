@@ -49,6 +49,54 @@ func TestSubmitJobReturnsQueueFullWithoutRetainingRejectedJob(t *testing.T) {
 	}
 }
 
+func TestSubmitJobRecordsInitialDurableTransitions(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize: 1,
+	})
+
+	job := NewJob("job-init", "initial")
+	stage := &Stage{
+		ID:    "stage-1",
+		JobID: job.ID,
+		Tasks: []*Task{
+			{ID: "task-1", JobID: job.ID, StageID: "stage-1"},
+		},
+	}
+	job.AddStage(stage)
+
+	if err := s.SubmitJob(job); err != nil {
+		t.Fatalf("SubmitJob unexpected error: %v", err)
+	}
+
+	store, ok := s.TransitionStore().(*InMemoryTransitionStore)
+	if !ok {
+		t.Fatal("expected in-memory transition store")
+	}
+
+	records, err := store.ListTransitionsByJob(context.Background(), job.ID)
+	if err != nil {
+		t.Fatalf("ListTransitionsByJob unexpected error: %v", err)
+	}
+	if len(records) != 3 {
+		t.Fatalf("transition count = %d, want 3", len(records))
+	}
+	if records[0].Transition != TransitionJobSubmitted {
+		t.Fatalf("first transition = %q, want %q", records[0].Transition, TransitionJobSubmitted)
+	}
+	if records[1].Transition != TransitionTaskCreated {
+		t.Fatalf("second transition = %q, want %q", records[1].Transition, TransitionTaskCreated)
+	}
+	if records[2].Transition != TransitionJobQueued {
+		t.Fatalf("third transition = %q, want %q", records[2].Transition, TransitionJobQueued)
+	}
+	if job.LifecycleState != JobStateQueued {
+		t.Fatalf("job lifecycle state = %q, want %q", job.LifecycleState, JobStateQueued)
+	}
+	if stage.Tasks[0].LifecycleState != TaskStatePending {
+		t.Fatalf("task lifecycle state = %q, want %q", stage.Tasks[0].LifecycleState, TaskStatePending)
+	}
+}
+
 func TestSelectNodeByCapacityPrefersLeastBusyNode(t *testing.T) {
 	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
 		DefaultWorkerMaxConcurrency: 2,

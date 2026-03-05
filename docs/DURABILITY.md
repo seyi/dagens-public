@@ -196,6 +196,13 @@ What is lost:
 - queued jobs
 - task outputs attached to in-memory job structs
 
+Restart behavior today:
+
+- scheduler startup recovery is visibility-only when transition history is available
+- recovered jobs/tasks are rebuilt into in-memory views
+- recovered work is not automatically re-enqueued or redispatched
+- with the current default in-memory transition store, process restart still drops transition history unless a durable transition backend is configured
+
 What may survive:
 
 - etcd node registry state (if etcd is in use and peers are still registered)

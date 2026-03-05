@@ -24,6 +24,7 @@ type Job struct {
 	Stages    []*Stage
 	Edges     []Edge // Added to preserve logical structure for UI
 	Status    JobStatus
+	LifecycleState JobLifecycleState
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Metadata  map[string]interface{}
@@ -56,6 +57,7 @@ type Task struct {
 	Output       *agent.AgentOutput `json:"Output,omitempty"` // Added for result retrieval
 	PartitionKey string // For locality-aware scheduling
 	Status       JobStatus
+	LifecycleState TaskLifecycleState
 	Attempts     int
 }
 
@@ -66,6 +68,7 @@ func NewJob(id, name string) *Job {
 		Name:      name,
 		Stages:    make([]*Stage, 0),
 		Status:    JobPending,
+		LifecycleState: JobStateSubmitted,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 		Metadata:  make(map[string]interface{}),

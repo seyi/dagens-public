@@ -54,6 +54,9 @@ type Metrics struct {
 	SchedulerDegradedMode   prometheus.Counter
 	SchedulerDispatchCooldownActivations prometheus.Counter
 	SchedulerDispatchRejections *prometheus.CounterVec
+	SchedulerRecoveryRuns *prometheus.CounterVec
+	SchedulerRecoveredJobs prometheus.Counter
+	SchedulerRecoveryDuration prometheus.Histogram
 	WorkerHeartbeatsReceived prometheus.Counter
 	WorkerHeartbeatsSucceeded prometheus.Counter
 	WorkerHeartbeatAuthFailed prometheus.Counter
@@ -360,6 +363,32 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"reason"},
 	)
 
+	m.SchedulerRecoveryRuns = promauto.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_recovery_runs_total",
+			Help:      "Total number of scheduler startup recovery runs by status",
+		},
+		[]string{"status"},
+	)
+
+	m.SchedulerRecoveredJobs = promauto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_recovered_jobs_total",
+			Help:      "Total number of jobs reconstructed into scheduler in-memory state during startup recovery",
+		},
+	)
+
+	m.SchedulerRecoveryDuration = promauto.NewHistogram(
+		prometheus.HistogramOpts{
+			Namespace: namespace,
+			Name:      "scheduler_recovery_duration_seconds",
+			Help:      "Scheduler startup recovery duration in seconds",
+			Buckets:   []float64{0.001, 0.01, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30},
+		},
+	)
+
 	m.WorkerHeartbeatsReceived = promauto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
@@ -568,6 +597,24 @@ func (m *Metrics) RecordSchedulerDispatchCooldownActivation() {
 // RecordSchedulerDispatchRejection records a dispatch rejection by reason.
 func (m *Metrics) RecordSchedulerDispatchRejection(reason string) {
 	m.SchedulerDispatchRejections.WithLabelValues(reason).Inc()
+}
+
+// RecordSchedulerRecoveryRun records one scheduler startup recovery attempt by status.
+func (m *Metrics) RecordSchedulerRecoveryRun(status string) {
+	m.SchedulerRecoveryRuns.WithLabelValues(status).Inc()
+}
+
+// RecordSchedulerRecoveredJobs records how many jobs were reconstructed by startup recovery.
+func (m *Metrics) RecordSchedulerRecoveredJobs(count int) {
+	if count <= 0 {
+		return
+	}
+	m.SchedulerRecoveredJobs.Add(float64(count))
+}
+
+// RecordSchedulerRecoveryDuration records scheduler startup recovery duration.
+func (m *Metrics) RecordSchedulerRecoveryDuration(duration time.Duration) {
+	m.SchedulerRecoveryDuration.Observe(duration.Seconds())
 }
 
 // RecordWorkerHeartbeatReceived records that a worker heartbeat request was received.

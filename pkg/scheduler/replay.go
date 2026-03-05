@@ -1,0 +1,128 @@
+package scheduler
+
+import (
+	"context"
+	"fmt"
+	"sort"
+)
+
+// ReplayedJobState is the reconstructed control-plane view for a job after
+// replaying its durable transition history.
+type ReplayedJobState struct {
+	Job         DurableJobRecord
+	Tasks       map[string]DurableTaskRecord
+	Transitions []TransitionRecord
+}
+
+// ReplayStateFromStore rebuilds the current control-plane view for every
+// unfinished job returned by the transition store.
+//
+// This is a visibility-first recovery helper. It does not redispatch work or
+// attempt to reconcile ambiguous in-flight execution.
+//
+// Replay currently follows fail-fast semantics: if any unfinished job has an
+// invalid or illegal transition sequence, the replay operation returns an
+// error.
+func ReplayStateFromStore(ctx context.Context, store TransitionStore) ([]ReplayedJobState, error) {
+	if store == nil {
+		return nil, fmt.Errorf("transition store is required")
+	}
+
+	jobs, err := store.ListUnfinishedJobs(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]ReplayedJobState, 0, len(jobs))
+	for _, job := range jobs {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		replayed, err := ReplayJobState(ctx, store, job.JobID)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, replayed)
+	}
+
+	sort.Slice(result, func(i, j int) bool {
+		if result[i].Job.CreatedAt.Equal(result[j].Job.CreatedAt) {
+			return result[i].Job.JobID < result[j].Job.JobID
+		}
+		return result[i].Job.CreatedAt.Before(result[j].Job.CreatedAt)
+	})
+	return result, nil
+}
+
+// ReplayJobState rebuilds the current control-plane view for a single job from
+// its ordered transition history.
+//
+// Ordering assumption:
+// TransitionStore.ListTransitionsByJob must return transitions ordered by
+// SequenceID ascending.
+func ReplayJobState(ctx context.Context, store TransitionStore, jobID string) (ReplayedJobState, error) {
+	if store == nil {
+		return ReplayedJobState{}, fmt.Errorf("transition store is required")
+	}
+	if jobID == "" {
+		return ReplayedJobState{}, fmt.Errorf("job_id is required")
+	}
+
+	transitions, err := store.ListTransitionsByJob(ctx, jobID)
+	if err != nil {
+		return ReplayedJobState{}, err
+	}
+
+	state := ReplayedJobState{
+		Job: DurableJobRecord{
+			JobID: jobID,
+		},
+		Tasks:       make(map[string]DurableTaskRecord),
+		Transitions: transitions,
+	}
+
+	for _, record := range transitions {
+		if err := ctx.Err(); err != nil {
+			return ReplayedJobState{}, err
+		}
+		if err := record.Validate(); err != nil {
+			return ReplayedJobState{}, fmt.Errorf("invalid transition during replay for job %s: %w", jobID, err)
+		}
+		if record.JobID != jobID {
+			return ReplayedJobState{}, fmt.Errorf("transition references wrong job during replay: expected %s, got %s", jobID, record.JobID)
+		}
+
+		switch record.EntityType {
+		case TransitionEntityJob:
+			newState := JobLifecycleState(record.NewState)
+			if state.Job.CurrentState != "" && !CanTransitionJobState(state.Job.CurrentState, newState) {
+				return ReplayedJobState{}, fmt.Errorf("illegal job transition during replay for job %s: %s -> %s", jobID, state.Job.CurrentState, newState)
+			}
+			state.Job.CurrentState = newState
+			if state.Job.CreatedAt.IsZero() {
+				state.Job.CreatedAt = record.OccurredAt
+			}
+			state.Job.UpdatedAt = record.OccurredAt
+		case TransitionEntityTask:
+			current := state.Tasks[record.TaskID]
+			newState := TaskLifecycleState(record.NewState)
+			if current.CurrentState != "" && !CanTransitionTaskState(current.CurrentState, newState) {
+				return ReplayedJobState{}, fmt.Errorf("illegal task transition during replay for task %s: %s -> %s", record.TaskID, current.CurrentState, newState)
+			}
+
+			current.TaskID = record.TaskID
+			current.JobID = record.JobID
+			current.NodeID = record.NodeID
+			current.CurrentState = newState
+			if record.Attempt > current.LastAttempt {
+				current.LastAttempt = record.Attempt
+			}
+			current.UpdatedAt = record.OccurredAt
+			state.Tasks[record.TaskID] = current
+		default:
+			return ReplayedJobState{}, fmt.Errorf("unknown transition entity type %q", record.EntityType)
+		}
+	}
+
+	return state, nil
+}

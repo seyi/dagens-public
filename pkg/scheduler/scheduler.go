@@ -23,6 +23,8 @@ type TaskExecutor interface {
 
 var ErrJobQueueFull = errors.New("job queue is full")
 var ErrNoWorkerCapacity = errors.New("all healthy workers are at capacity")
+var ErrSchedulerRecovering = errors.New("scheduler is recovering state")
+var ErrTransitionStoreSetAfterStart = errors.New("transition store can only be set before scheduler start")
 
 const schedulerMetricsID = "default"
 
@@ -47,6 +49,11 @@ type Scheduler struct {
 	nodeIndex   int          // Round-robin counter for node selection
 	nodeCapacity map[string]*nodeCapacity
 	dispatchCooldowns map[string]time.Time
+	transitionStore TransitionStore
+	transitionMu    sync.Mutex
+	jobSequences    map[string]uint64
+	started         bool
+	recovering      bool
 }
 
 // RegistryInterface defines the subset of registry functionality needed by the scheduler
@@ -79,6 +86,8 @@ func NewSchedulerWithConfig(reg registry.Registry, executor TaskExecutor, config
 		affinityMap: affinityMap,
 		nodeCapacity: make(map[string]*nodeCapacity),
 		dispatchCooldowns: make(map[string]time.Time),
+		transitionStore: NewInMemoryTransitionStore(),
+		jobSequences: make(map[string]uint64),
 	}
 	observability.GetMetrics().SetTaskQueueDepths(schedulerMetricsID, 0, cap(s.jobQueue))
 	return s
@@ -86,6 +95,22 @@ func NewSchedulerWithConfig(reg registry.Registry, executor TaskExecutor, config
 
 // Start starts the scheduler's main loop
 func (s *Scheduler) Start() {
+	s.mu.Lock()
+	if s.started || s.recovering {
+		s.mu.Unlock()
+		return
+	}
+	s.recovering = true
+	s.mu.Unlock()
+
+	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+		log.Printf("failed to recover scheduler state from transitions: %v", err)
+	}
+
+	s.mu.Lock()
+	s.recovering = false
+	s.started = true
+	s.mu.Unlock()
 	s.wg.Add(1)
 	go s.run()
 }
@@ -104,9 +129,13 @@ func (s *Scheduler) Stop() {
 // SubmitJob submits a job for execution
 func (s *Scheduler) SubmitJob(job *Job) error {
 	s.mu.Lock()
-	defer s.mu.Unlock()
+	if s.recovering {
+		s.mu.Unlock()
+		return ErrSchedulerRecovering
+	}
 
 	if _, exists := s.jobs[job.ID]; exists {
+		s.mu.Unlock()
 		return fmt.Errorf("job %s already exists", job.ID)
 	}
 
@@ -116,9 +145,12 @@ func (s *Scheduler) SubmitJob(job *Job) error {
 		job.Status = JobPending
 		s.jobs[job.ID] = job
 		metrics.SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
+		s.mu.Unlock()
+		s.recordInitialTransitions(job)
 		return nil
 	default:
 		metrics.SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
+		s.mu.Unlock()
 		return ErrJobQueueFull
 	}
 }
@@ -145,6 +177,23 @@ func (s *Scheduler) GetAllJobs() []*Job {
 		jobs = append(jobs, job)
 	}
 	return jobs
+}
+
+// TransitionStore exposes the configured lifecycle transition store.
+func (s *Scheduler) TransitionStore() TransitionStore {
+	return s.transitionStore
+}
+
+// SetTransitionStore replaces the scheduler transition store.
+// Intended for startup wiring and tests. It must be called before Start().
+func (s *Scheduler) SetTransitionStore(store TransitionStore) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.started || s.recovering {
+		return ErrTransitionStoreSetAfterStart
+	}
+	s.transitionStore = store
+	return nil
 }
 
 // UpdateNodeCapacity updates the scheduler's latest capacity snapshot for a node.
@@ -205,6 +254,7 @@ func (s *Scheduler) executeJob(job *Job) {
 	
 	span.SetAttribute("job.id", job.ID)
 	span.SetAttribute("job.name", job.Name)
+	s.recordJobTransition(ctx, span, job, TransitionJobRunning, JobStateRunning, "")
 
 	// Execute stages sequentially
 	for _, stage := range job.Stages {
@@ -215,9 +265,11 @@ func (s *Scheduler) executeJob(job *Job) {
 			var policyErr *policy.ErrPolicyViolation
 			if errors.As(err, &policyErr) {
 				s.updateJobStatus(job, JobBlocked)
+				s.recordJobTransition(ctx, span, job, TransitionJobFailed, JobStateFailed, err.Error())
 				span.SetStatus(telemetry.StatusError, "policy_blocked: "+policyErr.Reason)
 			} else {
 				s.updateJobStatus(job, JobFailed)
+				s.recordJobTransition(ctx, span, job, TransitionJobFailed, JobStateFailed, err.Error())
 				span.SetStatus(telemetry.StatusError, err.Error())
 			}
 			return
@@ -225,6 +277,7 @@ func (s *Scheduler) executeJob(job *Job) {
 	}
 
 	s.updateJobStatus(job, JobCompleted)
+	s.recordJobTransition(ctx, span, job, TransitionJobSucceeded, JobStateSucceeded, "")
 	span.SetStatus(telemetry.StatusOK, "Job completed successfully")
 	log.Printf("Job %s completed successfully", job.ID)
 }
@@ -328,6 +381,7 @@ func (s *Scheduler) executeTaskWithRetry(ctx context.Context, task *Task, initia
 
 	for attempt := 1; attempt <= maxAttempts; attempt++ {
 		task.Attempts = attempt
+		s.recordTaskTransition(ctx, telemetry.GetGlobalTelemetry().GetTracer().GetSpan(ctx), task, TransitionTaskDispatched, TaskStateDispatched, node.ID, attempt, "")
 
 		s.reserveNodeSlot(node.ID)
 		err := s.executeTask(ctx, task, node)
@@ -367,6 +421,7 @@ func (s *Scheduler) executeTask(ctx context.Context, task *Task, node registry.N
 	span.SetAttribute("task.id", task.ID)
 	span.SetAttribute("agent.id", task.AgentID)
 	span.SetAttribute("node.id", node.ID)
+	s.recordTaskTransition(taskCtx, span, task, TransitionTaskRunning, TaskStateRunning, node.ID, task.Attempts, "")
 
 	log.Printf("Dispatching task %s (Agent: %s) to node %s", task.ID, task.AgentID, node.ID)
 
@@ -392,6 +447,7 @@ func (s *Scheduler) executeTask(ctx context.Context, task *Task, node registry.N
 		}
 
 		task.Status = JobFailed
+		s.recordTaskTransition(taskCtx, span, task, TransitionTaskFailed, TaskStateFailed, node.ID, task.Attempts, err.Error())
 		span.SetStatus(telemetry.StatusError, err.Error())
 		return fmt.Errorf("task %s failed on node %s: %w", task.ID, node.ID, err)
 	}
@@ -399,6 +455,7 @@ func (s *Scheduler) executeTask(ctx context.Context, task *Task, node registry.N
 	// Store output in the task object
 	task.Output = output
 	task.Status = JobCompleted
+	s.recordTaskTransition(taskCtx, span, task, TransitionTaskSucceeded, TaskStateSucceeded, node.ID, task.Attempts, "")
 	span.SetStatus(telemetry.StatusOK, "Task completed")
 	return nil
 }
@@ -410,6 +467,137 @@ func (s *Scheduler) updateJobStatus(job *Job, status JobStatus) {
 
 	job.Status = status
 	job.UpdatedAt = time.Now()
+}
+
+func (s *Scheduler) recordInitialTransitions(job *Job) {
+	if job == nil {
+		return
+	}
+
+	ctx := context.Background()
+	s.recordJobTransition(ctx, nil, job, TransitionJobSubmitted, JobStateSubmitted, "")
+	for _, stage := range job.Stages {
+		for _, task := range stage.Tasks {
+			if task.JobID == "" {
+				task.JobID = job.ID
+			}
+			if task.StageID == "" {
+				task.StageID = stage.ID
+			}
+			s.recordTaskTransition(ctx, nil, task, TransitionTaskCreated, TaskStatePending, "", 0, "")
+		}
+	}
+	s.recordJobTransition(ctx, nil, job, TransitionJobQueued, JobStateQueued, "")
+}
+
+func (s *Scheduler) recordJobTransition(ctx context.Context, span telemetry.Span, job *Job, transition TransitionType, newState JobLifecycleState, errorSummary string) {
+	if s.transitionStore == nil || job == nil {
+		return
+	}
+
+	previousState := job.LifecycleState
+	record := TransitionRecord{
+		SequenceID:    s.nextSequenceID(job.ID),
+		EntityType:    TransitionEntityJob,
+		Transition:    transition,
+		JobID:         job.ID,
+		PreviousState: string(previousState),
+		NewState:      string(newState),
+		ErrorSummary:  errorSummary,
+		OccurredAt:    time.Now().UTC(),
+	}
+
+	if err := s.transitionStore.AppendTransition(ctx, record); err != nil {
+		log.Printf("failed to append job transition for job %s: %v", job.ID, err)
+		return
+	}
+
+	now := record.OccurredAt
+	job.LifecycleState = newState
+	if err := s.transitionStore.UpsertJob(ctx, DurableJobRecord{
+		JobID:        job.ID,
+		Name:         job.Name,
+		CurrentState: newState,
+		CreatedAt:    job.CreatedAt,
+		UpdatedAt:    now,
+	}); err != nil {
+		log.Printf("failed to upsert durable job record for job %s: %v", job.ID, err)
+		return
+	}
+
+	if span != nil {
+		span.AddEvent("scheduler.transition", map[string]interface{}{
+			"entity_type":  string(TransitionEntityJob),
+			"transition":   string(transition),
+			"job_id":       job.ID,
+			"previous":     string(previousState),
+			"new":          string(newState),
+			"sequence_id":  record.SequenceID,
+			"error_summary": errorSummary,
+		})
+	}
+}
+
+func (s *Scheduler) recordTaskTransition(ctx context.Context, span telemetry.Span, task *Task, transition TransitionType, newState TaskLifecycleState, nodeID string, attempt int, errorSummary string) {
+	if s.transitionStore == nil || task == nil {
+		return
+	}
+
+	previousState := task.LifecycleState
+	record := TransitionRecord{
+		SequenceID:    s.nextSequenceID(task.JobID),
+		EntityType:    TransitionEntityTask,
+		Transition:    transition,
+		JobID:         task.JobID,
+		TaskID:        task.ID,
+		PreviousState: string(previousState),
+		NewState:      string(newState),
+		NodeID:        nodeID,
+		Attempt:       attempt,
+		ErrorSummary:  errorSummary,
+		OccurredAt:    time.Now().UTC(),
+	}
+
+	if err := s.transitionStore.AppendTransition(ctx, record); err != nil {
+		log.Printf("failed to append task transition for task %s: %v", task.ID, err)
+		return
+	}
+
+	task.LifecycleState = newState
+	if err := s.transitionStore.UpsertTask(ctx, DurableTaskRecord{
+		TaskID:       task.ID,
+		JobID:        task.JobID,
+		StageID:      task.StageID,
+		NodeID:       nodeID,
+		CurrentState: newState,
+		LastAttempt:  attempt,
+		UpdatedAt:    record.OccurredAt,
+	}); err != nil {
+		log.Printf("failed to upsert durable task record for task %s: %v", task.ID, err)
+		return
+	}
+
+	if span != nil {
+		span.AddEvent("scheduler.transition", map[string]interface{}{
+			"entity_type":   string(TransitionEntityTask),
+			"transition":    string(transition),
+			"job_id":        task.JobID,
+			"task_id":       task.ID,
+			"previous":      string(previousState),
+			"new":           string(newState),
+			"node_id":       nodeID,
+			"attempt":       attempt,
+			"sequence_id":   record.SequenceID,
+			"error_summary": errorSummary,
+		})
+	}
+}
+
+func (s *Scheduler) nextSequenceID(jobID string) uint64 {
+	s.transitionMu.Lock()
+	defer s.transitionMu.Unlock()
+	s.jobSequences[jobID]++
+	return s.jobSequences[jobID]
 }
 
 // selectNodeForTask selects a node for the given task using sticky scheduling
