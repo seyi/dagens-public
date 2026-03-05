@@ -22,6 +22,10 @@ This is infrastructure, not an in-process agent library. It treats orchestration
 Control-plane saturation model (v0.2):
 - [Backpressure Design](docs/BACKPRESSURE.md)
 
+Durability and recovery model (v0.2):
+- [State Machine](docs/STATE_MACHINE.md)
+- [Durability](docs/DURABILITY.md)
+
 ## Integrations (Bring Your Own Agent Framework)
 
 Dagens supports A2A adapters that allow external agent frameworks to participate in distributed orchestration.
