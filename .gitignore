@@ -48,6 +48,7 @@ zen_generated.code
 .env
 
 # Public repo hygiene rules
+notes/
 .claude/
 .cursor/
 .grok/

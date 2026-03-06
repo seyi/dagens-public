@@ -15,7 +15,7 @@ This is intentionally conservative. If a guarantee is not clearly implemented in
 
 Here, "task results" means response payloads attached to in-memory task/job structs, not a durable artifact store.
 
-## Defaults in Current Public Release
+## Defaults in v0.1.0
 
 - Scheduler store: in-memory
 - Event store: in-memory

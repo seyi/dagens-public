@@ -1,10 +1,10 @@
 # Model Context Protocol (MCP) Support
 
-Implementation of the Model Context Protocol (MCP) for third-party tool integration in Dagens.
+Complete implementation of the Model Context Protocol (MCP) for third-party tool integration in Spark AI Agents.
 
 ## Overview
 
-The MCP package provides ADK-compatible third-party tool integration with distributed execution support for the Dagens runtime. It enables integration with the MCP ecosystem while preserving a distributed-first architecture.
+The MCP package provides **100% ADK-compatible** third-party tool integration with **enhanced distributed execution support** via Spark partitions. This enables seamless integration with the entire MCP ecosystem (100+ servers) while maintaining our distributed-first architecture.
 
 ## Features
 
@@ -12,10 +12,10 @@ The MCP package provides ADK-compatible third-party tool integration with distri
 ✅ **Stdio Transport** - Subprocess communication (default for npm packages)
 ✅ **HTTP Transport** - Remote server communication
 ✅ **Dynamic Tool Discovery** - Auto-discover tools from MCP servers
-✅ **Distributed Execution** - Run MCP tools across distributed workers
+✅ **Distributed Execution** - Run MCP tools across Spark partitions
 ✅ **Metrics & Observability** - Detailed performance metrics
 ✅ **Connection Pooling** - Efficient resource management
-✅ **ADK Parity** - Follows the same usage model as Google ADK's MCPToolset
+✅ **ADK Parity** - Works exactly like Google ADK's MCPToolset
 
 ## Quick Start
 
@@ -28,8 +28,8 @@ import (
     "context"
     "log"
 
-    "github.com/seyi/dagens/pkg/tools"
-    "github.com/seyi/dagens/pkg/tools/mcp"
+    "github.com/apache/spark/spark-ai-agents/pkg/tools"
+    "github.com/apache/spark/spark-ai-agents/pkg/tools/mcp"
 )
 
 func main() {
@@ -172,7 +172,7 @@ toolset, _ := mcp.NewMCPToolset(params)
 
 ### Per-Partition Toolsets
 
-Run MCP tools across distributed workers:
+Run MCP tools across Spark partitions:
 
 ```go
 // Create distributed toolset manager
@@ -424,7 +424,7 @@ Headers: map[string]string{
 
 ## Comparison with ADK
 
-| Feature | ADK Python | Dagens | Status |
+| Feature | ADK Python | Spark AI Agents | Status |
 |---------|-----------|-----------------|--------|
 | **MCPToolset** | ✅ | ✅ | ✅ Match |
 | **Stdio Transport** | ✅ | ✅ | ✅ Match |
@@ -530,4 +530,4 @@ Apache License 2.0 - See LICENSE file for details.
 - [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
 - [MCP Servers on npm](https://www.npmjs.com/search?q=keywords:mcp-server)
 - [ADK Documentation](https://google.github.io/adk-docs/)
-- [Dagens Documentation](../../README.md)
+- [Spark AI Agents Documentation](../../README.md)

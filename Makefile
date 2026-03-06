@@ -1,10 +1,10 @@
 .PHONY: all build clean test install run-examples proto help
 
 # Variables
-GO_PACKAGE := github.com/seyi/dagens
+GO_PACKAGE := github.com/apache/spark/spark-ai-agents
 PYTHON_DIR := python
 BINDINGS_DIR := $(PYTHON_DIR)/bindings
-LIB_NAME := libdagens.so
+LIB_NAME := libsparkagents.so
 PROTO_DIR := pkg/rpc
 
 # Default target
@@ -12,7 +12,7 @@ all: build
 
 # Help target
 help:
-	@echo "Dagens - Makefile"
+	@echo "Spark AI Agents - Makefile"
 	@echo ""
 	@echo "Available targets:"
 	@echo "  build          Build the Go shared library for Python bindings"

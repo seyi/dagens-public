@@ -1,5 +1,5 @@
 ---
-# Redis deployment for Dagens state management
+# Redis deployment for Spark AI Agents state management
 # For production, consider using Redis Cluster or a managed Redis service
 
 apiVersion: apps/v1
@@ -97,7 +97,7 @@ metadata:
     app: redis
 data:
   redis.conf: |
-    # Redis configuration for Dagens
+    # Redis configuration for Spark AI Agents
 
     # Network
     bind 0.0.0.0

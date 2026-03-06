@@ -19,15 +19,15 @@ const (
 
 // Job represents a distributed execution job derived from a Graph
 type Job struct {
-	ID        string
-	Name      string
-	Stages    []*Stage
-	Edges     []Edge // Added to preserve logical structure for UI
-	Status    JobStatus
+	ID             string
+	Name           string
+	Stages         []*Stage
+	Edges          []Edge // Added to preserve logical structure for UI
+	Status         JobStatus
 	LifecycleState JobLifecycleState
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	Metadata  map[string]interface{}
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	Metadata       map[string]interface{}
 }
 
 // Edge represents a logical connection between agents
@@ -48,30 +48,30 @@ type Stage struct {
 
 // Task represents a single unit of work to be executed by an agent
 type Task struct {
-	ID           string
-	StageID      string
-	JobID        string
-	AgentID      string
-	AgentName    string
-	Input        *agent.AgentInput
-	Output       *agent.AgentOutput `json:"Output,omitempty"` // Added for result retrieval
-	PartitionKey string // For locality-aware scheduling
-	Status       JobStatus
+	ID             string
+	StageID        string
+	JobID          string
+	AgentID        string
+	AgentName      string
+	Input          *agent.AgentInput
+	Output         *agent.AgentOutput `json:"Output,omitempty"` // Added for result retrieval
+	PartitionKey   string             // For locality-aware scheduling
+	Status         JobStatus
 	LifecycleState TaskLifecycleState
-	Attempts     int
+	Attempts       int
 }
 
 // NewJob creates a new empty job
 func NewJob(id, name string) *Job {
 	return &Job{
-		ID:        id,
-		Name:      name,
-		Stages:    make([]*Stage, 0),
-		Status:    JobPending,
+		ID:             id,
+		Name:           name,
+		Stages:         make([]*Stage, 0),
+		Status:         JobPending,
 		LifecycleState: JobStateSubmitted,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-		Metadata:  make(map[string]interface{}),
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
+		Metadata:       make(map[string]interface{}),
 	}
 }
 

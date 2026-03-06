@@ -1,8 +1,11 @@
-# Extended validation outside the default v0.1.x public gate.
-name: Extended Validation (Manual)
+# E2E Tests - Run on every PR and push to main
+name: E2E Tests
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   e2e-tests:
@@ -39,7 +42,7 @@ jobs:
             tests/e2e/*.log
           retention-days: 7
 
-  broad-unit-tests:
+  unit-tests:
     runs-on: ubuntu-latest
 
     steps:

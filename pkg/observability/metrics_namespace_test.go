@@ -15,4 +15,3 @@ func TestResolveMetricsNamespaceOverride(t *testing.T) {
 		t.Fatalf("resolveMetricsNamespace() = %q, want %q", got, "custom_ns")
 	}
 }
-

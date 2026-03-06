@@ -2,7 +2,10 @@ package scheduler
 
 import "time"
 
-// SchedulerConfig holds configuration options for the Scheduler
+// SchedulerConfig holds configuration options for the Scheduler.
+//
+// The config is copied into the scheduler at construction time. Mutating a
+// SchedulerConfig after calling NewSchedulerWithConfig has no effect.
 type SchedulerConfig struct {
 	// AffinityTTL is how long unused affinities survive before expiration
 	// Default: 1 hour
@@ -17,6 +20,8 @@ type SchedulerConfig struct {
 	EnableStickiness bool
 
 	// JobQueueSize is the buffer size for the job queue channel
+	// Recommended upper bound: ~10,000 for most deployments. Larger values can
+	// materially increase memory pressure under sustained admission load.
 	// Default: 100
 	JobQueueSize int
 
@@ -28,12 +33,14 @@ type SchedulerConfig struct {
 	// MaxWorkerConcurrencyCap is the hard upper bound for worker-reported
 	// max_concurrency. Larger values are capped to prevent a misconfigured
 	// worker from attracting unsafe amounts of traffic.
+	// Recommended upper bound: ~500 unless capacity planning explicitly justifies more.
 	// Default: 100
 	MaxWorkerConcurrencyCap int
 
 	// CapacityTTL defines how long a worker-reported capacity snapshot remains fresh.
 	// CapacityTTL should remain greater than or equal to the worker heartbeat
 	// interval to avoid false-positive staleness under normal network jitter.
+	// A practical baseline is CapacityTTL >= 2x expected heartbeat interval.
 	// Default: 5 seconds
 	CapacityTTL time.Duration
 
@@ -45,6 +52,7 @@ type SchedulerConfig struct {
 	// MaxDispatchAttempts is the maximum number of capacity-conflict dispatch
 	// attempts a task is allowed before it fails explicitly. This config is
 	// added now so the retry-boundary implementation can use a stable knob.
+	// Recommended upper bound: ~10 to avoid prolonged retry churn under saturation.
 	// Default: 3
 	MaxDispatchAttempts int
 
@@ -72,23 +80,25 @@ type SchedulerConfig struct {
 // DefaultSchedulerConfig returns the default scheduler configuration
 func DefaultSchedulerConfig() SchedulerConfig {
 	return SchedulerConfig{
-		AffinityTTL:                 1 * time.Hour,
-		AffinityCleanupInterval:     5 * time.Minute,
-		EnableStickiness:            true,
-		JobQueueSize:                100,
-		DefaultWorkerMaxConcurrency: 1,
-		MaxWorkerConcurrencyCap:     100,
-		CapacityTTL:                 5 * time.Second,
-		DispatchRejectCooldown:      5 * time.Second,
-		MaxDispatchAttempts:         3,
-		EnableStageCapacityDeferral: false,
-		StageCapacityDeferralTimeout: 2 * time.Second,
+		AffinityTTL:                       1 * time.Hour,
+		AffinityCleanupInterval:           5 * time.Minute,
+		EnableStickiness:                  true,
+		JobQueueSize:                      100,
+		DefaultWorkerMaxConcurrency:       1,
+		MaxWorkerConcurrencyCap:           100,
+		CapacityTTL:                       5 * time.Second,
+		DispatchRejectCooldown:            5 * time.Second,
+		MaxDispatchAttempts:               3,
+		EnableStageCapacityDeferral:       false,
+		StageCapacityDeferralTimeout:      2 * time.Second,
 		StageCapacityDeferralPollInterval: 100 * time.Millisecond,
-		RecoveryTimeout:             5 * time.Minute,
+		RecoveryTimeout:                   5 * time.Minute,
 	}
 }
 
-// Validate checks the configuration and applies defaults for zero values
+// Validate checks the configuration and applies defaults for zero values.
+// Validate mutates the receiver and is not thread-safe; call before sharing
+// config across goroutines.
 func (c *SchedulerConfig) Validate() {
 	if c.AffinityTTL <= 0 {
 		c.AffinityTTL = 1 * time.Hour
@@ -122,5 +132,23 @@ func (c *SchedulerConfig) Validate() {
 	}
 	if c.RecoveryTimeout <= 0 {
 		c.RecoveryTimeout = 5 * time.Minute
+	}
+
+	// Keep cleanup cadence comfortably below expiry to avoid stale affinity
+	// entries persisting for long windows.
+	if c.AffinityCleanupInterval >= c.AffinityTTL {
+		c.AffinityCleanupInterval = c.AffinityTTL / 4
+		if c.AffinityCleanupInterval <= 0 {
+			c.AffinityCleanupInterval = time.Second
+		}
+	}
+
+	// Ensure deferred-capacity polling has at least one practical interval
+	// before timeout.
+	if c.StageCapacityDeferralPollInterval >= c.StageCapacityDeferralTimeout {
+		c.StageCapacityDeferralPollInterval = c.StageCapacityDeferralTimeout / 4
+		if c.StageCapacityDeferralPollInterval <= 0 {
+			c.StageCapacityDeferralPollInterval = 10 * time.Millisecond
+		}
 	}
 }

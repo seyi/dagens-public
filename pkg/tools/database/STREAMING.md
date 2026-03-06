@@ -1,6 +1,6 @@
 # Query Result Streaming
 
-Guide to streaming and paginating large query results in the Dagens database toolset.
+Comprehensive guide to streaming and paginating large query results in the Spark AI Agents database toolset.
 
 ## Overview
 
@@ -44,7 +44,7 @@ Both approaches prevent memory exhaustion when querying large datasets.
 ### Basic Streaming
 
 ```go
-import "github.com/seyi/dagens/pkg/tools/database"
+import "github.com/apache/spark/spark-ai-agents/pkg/tools/database"
 
 // Create connector
 config := database.DefaultDatabaseConfig(...)

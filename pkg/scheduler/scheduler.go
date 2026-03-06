@@ -240,6 +240,9 @@ func (s *Scheduler) UpdateNodeCapacityAt(nodeID string, inFlight, maxConcurrency
 		maxConcurrency = s.config.MaxWorkerConcurrencyCap
 	}
 	if reportedAt.IsZero() {
+		telemetry.GetGlobalTelemetry().GetLogger().Warn("node capacity report missing timestamp; using server receipt time", map[string]interface{}{
+			"node_id": nodeID,
+		})
 		reportedAt = time.Now()
 	}
 
@@ -376,7 +379,7 @@ func (s *Scheduler) executeStage(ctx context.Context, stage *Stage) error {
 		span.SetAttribute("scheduler.pending_tasks", len(stage.Tasks)-startedTasks)
 		stage.Status = JobFailed
 		span.SetStatus(telemetry.StatusError, selectionErr.Error())
-		return selectionErr
+		return fmt.Errorf("stage %s failed: %w", stage.ID, selectionErr)
 	}
 
 	// Check for errors
@@ -389,7 +392,7 @@ func (s *Scheduler) executeStage(ctx context.Context, stage *Stage) error {
 			stage.Status = JobBlocked
 		}
 		span.SetStatus(telemetry.StatusError, err.Error())
-		return err
+		return fmt.Errorf("stage %s failed: %w", stage.ID, err)
 	}
 
 	stage.Status = JobCompleted
@@ -426,6 +429,7 @@ func (s *Scheduler) selectNodeForTaskWithDeferral(ctx context.Context, task *Tas
 		case <-timer.C:
 			return registry.NodeInfo{}, affinity, false, nil
 		case <-ticker.C:
+			observability.GetMetrics().RecordSchedulerCapacityDeferralPoll()
 			if s.registry == nil {
 				return registry.NodeInfo{}, affinity, false, nil
 			}
@@ -741,6 +745,7 @@ func (s *Scheduler) selectNodeForTask(task *Task, healthyNodes []registry.NodeIn
 			if s.nodeHasAvailableCapacity(entry.NodeID) {
 				// HIT: Use the sticky node
 				s.affinityMap.Touch(task.PartitionKey)
+				observability.GetMetrics().RecordSchedulerAffinityHit()
 				result.NodeID = entry.NodeID
 				result.IsHit = true
 				log.Printf("[AFFINITY] HIT: PartitionKey=%s -> Node=%s (hits=%d)",
@@ -757,6 +762,7 @@ func (s *Scheduler) selectNodeForTask(task *Task, healthyNodes []registry.NodeIn
 			log.Printf("[AFFINITY] STALE: PartitionKey=%s, Node=%s is unhealthy, re-routing",
 				task.PartitionKey, entry.NodeID)
 			s.affinityMap.Delete(task.PartitionKey)
+			observability.GetMetrics().RecordSchedulerAffinityStale()
 			result.IsStale = true
 		}
 	}
@@ -767,6 +773,7 @@ func (s *Scheduler) selectNodeForTask(task *Task, healthyNodes []registry.NodeIn
 		return registry.NodeInfo{}, result, false
 	}
 	s.affinityMap.Set(task.PartitionKey, selectedNode.ID)
+	observability.GetMetrics().RecordSchedulerAffinityMiss()
 	result.NodeID = selectedNode.ID
 
 	log.Printf("[AFFINITY] MISS: PartitionKey=%s -> Node=%s (new affinity)",

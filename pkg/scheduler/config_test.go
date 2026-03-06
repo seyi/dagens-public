@@ -47,18 +47,18 @@ func TestSchedulerConfigValidateAppliesDefaults(t *testing.T) {
 
 func TestSchedulerConfigValidatePreservesExplicitValues(t *testing.T) {
 	cfg := SchedulerConfig{
-		AffinityTTL:                 2 * time.Hour,
-		AffinityCleanupInterval:     10 * time.Minute,
-		JobQueueSize:                42,
-		DefaultWorkerMaxConcurrency: 4,
-		MaxWorkerConcurrencyCap:     12,
-		CapacityTTL:                 9 * time.Second,
-		DispatchRejectCooldown:      11 * time.Second,
-		MaxDispatchAttempts:         7,
-		EnableStageCapacityDeferral: true,
-		StageCapacityDeferralTimeout: 750 * time.Millisecond,
+		AffinityTTL:                       2 * time.Hour,
+		AffinityCleanupInterval:           10 * time.Minute,
+		JobQueueSize:                      42,
+		DefaultWorkerMaxConcurrency:       4,
+		MaxWorkerConcurrencyCap:           12,
+		CapacityTTL:                       9 * time.Second,
+		DispatchRejectCooldown:            11 * time.Second,
+		MaxDispatchAttempts:               7,
+		EnableStageCapacityDeferral:       true,
+		StageCapacityDeferralTimeout:      750 * time.Millisecond,
 		StageCapacityDeferralPollInterval: 25 * time.Millisecond,
-		RecoveryTimeout:             2 * time.Minute,
+		RecoveryTimeout:                   2 * time.Minute,
 	}
 
 	cfg.Validate()
@@ -98,5 +98,59 @@ func TestSchedulerConfigValidatePreservesExplicitValues(t *testing.T) {
 	}
 	if cfg.RecoveryTimeout != 2*time.Minute {
 		t.Fatalf("RecoveryTimeout = %v, want %v", cfg.RecoveryTimeout, 2*time.Minute)
+	}
+}
+
+func TestSchedulerConfigValidateAdjustsInvalidTimingRelationships(t *testing.T) {
+	cfg := SchedulerConfig{
+		AffinityTTL:                       1 * time.Minute,
+		AffinityCleanupInterval:           2 * time.Minute, // invalid: >= TTL
+		StageCapacityDeferralTimeout:      100 * time.Millisecond,
+		StageCapacityDeferralPollInterval: 250 * time.Millisecond, // invalid: >= timeout
+	}
+
+	cfg.Validate()
+
+	if cfg.AffinityCleanupInterval != 15*time.Second {
+		t.Fatalf("AffinityCleanupInterval = %v, want %v", cfg.AffinityCleanupInterval, 15*time.Second)
+	}
+	if cfg.AffinityCleanupInterval >= cfg.AffinityTTL {
+		t.Fatalf("AffinityCleanupInterval = %v, want < AffinityTTL %v", cfg.AffinityCleanupInterval, cfg.AffinityTTL)
+	}
+	if cfg.StageCapacityDeferralPollInterval != 25*time.Millisecond {
+		t.Fatalf(
+			"StageCapacityDeferralPollInterval = %v, want %v",
+			cfg.StageCapacityDeferralPollInterval,
+			25*time.Millisecond,
+		)
+	}
+	if cfg.StageCapacityDeferralPollInterval >= cfg.StageCapacityDeferralTimeout {
+		t.Fatalf(
+			"StageCapacityDeferralPollInterval = %v, want < StageCapacityDeferralTimeout %v",
+			cfg.StageCapacityDeferralPollInterval,
+			cfg.StageCapacityDeferralTimeout,
+		)
+	}
+}
+
+func TestSchedulerConfigValidatePreservesValidTimingRelationships(t *testing.T) {
+	cfg := SchedulerConfig{
+		AffinityTTL:                       1 * time.Minute,
+		AffinityCleanupInterval:           10 * time.Second, // valid: < TTL
+		StageCapacityDeferralTimeout:      1 * time.Second,
+		StageCapacityDeferralPollInterval: 100 * time.Millisecond, // valid: < timeout
+	}
+
+	cfg.Validate()
+
+	if cfg.AffinityCleanupInterval != 10*time.Second {
+		t.Fatalf("AffinityCleanupInterval = %v, want %v", cfg.AffinityCleanupInterval, 10*time.Second)
+	}
+	if cfg.StageCapacityDeferralPollInterval != 100*time.Millisecond {
+		t.Fatalf(
+			"StageCapacityDeferralPollInterval = %v, want %v",
+			cfg.StageCapacityDeferralPollInterval,
+			100*time.Millisecond,
+		)
 	}
 }

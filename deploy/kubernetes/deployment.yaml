@@ -1,19 +1,19 @@
 ---
-# Dagens Kubernetes Deployment
-# This manifest deploys the Dagens control plane with production-oriented defaults
+# Spark AI Agents Kubernetes Deployment
+# This manifest deploys the AI agents server with all production features
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dagens
+  name: spark-ai-agents
   labels:
-    app: dagens
+    app: spark-ai-agents
     component: server
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: dagens
+      app: spark-ai-agents
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -22,21 +22,21 @@ spec:
   template:
     metadata:
       labels:
-        app: dagens
+        app: spark-ai-agents
         component: server
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9090"
         prometheus.io/path: "/metrics"
     spec:
-      serviceAccountName: dagens
+      serviceAccountName: spark-ai-agents
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
         fsGroup: 1000
       containers:
-      - name: dagens
-        image: dagens:latest
+      - name: spark-ai-agents
+        image: spark-ai-agents:latest
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
@@ -56,24 +56,24 @@ spec:
         - name: REDIS_ADDRESS
           valueFrom:
             secretKeyRef:
-              name: dagens-secrets
+              name: spark-ai-agents-secrets
               key: redis-address
         - name: REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: dagens-secrets
+              name: spark-ai-agents-secrets
               key: redis-password
         # LLM Provider API Keys
         - name: OPENAI_API_KEY
           valueFrom:
             secretKeyRef:
-              name: dagens-secrets
+              name: spark-ai-agents-secrets
               key: openai-api-key
               optional: true
         - name: ANTHROPIC_API_KEY
           valueFrom:
             secretKeyRef:
-              name: dagens-secrets
+              name: spark-ai-agents-secrets
               key: anthropic-api-key
               optional: true
         # Circuit breaker settings
@@ -111,14 +111,14 @@ spec:
           failureThreshold: 3
         volumeMounts:
         - name: config
-          mountPath: /etc/dagens
+          mountPath: /etc/spark-ai-agents
           readOnly: true
         - name: tmp
           mountPath: /tmp
       volumes:
       - name: config
         configMap:
-          name: dagens-config
+          name: spark-ai-agents-config
       - name: tmp
         emptyDir: {}
       affinity:
@@ -128,7 +128,7 @@ spec:
             podAffinityTerm:
               labelSelector:
                 matchLabels:
-                  app: dagens
+                  app: spark-ai-agents
               topologyKey: kubernetes.io/hostname
       topologySpreadConstraints:
       - maxSkew: 1
@@ -136,15 +136,15 @@ spec:
         whenUnsatisfiable: ScheduleAnyway
         labelSelector:
           matchLabels:
-            app: dagens
+            app: spark-ai-agents
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: dagens
+  name: spark-ai-agents
   labels:
-    app: dagens
+    app: spark-ai-agents
 spec:
   type: ClusterIP
   ports:
@@ -157,23 +157,23 @@ spec:
     targetPort: metrics
     protocol: TCP
   selector:
-    app: dagens
+    app: spark-ai-agents
 
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: dagens
+  name: spark-ai-agents
   labels:
-    app: dagens
+    app: spark-ai-agents
 
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: dagens-config
+  name: spark-ai-agents-config
   labels:
-    app: dagens
+    app: spark-ai-agents
 data:
   config.yaml: |
     server:
@@ -227,9 +227,9 @@ data:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: dagens-secrets
+  name: spark-ai-agents-secrets
   labels:
-    app: dagens
+    app: spark-ai-agents
 type: Opaque
 stringData:
   # Replace with actual values or use external secrets management
@@ -242,14 +242,14 @@ stringData:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: dagens
+  name: spark-ai-agents
   labels:
-    app: dagens
+    app: spark-ai-agents
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: dagens
+    name: spark-ai-agents
   minReplicas: 3
   maxReplicas: 20
   metrics:
@@ -294,26 +294,26 @@ spec:
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: dagens
+  name: spark-ai-agents
   labels:
-    app: dagens
+    app: spark-ai-agents
 spec:
   minAvailable: 2
   selector:
     matchLabels:
-      app: dagens
+      app: spark-ai-agents
 
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: dagens
+  name: spark-ai-agents
   labels:
-    app: dagens
+    app: spark-ai-agents
 spec:
   podSelector:
     matchLabels:
-      app: dagens
+      app: spark-ai-agents
   policyTypes:
   - Ingress
   - Egress

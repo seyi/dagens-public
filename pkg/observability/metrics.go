@@ -1,5 +1,9 @@
-// Package observability provides monitoring and metrics for the AI agents framework.
+// Package observability provides monitoring and metrics for Dagens.
 // This includes Prometheus metrics export, structured logging, and tracing integration.
+//
+// Label cardinality guidance:
+// - `agent_name`, `agent_type`, and `scheduler` should be stable low-cardinality identifiers.
+// - Avoid dynamic values such as request IDs, payload hashes, or timestamps in labels.
 package observability
 
 import (
@@ -44,27 +48,31 @@ type Metrics struct {
 	StateOperationTime *prometheus.HistogramVec
 
 	// Scheduler metrics
-	DAGStagesTotal          *prometheus.CounterVec
-	DAGStagesDuration       *prometheus.HistogramVec
-	TaskQueueLength         *prometheus.GaugeVec
-	TaskQueueConfigMax      *prometheus.GaugeVec
-	TaskQueueObservedMax    *prometheus.GaugeVec
-	TaskExecutionTime       *prometheus.HistogramVec
-	TaskDispatchRetries     prometheus.Counter
-	TasksFailedMaxDispatchAttempts prometheus.Counter
-	SchedulerAllWorkersFull prometheus.Counter
-	SchedulerCapacityDeferrals prometheus.Counter
-	SchedulerDegradedMode   prometheus.Counter
+	DAGStagesTotal                       *prometheus.CounterVec
+	DAGStagesDuration                    *prometheus.HistogramVec
+	TaskQueueLength                      *prometheus.GaugeVec
+	TaskQueueConfigMax                   *prometheus.GaugeVec
+	TaskQueueObservedMax                 *prometheus.GaugeVec
+	TaskExecutionTime                    *prometheus.HistogramVec
+	TaskDispatchRetries                  prometheus.Counter
+	TasksFailedMaxDispatchAttempts       prometheus.Counter
+	SchedulerAllWorkersFull              prometheus.Counter
+	SchedulerCapacityDeferrals           prometheus.Counter
+	SchedulerCapacityDeferralPolls       prometheus.Counter
+	SchedulerDegradedMode                prometheus.Counter
+	SchedulerAffinityHits                prometheus.Counter
+	SchedulerAffinityMisses              prometheus.Counter
+	SchedulerAffinityStale               prometheus.Counter
 	SchedulerDispatchCooldownActivations prometheus.Counter
-	SchedulerDispatchRejections *prometheus.CounterVec
-	SchedulerRecoveryRuns *prometheus.CounterVec
-	SchedulerRecoveredJobs prometheus.Counter
-	SchedulerRecoveryDuration prometheus.Histogram
-	WorkerHeartbeatsReceived prometheus.Counter
-	WorkerHeartbeatsSucceeded prometheus.Counter
-	WorkerHeartbeatAuthFailed prometheus.Counter
-	WorkerHeartbeatInvalidPayload prometheus.Counter
-	WorkerHeartbeatProcessingTime prometheus.Histogram
+	SchedulerDispatchRejections          *prometheus.CounterVec
+	SchedulerRecoveryRuns                *prometheus.CounterVec
+	SchedulerRecoveredJobs               prometheus.Counter
+	SchedulerRecoveryDuration            prometheus.Histogram
+	WorkerHeartbeatsReceived             prometheus.Counter
+	WorkerHeartbeatsSucceeded            prometheus.Counter
+	WorkerHeartbeatAuthFailed            prometheus.Counter
+	WorkerHeartbeatInvalidPayload        prometheus.Counter
+	WorkerHeartbeatProcessingTime        prometheus.Histogram
 
 	// Coordination metrics
 	BarrierWaitSeconds *prometheus.HistogramVec
@@ -105,12 +113,22 @@ func GetMetrics() *Metrics {
 
 // NewMetrics creates a new Metrics instance with the given namespace
 func NewMetrics(namespace string) *Metrics {
+	return NewMetricsWithRegistry(namespace, prometheus.DefaultRegisterer)
+}
+
+// NewMetricsWithRegistry creates a new Metrics instance using the provided
+// Prometheus registerer. This enables test-safe isolated registries.
+func NewMetricsWithRegistry(namespace string, reg prometheus.Registerer) *Metrics {
+	if reg == nil {
+		reg = prometheus.DefaultRegisterer
+	}
+	auto := promauto.With(reg)
 	m := &Metrics{
 		queueObservedMax: make(map[string]int),
 	}
 
 	// Agent execution metrics
-	m.AgentExecutions = promauto.NewCounterVec(
+	m.AgentExecutions = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "executions_total",
@@ -119,7 +137,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"agent_name", "agent_type", "status"},
 	)
 
-	m.AgentExecutionTime = promauto.NewHistogramVec(
+	m.AgentExecutionTime = auto.NewHistogramVec(
 		prometheus.HistogramOpts{
 			Namespace: namespace,
 			Name:      "execution_duration_seconds",
@@ -129,7 +147,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"agent_name", "agent_type"},
 	)
 
-	m.AgentExecutionErrors = promauto.NewCounterVec(
+	m.AgentExecutionErrors = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "execution_errors_total",
@@ -138,7 +156,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"agent_name", "agent_type", "error_type"},
 	)
 
-	m.AgentActiveRequests = promauto.NewGaugeVec(
+	m.AgentActiveRequests = auto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Namespace: namespace,
 			Name:      "active_requests",
@@ -147,7 +165,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"agent_name"},
 	)
 
-	m.AgentRetries = promauto.NewCounterVec(
+	m.AgentRetries = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "retries_total",
@@ -157,7 +175,7 @@ func NewMetrics(namespace string) *Metrics {
 	)
 
 	// LLM provider metrics
-	m.LLMRequests = promauto.NewCounterVec(
+	m.LLMRequests = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "llm_requests_total",
@@ -166,7 +184,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"provider", "model", "status"},
 	)
 
-	m.LLMRequestDuration = promauto.NewHistogramVec(
+	m.LLMRequestDuration = auto.NewHistogramVec(
 		prometheus.HistogramOpts{
 			Namespace: namespace,
 			Name:      "llm_request_duration_seconds",
@@ -176,7 +194,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"provider", "model"},
 	)
 
-	m.LLMTokensUsed = promauto.NewCounterVec(
+	m.LLMTokensUsed = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "llm_tokens_total",
@@ -185,7 +203,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"provider", "model", "type"}, // type: input, output
 	)
 
-	m.LLMRateLimitHits = promauto.NewCounterVec(
+	m.LLMRateLimitHits = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "llm_rate_limit_hits_total",
@@ -195,7 +213,7 @@ func NewMetrics(namespace string) *Metrics {
 	)
 
 	// Circuit breaker metrics
-	m.CircuitBreakerState = promauto.NewGaugeVec(
+	m.CircuitBreakerState = auto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Namespace: namespace,
 			Name:      "circuit_breaker_state",
@@ -204,7 +222,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"name"},
 	)
 
-	m.CircuitBreakerFailures = promauto.NewCounterVec(
+	m.CircuitBreakerFailures = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "circuit_breaker_failures_total",
@@ -214,7 +232,7 @@ func NewMetrics(namespace string) *Metrics {
 	)
 
 	// Rate limiter metrics
-	m.RateLimiterAllowed = promauto.NewCounterVec(
+	m.RateLimiterAllowed = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "rate_limiter_allowed_total",
@@ -223,7 +241,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"name"},
 	)
 
-	m.RateLimiterRejected = promauto.NewCounterVec(
+	m.RateLimiterRejected = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "rate_limiter_rejected_total",
@@ -233,7 +251,7 @@ func NewMetrics(namespace string) *Metrics {
 	)
 
 	// State management metrics
-	m.CheckpointsSaved = promauto.NewCounterVec(
+	m.CheckpointsSaved = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "checkpoints_saved_total",
@@ -242,7 +260,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"agent_id"},
 	)
 
-	m.CheckpointsLoaded = promauto.NewCounterVec(
+	m.CheckpointsLoaded = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "checkpoints_loaded_total",
@@ -251,7 +269,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"agent_id"},
 	)
 
-	m.SessionsActive = promauto.NewGaugeVec(
+	m.SessionsActive = auto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Namespace: namespace,
 			Name:      "sessions_active",
@@ -260,7 +278,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"agent_id"},
 	)
 
-	m.StateOperationTime = promauto.NewHistogramVec(
+	m.StateOperationTime = auto.NewHistogramVec(
 		prometheus.HistogramOpts{
 			Namespace: namespace,
 			Name:      "state_operation_duration_seconds",
@@ -271,7 +289,7 @@ func NewMetrics(namespace string) *Metrics {
 	)
 
 	// Scheduler metrics
-	m.DAGStagesTotal = promauto.NewCounterVec(
+	m.DAGStagesTotal = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "dag_stages_total",
@@ -280,7 +298,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"status"},
 	)
 
-	m.DAGStagesDuration = promauto.NewHistogramVec(
+	m.DAGStagesDuration = auto.NewHistogramVec(
 		prometheus.HistogramOpts{
 			Namespace: namespace,
 			Name:      "dag_stage_duration_seconds",
@@ -290,7 +308,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"stage_id"},
 	)
 
-	m.TaskQueueLength = promauto.NewGaugeVec(
+	m.TaskQueueLength = auto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Namespace: namespace,
 			Name:      "task_queue_length",
@@ -299,7 +317,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"scheduler"},
 	)
 
-	m.TaskQueueConfigMax = promauto.NewGaugeVec(
+	m.TaskQueueConfigMax = auto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Namespace: namespace,
 			Name:      "task_queue_config_max",
@@ -308,7 +326,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"scheduler"},
 	)
 
-	m.TaskQueueObservedMax = promauto.NewGaugeVec(
+	m.TaskQueueObservedMax = auto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Namespace: namespace,
 			Name:      "task_queue_observed_max",
@@ -317,7 +335,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"scheduler"},
 	)
 
-	m.TaskExecutionTime = promauto.NewHistogramVec(
+	m.TaskExecutionTime = auto.NewHistogramVec(
 		prometheus.HistogramOpts{
 			Namespace: namespace,
 			Name:      "task_execution_duration_seconds",
@@ -327,7 +345,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"locality"},
 	)
 
-	m.TaskDispatchRetries = promauto.NewCounter(
+	m.TaskDispatchRetries = auto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "task_dispatch_retries_total",
@@ -335,7 +353,7 @@ func NewMetrics(namespace string) *Metrics {
 		},
 	)
 
-	m.TasksFailedMaxDispatchAttempts = promauto.NewCounter(
+	m.TasksFailedMaxDispatchAttempts = auto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "tasks_failed_max_dispatch_attempts_total",
@@ -343,7 +361,7 @@ func NewMetrics(namespace string) *Metrics {
 		},
 	)
 
-	m.SchedulerAllWorkersFull = promauto.NewCounter(
+	m.SchedulerAllWorkersFull = auto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "scheduler_all_workers_full_total",
@@ -351,7 +369,7 @@ func NewMetrics(namespace string) *Metrics {
 		},
 	)
 
-	m.SchedulerCapacityDeferrals = promauto.NewCounter(
+	m.SchedulerCapacityDeferrals = auto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "scheduler_capacity_deferrals_total",
@@ -359,7 +377,15 @@ func NewMetrics(namespace string) *Metrics {
 		},
 	)
 
-	m.SchedulerDegradedMode = promauto.NewCounter(
+	m.SchedulerCapacityDeferralPolls = auto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_capacity_deferral_polls_total",
+			Help:      "Total number of polling iterations while waiting for deferred stage capacity",
+		},
+	)
+
+	m.SchedulerDegradedMode = auto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "scheduler_degraded_mode_total",
@@ -367,7 +393,31 @@ func NewMetrics(namespace string) *Metrics {
 		},
 	)
 
-	m.SchedulerDispatchCooldownActivations = promauto.NewCounter(
+	m.SchedulerAffinityHits = auto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_affinity_hits_total",
+			Help:      "Total number of sticky scheduling affinity hits",
+		},
+	)
+
+	m.SchedulerAffinityMisses = auto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_affinity_misses_total",
+			Help:      "Total number of sticky scheduling affinity misses",
+		},
+	)
+
+	m.SchedulerAffinityStale = auto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_affinity_stale_total",
+			Help:      "Total number of stale sticky scheduling affinity entries encountered",
+		},
+	)
+
+	m.SchedulerDispatchCooldownActivations = auto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "scheduler_dispatch_cooldown_activations_total",
@@ -375,7 +425,7 @@ func NewMetrics(namespace string) *Metrics {
 		},
 	)
 
-	m.SchedulerDispatchRejections = promauto.NewCounterVec(
+	m.SchedulerDispatchRejections = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "scheduler_dispatch_rejections_total",
@@ -384,7 +434,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"reason"},
 	)
 
-	m.SchedulerRecoveryRuns = promauto.NewCounterVec(
+	m.SchedulerRecoveryRuns = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "scheduler_recovery_runs_total",
@@ -393,7 +443,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"status"},
 	)
 
-	m.SchedulerRecoveredJobs = promauto.NewCounter(
+	m.SchedulerRecoveredJobs = auto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "scheduler_recovered_jobs_total",
@@ -401,7 +451,7 @@ func NewMetrics(namespace string) *Metrics {
 		},
 	)
 
-	m.SchedulerRecoveryDuration = promauto.NewHistogram(
+	m.SchedulerRecoveryDuration = auto.NewHistogram(
 		prometheus.HistogramOpts{
 			Namespace: namespace,
 			Name:      "scheduler_recovery_duration_seconds",
@@ -410,7 +460,7 @@ func NewMetrics(namespace string) *Metrics {
 		},
 	)
 
-	m.WorkerHeartbeatsReceived = promauto.NewCounter(
+	m.WorkerHeartbeatsReceived = auto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "worker_heartbeats_received_total",
@@ -418,7 +468,7 @@ func NewMetrics(namespace string) *Metrics {
 		},
 	)
 
-	m.WorkerHeartbeatsSucceeded = promauto.NewCounter(
+	m.WorkerHeartbeatsSucceeded = auto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "worker_heartbeats_succeeded_total",
@@ -426,7 +476,7 @@ func NewMetrics(namespace string) *Metrics {
 		},
 	)
 
-	m.WorkerHeartbeatAuthFailed = promauto.NewCounter(
+	m.WorkerHeartbeatAuthFailed = auto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "worker_heartbeat_auth_failed_total",
@@ -434,7 +484,7 @@ func NewMetrics(namespace string) *Metrics {
 		},
 	)
 
-	m.WorkerHeartbeatInvalidPayload = promauto.NewCounter(
+	m.WorkerHeartbeatInvalidPayload = auto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "worker_heartbeat_invalid_payload_total",
@@ -442,7 +492,7 @@ func NewMetrics(namespace string) *Metrics {
 		},
 	)
 
-	m.WorkerHeartbeatProcessingTime = promauto.NewHistogram(
+	m.WorkerHeartbeatProcessingTime = auto.NewHistogram(
 		prometheus.HistogramOpts{
 			Namespace: namespace,
 			Name:      "worker_heartbeat_processing_duration_seconds",
@@ -452,7 +502,7 @@ func NewMetrics(namespace string) *Metrics {
 	)
 
 	// Coordination metrics
-	m.BarrierWaitSeconds = promauto.NewHistogramVec(
+	m.BarrierWaitSeconds = auto.NewHistogramVec(
 		prometheus.HistogramOpts{
 			Namespace: namespace,
 			Name:      "barrier_wait_seconds",
@@ -462,7 +512,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"barrier", "status"},
 	)
 
-	m.GenerationCreated = promauto.NewCounterVec(
+	m.GenerationCreated = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "generation_created",
@@ -471,7 +521,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"barrier"},
 	)
 
-	m.TripLatency = promauto.NewHistogramVec(
+	m.TripLatency = auto.NewHistogramVec(
 		prometheus.HistogramOpts{
 			Namespace: namespace,
 			Name:      "trip_latency",
@@ -481,7 +531,7 @@ func NewMetrics(namespace string) *Metrics {
 		[]string{"barrier"},
 	)
 
-	m.BarrierTripTotal = promauto.NewCounterVec(
+	m.BarrierTripTotal = auto.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "barrier_trip_total",
@@ -491,7 +541,7 @@ func NewMetrics(namespace string) *Metrics {
 	)
 
 	// System metrics
-	m.GoroutinesActive = promauto.NewGauge(
+	m.GoroutinesActive = auto.NewGauge(
 		prometheus.GaugeOpts{
 			Namespace: namespace,
 			Name:      "goroutines_active",
@@ -499,7 +549,7 @@ func NewMetrics(namespace string) *Metrics {
 		},
 	)
 
-	m.MemoryUsageBytes = promauto.NewGauge(
+	m.MemoryUsageBytes = auto.NewGauge(
 		prometheus.GaugeOpts{
 			Namespace: namespace,
 			Name:      "memory_usage_bytes",
@@ -517,8 +567,9 @@ func (m *Metrics) RecordAgentExecution(agentName, agentType, status string, dura
 }
 
 // RecordAgentError records an agent execution error (simple version)
+// Deprecated: prefer RecordAgentErrorTyped so dashboards preserve true agent_type.
 func (m *Metrics) RecordAgentError(agentName, errorType string) {
-	m.AgentExecutionErrors.WithLabelValues(agentName, "resilient", errorType).Inc()
+	m.RecordAgentErrorTyped(agentName, "unknown", errorType)
 }
 
 // RecordAgentErrorTyped records an agent execution error with type
@@ -611,9 +662,30 @@ func (m *Metrics) RecordSchedulerCapacityDeferral() {
 	m.SchedulerCapacityDeferrals.Inc()
 }
 
+// RecordSchedulerCapacityDeferralPoll records one polling iteration while
+// waiting for deferred stage capacity.
+func (m *Metrics) RecordSchedulerCapacityDeferralPoll() {
+	m.SchedulerCapacityDeferralPolls.Inc()
+}
+
 // RecordSchedulerDegradedMode records a stale-capacity fallback selection.
 func (m *Metrics) RecordSchedulerDegradedMode() {
 	m.SchedulerDegradedMode.Inc()
+}
+
+// RecordSchedulerAffinityHit records a sticky scheduling affinity hit.
+func (m *Metrics) RecordSchedulerAffinityHit() {
+	m.SchedulerAffinityHits.Inc()
+}
+
+// RecordSchedulerAffinityMiss records a sticky scheduling affinity miss.
+func (m *Metrics) RecordSchedulerAffinityMiss() {
+	m.SchedulerAffinityMisses.Inc()
+}
+
+// RecordSchedulerAffinityStale records a stale sticky affinity reroute.
+func (m *Metrics) RecordSchedulerAffinityStale() {
+	m.SchedulerAffinityStale.Inc()
 }
 
 // RecordSchedulerDispatchCooldownActivation records a worker entering cooldown.

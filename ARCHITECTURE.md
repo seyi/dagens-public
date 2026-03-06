@@ -1,130 +1,464 @@
-# Dagens Architecture
+# Spark AI Agents Architecture
 
-Dagens is a Go-based control-plane runtime for orchestrating distributed agent and service execution.
+This document provides a deep dive into the architecture of Spark AI Agents, explaining how it leverages Apache Spark's distributed computing concepts for AI agent orchestration.
 
-It separates control-plane concerns from execution-plane concerns:
+## Table of Contents
 
-- The API server accepts requests, compiles workflow graphs, and owns scheduling decisions.
-- The scheduler dispatches work push-style to workers over gRPC.
-- Workers act as execution endpoints.
-- Registry, events, observability, and HITL provide coordination, visibility, and resumability.
+1. [Overview](#overview)
+2. [Core Components](#core-components)
+3. [Execution Model](#execution-model)
+4. [Fault Tolerance](#fault-tolerance)
+5. [Scheduling Strategy](#scheduling-strategy)
+6. [Communication Layer](#communication-layer)
+7. [State Management](#state-management)
+8. [Comparison with Spark](#comparison-with-spark)
 
-## Core Model
+## Overview
 
-### Control Plane
+Spark AI Agents applies Apache Spark's proven distributed computing patterns to AI agent execution. The key insight is that AI agent workflows, like data processing workflows, form Directed Acyclic Graphs (DAGs) and benefit from:
 
-The control plane is responsible for:
+- **Parallel execution** of independent tasks
+- **Fault tolerance** through lineage tracking
+- **Locality-aware scheduling** for performance
+- **Resource elasticity** for scalability
 
-- request intake
-- graph compilation
-- job submission
-- queueing
-- scheduling
-- node selection
-- dispatch
-- lifecycle event emission
+## Core Components
 
-In the current implementation, the control plane lives primarily in:
+### 1. Agent Orchestrator (DAGScheduler)
 
-- `cmd/api_server`
-- `pkg/api`
-- `pkg/graph`
-- `pkg/scheduler`
-- `pkg/registry`
-- `pkg/events`
-- `pkg/hitl`
+**Location**: `pkg/scheduler/dag_scheduler.go`
 
-### Execution Plane
+The Agent Orchestrator is responsible for high-level workflow coordination, analogous to Spark's DAGScheduler.
 
-The execution plane consists of worker processes that expose gRPC execution endpoints.
+**Responsibilities**:
+- Build DAG from agent dependencies
+- Break DAG into stages at shuffle boundaries
+- Track stage completion and trigger subsequent stages
+- Handle stage failures and retries
+- Maintain job metadata
 
-Workers:
+**Key Concepts**:
+```
+Agent DAG → Stages → Tasks
+```
 
-- receive execution requests from the scheduler
-- run assigned tasks
-- return results to the caller
-- participate in static or etcd-backed registration
+**Stage Boundaries**:
+- Created at agent dependencies (like shuffle boundaries in Spark)
+- Agents with no dependencies can execute in parallel (same stage)
+- Stages execute in topological order
 
-In the current implementation, the execution plane lives primarily in:
+**Example DAG**:
+```
+ReportGenerator
+       ↓
+   Analyzer ←── Visualizer
+       ↓
+DataCollector
 
-- `cmd/worker`
-- `pkg/remote`
-- `pkg/agent`
-- `pkg/agentic`
+Stages:
+Stage 2: [DataCollector]
+Stage 1: [Analyzer, Visualizer] (parallel)
+Stage 0: [ReportGenerator]
+```
 
-## Dispatch Model
+### 2. Task Scheduler
 
-Dagens uses a central push scheduler.
+**Location**: `pkg/scheduler/task_scheduler.go`
 
-1. A request is submitted to the API server.
-2. The graph is compiled into executable work.
-3. The scheduler enqueues the job in-process.
-4. The scheduler selects a node from the registry.
-5. Work is dispatched to a worker via gRPC.
-6. The worker executes and returns a result.
+The Task Scheduler handles low-level task assignment to executors, similar to Spark's TaskScheduler.
 
-Workers do not poll for jobs.
+**Responsibilities**:
+- Assign tasks to available executors
+- Implement locality-aware scheduling
+- Handle task failures and retries
+- Track executor health
+- Manage task queue
 
-## Scale Modes
+**Locality Levels** (in order of preference):
+1. **PROCESS_LOCAL**: Task runs on executor with cached data/agent state
+2. **NODE_LOCAL**: Task runs on same node
+3. **RACK_LOCAL**: Task runs in same rack/region
+4. **ANY**: Task runs on any available executor
 
-### Fixed Topology
+**Delay Scheduling**:
+- Wait up to `maxLocalityWaitTime` for better locality
+- Prevents suboptimal scheduling due to temporary unavailability
+- Balances locality with job latency
 
-Without etcd, Dagens can run in static registry mode.
+### 3. Executor Pool
 
-This mode is suitable for:
+**Location**: `pkg/executor/executor.go`
 
-- development
-- staging
-- fixed production clusters
+Executors are worker processes that run agent tasks, analogous to Spark Executors.
 
-It can run indefinitely, but cluster membership is static.
+**Responsibilities**:
+- Execute agent tasks in thread pool
+- Cache agent definitions and state
+- Send heartbeats to scheduler
+- Report task completion/failure
+- Manage local resources
 
-### Cluster-Aware
+**Executor Properties**:
+- **Partition**: Logical partition for locality
+- **Node**: Physical node identifier
+- **Rack**: Rack/region for multi-level locality
+- **MaxTasks**: Concurrency limit
 
-With `ETCD_ENDPOINTS` configured, Dagens uses an etcd-backed distributed registry.
+**Heartbeat Mechanism**:
+- Periodic health signals to coordinator
+- Report metrics (CPU, memory, tasks)
+- Receive kill signals for failed tasks
+- Enable executor failure detection
 
-This adds:
+### 4. Agent Abstraction
 
-- dynamic node registration
-- health-filtered node views
-- watch/reconnect behavior
-- better support for elastic clusters and node churn
+**Location**: `pkg/agent/agent.go`
 
-etcd improves cluster coordination, but it is not the same as durable workflow state.
+Agents are the core abstraction, similar to RDDs in Spark.
 
-## Human-In-The-Loop (HITL)
+**Agent Properties**:
+1. **Capabilities**: List of tools the agent can use
+2. **Dependencies**: Other agents this depends on (DAG edges)
+3. **Partition**: Locality hint for scheduling
+4. **Executor**: Logic for executing the agent
 
-Dagens includes a first-class HITL pause/resume flow:
+**Agent Task**:
+- Represents a unit of work for an agent
+- Contains input, state, and execution metadata
+- Tracks attempts and retry state
 
-1. A workflow reaches a human checkpoint.
-2. Execution returns a pending state.
-3. A callback is validated for authenticity and idempotency.
-4. A resumption worker reloads checkpoint state.
-5. Execution resumes from the checkpoint.
+**Agent Stage**:
+- Groups tasks that can execute in parallel
+- Represents a level in the DAG
+- Contains dependency information
 
-This makes approval-driven workflows a runtime primitive, not an afterthought.
+### 5. State Manager
 
-## Durability and Failure Semantics
+**Location**: `pkg/state/checkpoint.go`
 
-Dagens is intentionally explicit about current guarantees:
+Manages agent state, checkpointing, and lineage tracking.
 
-- scheduler queueing is in-memory by default
-- job and task result state is not durably persisted by default
-- etcd provides coordination durability, not full workflow durability
-- exactly-once execution is not guaranteed in v0.1.x
+**Components**:
+- **CheckpointManager**: Saves/restores agent state
+- **LineageTracker**: Records execution dependencies
+- **Storage**: Pluggable backend (memory, file, S3)
 
-For the current guarantees, read:
+**Checkpointing Strategy**:
+- Checkpoint at stage boundaries
+- Truncate lineage to prevent long recomputation chains
+- Support both reliable (HDFS) and local checkpointing
+- Configurable checkpoint frequency
 
-- `docs/DURABILITY.md`
-- `docs/FAILURE_SEMANTICS.md`
-- `docs/SCALING_AND_DISPATCH_CLARIFICATION.md`
+**Lineage Tracking**:
+```
+LineageNode {
+    AgentID: "analyzer"
+    Input: {...}
+    Output: {...}
+    Dependencies: [data_collector_node]
+}
+```
 
-## Positioning
+Enables recomputation on failure without re-executing entire DAG.
 
-Dagens should be understood as:
+## Execution Model
 
-- a control-plane runtime
-- with an execution-plane worker fabric
-- for distributed agent and service orchestration
+### Job Submission Flow
 
-It is infrastructure first, with AI-specific integrations layered on top.
+```
+1. User submits root agent + input
+   ↓
+2. DAGScheduler builds DAG from dependencies
+   ↓
+3. DAG is broken into stages
+   ↓
+4. Tasks are created for each stage
+   ↓
+5. Tasks submitted to TaskScheduler
+   ↓
+6. TaskScheduler assigns to executors (locality-aware)
+   ↓
+7. Executors run tasks
+   ↓
+8. Results propagate through DAG
+   ↓
+9. Job completes
+```
+
+### Stage Execution
+
+Stages execute in reverse topological order (deepest dependencies first):
+
+```python
+# Example agent hierarchy
+root_agent
+  ├─ agent_a
+  │   └─ agent_c
+  └─ agent_b
+      └─ agent_c
+
+# Stages (reverse topological order)
+Stage 2: [agent_c]           # Deepest, no dependencies
+Stage 1: [agent_a, agent_b]  # Depend on agent_c (parallel)
+Stage 0: [root_agent]        # Depends on agent_a and agent_b
+```
+
+### Task Execution
+
+Within an executor:
+
+```
+1. Receive task from scheduler
+   ↓
+2. Get/load agent definition
+   ↓
+3. Setup execution context
+   ↓
+4. Execute agent with input
+   ↓
+5. Collect output and metrics
+   ↓
+6. Send result to scheduler
+```
+
+## Fault Tolerance
+
+### Multi-Level Fault Tolerance
+
+#### 1. Task-Level Recovery
+
+**Automatic Retry**:
+- Tasks automatically retry on failure
+- Configurable max retries (default: 3)
+- Exponential backoff between retries
+
+**Lineage-Based Recomputation**:
+- On failure, recompute from parent tasks
+- No need to rerun entire job
+- Efficient recovery for transient failures
+
+#### 2. Executor-Level Recovery
+
+**Executor Failure Detection**:
+- Heartbeat mechanism detects failed executors
+- Health tracker maintains exclusion list
+- Automatic task reassignment to healthy executors
+
+**Graceful Degradation**:
+- System continues with remaining executors
+- Tasks redistribute across healthy workers
+- Configurable failure thresholds
+
+#### 3. Stage-Level Recovery
+
+**Stage Retry**:
+- Failed stages retry from checkpoint
+- Dependent stages wait for completion
+- Stage boundaries provide natural recovery points
+
+**Checkpoint-Based Recovery**:
+- Checkpoint state at stage boundaries
+- Truncate lineage to prevent long recomputation
+- Reliable storage for durability
+
+### Failure Scenarios
+
+| Failure Type | Detection | Recovery Strategy |
+|--------------|-----------|-------------------|
+| Task timeout | Executor timeout | Retry on same/different executor |
+| Executor crash | Heartbeat miss | Rerun all tasks on executor |
+| Stage failure | All tasks fail | Retry stage from checkpoint |
+| Network partition | RPC timeout | Retry with backoff |
+| Data loss | Checksum/missing | Recompute from lineage |
+
+## Scheduling Strategy
+
+### Locality-Aware Scheduling
+
+The scheduler prioritizes data locality to minimize network transfer and maximize cache hits.
+
+**Locality Algorithm**:
+```go
+for each locality_level in [PROCESS_LOCAL, NODE_LOCAL, RACK_LOCAL, ANY]:
+    if time_since_submission < maxLocalityWaitTime:
+        if locality_level == RACK_LOCAL or NODE_LOCAL:
+            continue  // Wait for better locality
+
+    executor = find_executor_for_locality(task, locality_level)
+    if executor != nil:
+        launch_task(executor, task)
+        return
+```
+
+**Delay Scheduling**:
+- Wait up to 3 seconds for PROCESS_LOCAL placement
+- Prevents head-of-line blocking
+- Balances locality with latency
+
+### Fair Scheduling
+
+**FIFO Mode** (default):
+- First-in-first-out job scheduling
+- Simple and predictable
+- Good for batch workloads
+
+**Fair Mode** (optional):
+- Time-share resources across jobs
+- Prevents large jobs from monopolizing cluster
+- Good for multi-tenant scenarios
+
+### Resource Allocation
+
+**Static Allocation**:
+- Fixed number of executors
+- Simple configuration
+- Predictable resource usage
+
+**Dynamic Allocation** (future):
+- Add executors based on pending tasks
+- Remove idle executors
+- Optimal resource utilization
+
+## Communication Layer
+
+### Protocol Buffers Schema
+
+**Location**: `pkg/rpc/protocol.proto`
+
+Defines messages for distributed communication:
+- `RegisterExecutor`: Executor registration
+- `LaunchTask`: Task assignment
+- `TaskStatusUpdate`: Task completion/failure
+- `Heartbeat`: Health signals
+- `SubmitJob`: Job submission
+- `GetJobStatus`: Status queries
+
+### RPC Patterns
+
+**One-Way Messages**:
+- Fire-and-forget for async operations
+- Examples: LaunchTask, Heartbeat
+
+**Request-Response**:
+- Synchronous queries
+- Examples: SubmitJob, GetJobStatus
+
+**Event-Driven**:
+- Async event processing
+- Examples: TaskCompleted, StageFailed
+
+### Future: Distributed RPC
+
+**Current**: In-memory (single-process)
+**Planned**: gRPC-based distribution
+- Netty-based async communication
+- Connection pooling
+- TLS encryption
+- Authentication
+
+## State Management
+
+### Checkpoint Types
+
+**Reliable Checkpointing**:
+- Saved to distributed storage (HDFS, S3)
+- Survives executor/node failures
+- Higher latency but more durable
+
+**Local Checkpointing**:
+- Saved to executor local storage
+- Faster but less durable
+- Good for transient failures
+
+### Lineage vs. Checkpointing Trade-off
+
+**Short Lineage**:
+- Fast recomputation
+- No checkpointing needed
+- Low storage overhead
+
+**Long Lineage**:
+- Slow recomputation
+- Checkpoint periodically
+- Higher storage, faster recovery
+
+**Strategy**:
+- Checkpoint every N stages (configurable)
+- Truncate lineage after checkpoint
+- Balance storage vs. recomputation cost
+
+## Comparison with Spark
+
+### Similarities
+
+| Concept | Spark | Spark AI Agents |
+|---------|-------|-----------------|
+| Core Abstraction | RDD | Agent |
+| High-Level Scheduler | DAGScheduler | Agent Orchestrator |
+| Low-Level Scheduler | TaskScheduler | Task Scheduler |
+| Worker Process | Executor | Agent Worker |
+| Fault Recovery | Lineage | Execution Lineage |
+| State Persistence | Checkpoint | Checkpoint |
+| Locality | Data Locality | Agent/State Locality |
+| Parallelism | Partitions | Stages |
+
+### Differences
+
+| Aspect | Spark | Spark AI Agents |
+|--------|-------|-----------------|
+| Computation | Data transformations | AI agent execution |
+| Dependencies | Data dependencies | Agent dependencies |
+| Shuffle | Data redistribution | Agent communication |
+| Caching | RDD data | Agent state |
+| Input | Datasets | Instructions/prompts |
+| Output | Transformed data | Agent outputs |
+
+### Why Spark's Model Fits AI Agents
+
+1. **DAG Workflows**: AI agent tasks naturally form DAGs
+2. **Fault Tolerance**: Long-running AI tasks need resilience
+3. **Resource Management**: Expensive AI models benefit from efficient scheduling
+4. **Scalability**: Complex workflows require distributed execution
+5. **Composability**: Agents compose hierarchically like RDD transformations
+
+## Implementation Notes
+
+### Language Choice: Go
+
+**Why Go**:
+- High performance (compiled, low overhead)
+- Excellent concurrency (goroutines, channels)
+- Strong typing for reliability
+- Easy C interop for Python bindings
+- Growing AI/ML ecosystem
+
+### Python Bindings via CGO
+
+**Architecture**:
+```
+Python API → ctypes → CGO → Go Core
+```
+
+**Advantages**:
+- Python's ease of use
+- Go's performance
+- Single binary deployment
+- No separate processes
+
+### Future Improvements
+
+1. **Full gRPC Distribution**: Multi-node deployment
+2. **Advanced Checkpointing**: S3, HDFS, distributed file systems
+3. **UI Dashboard**: Like Spark UI for monitoring
+4. **Kubernetes Integration**: Native K8s executor management
+5. **GPU Support**: Locality-aware GPU scheduling
+6. **Streaming Agents**: Continuous agent execution
+7. **Cost Optimization**: Model selection, caching strategies
+
+## References
+
+1. [Apache Spark Architecture](https://spark.apache.org/docs/latest/)
+2. [Spark DAGScheduler](https://github.com/apache/spark/blob/master/core/src/main/scala/org/apache/spark/scheduler/DAGScheduler.scala)
+3. [Resilient Distributed Datasets Paper](https://www.usenix.org/system/files/conference/nsdi12/nsdi12-final138.pdf)
+4. [Zen MCP Server](https://github.com/seyi/zen-mcp-server)
+5. [ADK Python](https://github.com/seyi/adk-python)

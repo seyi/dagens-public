@@ -334,7 +334,7 @@ func TestExecuteStageLogsCapacityExhaustionWarning(t *testing.T) {
 		Tasks: []*Task{{ID: "task-1", StageID: "stage-logs", JobID: "job-logs"}},
 	}
 
-	logger := schedulerLogger()
+	logger := schedulerLogger(t)
 	before := len(logger.GetLogs())
 
 	err := s.executeStage(context.Background(), stage)
@@ -367,9 +367,9 @@ func TestExecuteStageLogsCapacityExhaustionWarning(t *testing.T) {
 
 func TestExecuteStageDefersUntilCapacityAvailable(t *testing.T) {
 	s := NewSchedulerWithConfig(capacityExhaustedRegistry{}, &sequenceTaskExecutor{}, SchedulerConfig{
-		DefaultWorkerMaxConcurrency:    1,
-		EnableStageCapacityDeferral:    true,
-		StageCapacityDeferralTimeout:   300 * time.Millisecond,
+		DefaultWorkerMaxConcurrency:       1,
+		EnableStageCapacityDeferral:       true,
+		StageCapacityDeferralTimeout:      300 * time.Millisecond,
 		StageCapacityDeferralPollInterval: 20 * time.Millisecond,
 	})
 	s.nodeCapacity["worker-1"] = &nodeCapacity{
@@ -392,6 +392,7 @@ func TestExecuteStageDefersUntilCapacityAvailable(t *testing.T) {
 	}
 
 	beforeDeferrals := metricCounterValue(t, "dagens_scheduler_capacity_deferrals_total")
+	beforePolls := metricCounterValue(t, "dagens_scheduler_capacity_deferral_polls_total")
 	go func() {
 		time.Sleep(80 * time.Millisecond)
 		s.releaseNodeSlot("worker-1")
@@ -408,13 +409,17 @@ func TestExecuteStageDefersUntilCapacityAvailable(t *testing.T) {
 	if afterDeferrals != beforeDeferrals+1 {
 		t.Fatalf("scheduler capacity deferrals = %v, want %v", afterDeferrals, beforeDeferrals+1)
 	}
+	afterPolls := metricCounterValue(t, "dagens_scheduler_capacity_deferral_polls_total")
+	if afterPolls <= beforePolls {
+		t.Fatalf("scheduler capacity deferral polls = %v, want > %v", afterPolls, beforePolls)
+	}
 }
 
 func TestExecuteStageDeferralTimeoutReturnsNoWorkerCapacity(t *testing.T) {
 	s := NewSchedulerWithConfig(capacityExhaustedRegistry{}, &sequenceTaskExecutor{}, SchedulerConfig{
-		DefaultWorkerMaxConcurrency:    1,
-		EnableStageCapacityDeferral:    true,
-		StageCapacityDeferralTimeout:   60 * time.Millisecond,
+		DefaultWorkerMaxConcurrency:       1,
+		EnableStageCapacityDeferral:       true,
+		StageCapacityDeferralTimeout:      60 * time.Millisecond,
 		StageCapacityDeferralPollInterval: 10 * time.Millisecond,
 	})
 	s.nodeCapacity["worker-1"] = &nodeCapacity{
@@ -442,6 +447,173 @@ func TestExecuteStageDeferralTimeoutReturnsNoWorkerCapacity(t *testing.T) {
 	}
 }
 
+func TestSelectNodeForTaskWithDeferralRespectsContextCancellation(t *testing.T) {
+	s := NewSchedulerWithConfig(capacityExhaustedRegistry{}, &sequenceTaskExecutor{}, SchedulerConfig{
+		DefaultWorkerMaxConcurrency:       1,
+		EnableStageCapacityDeferral:       true,
+		StageCapacityDeferralTimeout:      2 * time.Second,
+		StageCapacityDeferralPollInterval: 50 * time.Millisecond,
+	})
+	s.nodeCapacity["worker-1"] = &nodeCapacity{
+		ReservedInFlight: 1,
+		MaxConcurrency:   1,
+		LastUpdated:      time.Now(),
+	}
+
+	task := &Task{ID: "task-cancel", PartitionKey: "pk-cancel"}
+	nodes := []registry.NodeInfo{{ID: "worker-1", Healthy: true}}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	_, _, ok, err := s.selectNodeForTaskWithDeferral(ctx, task, nodes)
+	if ok {
+		t.Fatal("expected no node selection when context is canceled")
+	}
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("selectNodeForTaskWithDeferral error = %v, want %v", err, context.Canceled)
+	}
+}
+
+func TestSelectNodeForTaskAffinityHit(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		EnableStickiness:            true,
+		DefaultWorkerMaxConcurrency: 2,
+	})
+	beforeHits := metricCounterValue(t, "dagens_scheduler_affinity_hits_total")
+	s.affinityMap.Set("pk-hit", "worker-1")
+	s.nodeCapacity["worker-1"] = &nodeCapacity{MaxConcurrency: 2, LastUpdated: time.Now()}
+	s.nodeCapacity["worker-2"] = &nodeCapacity{MaxConcurrency: 2, LastUpdated: time.Now()}
+
+	task := &Task{ID: "task-aff-hit", PartitionKey: "pk-hit"}
+	node, result, ok := s.selectNodeForTask(task, []registry.NodeInfo{
+		{ID: "worker-1", Healthy: true},
+		{ID: "worker-2", Healthy: true},
+	})
+	if !ok {
+		t.Fatal("expected affinity hit selection to succeed")
+	}
+	if node.ID != "worker-1" {
+		t.Fatalf("selected node = %q, want %q", node.ID, "worker-1")
+	}
+	if !result.IsHit {
+		t.Fatal("expected IsHit=true for affinity hit")
+	}
+	afterHits := metricCounterValue(t, "dagens_scheduler_affinity_hits_total")
+	if afterHits != beforeHits+1 {
+		t.Fatalf("scheduler affinity hits = %v, want %v", afterHits, beforeHits+1)
+	}
+}
+
+func TestSelectNodeForTaskAffinityMissCreatesEntry(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		EnableStickiness:            true,
+		DefaultWorkerMaxConcurrency: 1,
+	})
+	beforeMisses := metricCounterValue(t, "dagens_scheduler_affinity_misses_total")
+	s.nodeCapacity["worker-1"] = &nodeCapacity{MaxConcurrency: 1, LastUpdated: time.Now()}
+
+	task := &Task{ID: "task-aff-miss", PartitionKey: "pk-miss"}
+	node, result, ok := s.selectNodeForTask(task, []registry.NodeInfo{
+		{ID: "worker-1", Healthy: true},
+	})
+	if !ok {
+		t.Fatal("expected affinity miss selection to succeed")
+	}
+	if result.IsHit {
+		t.Fatal("expected IsHit=false for affinity miss")
+	}
+	if result.IsStale {
+		t.Fatal("expected IsStale=false for affinity miss")
+	}
+	entry := s.affinityMap.Get("pk-miss")
+	if entry == nil {
+		t.Fatal("expected affinity entry to be created on miss")
+	}
+	if entry.NodeID != node.ID {
+		t.Fatalf("affinity node = %q, want %q", entry.NodeID, node.ID)
+	}
+	afterMisses := metricCounterValue(t, "dagens_scheduler_affinity_misses_total")
+	if afterMisses != beforeMisses+1 {
+		t.Fatalf("scheduler affinity misses = %v, want %v", afterMisses, beforeMisses+1)
+	}
+}
+
+func TestSelectNodeForTaskAffinityStaleReroutes(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		EnableStickiness:            true,
+		DefaultWorkerMaxConcurrency: 1,
+	})
+	beforeStale := metricCounterValue(t, "dagens_scheduler_affinity_stale_total")
+	beforeMisses := metricCounterValue(t, "dagens_scheduler_affinity_misses_total")
+	s.affinityMap.Set("pk-stale", "worker-stale")
+	s.nodeCapacity["worker-new"] = &nodeCapacity{MaxConcurrency: 1, LastUpdated: time.Now()}
+
+	task := &Task{ID: "task-aff-stale", PartitionKey: "pk-stale"}
+	node, result, ok := s.selectNodeForTask(task, []registry.NodeInfo{
+		{ID: "worker-new", Healthy: true},
+	})
+	if !ok {
+		t.Fatal("expected stale affinity reroute to succeed")
+	}
+	if node.ID != "worker-new" {
+		t.Fatalf("selected node = %q, want %q", node.ID, "worker-new")
+	}
+	if !result.IsStale {
+		t.Fatal("expected IsStale=true for stale affinity")
+	}
+	entry := s.affinityMap.Get("pk-stale")
+	if entry == nil || entry.NodeID != "worker-new" {
+		t.Fatalf("expected stale affinity to be replaced with %q", "worker-new")
+	}
+	afterStale := metricCounterValue(t, "dagens_scheduler_affinity_stale_total")
+	if afterStale != beforeStale+1 {
+		t.Fatalf("scheduler affinity stale = %v, want %v", afterStale, beforeStale+1)
+	}
+	afterMisses := metricCounterValue(t, "dagens_scheduler_affinity_misses_total")
+	if afterMisses != beforeMisses+1 {
+		t.Fatalf("scheduler affinity misses = %v, want %v", afterMisses, beforeMisses+1)
+	}
+}
+
+func TestSelectNodeForTaskAffinityCapacityBypass(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		EnableStickiness:            true,
+		DefaultWorkerMaxConcurrency: 1,
+	})
+	s.affinityMap.Set("pk-cap-bypass", "worker-1")
+	now := time.Now()
+	s.nodeCapacity["worker-1"] = &nodeCapacity{
+		ReservedInFlight: 1,
+		MaxConcurrency:   1,
+		LastUpdated:      now,
+	}
+	s.nodeCapacity["worker-2"] = &nodeCapacity{
+		ReservedInFlight: 0,
+		MaxConcurrency:   1,
+		LastUpdated:      now,
+	}
+
+	task := &Task{ID: "task-aff-bypass", PartitionKey: "pk-cap-bypass"}
+	node, result, ok := s.selectNodeForTask(task, []registry.NodeInfo{
+		{ID: "worker-1", Healthy: true},
+		{ID: "worker-2", Healthy: true},
+	})
+	if !ok {
+		t.Fatal("expected capacity bypass selection to succeed")
+	}
+	if node.ID != "worker-2" {
+		t.Fatalf("selected node = %q, want %q", node.ID, "worker-2")
+	}
+	if result.IsHit {
+		t.Fatal("expected IsHit=false for capacity bypass")
+	}
+	entry := s.affinityMap.Get("pk-cap-bypass")
+	if entry == nil || entry.NodeID != "worker-2" {
+		t.Fatalf("expected affinity to update to bypass node %q", "worker-2")
+	}
+}
+
 func TestExecuteTaskRecordsDispatchRejectionReason(t *testing.T) {
 	s := NewSchedulerWithConfig(nil, &failingTaskExecutor{err: errors.New("connection refused")}, SchedulerConfig{})
 	task := &Task{
@@ -465,11 +637,12 @@ func TestExecuteTaskRecordsDispatchRejectionReason(t *testing.T) {
 }
 
 func TestExecuteTaskWithRetryRetriesCapacityConflictAndSucceeds(t *testing.T) {
-	s := NewSchedulerWithConfig(nil, &sequenceTaskExecutor{
+	executor := &sequenceTaskExecutor{
 		errs: []error{errors.New("worker at capacity"), nil},
-	}, SchedulerConfig{
-		MaxDispatchAttempts:        2,
-		DispatchRejectCooldown:     5 * time.Second,
+	}
+	s := NewSchedulerWithConfig(nil, executor, SchedulerConfig{
+		MaxDispatchAttempts:         2,
+		DispatchRejectCooldown:      5 * time.Second,
 		DefaultWorkerMaxConcurrency: 1,
 	})
 
@@ -494,14 +667,20 @@ func TestExecuteTaskWithRetryRetriesCapacityConflictAndSucceeds(t *testing.T) {
 	if afterRetries != beforeRetries+1 {
 		t.Fatalf("task dispatch retries = %v, want %v", afterRetries, beforeRetries+1)
 	}
+	if len(executor.callNodes) < 2 {
+		t.Fatalf("executor callNodes length = %d, want at least 2", len(executor.callNodes))
+	}
+	if executor.callNodes[0] == executor.callNodes[1] {
+		t.Fatalf("expected retry to pick a different node, got %q twice", executor.callNodes[0])
+	}
 }
 
 func TestExecuteTaskWithRetryFailsAtMaxDispatchAttempts(t *testing.T) {
 	s := NewSchedulerWithConfig(nil, &sequenceTaskExecutor{
 		errs: []error{errors.New("worker at capacity"), errors.New("worker at capacity")},
 	}, SchedulerConfig{
-		MaxDispatchAttempts:        2,
-		DispatchRejectCooldown:     5 * time.Second,
+		MaxDispatchAttempts:         2,
+		DispatchRejectCooldown:      5 * time.Second,
 		DefaultWorkerMaxConcurrency: 1,
 	})
 
@@ -569,10 +748,16 @@ func counterVecValue(t *testing.T, metricName string, labels ...string) float64 
 				return metric.GetCounter().GetValue()
 			}
 		}
-		return 0
+		if len(labels) == 0 {
+			t.Fatalf("metric %q found but no counter samples available", metricName)
+		}
+		return 0 // Labeled counters may not have a sample yet; treat as zero baseline.
 	}
 
-	return 0
+	if len(labels) == 0 {
+		t.Fatalf("metric family %q not found", metricName)
+	}
+	return 0 // Labeled metric vec may not exist in gather output until first label sample.
 }
 
 func gaugeValue(t *testing.T, metricName string, labels ...string) float64 {
@@ -595,9 +780,15 @@ func gaugeValue(t *testing.T, metricName string, labels ...string) float64 {
 				return metric.GetGauge().GetValue()
 			}
 		}
+		if len(labels) == 0 {
+			t.Fatalf("metric %q found but no gauge samples match labels", metricName)
+		}
 		return 0
 	}
 
+	if len(labels) == 0 {
+		t.Fatalf("metric family %q not found", metricName)
+	}
 	return 0
 }
 
@@ -621,10 +812,11 @@ func metricMatchesLabels(metric *dto.Metric, labels ...string) bool {
 	return true
 }
 
-func schedulerLogger() *telemetry.InMemoryLogger {
+func schedulerLogger(t *testing.T) *telemetry.InMemoryLogger {
+	t.Helper()
 	logger, ok := telemetry.GetGlobalTelemetry().GetLogger().(*telemetry.InMemoryLogger)
 	if !ok {
-		panic("expected in-memory logger")
+		t.Fatal("expected in-memory logger")
 	}
 	return logger
 }
@@ -669,11 +861,13 @@ func (f *failingTaskExecutor) ExecuteOnNode(ctx context.Context, nodeID string, 
 }
 
 type sequenceTaskExecutor struct {
-	errs  []error
-	calls int
+	errs      []error
+	calls     int
+	callNodes []string
 }
 
 func (s *sequenceTaskExecutor) ExecuteOnNode(ctx context.Context, nodeID string, agentName string, input *agent.AgentInput) (*agent.AgentOutput, error) {
+	s.callNodes = append(s.callNodes, nodeID)
 	if s.calls >= len(s.errs) {
 		return &agent.AgentOutput{}, nil
 	}

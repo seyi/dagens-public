@@ -1,18 +1,18 @@
 ---
-# Prometheus ServiceMonitor for Dagens
+# Prometheus ServiceMonitor for Spark AI Agents
 # Requires Prometheus Operator to be installed
 
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: dagens
+  name: spark-ai-agents
   labels:
-    app: dagens
+    app: spark-ai-agents
     release: prometheus
 spec:
   selector:
     matchLabels:
-      app: dagens
+      app: spark-ai-agents
   endpoints:
   - port: metrics
     path: /metrics
@@ -27,17 +27,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: dagens
+  name: spark-ai-agents
   labels:
-    app: dagens
+    app: spark-ai-agents
     release: prometheus
 spec:
   groups:
-  - name: dagens
+  - name: spark-ai-agents
     interval: 30s
     rules:
     # High error rate
-    - alert: DagensHighErrorRate
+    - alert: SparkAgentHighErrorRate
       expr: |
         sum(rate(spark_agent_execution_errors_total[5m])) by (agent_name)
         /
@@ -51,7 +51,7 @@ spec:
         description: "Agent {{ $labels.agent_name }} has error rate > 5% for 5 minutes"
 
     # Very high error rate (critical)
-    - alert: DagensCriticalErrorRate
+    - alert: SparkAgentCriticalErrorRate
       expr: |
         sum(rate(spark_agent_execution_errors_total[5m])) by (agent_name)
         /
@@ -65,7 +65,7 @@ spec:
         description: "Agent {{ $labels.agent_name }} has error rate > 20% for 2 minutes"
 
     # Circuit breaker open
-    - alert: DagensCircuitBreakerOpen
+    - alert: SparkAgentCircuitBreakerOpen
       expr: spark_agent_circuit_breaker_state == 1
       for: 1m
       labels:
@@ -75,7 +75,7 @@ spec:
         description: "Circuit breaker {{ $labels.name }} has been open for more than 1 minute"
 
     # High latency
-    - alert: DagensHighLatency
+    - alert: SparkAgentHighLatency
       expr: |
         histogram_quantile(0.95,
           sum(rate(spark_agent_execution_duration_seconds_bucket[5m])) by (le, agent_name)
@@ -88,7 +88,7 @@ spec:
         description: "Agent {{ $labels.agent_name }} P95 latency > 10s for 5 minutes"
 
     # LLM rate limiting
-    - alert: DagensLLMRateLimited
+    - alert: SparkAgentLLMRateLimited
       expr: |
         sum(rate(spark_agent_llm_rate_limit_hits_total[5m])) by (provider)
         > 1
@@ -100,11 +100,11 @@ spec:
         description: "Provider {{ $labels.provider }} hit rate limits"
 
     # Redis down
-    - alert: DagensRedisDown
+    - alert: SparkAgentRedisDown
       expr: |
         spark_agent_state_operation_duration_seconds_count{backend="redis"} == 0
         and
-        up{job="dagens"} == 1
+        up{job="spark-ai-agents"} == 1
       for: 2m
       labels:
         severity: critical
@@ -113,29 +113,29 @@ spec:
         description: "No Redis operations in the last 2 minutes"
 
     # High memory usage
-    - alert: DagensHighMemory
+    - alert: SparkAgentHighMemory
       expr: |
-        container_memory_usage_bytes{container="dagens"}
+        container_memory_usage_bytes{container="spark-ai-agents"}
         /
-        container_spec_memory_limit_bytes{container="dagens"}
+        container_spec_memory_limit_bytes{container="spark-ai-agents"}
         > 0.85
       for: 5m
       labels:
         severity: warning
       annotations:
-        summary: "High memory usage for Dagens"
+        summary: "High memory usage for Spark AI Agents"
         description: "Memory usage > 85% for 5 minutes"
 
     # Pod restart
-    - alert: DagensPodRestarting
+    - alert: SparkAgentPodRestarting
       expr: |
-        increase(kube_pod_container_status_restarts_total{container="dagens"}[1h])
+        increase(kube_pod_container_status_restarts_total{container="spark-ai-agents"}[1h])
         > 3
       for: 0m
       labels:
         severity: warning
       annotations:
-        summary: "Dagens pod restarting frequently"
+        summary: "Spark AI Agents pod restarting frequently"
         description: "Pod has restarted more than 3 times in the last hour"
 
 ---
@@ -143,17 +143,17 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: dagens-dashboard
+  name: spark-ai-agents-dashboard
   labels:
-    app: dagens
+    app: spark-ai-agents
     grafana_dashboard: "true"
 data:
-  dagens.json: |
+  spark-ai-agents.json: |
     {
       "dashboard": {
-        "title": "Dagens",
-        "uid": "dagens",
-        "tags": ["dagens", "orchestration", "runtime"],
+        "title": "Spark AI Agents",
+        "uid": "spark-ai-agents",
+        "tags": ["ai", "agents", "spark"],
         "timezone": "browser",
         "refresh": "30s",
         "panels": [

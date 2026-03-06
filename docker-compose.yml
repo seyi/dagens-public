@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   jaeger:
     image: jaegertracing/all-in-one:latest
@@ -28,6 +30,8 @@ services:
       dockerfile: Dockerfile.api
     environment:
       - DEV_MODE=true
+      - SCHEDULER_TRANSITION_STORE=postgres
+      - SCHEDULER_TRANSITION_POSTGRES_DSN=postgres://postgres:postgres@postgres:5432/dagens?sslmode=disable
       - OTEL_EXPORTER_TYPE=otlp
       - OTEL_EXPORTER_OTLP_ENDPOINT=jaeger:4317
       - OTEL_SERVICE_NAME=dagens-api
@@ -35,6 +39,7 @@ services:
       - "8080:8080"
     depends_on:
       - jaeger
+      - postgres
 
   worker-1:
     build:

@@ -448,7 +448,7 @@ func TestRecoverFromTransitionsEmptyStoreRecordsSuccessMetrics(t *testing.T) {
 
 	beforeRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "succeeded")
 	beforeRecovered := metricCounterValue(t, "dagens_scheduler_recovered_jobs_total")
-	logger := schedulerLogger()
+	logger := schedulerLogger(t)
 	beforeLogs := len(logger.GetLogs())
 
 	if err := s.RecoverFromTransitions(context.Background()); err != nil {
@@ -652,7 +652,7 @@ func TestRecoverFromTransitionsRecordsSuccessMetricsAndLog(t *testing.T) {
 
 	beforeRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "succeeded")
 	beforeRecovered := metricCounterValue(t, "dagens_scheduler_recovered_jobs_total")
-	logger := schedulerLogger()
+	logger := schedulerLogger(t)
 	beforeLogs := len(logger.GetLogs())
 
 	if err := s.RecoverFromTransitions(context.Background()); err != nil {
@@ -708,7 +708,7 @@ func TestRecoverFromTransitionsRecordsFailureMetricsAndLog(t *testing.T) {
 	}
 
 	beforeRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "failed")
-	logger := schedulerLogger()
+	logger := schedulerLogger(t)
 	beforeLogs := len(logger.GetLogs())
 
 	err := s.RecoverFromTransitions(context.Background())
@@ -758,7 +758,7 @@ func TestRecoverFromTransitionsRecordsCanceledMetricsAndLog(t *testing.T) {
 	}
 
 	beforeRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "canceled")
-	logger := schedulerLogger()
+	logger := schedulerLogger(t)
 	beforeLogs := len(logger.GetLogs())
 
 	ctx, cancel := context.WithCancel(context.Background())

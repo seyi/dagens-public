@@ -371,6 +371,7 @@ Current behavior:
 - retries only on explicit capacity-conflict-style dispatch failures
 - retry budget is controlled by `MaxDispatchAttempts`
 - when capacity-conflict retry budget is exhausted, the task fails explicitly
+- retries also remain bounded by caller context cancellation/deadline
 
 This keeps retry semantics visible and constrained.
 
@@ -382,7 +383,9 @@ If a stage cannot select a worker for a task because no healthy worker has capac
 
 - the scheduler records the all-workers-full metric
 - the scheduler logs the saturation event
-- the stage fails
+- by default, the stage fails
+- with `EnableStageCapacityDeferral=true`, the scheduler polls for capacity up to `StageCapacityDeferralTimeout`
+- if capacity appears before timeout, the task is dispatched; otherwise the stage fails
 
 This is an interim v0.2 semantic.
 
@@ -757,6 +760,35 @@ Backpressure for v0.2 should only be considered complete when:
 5. Saturation is visible in metrics and logs
 6. Client retry behavior is defined through `Retry-After`
 7. Client retry behavior is validated in integration tests
+
+## Prometheus Queries
+
+Use these as operational starting points for affinity-aware scheduling visibility:
+
+```promql
+# Affinity hit rate (higher is better for sticky workloads)
+rate(dagens_scheduler_affinity_hits_total[5m])
+/
+(
+  rate(dagens_scheduler_affinity_hits_total[5m]) +
+  rate(dagens_scheduler_affinity_misses_total[5m])
+)
+```
+
+```promql
+# Stale affinity rate (higher can indicate worker churn)
+rate(dagens_scheduler_affinity_stale_total[5m])
+```
+
+```promql
+# Affinity effectiveness over a longer window
+sum(increase(dagens_scheduler_affinity_hits_total[1h]))
+/
+(
+  sum(increase(dagens_scheduler_affinity_hits_total[1h])) +
+  sum(increase(dagens_scheduler_affinity_misses_total[1h]))
+)
+```
 
 ## Relationship To Other Docs
 

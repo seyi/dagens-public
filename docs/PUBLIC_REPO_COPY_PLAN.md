@@ -133,16 +133,9 @@ payload*.json
 review_context*.txt
 state_fix*.txt
 state_snapshot.xml
-agent-server
-api_server
 dagens-api
 dagens-worker
 main
-Backpressure
-Dagens
-This
-When
-Workers
 ```
 
 ## Step 5: Verify that known internal-only artifacts are absent
@@ -285,8 +278,6 @@ rsync -a \
   --exclude 'When' \
   --exclude 'Workers' \
   --exclude 'main' \
-  --exclude 'agent-server' \
-  --exclude 'api_server' \
   --exclude 'dagens-api' \
   --exclude 'dagens-worker' \
   --exclude 'hello_dagens' \

@@ -249,8 +249,6 @@ payload*.json
 review_context*.txt
 state_fix*.txt
 state_snapshot.xml
-agent-server
-api_server
 dagens-api
 dagens-worker
 main
