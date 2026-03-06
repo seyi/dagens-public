@@ -296,6 +296,13 @@ Current scheduler startup replay behavior is intentionally visibility-first:
 
 This preserves safety under ambiguity and avoids accidental double execution.
 
+Recovery execution model notes:
+
+- replay is currently fail-fast for startup safety; a single invalid unfinished job transition stream fails the recovery run
+- replay failures are wrapped with job context (`job_id`) to aid operator diagnosis
+- scheduler startup recovery is time-bounded by `RecoveryTimeout` (default `5m`)
+- recovery observability uses explicit statuses (`succeeded`, `failed`, `canceled`)
+
 ### Stuck and Uncertain Tasks
 
 Tasks recovered after restart may be operationally uncertain when their last durable state was:

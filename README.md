@@ -129,6 +129,8 @@ Services started:
 - `postgres`
 - `jaeger` (OTEL backend)
 
+Compose config enables Postgres-backed scheduler transitions (`SCHEDULER_TRANSITION_STORE=postgres`) so transition history and startup replay state are durable.
+
 Verify:
 
 ```bash
@@ -153,6 +155,15 @@ DEV_MODE=true
 ```
 
 In docker-compose, this is enabled by default. For production, set `DEV_MODE=false` or omit the variable.
+
+### Transition Store Configuration
+
+Scheduler transition durability backend is configured on the API server:
+
+- `SCHEDULER_TRANSITION_STORE=memory|postgres` (default: `memory`)
+- `SCHEDULER_TRANSITION_POSTGRES_DSN=<postgres dsn>` (required for `postgres` backend)
+- `DATABASE_URL=<postgres dsn>` (fallback if `SCHEDULER_TRANSITION_POSTGRES_DSN` is not set)
+- `SCHEDULER_RECOVERY_TIMEOUT=<duration>` (default: `5m`, examples: `30s`, `2m`)
 
 ## Python SDK (Run a Distributed Job in 2 Minutes)
 
