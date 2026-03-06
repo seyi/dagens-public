@@ -414,12 +414,12 @@ Dagens is a distributed orchestration runtime that can execute LangGraph-based a
 CrewAI is a single-process agent coordination framework.
 Dagens provides distributed scheduling, health-aware dispatch, and human-in-the-loop primitives at the runtime layer.
 
-See [Philosophy](docs/PHILOSOPHY.md) for a deeper discussion of architectural differences.
+See [Backpressure Design](docs/BACKPRESSURE.md) and [State Machine](docs/STATE_MACHINE.md) for the current control-plane semantics.
 
 ## Roadmap
 
 - Advanced scheduling strategies (least-loaded, weighted routing)
-- Backpressure-aware dispatch
+- Durable deferred/requeue scheduling semantics
 - Pluggable persistence layer abstraction
 - Kubernetes-native operator
 - Multi-tenant isolation model
@@ -427,8 +427,9 @@ See [Philosophy](docs/PHILOSOPHY.md) for a deeper discussion of architectural di
 
 ## Additional Docs
 
-- [Philosophy](docs/PHILOSOPHY.md) - Architectural beliefs and comparisons
-- [Discipline](docs/DISCIPLINE.md) - What Dagens will not become
+- [Backpressure Design](docs/BACKPRESSURE.md) - Control-plane saturation model (v0.2)
+- [State Machine](docs/STATE_MACHINE.md) - Durable transition and replay model
+- [Durability](docs/DURABILITY.md) - Current persistence guarantees and limits
 - [Scaling and Dispatch Clarification](docs/SCALING_AND_DISPATCH_CLARIFICATION.md)
 - [Repo Tree and Runtime Snapshot](docs/REPO_TREE_AND_RUNTIME.md)
 
