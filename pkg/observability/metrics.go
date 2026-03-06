@@ -67,6 +67,9 @@ type Metrics struct {
 	SchedulerDispatchRejections          *prometheus.CounterVec
 	SchedulerRecoveryRuns                *prometheus.CounterVec
 	SchedulerRecoveredJobs               prometheus.Counter
+	SchedulerRecoveryResumedQueuedJobs   prometheus.Counter
+	SchedulerRecoveryResumeSkippedQueued prometheus.Counter
+	SchedulerRecoveryResumeSkippedUnsafe prometheus.Counter
 	SchedulerRecoveryDuration            prometheus.Histogram
 	WorkerHeartbeatsReceived             prometheus.Counter
 	WorkerHeartbeatsSucceeded            prometheus.Counter
@@ -451,6 +454,30 @@ func NewMetricsWithRegistry(namespace string, reg prometheus.Registerer) *Metric
 		},
 	)
 
+	m.SchedulerRecoveryResumedQueuedJobs = auto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_recovery_resumed_queued_jobs_total",
+			Help:      "Total number of recovered QUEUED jobs re-enqueued during startup recovery",
+		},
+	)
+
+	m.SchedulerRecoveryResumeSkippedQueued = auto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_recovery_resume_skipped_queued_jobs_total",
+			Help:      "Total number of recovered QUEUED jobs not resumed because the scheduler queue was full",
+		},
+	)
+
+	m.SchedulerRecoveryResumeSkippedUnsafe = auto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_recovery_resume_skipped_unsafe_queued_jobs_total",
+			Help:      "Total number of recovered QUEUED jobs not resumed due to non-pending task lifecycle states",
+		},
+	)
+
 	m.SchedulerRecoveryDuration = auto.NewHistogram(
 		prometheus.HistogramOpts{
 			Namespace: namespace,
@@ -709,6 +736,33 @@ func (m *Metrics) RecordSchedulerRecoveredJobs(count int) {
 		return
 	}
 	m.SchedulerRecoveredJobs.Add(float64(count))
+}
+
+// RecordSchedulerRecoveryResumedQueuedJobs records how many recovered QUEUED
+// jobs were re-enqueued during startup recovery.
+func (m *Metrics) RecordSchedulerRecoveryResumedQueuedJobs(count int) {
+	if count <= 0 {
+		return
+	}
+	m.SchedulerRecoveryResumedQueuedJobs.Add(float64(count))
+}
+
+// RecordSchedulerRecoveryResumeSkippedQueuedJobs records how many recovered
+// QUEUED jobs were skipped due to startup queue saturation.
+func (m *Metrics) RecordSchedulerRecoveryResumeSkippedQueuedJobs(count int) {
+	if count <= 0 {
+		return
+	}
+	m.SchedulerRecoveryResumeSkippedQueued.Add(float64(count))
+}
+
+// RecordSchedulerRecoveryResumeSkippedUnsafeQueuedJobs records how many
+// recovered QUEUED jobs were skipped due to unsafe (non-pending) task states.
+func (m *Metrics) RecordSchedulerRecoveryResumeSkippedUnsafeQueuedJobs(count int) {
+	if count <= 0 {
+		return
+	}
+	m.SchedulerRecoveryResumeSkippedUnsafe.Add(float64(count))
 }
 
 // RecordSchedulerRecoveryDuration records scheduler startup recovery duration.

@@ -43,6 +43,9 @@ func TestSchedulerConfigValidateAppliesDefaults(t *testing.T) {
 	if cfg.RecoveryTimeout != 5*time.Minute {
 		t.Fatalf("RecoveryTimeout = %v, want %v", cfg.RecoveryTimeout, 5*time.Minute)
 	}
+	if cfg.EnableResumeRecoveredQueuedJobs {
+		t.Fatal("EnableResumeRecoveredQueuedJobs = true, want false")
+	}
 }
 
 func TestSchedulerConfigValidatePreservesExplicitValues(t *testing.T) {
@@ -59,6 +62,7 @@ func TestSchedulerConfigValidatePreservesExplicitValues(t *testing.T) {
 		StageCapacityDeferralTimeout:      750 * time.Millisecond,
 		StageCapacityDeferralPollInterval: 25 * time.Millisecond,
 		RecoveryTimeout:                   2 * time.Minute,
+		EnableResumeRecoveredQueuedJobs:   true,
 	}
 
 	cfg.Validate()
@@ -98,6 +102,9 @@ func TestSchedulerConfigValidatePreservesExplicitValues(t *testing.T) {
 	}
 	if cfg.RecoveryTimeout != 2*time.Minute {
 		t.Fatalf("RecoveryTimeout = %v, want %v", cfg.RecoveryTimeout, 2*time.Minute)
+	}
+	if !cfg.EnableResumeRecoveredQueuedJobs {
+		t.Fatal("EnableResumeRecoveredQueuedJobs = false, want true")
 	}
 }
 

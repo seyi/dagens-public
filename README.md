@@ -164,6 +164,7 @@ Scheduler transition durability backend is configured on the API server:
 - `SCHEDULER_TRANSITION_POSTGRES_DSN=<postgres dsn>` (required for `postgres` backend)
 - `DATABASE_URL=<postgres dsn>` (fallback if `SCHEDULER_TRANSITION_POSTGRES_DSN` is not set)
 - `SCHEDULER_RECOVERY_TIMEOUT=<duration>` (default: `5m`, examples: `30s`, `2m`)
+- `SCHEDULER_RESUME_RECOVERED_QUEUED_JOBS=true|false` (default: `false`; resumes recovered `QUEUED` jobs only)
 
 ## Python SDK (Run a Distributed Job in 2 Minutes)
 

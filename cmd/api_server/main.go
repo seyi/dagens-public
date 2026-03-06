@@ -12,6 +12,7 @@ import (
 
 	"github.com/seyi/dagens/pkg/api"
 	"github.com/seyi/dagens/pkg/auth"
+	"github.com/seyi/dagens/pkg/observability"
 	"github.com/seyi/dagens/pkg/registry"
 	"github.com/seyi/dagens/pkg/remote"
 	"github.com/seyi/dagens/pkg/scheduler"
@@ -35,16 +36,24 @@ func main() {
 		if err == nil {
 			secretMgr.RegisterProvider(vaultProv)
 			log.Println("Registered Vault secret provider")
+		} else {
+			log.Printf("Warning: failed to initialize Vault provider: %v (continuing with env provider)", err)
 		}
 	}
 
 	// Initialize Authenticator
+	devMode := strings.EqualFold(strings.TrimSpace(os.Getenv("DEV_MODE")), "true")
+	environment := strings.ToLower(strings.TrimSpace(os.Getenv("ENVIRONMENT")))
+
 	jwtSecret, err := secretMgr.GetSecret(context.Background(), secrets.Config{
 		Name:     "JWT_SECRET",
 		Provider: "env", // Default to env for now
 	})
 	if err != nil {
-		log.Printf("Warning: JWT_SECRET not found, using development default")
+		if environment == "production" && !devMode {
+			log.Fatal("JWT_SECRET is required when ENVIRONMENT=production")
+		}
+		log.Printf("Warning: JWT_SECRET not found; using development fallback (not for production)")
 		jwtSecret = "dagens-dev-secret-change-me-in-production"
 	}
 	authenticator := auth.NewJWTAuthenticator(jwtSecret, "dagens-api", "dagens-clients")
@@ -68,8 +77,10 @@ func main() {
 			log.Fatalf("Failed to create distributed registry: %v", err)
 		}
 
-		// Start registry background processes
-		if err := distReg.Start(context.Background()); err != nil {
+		// Start registry background processes with a bounded startup context.
+		startCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		if err := distReg.Start(startCtx); err != nil {
 			log.Fatalf("Failed to start distributed registry: %v", err)
 		}
 		// Ensure registry is stopped on shutdown
@@ -96,6 +107,9 @@ func main() {
 			log.Fatalf("Invalid SCHEDULER_RECOVERY_TIMEOUT %q: %v", timeoutRaw, err)
 		}
 		schedulerCfg.RecoveryTimeout = timeout
+	}
+	if resumeRaw := strings.TrimSpace(os.Getenv("SCHEDULER_RESUME_RECOVERED_QUEUED_JOBS")); resumeRaw != "" {
+		schedulerCfg.EnableResumeRecoveredQueuedJobs = strings.EqualFold(resumeRaw, "true")
 	}
 
 	sched := scheduler.NewSchedulerWithConfig(reg, realExec, schedulerCfg)
@@ -140,12 +154,17 @@ func main() {
 	port := ":8080"
 	log.Printf("Starting Dagens Control API on %s", port)
 
+	// Compose route tree with metrics endpoint.
+	mux := http.NewServeMux()
+	mux.Handle("/", server.Routes())
+	mux.Handle("/metrics", observability.Handler())
+
 	// Apply auth middleware unless DEV_MODE is enabled
-	var handler http.Handler = server.Routes()
-	if os.Getenv("DEV_MODE") != "true" {
-		handler = auth.HTTPMiddleware(authenticator)(server.Routes())
+	var handler http.Handler = mux
+	if !devMode {
+		handler = auth.HTTPMiddleware(authenticator)(mux)
 	} else {
-		log.Println("DEV_MODE enabled - skipping authentication")
+		log.Println("WARNING: DEV_MODE enabled - authentication is disabled")
 	}
 
 	srv := &http.Server{
@@ -170,6 +189,10 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal("Server forced to shutdown:", err)
 	}
+	// Shutdown order:
+	// 1) scheduler stop (may flush final transitions)
+	// 2) remote executor close (drain transport resources)
+	// 3) transition store close
 	sched.Stop()
 	realExec.Close()
 	if closeTransitionStore != nil {
@@ -194,7 +217,10 @@ func (m *MockRegistry) GetNode(id string) (registry.NodeInfo, bool) {
 }
 func (m *MockRegistry) GetNodes() []registry.NodeInfo                     { return m.nodes }
 func (m *MockRegistry) GetNodeID() string                                 { return "api-server" }
-func (m *MockRegistry) GetNodesByCapability(c string) []registry.NodeInfo { return m.nodes }
+func (m *MockRegistry) GetNodesByCapability(c string) []registry.NodeInfo {
+	// Mock registry does not model per-capability filtering; return all nodes.
+	return m.nodes
+}
 func (m *MockRegistry) GetNodeCount() int                                 { return len(m.nodes) }
 func (m *MockRegistry) GetHealthyNodeCount() int                          { return len(m.nodes) }
 func (m *MockRegistry) Start(ctx context.Context) error                   { return nil }

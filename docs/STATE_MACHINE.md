@@ -291,10 +291,16 @@ The safe first behavior is:
 Current scheduler startup replay behavior is intentionally visibility-first:
 
 - reconstruct in-memory job/task visibility state from transition history
-- do not re-enqueue recovered jobs into the active scheduler queue
+- by default, do not re-enqueue recovered jobs into the active scheduler queue
 - do not automatically redispatch recovered tasks
 
 This preserves safety under ambiguity and avoids accidental double execution.
+
+Optional startup resume slice (config-gated):
+
+- when `EnableResumeRecoveredQueuedJobs=true`, recovered jobs in `QUEUED` lifecycle state are re-enqueued
+- recovered `QUEUED` jobs are resumed only when recovered task lifecycle state remains pending/unknown
+- this does not alter ambiguity handling for `DISPATCHED`/`RUNNING` tasks; those remain visibility-only
 
 Recovery execution model notes:
 

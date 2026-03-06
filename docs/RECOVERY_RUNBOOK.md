@@ -20,6 +20,7 @@ Code references:
 - Recovery is bounded by `SCHEDULER_RECOVERY_TIMEOUT` (default `5m`).
 - Replay is fail-fast for startup safety.
 - Recovery is visibility-first; it does not auto-redispatch previously running tasks.
+- Optional: `SCHEDULER_RESUME_RECOVERED_QUEUED_JOBS=true` re-enqueues recovered `QUEUED` jobs at startup.
 
 ## Common Failure Modes
 

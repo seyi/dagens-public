@@ -73,6 +73,385 @@ func TestRecoverFromTransitionsRebuildsVisibilityState(t *testing.T) {
 	}
 }
 
+func TestRecoverFromTransitionsResumesRecoveredQueuedJobsWhenEnabled(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+
+	records := []TransitionRecord{
+		{SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-resume", NewState: string(JobStateSubmitted), OccurredAt: now},
+		{SequenceID: 2, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated, JobID: "job-resume", TaskID: "task-1", NewState: string(TaskStatePending), OccurredAt: now.Add(time.Second)},
+		{SequenceID: 3, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: "job-resume", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(2 * time.Second)},
+	}
+	for _, record := range records {
+		if err := store.AppendTransition(context.Background(), record); err != nil {
+			t.Fatalf("AppendTransition unexpected error: %v", err)
+		}
+	}
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:          "job-resume",
+		Name:           "job-resume",
+		CurrentState:   JobStateQueued,
+		LastSequenceID: 3,
+		CreatedAt:      now,
+		UpdatedAt:      now.Add(2 * time.Second),
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	beforeResumed := metricCounterValue(t, "dagens_scheduler_recovery_resumed_queued_jobs_total")
+	beforeSkipped := metricCounterValue(t, "dagens_scheduler_recovery_resume_skipped_queued_jobs_total")
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:                    2,
+		EnableResumeRecoveredQueuedJobs: true,
+	})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+
+	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
+	}
+
+	if got := len(s.jobQueue); got != 1 {
+		t.Fatalf("recovered queue depth = %d, want 1", got)
+	}
+	resumed := metricCounterValue(t, "dagens_scheduler_recovery_resumed_queued_jobs_total")
+	if resumed != beforeResumed+1 {
+		t.Fatalf("resumed queued jobs metric = %v, want %v", resumed, beforeResumed+1)
+	}
+	skipped := metricCounterValue(t, "dagens_scheduler_recovery_resume_skipped_queued_jobs_total")
+	if skipped != beforeSkipped {
+		t.Fatalf("skipped queued jobs metric = %v, want %v", skipped, beforeSkipped)
+	}
+}
+
+func TestRecoverFromTransitionsDoesNotResumeQueuedJobsWhenDisabled(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+
+	records := []TransitionRecord{
+		{SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-visibility-only", NewState: string(JobStateSubmitted), OccurredAt: now},
+		{SequenceID: 2, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated, JobID: "job-visibility-only", TaskID: "task-1", NewState: string(TaskStatePending), OccurredAt: now.Add(time.Second)},
+		{SequenceID: 3, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: "job-visibility-only", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(2 * time.Second)},
+	}
+	for _, record := range records {
+		if err := store.AppendTransition(context.Background(), record); err != nil {
+			t.Fatalf("AppendTransition unexpected error: %v", err)
+		}
+	}
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:          "job-visibility-only",
+		Name:           "job-visibility-only",
+		CurrentState:   JobStateQueued,
+		LastSequenceID: 3,
+		CreatedAt:      now,
+		UpdatedAt:      now.Add(2 * time.Second),
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 2})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+
+	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
+	}
+	if got := len(s.jobQueue); got != 0 {
+		t.Fatalf("recovered queue depth with resume disabled = %d, want 0", got)
+	}
+}
+
+func TestRecoverFromTransitionsDoesNotResumeRunningJobsWhenEnabled(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+
+	records := []TransitionRecord{
+		{SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-running", NewState: string(JobStateSubmitted), OccurredAt: now},
+		{SequenceID: 2, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: "job-running", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(time.Second)},
+		{SequenceID: 3, EntityType: TransitionEntityJob, Transition: TransitionJobRunning, JobID: "job-running", PreviousState: string(JobStateQueued), NewState: string(JobStateRunning), OccurredAt: now.Add(2 * time.Second)},
+	}
+	for _, record := range records {
+		if err := store.AppendTransition(context.Background(), record); err != nil {
+			t.Fatalf("AppendTransition unexpected error: %v", err)
+		}
+	}
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:          "job-running",
+		Name:           "job-running",
+		CurrentState:   JobStateRunning,
+		LastSequenceID: 3,
+		CreatedAt:      now,
+		UpdatedAt:      now.Add(2 * time.Second),
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:                    2,
+		EnableResumeRecoveredQueuedJobs: true,
+	})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
+	}
+
+	if got := len(s.jobQueue); got != 0 {
+		t.Fatalf("recovered queue depth for RUNNING job = %d, want 0", got)
+	}
+}
+
+func TestRecoverFromTransitionsSkipsQueuedJobsWithDispatchedTasks(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+
+	records := []TransitionRecord{
+		{SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-dispatched", NewState: string(JobStateSubmitted), OccurredAt: now},
+		{SequenceID: 2, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated, JobID: "job-dispatched", TaskID: "task-1", NewState: string(TaskStatePending), OccurredAt: now.Add(time.Second)},
+		{SequenceID: 3, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: "job-dispatched", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(2 * time.Second)},
+		{SequenceID: 4, EntityType: TransitionEntityTask, Transition: TransitionTaskDispatched, JobID: "job-dispatched", TaskID: "task-1", PreviousState: string(TaskStatePending), NewState: string(TaskStateDispatched), NodeID: "worker-1", Attempt: 1, OccurredAt: now.Add(3 * time.Second)},
+	}
+	for _, record := range records {
+		if err := store.AppendTransition(context.Background(), record); err != nil {
+			t.Fatalf("AppendTransition unexpected error: %v", err)
+		}
+	}
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:          "job-dispatched",
+		Name:           "job-dispatched",
+		CurrentState:   JobStateQueued,
+		LastSequenceID: 4,
+		CreatedAt:      now,
+		UpdatedAt:      now.Add(3 * time.Second),
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:                    2,
+		EnableResumeRecoveredQueuedJobs: true,
+	})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
+	}
+
+	if got := len(s.jobQueue); got != 0 {
+		t.Fatalf("recovered queue depth for QUEUED job with DISPATCHED task = %d, want 0", got)
+	}
+}
+
+func TestRecoverFromTransitionsSkipsQueuedJobsWhenQueueFull(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:          "job-q1",
+		Name:           "job-q1",
+		CurrentState:   JobStateQueued,
+		LastSequenceID: 1,
+		CreatedAt:      now,
+		UpdatedAt:      now,
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+	if err := store.AppendTransition(context.Background(), TransitionRecord{
+		SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobQueued,
+		JobID: "job-q1", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now,
+	}); err != nil {
+		t.Fatalf("AppendTransition unexpected error: %v", err)
+	}
+
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:          "job-q2",
+		Name:           "job-q2",
+		CurrentState:   JobStateQueued,
+		LastSequenceID: 1,
+		CreatedAt:      now.Add(time.Second),
+		UpdatedAt:      now.Add(time.Second),
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+	if err := store.AppendTransition(context.Background(), TransitionRecord{
+		SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobQueued,
+		JobID: "job-q2", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(time.Second),
+	}); err != nil {
+		t.Fatalf("AppendTransition unexpected error: %v", err)
+	}
+
+	beforeResumed := metricCounterValue(t, "dagens_scheduler_recovery_resumed_queued_jobs_total")
+	beforeSkipped := metricCounterValue(t, "dagens_scheduler_recovery_resume_skipped_queued_jobs_total")
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:                    1,
+		EnableResumeRecoveredQueuedJobs: true,
+	})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
+	}
+
+	if got := len(s.jobQueue); got != 1 {
+		t.Fatalf("recovered queue depth with queue-full scenario = %d, want 1", got)
+	}
+	resumed := metricCounterValue(t, "dagens_scheduler_recovery_resumed_queued_jobs_total")
+	if resumed != beforeResumed+1 {
+		t.Fatalf("resumed queued jobs metric = %v, want %v", resumed, beforeResumed+1)
+	}
+	skipped := metricCounterValue(t, "dagens_scheduler_recovery_resume_skipped_queued_jobs_total")
+	if skipped != beforeSkipped+1 {
+		t.Fatalf("skipped queued jobs metric = %v, want %v", skipped, beforeSkipped+1)
+	}
+}
+
+func TestRecoverFromTransitionsSkipsQueuedJobsWithMixedTaskStates(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+
+	records := []TransitionRecord{
+		{SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-mixed", NewState: string(JobStateSubmitted), OccurredAt: now},
+		{SequenceID: 2, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated, JobID: "job-mixed", TaskID: "task-pending", NewState: string(TaskStatePending), OccurredAt: now.Add(time.Second)},
+		{SequenceID: 3, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated, JobID: "job-mixed", TaskID: "task-dispatched", NewState: string(TaskStatePending), OccurredAt: now.Add(2 * time.Second)},
+		{SequenceID: 4, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: "job-mixed", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(3 * time.Second)},
+		{SequenceID: 5, EntityType: TransitionEntityTask, Transition: TransitionTaskDispatched, JobID: "job-mixed", TaskID: "task-dispatched", PreviousState: string(TaskStatePending), NewState: string(TaskStateDispatched), NodeID: "worker-1", Attempt: 1, OccurredAt: now.Add(4 * time.Second)},
+	}
+	for _, record := range records {
+		if err := store.AppendTransition(context.Background(), record); err != nil {
+			t.Fatalf("AppendTransition unexpected error: %v", err)
+		}
+	}
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:          "job-mixed",
+		Name:           "job-mixed",
+		CurrentState:   JobStateQueued,
+		LastSequenceID: 5,
+		CreatedAt:      now,
+		UpdatedAt:      now.Add(4 * time.Second),
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	beforeUnsafe := metricCounterValue(t, "dagens_scheduler_recovery_resume_skipped_unsafe_queued_jobs_total")
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:                    2,
+		EnableResumeRecoveredQueuedJobs: true,
+	})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
+	}
+
+	if got := len(s.jobQueue); got != 0 {
+		t.Fatalf("recovered queue depth for QUEUED job with mixed task states = %d, want 0", got)
+	}
+	afterUnsafe := metricCounterValue(t, "dagens_scheduler_recovery_resume_skipped_unsafe_queued_jobs_total")
+	if afterUnsafe != beforeUnsafe+1 {
+		t.Fatalf("unsafe skipped queued jobs metric = %v, want %v", afterUnsafe, beforeUnsafe+1)
+	}
+}
+
+func TestRecoverFromTransitionsSkipsQueuedJobsWithTerminalTaskState(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+
+	records := []TransitionRecord{
+		{SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-terminal", NewState: string(JobStateSubmitted), OccurredAt: now},
+		{SequenceID: 2, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated, JobID: "job-terminal", TaskID: "task-1", NewState: string(TaskStatePending), OccurredAt: now.Add(time.Second)},
+		{SequenceID: 3, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: "job-terminal", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(2 * time.Second)},
+		{SequenceID: 4, EntityType: TransitionEntityTask, Transition: TransitionTaskFailed, JobID: "job-terminal", TaskID: "task-1", PreviousState: string(TaskStatePending), NewState: string(TaskStateFailed), ErrorSummary: "terminal failure", OccurredAt: now.Add(3 * time.Second)},
+	}
+	for _, record := range records {
+		if err := store.AppendTransition(context.Background(), record); err != nil {
+			t.Fatalf("AppendTransition unexpected error: %v", err)
+		}
+	}
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:          "job-terminal",
+		Name:           "job-terminal",
+		CurrentState:   JobStateQueued,
+		LastSequenceID: 4,
+		CreatedAt:      now,
+		UpdatedAt:      now.Add(3 * time.Second),
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	beforeUnsafe := metricCounterValue(t, "dagens_scheduler_recovery_resume_skipped_unsafe_queued_jobs_total")
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:                    2,
+		EnableResumeRecoveredQueuedJobs: true,
+	})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
+	}
+
+	if got := len(s.jobQueue); got != 0 {
+		t.Fatalf("recovered queue depth for QUEUED job with terminal task state = %d, want 0", got)
+	}
+	afterUnsafe := metricCounterValue(t, "dagens_scheduler_recovery_resume_skipped_unsafe_queued_jobs_total")
+	if afterUnsafe != beforeUnsafe+1 {
+		t.Fatalf("unsafe skipped queued jobs metric = %v, want %v", afterUnsafe, beforeUnsafe+1)
+	}
+}
+
+func TestIsSafeForQueuedResume_AllowsEmptyLifecycleState(t *testing.T) {
+	job := &Job{
+		LifecycleState: JobStateQueued,
+		Stages: []*Stage{
+			{
+				Tasks: []*Task{
+					{LifecycleState: ""},
+				},
+			},
+		},
+	}
+
+	if !isSafeForQueuedResume(job) {
+		t.Fatal("expected empty task lifecycle state to be safe for queued resume")
+	}
+}
+
+func TestIsSafeForQueuedResume_HandlesNilComponents(t *testing.T) {
+	if isSafeForQueuedResume(nil) {
+		t.Fatal("nil job should be unsafe for queued resume")
+	}
+
+	jobWithNilStage := &Job{
+		LifecycleState: JobStateQueued,
+		Stages:         []*Stage{nil},
+	}
+	if !isSafeForQueuedResume(jobWithNilStage) {
+		t.Fatal("job with nil stage should be treated as safe when no unsafe task states are present")
+	}
+
+	jobWithNilTask := &Job{
+		LifecycleState: JobStateQueued,
+		Stages: []*Stage{
+			{
+				Tasks: []*Task{nil},
+			},
+		},
+	}
+	if !isSafeForQueuedResume(jobWithNilTask) {
+		t.Fatal("job with nil task should be treated as safe when no unsafe task states are present")
+	}
+}
+
 func TestRecoverFromTransitionsSkipsExistingJobs(t *testing.T) {
 	store := NewInMemoryTransitionStore()
 	now := time.Now().UTC()

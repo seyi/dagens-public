@@ -75,6 +75,16 @@ type SchedulerConfig struct {
 	// cancellation.
 	// Default: 5 minutes
 	RecoveryTimeout time.Duration
+
+	// EnableResumeRecoveredQueuedJobs enables startup replay to re-enqueue jobs
+	// recovered in QUEUED lifecycle state.
+	//
+	// Safety boundary:
+	// - only QUEUED jobs are resumed
+	// - RUNNING and DISPATCHED work remains visibility-only (no auto-redispatch)
+	//
+	// Default: false
+	EnableResumeRecoveredQueuedJobs bool
 }
 
 // DefaultSchedulerConfig returns the default scheduler configuration
@@ -93,6 +103,7 @@ func DefaultSchedulerConfig() SchedulerConfig {
 		StageCapacityDeferralTimeout:      2 * time.Second,
 		StageCapacityDeferralPollInterval: 100 * time.Millisecond,
 		RecoveryTimeout:                   5 * time.Minute,
+		EnableResumeRecoveredQueuedJobs:   false,
 	}
 }
 

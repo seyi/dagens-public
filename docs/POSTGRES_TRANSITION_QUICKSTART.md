@@ -31,6 +31,7 @@ Optional:
 
 ```bash
 export SCHEDULER_RECOVERY_TIMEOUT=5m
+export SCHEDULER_RESUME_RECOVERED_QUEUED_JOBS=false
 ```
 
 `DATABASE_URL` can be used as DSN fallback if `SCHEDULER_TRANSITION_POSTGRES_DSN` is not set.
@@ -85,6 +86,7 @@ Code reference:
 
 Notes:
 - Recovery is visibility-first.
+- Optional: set `SCHEDULER_RESUME_RECOVERED_QUEUED_JOBS=true` to re-enqueue recovered `QUEUED` jobs at startup.
 - Replay is bounded by `SCHEDULER_RECOVERY_TIMEOUT`.
 - Previously running tasks are not auto-redispatched by replay.
 

@@ -200,7 +200,9 @@ Restart behavior today:
 
 - scheduler startup recovery is visibility-only when transition history is available
 - recovered jobs/tasks are rebuilt into in-memory views
-- recovered work is not automatically re-enqueued or redispatched
+- by default, recovered work is not automatically re-enqueued or redispatched
+- optional: if `EnableResumeRecoveredQueuedJobs=true`, recovered jobs in `QUEUED` state are re-enqueued at startup
+- recovered `RUNNING`/`DISPATCHED` task execution remains non-redispatched
 - with the current default in-memory transition store, process restart still drops transition history unless a durable transition backend is configured
 - startup recovery is bounded by `RecoveryTimeout` (default `5m`) to avoid indefinite startup hangs
 - recovery observability distinguishes `status=failed` from `status=canceled` for operator triage
