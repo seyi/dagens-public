@@ -394,20 +394,20 @@ That stronger waiting-state model is a later step because it should be introduce
 
 Current backpressure-relevant metrics:
 
-- `spark_agent_task_queue_length`
-- `spark_agent_task_queue_config_max`
-- `spark_agent_task_queue_observed_max`
-- `spark_agent_scheduler_all_workers_full_total`
-- `spark_agent_scheduler_degraded_mode_total`
-- `spark_agent_scheduler_dispatch_cooldown_activations_total`
-- `spark_agent_scheduler_dispatch_rejections_total`
-- `spark_agent_worker_heartbeats_received_total`
-- `spark_agent_worker_heartbeats_succeeded_total`
-- `spark_agent_worker_heartbeat_auth_failed_total`
-- `spark_agent_worker_heartbeat_invalid_payload_total`
-- `spark_agent_worker_heartbeat_processing_duration_seconds`
-- `spark_agent_task_dispatch_retries_total`
-- `spark_agent_tasks_failed_max_dispatch_attempts_total`
+- `dagens_task_queue_length`
+- `dagens_task_queue_config_max`
+- `dagens_task_queue_observed_max`
+- `dagens_scheduler_all_workers_full_total`
+- `dagens_scheduler_degraded_mode_total`
+- `dagens_scheduler_dispatch_cooldown_activations_total`
+- `dagens_scheduler_dispatch_rejections_total`
+- `dagens_worker_heartbeats_received_total`
+- `dagens_worker_heartbeats_succeeded_total`
+- `dagens_worker_heartbeat_auth_failed_total`
+- `dagens_worker_heartbeat_invalid_payload_total`
+- `dagens_worker_heartbeat_processing_duration_seconds`
+- `dagens_task_dispatch_retries_total`
+- `dagens_tasks_failed_max_dispatch_attempts_total`
 
 These metrics are the primary operator view of:
 

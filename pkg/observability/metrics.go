@@ -4,6 +4,8 @@ package observability
 
 import (
 	"net/http"
+	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -51,6 +53,7 @@ type Metrics struct {
 	TaskDispatchRetries     prometheus.Counter
 	TasksFailedMaxDispatchAttempts prometheus.Counter
 	SchedulerAllWorkersFull prometheus.Counter
+	SchedulerCapacityDeferrals prometheus.Counter
 	SchedulerDegradedMode   prometheus.Counter
 	SchedulerDispatchCooldownActivations prometheus.Counter
 	SchedulerDispatchRejections *prometheus.CounterVec
@@ -82,10 +85,20 @@ var (
 	once          sync.Once
 )
 
+const defaultMetricsNamespace = "dagens"
+
+func resolveMetricsNamespace() string {
+	namespace := strings.TrimSpace(os.Getenv("METRICS_NAMESPACE"))
+	if namespace == "" {
+		return defaultMetricsNamespace
+	}
+	return namespace
+}
+
 // GetMetrics returns the global metrics instance
 func GetMetrics() *Metrics {
 	once.Do(func() {
-		globalMetrics = NewMetrics("spark_agent")
+		globalMetrics = NewMetrics(resolveMetricsNamespace())
 	})
 	return globalMetrics
 }
@@ -338,6 +351,14 @@ func NewMetrics(namespace string) *Metrics {
 		},
 	)
 
+	m.SchedulerCapacityDeferrals = promauto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_capacity_deferrals_total",
+			Help:      "Total number of times stage scheduling entered deferred capacity wait before placement",
+		},
+	)
+
 	m.SchedulerDegradedMode = promauto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
@@ -582,6 +603,12 @@ func (m *Metrics) RecordTaskFailedMaxDispatchAttempts() {
 // RecordSchedulerAllWorkersFull records a scheduling refusal due to no worker capacity.
 func (m *Metrics) RecordSchedulerAllWorkersFull() {
 	m.SchedulerAllWorkersFull.Inc()
+}
+
+// RecordSchedulerCapacityDeferral records entering stage-level deferred
+// capacity waiting.
+func (m *Metrics) RecordSchedulerCapacityDeferral() {
+	m.SchedulerCapacityDeferrals.Inc()
 }
 
 // RecordSchedulerDegradedMode records a stale-capacity fallback selection.

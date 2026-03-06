@@ -48,6 +48,21 @@ type SchedulerConfig struct {
 	// Default: 3
 	MaxDispatchAttempts int
 
+	// EnableStageCapacityDeferral enables stage-level capacity waiting before
+	// failing with ErrNoWorkerCapacity.
+	// Default: false
+	EnableStageCapacityDeferral bool
+
+	// StageCapacityDeferralTimeout bounds how long stage selection may wait for
+	// capacity before returning ErrNoWorkerCapacity.
+	// Default: 2 seconds
+	StageCapacityDeferralTimeout time.Duration
+
+	// StageCapacityDeferralPollInterval controls how often capacity is rechecked
+	// while deferring stage selection.
+	// Default: 100 milliseconds
+	StageCapacityDeferralPollInterval time.Duration
+
 	// RecoveryTimeout bounds scheduler startup recovery duration before context
 	// cancellation.
 	// Default: 5 minutes
@@ -66,6 +81,9 @@ func DefaultSchedulerConfig() SchedulerConfig {
 		CapacityTTL:                 5 * time.Second,
 		DispatchRejectCooldown:      5 * time.Second,
 		MaxDispatchAttempts:         3,
+		EnableStageCapacityDeferral: false,
+		StageCapacityDeferralTimeout: 2 * time.Second,
+		StageCapacityDeferralPollInterval: 100 * time.Millisecond,
 		RecoveryTimeout:             5 * time.Minute,
 	}
 }
@@ -95,6 +113,12 @@ func (c *SchedulerConfig) Validate() {
 	}
 	if c.MaxDispatchAttempts <= 0 {
 		c.MaxDispatchAttempts = 3
+	}
+	if c.StageCapacityDeferralTimeout <= 0 {
+		c.StageCapacityDeferralTimeout = 2 * time.Second
+	}
+	if c.StageCapacityDeferralPollInterval <= 0 {
+		c.StageCapacityDeferralPollInterval = 100 * time.Millisecond
 	}
 	if c.RecoveryTimeout <= 0 {
 		c.RecoveryTimeout = 5 * time.Minute

@@ -34,6 +34,12 @@ func TestSchedulerConfigValidateAppliesDefaults(t *testing.T) {
 	if cfg.MaxDispatchAttempts != 3 {
 		t.Fatalf("MaxDispatchAttempts = %d, want %d", cfg.MaxDispatchAttempts, 3)
 	}
+	if cfg.StageCapacityDeferralTimeout != 2*time.Second {
+		t.Fatalf("StageCapacityDeferralTimeout = %v, want %v", cfg.StageCapacityDeferralTimeout, 2*time.Second)
+	}
+	if cfg.StageCapacityDeferralPollInterval != 100*time.Millisecond {
+		t.Fatalf("StageCapacityDeferralPollInterval = %v, want %v", cfg.StageCapacityDeferralPollInterval, 100*time.Millisecond)
+	}
 	if cfg.RecoveryTimeout != 5*time.Minute {
 		t.Fatalf("RecoveryTimeout = %v, want %v", cfg.RecoveryTimeout, 5*time.Minute)
 	}
@@ -49,6 +55,9 @@ func TestSchedulerConfigValidatePreservesExplicitValues(t *testing.T) {
 		CapacityTTL:                 9 * time.Second,
 		DispatchRejectCooldown:      11 * time.Second,
 		MaxDispatchAttempts:         7,
+		EnableStageCapacityDeferral: true,
+		StageCapacityDeferralTimeout: 750 * time.Millisecond,
+		StageCapacityDeferralPollInterval: 25 * time.Millisecond,
 		RecoveryTimeout:             2 * time.Minute,
 	}
 
@@ -77,6 +86,15 @@ func TestSchedulerConfigValidatePreservesExplicitValues(t *testing.T) {
 	}
 	if cfg.MaxDispatchAttempts != 7 {
 		t.Fatalf("MaxDispatchAttempts = %d, want %d", cfg.MaxDispatchAttempts, 7)
+	}
+	if !cfg.EnableStageCapacityDeferral {
+		t.Fatal("EnableStageCapacityDeferral = false, want true")
+	}
+	if cfg.StageCapacityDeferralTimeout != 750*time.Millisecond {
+		t.Fatalf("StageCapacityDeferralTimeout = %v, want %v", cfg.StageCapacityDeferralTimeout, 750*time.Millisecond)
+	}
+	if cfg.StageCapacityDeferralPollInterval != 25*time.Millisecond {
+		t.Fatalf("StageCapacityDeferralPollInterval = %v, want %v", cfg.StageCapacityDeferralPollInterval, 25*time.Millisecond)
 	}
 	if cfg.RecoveryTimeout != 2*time.Minute {
 		t.Fatalf("RecoveryTimeout = %v, want %v", cfg.RecoveryTimeout, 2*time.Minute)

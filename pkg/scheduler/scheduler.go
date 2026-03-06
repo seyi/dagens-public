@@ -332,7 +332,11 @@ func (s *Scheduler) executeStage(ctx context.Context, stage *Stage) error {
 	var selectionErr error
 	startedTasks := 0
 	for _, task := range stage.Tasks {
-		node, affinityResult, ok := s.selectNodeForTask(task, nodes)
+		node, affinityResult, ok, err := s.selectNodeForTaskWithDeferral(stageCtx, task, nodes)
+		if err != nil {
+			selectionErr = err
+			break
+		}
 		if !ok {
 			selectionErr = ErrNoWorkerCapacity
 			break
@@ -391,6 +395,50 @@ func (s *Scheduler) executeStage(ctx context.Context, stage *Stage) error {
 	stage.Status = JobCompleted
 	span.SetStatus(telemetry.StatusOK, "Stage completed")
 	return nil
+}
+
+func (s *Scheduler) selectNodeForTaskWithDeferral(ctx context.Context, task *Task, initialNodes []registry.NodeInfo) (registry.NodeInfo, AffinityResult, bool, error) {
+	node, affinity, ok := s.selectNodeForTask(task, initialNodes)
+	if ok {
+		return node, affinity, true, nil
+	}
+	if !s.config.EnableStageCapacityDeferral {
+		return registry.NodeInfo{}, affinity, false, nil
+	}
+
+	observability.GetMetrics().RecordSchedulerCapacityDeferral()
+
+	timeout := s.config.StageCapacityDeferralTimeout
+	poll := s.config.StageCapacityDeferralPollInterval
+	if timeout <= 0 || poll <= 0 {
+		return registry.NodeInfo{}, affinity, false, nil
+	}
+
+	timer := time.NewTimer(timeout)
+	defer timer.Stop()
+	ticker := time.NewTicker(poll)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return registry.NodeInfo{}, affinity, false, ctx.Err()
+		case <-timer.C:
+			return registry.NodeInfo{}, affinity, false, nil
+		case <-ticker.C:
+			if s.registry == nil {
+				return registry.NodeInfo{}, affinity, false, nil
+			}
+			nodes := s.registry.GetHealthyNodes()
+			if len(nodes) == 0 {
+				continue
+			}
+			node, affinity, ok = s.selectNodeForTask(task, nodes)
+			if ok {
+				return node, affinity, true, nil
+			}
+		}
+	}
 }
 
 func (s *Scheduler) executeTaskWithRetry(ctx context.Context, task *Task, initialNode registry.NodeInfo, healthyNodes []registry.NodeInfo) error {

@@ -182,7 +182,7 @@ func TestUpdateWorkerCapacityHandlerRecordsSuccessMetric(t *testing.T) {
 	server := NewServer(sched)
 
 	_ = observability.GetMetrics()
-	before := metricCounterValue(t, "spark_agent_worker_heartbeats_succeeded_total")
+	before := metricCounterValue(t, "dagens_worker_heartbeats_succeeded_total")
 
 	body, _ := json.Marshal(WorkerCapacityUpdateRequest{
 		NodeID:          "worker-1",
@@ -199,7 +199,7 @@ func TestUpdateWorkerCapacityHandlerRecordsSuccessMetric(t *testing.T) {
 		t.Fatalf("response code = %d, want %d", rec.Code, http.StatusNoContent)
 	}
 
-	after := metricCounterValue(t, "spark_agent_worker_heartbeats_succeeded_total")
+	after := metricCounterValue(t, "dagens_worker_heartbeats_succeeded_total")
 	if after != before+1 {
 		t.Fatalf("worker heartbeat success metric = %v, want %v", after, before+1)
 	}

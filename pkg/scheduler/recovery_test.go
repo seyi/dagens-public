@@ -446,8 +446,8 @@ func TestRecoverFromTransitionsEmptyStoreRecordsSuccessMetrics(t *testing.T) {
 		t.Fatalf("SetTransitionStore unexpected error: %v", err)
 	}
 
-	beforeRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "succeeded")
-	beforeRecovered := metricCounterValue(t, "spark_agent_scheduler_recovered_jobs_total")
+	beforeRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "succeeded")
+	beforeRecovered := metricCounterValue(t, "dagens_scheduler_recovered_jobs_total")
 	logger := schedulerLogger()
 	beforeLogs := len(logger.GetLogs())
 
@@ -455,11 +455,11 @@ func TestRecoverFromTransitionsEmptyStoreRecordsSuccessMetrics(t *testing.T) {
 		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
 	}
 
-	afterRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "succeeded")
+	afterRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "succeeded")
 	if afterRuns != beforeRuns+1 {
 		t.Fatalf("scheduler recovery succeeded runs = %v, want %v", afterRuns, beforeRuns+1)
 	}
-	afterRecovered := metricCounterValue(t, "spark_agent_scheduler_recovered_jobs_total")
+	afterRecovered := metricCounterValue(t, "dagens_scheduler_recovered_jobs_total")
 	if afterRecovered != beforeRecovered {
 		t.Fatalf("scheduler recovered jobs total = %v, want %v", afterRecovered, beforeRecovered)
 	}
@@ -602,7 +602,7 @@ func TestStartRespectsRecoveryTimeout(t *testing.T) {
 		t.Fatalf("SetTransitionStore unexpected error: %v", err)
 	}
 
-	beforeRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "canceled")
+	beforeRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "canceled")
 	startDone := make(chan struct{})
 	go func() {
 		s.Start()
@@ -621,7 +621,7 @@ func TestStartRespectsRecoveryTimeout(t *testing.T) {
 		t.Fatal("Start did not return within timeout window")
 	}
 
-	afterRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "canceled")
+	afterRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "canceled")
 	if afterRuns != beforeRuns+1 {
 		t.Fatalf("scheduler recovery canceled runs = %v, want %v", afterRuns, beforeRuns+1)
 	}
@@ -650,8 +650,8 @@ func TestRecoverFromTransitionsRecordsSuccessMetricsAndLog(t *testing.T) {
 		t.Fatalf("SetTransitionStore unexpected error: %v", err)
 	}
 
-	beforeRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "succeeded")
-	beforeRecovered := metricCounterValue(t, "spark_agent_scheduler_recovered_jobs_total")
+	beforeRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "succeeded")
+	beforeRecovered := metricCounterValue(t, "dagens_scheduler_recovered_jobs_total")
 	logger := schedulerLogger()
 	beforeLogs := len(logger.GetLogs())
 
@@ -659,11 +659,11 @@ func TestRecoverFromTransitionsRecordsSuccessMetricsAndLog(t *testing.T) {
 		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
 	}
 
-	afterRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "succeeded")
+	afterRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "succeeded")
 	if afterRuns != beforeRuns+1 {
 		t.Fatalf("scheduler recovery succeeded runs = %v, want %v", afterRuns, beforeRuns+1)
 	}
-	afterRecovered := metricCounterValue(t, "spark_agent_scheduler_recovered_jobs_total")
+	afterRecovered := metricCounterValue(t, "dagens_scheduler_recovered_jobs_total")
 	if afterRecovered != beforeRecovered+1 {
 		t.Fatalf("scheduler recovered jobs total = %v, want %v", afterRecovered, beforeRecovered+1)
 	}
@@ -707,7 +707,7 @@ func TestRecoverFromTransitionsRecordsFailureMetricsAndLog(t *testing.T) {
 		t.Fatalf("SetTransitionStore unexpected error: %v", err)
 	}
 
-	beforeRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "failed")
+	beforeRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "failed")
 	logger := schedulerLogger()
 	beforeLogs := len(logger.GetLogs())
 
@@ -716,7 +716,7 @@ func TestRecoverFromTransitionsRecordsFailureMetricsAndLog(t *testing.T) {
 		t.Fatal("expected RecoverFromTransitions to fail")
 	}
 
-	afterRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "failed")
+	afterRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "failed")
 	if afterRuns != beforeRuns+1 {
 		t.Fatalf("scheduler recovery failed runs = %v, want %v", afterRuns, beforeRuns+1)
 	}
@@ -757,7 +757,7 @@ func TestRecoverFromTransitionsRecordsCanceledMetricsAndLog(t *testing.T) {
 		t.Fatalf("SetTransitionStore unexpected error: %v", err)
 	}
 
-	beforeRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "canceled")
+	beforeRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "canceled")
 	logger := schedulerLogger()
 	beforeLogs := len(logger.GetLogs())
 
@@ -777,7 +777,7 @@ func TestRecoverFromTransitionsRecordsCanceledMetricsAndLog(t *testing.T) {
 		t.Fatalf("RecoverFromTransitions error = %v, want %v", err, context.Canceled)
 	}
 
-	afterRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "canceled")
+	afterRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "canceled")
 	if afterRuns != beforeRuns+1 {
 		t.Fatalf("scheduler recovery canceled runs = %v, want %v", afterRuns, beforeRuns+1)
 	}

@@ -41,10 +41,10 @@ func TestSubmitJobReturnsQueueFullWithoutRetainingRejectedJob(t *testing.T) {
 		t.Fatalf("GetAllJobs length = %d, want 1", got)
 	}
 
-	if got := gaugeValue(t, "spark_agent_task_queue_config_max", "scheduler", schedulerMetricsID); got != 1 {
+	if got := gaugeValue(t, "dagens_task_queue_config_max", "scheduler", schedulerMetricsID); got != 1 {
 		t.Fatalf("task queue config max = %v, want %v", got, 1.0)
 	}
-	if got := gaugeValue(t, "spark_agent_task_queue_observed_max", "scheduler", schedulerMetricsID); got < 1 {
+	if got := gaugeValue(t, "dagens_task_queue_observed_max", "scheduler", schedulerMetricsID); got < 1 {
 		t.Fatalf("task queue observed max = %v, want at least %v", got, 1.0)
 	}
 }
@@ -243,7 +243,7 @@ func TestSelectNodeByCapacityFallsBackToStaleWhenNoFreshCapacityExists(t *testin
 		CapacityTTL:                 5 * time.Second,
 	})
 	_ = schedulerMetrics()
-	before := metricCounterValue(t, "spark_agent_scheduler_degraded_mode_total")
+	before := metricCounterValue(t, "dagens_scheduler_degraded_mode_total")
 
 	s.nodeCapacity["worker-stale"] = &nodeCapacity{
 		ReportedInFlight: 0,
@@ -267,7 +267,7 @@ func TestSelectNodeByCapacityFallsBackToStaleWhenNoFreshCapacityExists(t *testin
 		t.Fatalf("selected node = %q, want %q", selected.ID, "worker-stale")
 	}
 
-	after := metricCounterValue(t, "spark_agent_scheduler_degraded_mode_total")
+	after := metricCounterValue(t, "dagens_scheduler_degraded_mode_total")
 	if after != before+1 {
 		t.Fatalf("SchedulerDegradedMode = %v, want %v", after, before+1)
 	}
@@ -365,6 +365,83 @@ func TestExecuteStageLogsCapacityExhaustionWarning(t *testing.T) {
 	}
 }
 
+func TestExecuteStageDefersUntilCapacityAvailable(t *testing.T) {
+	s := NewSchedulerWithConfig(capacityExhaustedRegistry{}, &sequenceTaskExecutor{}, SchedulerConfig{
+		DefaultWorkerMaxConcurrency:    1,
+		EnableStageCapacityDeferral:    true,
+		StageCapacityDeferralTimeout:   300 * time.Millisecond,
+		StageCapacityDeferralPollInterval: 20 * time.Millisecond,
+	})
+	s.nodeCapacity["worker-1"] = &nodeCapacity{
+		ReservedInFlight: 1,
+		MaxConcurrency:   1,
+		LastUpdated:      time.Now(),
+	}
+
+	stage := &Stage{
+		ID:    "stage-defer-success",
+		JobID: "job-defer-success",
+		Tasks: []*Task{{
+			ID:        "task-1",
+			StageID:   "stage-defer-success",
+			JobID:     "job-defer-success",
+			AgentID:   "agent-1",
+			AgentName: "agent",
+			Input:     &agent.AgentInput{},
+		}},
+	}
+
+	beforeDeferrals := metricCounterValue(t, "dagens_scheduler_capacity_deferrals_total")
+	go func() {
+		time.Sleep(80 * time.Millisecond)
+		s.releaseNodeSlot("worker-1")
+	}()
+
+	if err := s.executeStage(context.Background(), stage); err != nil {
+		t.Fatalf("executeStage error = %v, want nil", err)
+	}
+	if stage.Status != JobCompleted {
+		t.Fatalf("stage status = %q, want %q", stage.Status, JobCompleted)
+	}
+
+	afterDeferrals := metricCounterValue(t, "dagens_scheduler_capacity_deferrals_total")
+	if afterDeferrals != beforeDeferrals+1 {
+		t.Fatalf("scheduler capacity deferrals = %v, want %v", afterDeferrals, beforeDeferrals+1)
+	}
+}
+
+func TestExecuteStageDeferralTimeoutReturnsNoWorkerCapacity(t *testing.T) {
+	s := NewSchedulerWithConfig(capacityExhaustedRegistry{}, &sequenceTaskExecutor{}, SchedulerConfig{
+		DefaultWorkerMaxConcurrency:    1,
+		EnableStageCapacityDeferral:    true,
+		StageCapacityDeferralTimeout:   60 * time.Millisecond,
+		StageCapacityDeferralPollInterval: 10 * time.Millisecond,
+	})
+	s.nodeCapacity["worker-1"] = &nodeCapacity{
+		ReservedInFlight: 1,
+		MaxConcurrency:   1,
+		LastUpdated:      time.Now(),
+	}
+
+	stage := &Stage{
+		ID:    "stage-defer-timeout",
+		JobID: "job-defer-timeout",
+		Tasks: []*Task{{
+			ID:      "task-1",
+			StageID: "stage-defer-timeout",
+			JobID:   "job-defer-timeout",
+		}},
+	}
+
+	err := s.executeStage(context.Background(), stage)
+	if !errors.Is(err, ErrNoWorkerCapacity) {
+		t.Fatalf("executeStage error = %v, want %v", err, ErrNoWorkerCapacity)
+	}
+	if stage.Status != JobFailed {
+		t.Fatalf("stage status = %q, want %q", stage.Status, JobFailed)
+	}
+}
+
 func TestExecuteTaskRecordsDispatchRejectionReason(t *testing.T) {
 	s := NewSchedulerWithConfig(nil, &failingTaskExecutor{err: errors.New("connection refused")}, SchedulerConfig{})
 	task := &Task{
@@ -375,13 +452,13 @@ func TestExecuteTaskRecordsDispatchRejectionReason(t *testing.T) {
 	}
 	node := registry.NodeInfo{ID: "worker-1"}
 
-	before := counterVecValue(t, "spark_agent_scheduler_dispatch_rejections_total", "reason", "transport_error")
+	before := counterVecValue(t, "dagens_scheduler_dispatch_rejections_total", "reason", "transport_error")
 	err := s.executeTask(context.Background(), task, node)
 	if err == nil {
 		t.Fatal("expected executeTask to fail")
 	}
 
-	after := counterVecValue(t, "spark_agent_scheduler_dispatch_rejections_total", "reason", "transport_error")
+	after := counterVecValue(t, "dagens_scheduler_dispatch_rejections_total", "reason", "transport_error")
 	if after != before+1 {
 		t.Fatalf("transport_error dispatch rejections = %v, want %v", after, before+1)
 	}
@@ -404,7 +481,7 @@ func TestExecuteTaskWithRetryRetriesCapacityConflictAndSucceeds(t *testing.T) {
 		Input:     &agent.AgentInput{},
 	}
 
-	beforeRetries := metricCounterValue(t, "spark_agent_task_dispatch_retries_total")
+	beforeRetries := metricCounterValue(t, "dagens_task_dispatch_retries_total")
 	err := s.executeTaskWithRetry(context.Background(), task, nodes[0], nodes)
 	if err != nil {
 		t.Fatalf("executeTaskWithRetry error = %v, want nil", err)
@@ -413,7 +490,7 @@ func TestExecuteTaskWithRetryRetriesCapacityConflictAndSucceeds(t *testing.T) {
 		t.Fatalf("task.Attempts = %d, want %d", task.Attempts, 2)
 	}
 
-	afterRetries := metricCounterValue(t, "spark_agent_task_dispatch_retries_total")
+	afterRetries := metricCounterValue(t, "dagens_task_dispatch_retries_total")
 	if afterRetries != beforeRetries+1 {
 		t.Fatalf("task dispatch retries = %v, want %v", afterRetries, beforeRetries+1)
 	}
@@ -436,7 +513,7 @@ func TestExecuteTaskWithRetryFailsAtMaxDispatchAttempts(t *testing.T) {
 		Input:     &agent.AgentInput{},
 	}
 
-	beforeFailures := metricCounterValue(t, "spark_agent_tasks_failed_max_dispatch_attempts_total")
+	beforeFailures := metricCounterValue(t, "dagens_tasks_failed_max_dispatch_attempts_total")
 	err := s.executeTaskWithRetry(context.Background(), task, nodes[0], nodes)
 	if err == nil {
 		t.Fatal("expected executeTaskWithRetry to fail")
@@ -445,7 +522,7 @@ func TestExecuteTaskWithRetryFailsAtMaxDispatchAttempts(t *testing.T) {
 		t.Fatalf("task.Attempts = %d, want %d", task.Attempts, 2)
 	}
 
-	afterFailures := metricCounterValue(t, "spark_agent_tasks_failed_max_dispatch_attempts_total")
+	afterFailures := metricCounterValue(t, "dagens_tasks_failed_max_dispatch_attempts_total")
 	if afterFailures != beforeFailures+1 {
 		t.Fatalf("tasks failed max dispatch attempts = %v, want %v", afterFailures, beforeFailures+1)
 	}
@@ -464,7 +541,7 @@ func schedulerMetrics() *observability.Metrics {
 }
 
 func schedulerAllWorkersFullValue(t *testing.T) float64 {
-	return metricCounterValue(t, "spark_agent_scheduler_all_workers_full_total")
+	return metricCounterValue(t, "dagens_scheduler_all_workers_full_total")
 }
 
 func metricCounterValue(t *testing.T, metricName string) float64 {

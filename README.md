@@ -165,19 +165,6 @@ Scheduler transition durability backend is configured on the API server:
 - `DATABASE_URL=<postgres dsn>` (fallback if `SCHEDULER_TRANSITION_POSTGRES_DSN` is not set)
 - `SCHEDULER_RECOVERY_TIMEOUT=<duration>` (default: `5m`, examples: `30s`, `2m`)
 
-### Recovery and Replay Summary
-
-- Startup recovery replays unfinished jobs from transition history before the scheduler run loop begins.
-- Replay is deterministic by `sequence_id` order and intended to restore control-plane visibility first.
-- Startup recovery is time-bounded by `SCHEDULER_RECOVERY_TIMEOUT`.
-- In-memory transition store does not survive process restart; use Postgres transition store for durable replay input.
-- Current replay behavior does not auto-redispatch previously running tasks.
-
-See:
-- [State Machine](docs/STATE_MACHINE.md)
-- [Durability](docs/DURABILITY.md)
-- [Backpressure Design](docs/BACKPRESSURE.md)
-
 ## Python SDK (Run a Distributed Job in 2 Minutes)
 
 Once the Compose stack is running:
@@ -374,7 +361,10 @@ Set:
 ```bash
 OTEL_EXPORTER_TYPE=otlp
 OTEL_EXPORTER_OTLP_ENDPOINT=jaeger:4317
+METRICS_NAMESPACE=dagens
 ```
+
+`METRICS_NAMESPACE` defaults to `dagens` if unset.
 
 ## Project Structure
 
@@ -427,12 +417,12 @@ Dagens is a distributed orchestration runtime that can execute LangGraph-based a
 CrewAI is a single-process agent coordination framework.
 Dagens provides distributed scheduling, health-aware dispatch, and human-in-the-loop primitives at the runtime layer.
 
-See [Backpressure Design](docs/BACKPRESSURE.md) and [State Machine](docs/STATE_MACHINE.md) for the current control-plane semantics.
+See [Philosophy](docs/PHILOSOPHY.md) for a deeper discussion of architectural differences.
 
 ## Roadmap
 
 - Advanced scheduling strategies (least-loaded, weighted routing)
-- Durable deferred/requeue scheduling semantics
+- Backpressure-aware dispatch
 - Pluggable persistence layer abstraction
 - Kubernetes-native operator
 - Multi-tenant isolation model
@@ -440,9 +430,10 @@ See [Backpressure Design](docs/BACKPRESSURE.md) and [State Machine](docs/STATE_M
 
 ## Additional Docs
 
-- [Backpressure Design](docs/BACKPRESSURE.md) - Control-plane saturation model (v0.2)
-- [State Machine](docs/STATE_MACHINE.md) - Durable transition and replay model
-- [Durability](docs/DURABILITY.md) - Current persistence guarantees and limits
+- [Philosophy](docs/PHILOSOPHY.md) - Architectural beliefs and comparisons
+- [Discipline](docs/DISCIPLINE.md) - What Dagens will not become
+- [Recovery Runbook](docs/RECOVERY_RUNBOOK.md) - Operator actions for replay/recovery failures
+- [Postgres Transition Quickstart](docs/POSTGRES_TRANSITION_QUICKSTART.md) - Enable durable transition storage and replay input
 - [Scaling and Dispatch Clarification](docs/SCALING_AND_DISPATCH_CLARIFICATION.md)
 - [Repo Tree and Runtime Snapshot](docs/REPO_TREE_AND_RUNTIME.md)
 
