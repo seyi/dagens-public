@@ -47,20 +47,26 @@ type SchedulerConfig struct {
 	// added now so the retry-boundary implementation can use a stable knob.
 	// Default: 3
 	MaxDispatchAttempts int
+
+	// RecoveryTimeout bounds scheduler startup recovery duration before context
+	// cancellation.
+	// Default: 5 minutes
+	RecoveryTimeout time.Duration
 }
 
 // DefaultSchedulerConfig returns the default scheduler configuration
 func DefaultSchedulerConfig() SchedulerConfig {
 	return SchedulerConfig{
-		AffinityTTL:             1 * time.Hour,
-		AffinityCleanupInterval: 5 * time.Minute,
-		EnableStickiness:        true,
-		JobQueueSize:            100,
+		AffinityTTL:                 1 * time.Hour,
+		AffinityCleanupInterval:     5 * time.Minute,
+		EnableStickiness:            true,
+		JobQueueSize:                100,
 		DefaultWorkerMaxConcurrency: 1,
-		MaxWorkerConcurrencyCap: 100,
-		CapacityTTL:             5 * time.Second,
-		DispatchRejectCooldown:  5 * time.Second,
-		MaxDispatchAttempts:     3,
+		MaxWorkerConcurrencyCap:     100,
+		CapacityTTL:                 5 * time.Second,
+		DispatchRejectCooldown:      5 * time.Second,
+		MaxDispatchAttempts:         3,
+		RecoveryTimeout:             5 * time.Minute,
 	}
 }
 
@@ -89,5 +95,8 @@ func (c *SchedulerConfig) Validate() {
 	}
 	if c.MaxDispatchAttempts <= 0 {
 		c.MaxDispatchAttempts = 3
+	}
+	if c.RecoveryTimeout <= 0 {
+		c.RecoveryTimeout = 5 * time.Minute
 	}
 }

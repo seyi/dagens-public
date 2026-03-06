@@ -31,29 +31,32 @@ const schedulerMetricsID = "default"
 type nodeCapacity struct {
 	ReservedInFlight int
 	ReportedInFlight int
-	MaxConcurrency int
-	LastUpdated    time.Time
+	MaxConcurrency   int
+	LastUpdated      time.Time
 }
 
 // Scheduler manages the execution of jobs and their tasks
 type Scheduler struct {
-	registry    registry.Registry // Interface for node discovery
-	executor    TaskExecutor
-	jobs        map[string]*Job
-	jobQueue    chan *Job
-	mu          sync.RWMutex
-	stopChan    chan struct{}
-	wg          sync.WaitGroup
-	config      SchedulerConfig
-	affinityMap *AffinityMap // Sticky scheduling affinity tracking
-	nodeIndex   int          // Round-robin counter for node selection
-	nodeCapacity map[string]*nodeCapacity
+	registry          registry.Registry // Interface for node discovery
+	executor          TaskExecutor
+	jobs              map[string]*Job
+	jobQueue          chan *Job
+	mu                sync.RWMutex
+	stopChan          chan struct{}
+	wg                sync.WaitGroup
+	config            SchedulerConfig
+	affinityMap       *AffinityMap // Sticky scheduling affinity tracking
+	nodeIndex         int          // Round-robin counter for node selection
+	nodeCapacity      map[string]*nodeCapacity
 	dispatchCooldowns map[string]time.Time
-	transitionStore TransitionStore
-	transitionMu    sync.Mutex
-	jobSequences    map[string]uint64
-	started         bool
-	recovering      bool
+	transitionStore   TransitionStore
+	transitionMu      sync.Mutex
+	jobSequences      map[string]uint64
+	started           bool
+	recovering        bool
+	stopRequested     bool
+	recoveryCancel    context.CancelFunc
+	stopOnce          sync.Once
 }
 
 // RegistryInterface defines the subset of registry functionality needed by the scheduler
@@ -77,17 +80,17 @@ func NewSchedulerWithConfig(reg registry.Registry, executor TaskExecutor, config
 	}
 
 	s := &Scheduler{
-		registry:    reg,
-		executor:    executor,
-		jobs:        make(map[string]*Job),
-		jobQueue:    make(chan *Job, config.JobQueueSize),
-		stopChan:    make(chan struct{}),
-		config:      config,
-		affinityMap: affinityMap,
-		nodeCapacity: make(map[string]*nodeCapacity),
+		registry:          reg,
+		executor:          executor,
+		jobs:              make(map[string]*Job),
+		jobQueue:          make(chan *Job, config.JobQueueSize),
+		stopChan:          make(chan struct{}),
+		config:            config,
+		affinityMap:       affinityMap,
+		nodeCapacity:      make(map[string]*nodeCapacity),
 		dispatchCooldowns: make(map[string]time.Time),
-		transitionStore: NewInMemoryTransitionStore(),
-		jobSequences: make(map[string]uint64),
+		transitionStore:   NewInMemoryTransitionStore(),
+		jobSequences:      make(map[string]uint64),
 	}
 	observability.GetMetrics().SetTaskQueueDepths(schedulerMetricsID, 0, cap(s.jobQueue))
 	return s
@@ -96,19 +99,27 @@ func NewSchedulerWithConfig(reg registry.Registry, executor TaskExecutor, config
 // Start starts the scheduler's main loop
 func (s *Scheduler) Start() {
 	s.mu.Lock()
-	if s.started || s.recovering {
+	if s.started || s.recovering || s.stopRequested {
 		s.mu.Unlock()
 		return
 	}
 	s.recovering = true
+	recoveryCtx, cancel := context.WithTimeout(context.Background(), s.config.RecoveryTimeout)
+	s.recoveryCancel = cancel
 	s.mu.Unlock()
 
-	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+	if err := s.RecoverFromTransitions(recoveryCtx); err != nil {
 		log.Printf("failed to recover scheduler state from transitions: %v", err)
 	}
+	cancel()
 
 	s.mu.Lock()
 	s.recovering = false
+	s.recoveryCancel = nil
+	if s.stopRequested {
+		s.mu.Unlock()
+		return
+	}
 	s.started = true
 	s.mu.Unlock()
 	s.wg.Add(1)
@@ -117,7 +128,17 @@ func (s *Scheduler) Start() {
 
 // Stop stops the scheduler and cleans up resources
 func (s *Scheduler) Stop() {
-	close(s.stopChan)
+	s.mu.Lock()
+	s.stopRequested = true
+	cancel := s.recoveryCancel
+	s.mu.Unlock()
+	if cancel != nil {
+		cancel()
+	}
+
+	s.stopOnce.Do(func() {
+		close(s.stopChan)
+	})
 	s.wg.Wait()
 
 	// Stop affinity map cleanup goroutine
@@ -251,7 +272,7 @@ func (s *Scheduler) executeJob(job *Job) {
 	tracer := telemetry.GetGlobalTelemetry().GetTracer()
 	ctx, span := tracer.StartSpan(context.Background(), "job.execute")
 	defer span.End()
-	
+
 	span.SetAttribute("job.id", job.ID)
 	span.SetAttribute("job.name", job.Name)
 	s.recordJobTransition(ctx, span, job, TransitionJobRunning, JobStateRunning, "")
@@ -260,7 +281,7 @@ func (s *Scheduler) executeJob(job *Job) {
 	for _, stage := range job.Stages {
 		if err := s.executeStage(ctx, stage); err != nil {
 			log.Printf("Job %s failed at stage %s: %v", job.ID, stage.ID, err)
-			
+
 			// Check for policy violation
 			var policyErr *policy.ErrPolicyViolation
 			if errors.As(err, &policyErr) {
@@ -291,7 +312,7 @@ func (s *Scheduler) executeStage(ctx context.Context, stage *Stage) error {
 	tracer := telemetry.GetGlobalTelemetry().GetTracer()
 	stageCtx, span := tracer.StartSpan(ctx, "stage.execute")
 	defer span.End()
-	
+
 	span.SetAttribute("stage.id", stage.ID)
 	span.SetAttribute("task_count", len(stage.Tasks))
 
@@ -412,12 +433,12 @@ func (s *Scheduler) executeTaskWithRetry(ctx context.Context, task *Task, initia
 // executeTask executes a single task on a specific node
 func (s *Scheduler) executeTask(ctx context.Context, task *Task, node registry.NodeInfo) error {
 	task.Status = JobRunning
-	
+
 	// Create span for task
 	tracer := telemetry.GetGlobalTelemetry().GetTracer()
 	taskCtx, span := tracer.StartSpan(ctx, "task.execute")
 	defer span.End()
-	
+
 	span.SetAttribute("task.id", task.ID)
 	span.SetAttribute("agent.id", task.AgentID)
 	span.SetAttribute("node.id", node.ID)
@@ -507,32 +528,33 @@ func (s *Scheduler) recordJobTransition(ctx context.Context, span telemetry.Span
 		OccurredAt:    time.Now().UTC(),
 	}
 
-	if err := s.transitionStore.AppendTransition(ctx, record); err != nil {
-		log.Printf("failed to append job transition for job %s: %v", job.ID, err)
-		return
-	}
-
 	now := record.OccurredAt
-	job.LifecycleState = newState
-	if err := s.transitionStore.UpsertJob(ctx, DurableJobRecord{
-		JobID:        job.ID,
-		Name:         job.Name,
-		CurrentState: newState,
-		CreatedAt:    job.CreatedAt,
-		UpdatedAt:    now,
+	if err := s.persistTransitionWrite(ctx, func(tx TransitionStoreTx) error {
+		if err := tx.AppendTransition(ctx, record); err != nil {
+			return err
+		}
+		return tx.UpsertJob(ctx, DurableJobRecord{
+			JobID:          job.ID,
+			Name:           job.Name,
+			CurrentState:   newState,
+			LastSequenceID: record.SequenceID,
+			CreatedAt:      job.CreatedAt,
+			UpdatedAt:      now,
+		})
 	}); err != nil {
-		log.Printf("failed to upsert durable job record for job %s: %v", job.ID, err)
+		log.Printf("failed to persist job transition for job %s: %v", job.ID, err)
 		return
 	}
+	job.LifecycleState = newState
 
 	if span != nil {
 		span.AddEvent("scheduler.transition", map[string]interface{}{
-			"entity_type":  string(TransitionEntityJob),
-			"transition":   string(transition),
-			"job_id":       job.ID,
-			"previous":     string(previousState),
-			"new":          string(newState),
-			"sequence_id":  record.SequenceID,
+			"entity_type":   string(TransitionEntityJob),
+			"transition":    string(transition),
+			"job_id":        job.ID,
+			"previous":      string(previousState),
+			"new":           string(newState),
+			"sequence_id":   record.SequenceID,
 			"error_summary": errorSummary,
 		})
 	}
@@ -558,24 +580,35 @@ func (s *Scheduler) recordTaskTransition(ctx context.Context, span telemetry.Spa
 		OccurredAt:    time.Now().UTC(),
 	}
 
-	if err := s.transitionStore.AppendTransition(ctx, record); err != nil {
-		log.Printf("failed to append task transition for task %s: %v", task.ID, err)
-		return
-	}
+	// Capture the job snapshot outside the persistence callback to avoid lock
+	// nesting between transition-store transaction paths and Scheduler.mu reads.
+	// This keeps callback critical sections narrower and easier to reason about.
+	snapshot, hasSnapshot := s.durableJobSnapshot(task.JobID, record.SequenceID, record.OccurredAt)
 
-	task.LifecycleState = newState
-	if err := s.transitionStore.UpsertTask(ctx, DurableTaskRecord{
-		TaskID:       task.ID,
-		JobID:        task.JobID,
-		StageID:      task.StageID,
-		NodeID:       nodeID,
-		CurrentState: newState,
-		LastAttempt:  attempt,
-		UpdatedAt:    record.OccurredAt,
+	if err := s.persistTransitionWrite(ctx, func(tx TransitionStoreTx) error {
+		if err := tx.AppendTransition(ctx, record); err != nil {
+			return err
+		}
+		if err := tx.UpsertTask(ctx, DurableTaskRecord{
+			TaskID:       task.ID,
+			JobID:        task.JobID,
+			StageID:      task.StageID,
+			NodeID:       nodeID,
+			CurrentState: newState,
+			LastAttempt:  attempt,
+			UpdatedAt:    record.OccurredAt,
+		}); err != nil {
+			return err
+		}
+		if hasSnapshot {
+			return tx.UpsertJob(ctx, snapshot)
+		}
+		return nil
 	}); err != nil {
-		log.Printf("failed to upsert durable task record for task %s: %v", task.ID, err)
+		log.Printf("failed to persist task transition for task %s: %v", task.ID, err)
 		return
 	}
+	task.LifecycleState = newState
 
 	if span != nil {
 		span.AddEvent("scheduler.transition", map[string]interface{}{
@@ -591,6 +624,33 @@ func (s *Scheduler) recordTaskTransition(ctx context.Context, span telemetry.Spa
 			"error_summary": errorSummary,
 		})
 	}
+}
+
+func (s *Scheduler) durableJobSnapshot(jobID string, lastSequenceID uint64, updatedAt time.Time) (DurableJobRecord, bool) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	if job, ok := s.jobs[jobID]; ok && job != nil {
+		return DurableJobRecord{
+			JobID:          job.ID,
+			Name:           job.Name,
+			CurrentState:   job.LifecycleState,
+			LastSequenceID: lastSequenceID,
+			CreatedAt:      job.CreatedAt,
+			UpdatedAt:      updatedAt,
+		}, true
+	}
+	return DurableJobRecord{}, false
+}
+
+func (s *Scheduler) persistTransitionWrite(ctx context.Context, fn func(tx TransitionStoreTx) error) error {
+	if s.transitionStore == nil {
+		return nil
+	}
+	if atomicStore, ok := s.transitionStore.(AtomicTransitionStore); ok {
+		return atomicStore.WithTx(ctx, fn)
+	}
+	return fn(s.transitionStore)
 }
 
 func (s *Scheduler) nextSequenceID(jobID string) uint64 {

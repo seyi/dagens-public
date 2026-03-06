@@ -2,6 +2,7 @@ package scheduler
 
 import (
 	"context"
+	"errors"
 	"sort"
 	"time"
 
@@ -26,10 +27,26 @@ func (s *Scheduler) RecoverFromTransitions(ctx context.Context) error {
 
 	replayed, err := ReplayStateFromStore(ctx, s.transitionStore)
 	if err != nil {
-		metrics.RecordSchedulerRecoveryRun("failed")
+		status := "failed"
+		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+			status = "canceled"
+		}
+		jobID := ""
+		replayReason := err.Error()
+		var replayErr *ReplayJobError
+		if errors.As(err, &replayErr) {
+			jobID = replayErr.JobID
+			if replayErr.Err != nil {
+				replayReason = replayErr.Err.Error()
+			}
+		}
+		metrics.RecordSchedulerRecoveryRun(status)
 		metrics.RecordSchedulerRecoveryDuration(time.Since(start))
 		logger.Warn("scheduler startup recovery failed", map[string]interface{}{
-			"error": err.Error(),
+			"error":        err.Error(),
+			"status":       status,
+			"job_id":       jobID,
+			"replay_error": replayReason,
 		})
 		return err
 	}
@@ -38,8 +55,17 @@ func (s *Scheduler) RecoverFromTransitions(ctx context.Context) error {
 	defer s.mu.Unlock()
 
 	recoveredJobs := 0
+	seededJobs := 0
+	var seededMaxSequence uint64
 	for _, r := range replayed {
 		if _, exists := s.jobs[r.Job.JobID]; exists {
+			seeded, maxSeq := s.seedJobSequenceLocked(r.Job.JobID, r.Job.LastSequenceID, r.Transitions)
+			if seeded {
+				seededJobs++
+				if maxSeq > seededMaxSequence {
+					seededMaxSequence = maxSeq
+				}
+			}
 			continue
 		}
 
@@ -51,6 +77,8 @@ func (s *Scheduler) RecoverFromTransitions(ctx context.Context) error {
 			LifecycleState: r.Job.CurrentState,
 			CreatedAt:      r.Job.CreatedAt,
 			UpdatedAt:      r.Job.UpdatedAt,
+			// Recovery currently rebuilds a minimal visibility view and does not
+			// preserve arbitrary prior runtime metadata keys.
 			Metadata: map[string]interface{}{
 				"recovered": true,
 			},
@@ -96,6 +124,13 @@ func (s *Scheduler) RecoverFromTransitions(ctx context.Context) error {
 		}
 
 		s.jobs[job.ID] = job
+		seeded, maxSeq := s.seedJobSequenceLocked(job.ID, r.Job.LastSequenceID, r.Transitions)
+		if seeded {
+			seededJobs++
+			if maxSeq > seededMaxSequence {
+				seededMaxSequence = maxSeq
+			}
+		}
 		recoveredJobs++
 	}
 
@@ -103,10 +138,29 @@ func (s *Scheduler) RecoverFromTransitions(ctx context.Context) error {
 	metrics.RecordSchedulerRecoveredJobs(recoveredJobs)
 	metrics.RecordSchedulerRecoveryDuration(time.Since(start))
 	logger.Info("scheduler startup recovery completed", map[string]interface{}{
-		"recovered_jobs": recoveredJobs,
+		"recovered_jobs":      recoveredJobs,
+		"seeded_jobs":         seededJobs,
+		"seeded_max_sequence": seededMaxSequence,
 	})
 
 	return nil
+}
+
+func (s *Scheduler) seedJobSequenceLocked(jobID string, durableLastSeq uint64, transitions []TransitionRecord) (bool, uint64) {
+	maxSeq := durableLastSeq
+	for _, tr := range transitions {
+		if tr.SequenceID > maxSeq {
+			maxSeq = tr.SequenceID
+		}
+	}
+	if maxSeq == 0 {
+		return false, 0
+	}
+	if current, ok := s.jobSequences[jobID]; !ok || maxSeq > current {
+		s.jobSequences[jobID] = maxSeq
+		return true, maxSeq
+	}
+	return false, maxSeq
 }
 
 func runtimeJobStatusFromLifecycle(state JobLifecycleState) JobStatus {

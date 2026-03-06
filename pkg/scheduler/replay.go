@@ -6,6 +6,26 @@ import (
 	"sort"
 )
 
+// ReplayJobError attaches the failed job identifier to a replay error.
+type ReplayJobError struct {
+	JobID string
+	Err   error
+}
+
+func (e *ReplayJobError) Error() string {
+	if e == nil {
+		return "replay job error"
+	}
+	return fmt.Sprintf("replay failed for job %s: %v", e.JobID, e.Err)
+}
+
+func (e *ReplayJobError) Unwrap() error {
+	if e == nil {
+		return nil
+	}
+	return e.Err
+}
+
 // ReplayedJobState is the reconstructed control-plane view for a job after
 // replaying its durable transition history.
 type ReplayedJobState struct {
@@ -40,7 +60,21 @@ func ReplayStateFromStore(ctx context.Context, store TransitionStore) ([]Replaye
 		}
 		replayed, err := ReplayJobState(ctx, store, job.JobID)
 		if err != nil {
-			return nil, err
+			return nil, &ReplayJobError{JobID: job.JobID, Err: err}
+		}
+		replayed.Job.Name = job.Name
+		replayed.Job.LastSequenceID = job.LastSequenceID
+		if replayed.Job.CreatedAt.IsZero() {
+			replayed.Job.CreatedAt = job.CreatedAt
+		}
+		if replayed.Job.UpdatedAt.IsZero() {
+			replayed.Job.UpdatedAt = job.UpdatedAt
+		}
+		if len(replayed.Transitions) > 0 {
+			last := replayed.Transitions[len(replayed.Transitions)-1].SequenceID
+			if last > replayed.Job.LastSequenceID {
+				replayed.Job.LastSequenceID = last
+			}
 		}
 		result = append(result, replayed)
 	}

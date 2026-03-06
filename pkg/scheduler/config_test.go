@@ -34,18 +34,22 @@ func TestSchedulerConfigValidateAppliesDefaults(t *testing.T) {
 	if cfg.MaxDispatchAttempts != 3 {
 		t.Fatalf("MaxDispatchAttempts = %d, want %d", cfg.MaxDispatchAttempts, 3)
 	}
+	if cfg.RecoveryTimeout != 5*time.Minute {
+		t.Fatalf("RecoveryTimeout = %v, want %v", cfg.RecoveryTimeout, 5*time.Minute)
+	}
 }
 
 func TestSchedulerConfigValidatePreservesExplicitValues(t *testing.T) {
 	cfg := SchedulerConfig{
-		AffinityTTL:                2 * time.Hour,
-		AffinityCleanupInterval:    10 * time.Minute,
-		JobQueueSize:               42,
+		AffinityTTL:                 2 * time.Hour,
+		AffinityCleanupInterval:     10 * time.Minute,
+		JobQueueSize:                42,
 		DefaultWorkerMaxConcurrency: 4,
-		MaxWorkerConcurrencyCap:    12,
-		CapacityTTL:                9 * time.Second,
-		DispatchRejectCooldown:     11 * time.Second,
-		MaxDispatchAttempts:        7,
+		MaxWorkerConcurrencyCap:     12,
+		CapacityTTL:                 9 * time.Second,
+		DispatchRejectCooldown:      11 * time.Second,
+		MaxDispatchAttempts:         7,
+		RecoveryTimeout:             2 * time.Minute,
 	}
 
 	cfg.Validate()
@@ -73,5 +77,8 @@ func TestSchedulerConfigValidatePreservesExplicitValues(t *testing.T) {
 	}
 	if cfg.MaxDispatchAttempts != 7 {
 		t.Fatalf("MaxDispatchAttempts = %d, want %d", cfg.MaxDispatchAttempts, 7)
+	}
+	if cfg.RecoveryTimeout != 2*time.Minute {
+		t.Fatalf("RecoveryTimeout = %v, want %v", cfg.RecoveryTimeout, 2*time.Minute)
 	}
 }

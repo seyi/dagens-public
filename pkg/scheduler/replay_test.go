@@ -276,3 +276,42 @@ func TestReplayJobStateContextCanceled(t *testing.T) {
 		t.Fatalf("expected context.Canceled, got: %v", err)
 	}
 }
+
+func TestReplayStateFromStoreWrapsJobIDOnJobReplayFailure(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+
+	// Register an unfinished job index entry so ReplayStateFromStore attempts replay.
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:        "job-wrap-error",
+		Name:         "job-wrap-error",
+		CurrentState: JobStateSubmitted,
+		CreatedAt:    now,
+		UpdatedAt:    now,
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	// Inject an invalid transition directly to force replay failure.
+	store.mu.Lock()
+	store.transitions["job-wrap-error"] = []TransitionRecord{
+		{
+			SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted,
+			JobID: "job-wrap-error", NewState: "BROKEN", OccurredAt: now,
+		},
+	}
+	store.mu.Unlock()
+
+	_, err := ReplayStateFromStore(context.Background(), store)
+	if err == nil {
+		t.Fatal("expected ReplayStateFromStore to fail")
+	}
+
+	var replayErr *ReplayJobError
+	if !errors.As(err, &replayErr) {
+		t.Fatalf("expected ReplayJobError wrapper, got %T: %v", err, err)
+	}
+	if replayErr.JobID != "job-wrap-error" {
+		t.Fatalf("ReplayJobError.JobID = %q, want %q", replayErr.JobID, "job-wrap-error")
+	}
+}

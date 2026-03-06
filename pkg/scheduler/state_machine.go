@@ -43,38 +43,39 @@ const (
 type TransitionType string
 
 const (
-	TransitionJobSubmitted  TransitionType = "JOB_SUBMITTED"
-	TransitionJobQueued     TransitionType = "JOB_QUEUED"
-	TransitionJobRunning    TransitionType = "JOB_RUNNING"
-	TransitionJobSucceeded  TransitionType = "JOB_SUCCEEDED"
-	TransitionJobFailed     TransitionType = "JOB_FAILED"
-	TransitionJobCanceled   TransitionType = "JOB_CANCELED"
-	TransitionTaskCreated   TransitionType = "TASK_CREATED"
+	TransitionJobSubmitted   TransitionType = "JOB_SUBMITTED"
+	TransitionJobQueued      TransitionType = "JOB_QUEUED"
+	TransitionJobRunning     TransitionType = "JOB_RUNNING"
+	TransitionJobSucceeded   TransitionType = "JOB_SUCCEEDED"
+	TransitionJobFailed      TransitionType = "JOB_FAILED"
+	TransitionJobCanceled    TransitionType = "JOB_CANCELED"
+	TransitionTaskCreated    TransitionType = "TASK_CREATED"
 	TransitionTaskDispatched TransitionType = "TASK_DISPATCHED"
-	TransitionTaskRunning   TransitionType = "TASK_RUNNING"
-	TransitionTaskSucceeded TransitionType = "TASK_SUCCEEDED"
-	TransitionTaskFailed    TransitionType = "TASK_FAILED"
+	TransitionTaskRunning    TransitionType = "TASK_RUNNING"
+	TransitionTaskSucceeded  TransitionType = "TASK_SUCCEEDED"
+	TransitionTaskFailed     TransitionType = "TASK_FAILED"
 )
 
 // DurableJobRecord is the materialized current-state view used for fast lookup.
 // The transition log remains authoritative; this record is a rebuildable index.
 type DurableJobRecord struct {
-	JobID        string
-	Name         string
-	CurrentState JobLifecycleState
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	JobID          string
+	Name           string
+	CurrentState   JobLifecycleState
+	LastSequenceID uint64
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
 }
 
 // DurableTaskRecord is the materialized current-state view for a task.
 type DurableTaskRecord struct {
-	TaskID        string
-	JobID         string
-	StageID       string
-	NodeID        string
-	CurrentState  TaskLifecycleState
-	LastAttempt   int
-	UpdatedAt     time.Time
+	TaskID       string
+	JobID        string
+	StageID      string
+	NodeID       string
+	CurrentState TaskLifecycleState
+	LastAttempt  int
+	UpdatedAt    time.Time
 }
 
 // TransitionRecord is the append-only durable event used to reconstruct state.
@@ -84,17 +85,17 @@ type DurableTaskRecord struct {
 // recommended default because replay correctness does not require a global
 // cross-job order.
 type TransitionRecord struct {
-	SequenceID   uint64
-	EntityType   TransitionEntityType
-	Transition   TransitionType
-	JobID        string
-	TaskID       string
+	SequenceID    uint64
+	EntityType    TransitionEntityType
+	Transition    TransitionType
+	JobID         string
+	TaskID        string
 	PreviousState string
-	NewState     string
-	NodeID       string
-	Attempt      int
-	ErrorSummary string
-	OccurredAt   time.Time
+	NewState      string
+	NodeID        string
+	Attempt       int
+	ErrorSummary  string
+	OccurredAt    time.Time
 }
 
 // TransitionStore is the first durability interface for append-only lifecycle
@@ -112,6 +113,21 @@ type TransitionStore interface {
 	// ListTransitionsByJob returns transitions for the given job ordered by
 	// SequenceID ascending.
 	ListTransitionsByJob(ctx context.Context, jobID string) ([]TransitionRecord, error)
+}
+
+// TransitionStoreTx is the write surface used inside an atomic transition-store
+// transaction.
+type TransitionStoreTx interface {
+	AppendTransition(ctx context.Context, record TransitionRecord) error
+	UpsertJob(ctx context.Context, job DurableJobRecord) error
+	UpsertTask(ctx context.Context, task DurableTaskRecord) error
+}
+
+// AtomicTransitionStore extends TransitionStore with transactional writes for
+// append+upsert atomicity.
+type AtomicTransitionStore interface {
+	TransitionStore
+	WithTx(ctx context.Context, fn func(tx TransitionStoreTx) error) error
 }
 
 var validJobTransitions = map[JobLifecycleState]map[JobLifecycleState]struct{}{

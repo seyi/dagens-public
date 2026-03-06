@@ -158,6 +158,325 @@ func TestRecoverFromTransitionsReconstructsTaskRetryAttempts(t *testing.T) {
 	}
 }
 
+func TestRecoverFromTransitionsSeedsJobSequenceFromReplayedTransitions(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+
+	records := []TransitionRecord{
+		{SequenceID: 4, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-seq", NewState: string(JobStateSubmitted), OccurredAt: now},
+		{SequenceID: 5, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: "job-seq", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(time.Second)},
+	}
+	for _, record := range records {
+		if err := store.AppendTransition(context.Background(), record); err != nil {
+			t.Fatalf("AppendTransition unexpected error: %v", err)
+		}
+	}
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:        "job-seq",
+		Name:         "job-seq",
+		CurrentState: JobStateQueued,
+		CreatedAt:    now,
+		UpdatedAt:    now.Add(time.Second),
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
+	}
+
+	if got := s.nextSequenceID("job-seq"); got != 6 {
+		t.Fatalf("nextSequenceID after recovery = %d, want %d", got, 6)
+	}
+}
+
+func TestRecoverFromTransitionsSeedsSequenceForExistingJob(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+
+	records := []TransitionRecord{
+		{SequenceID: 9, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-existing-seq", NewState: string(JobStateSubmitted), OccurredAt: now},
+		{SequenceID: 10, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: "job-existing-seq", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(time.Second)},
+	}
+	for _, record := range records {
+		if err := store.AppendTransition(context.Background(), record); err != nil {
+			t.Fatalf("AppendTransition unexpected error: %v", err)
+		}
+	}
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:          "job-existing-seq",
+		Name:           "existing-seq",
+		CurrentState:   JobStateQueued,
+		LastSequenceID: 10,
+		CreatedAt:      now,
+		UpdatedAt:      now.Add(time.Second),
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 2})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+	s.mu.Lock()
+	s.jobs["job-existing-seq"] = &Job{
+		ID:             "job-existing-seq",
+		Name:           "existing",
+		Status:         JobPending,
+		LifecycleState: JobStateSubmitted,
+		CreatedAt:      now,
+		UpdatedAt:      now,
+		Stages:         []*Stage{},
+		Metadata:       map[string]interface{}{},
+	}
+	s.mu.Unlock()
+	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
+	}
+
+	if got := s.nextSequenceID("job-existing-seq"); got != 11 {
+		t.Fatalf("nextSequenceID for existing recovered job = %d, want %d", got, 11)
+	}
+}
+
+func TestSeedJobSequenceLockedUsesDurableBaselineWhenHigher(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	transitions := []TransitionRecord{
+		{SequenceID: 5},
+	}
+
+	seeded, maxSeq := s.seedJobSequenceLocked("job-seed-baseline", 10, transitions)
+	if !seeded {
+		t.Fatal("expected seeded=true")
+	}
+	if maxSeq != 10 {
+		t.Fatalf("maxSeq = %d, want %d", maxSeq, 10)
+	}
+	if got := s.jobSequences["job-seed-baseline"]; got != 10 {
+		t.Fatalf("job sequence = %d, want %d", got, 10)
+	}
+}
+
+func TestSeedJobSequenceLockedUsesTransitionMaxWhenHigher(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	transitions := []TransitionRecord{
+		{SequenceID: 7},
+	}
+
+	seeded, maxSeq := s.seedJobSequenceLocked("job-seed-transition", 3, transitions)
+	if !seeded {
+		t.Fatal("expected seeded=true")
+	}
+	if maxSeq != 7 {
+		t.Fatalf("maxSeq = %d, want %d", maxSeq, 7)
+	}
+	if got := s.jobSequences["job-seed-transition"]; got != 7 {
+		t.Fatalf("job sequence = %d, want %d", got, 7)
+	}
+}
+
+func TestDeriveStageStatusPrecedenceFailedOverCompleted(t *testing.T) {
+	stageTasks := []*Task{
+		{Status: JobCompleted},
+		{Status: JobFailed},
+	}
+
+	if got := deriveStageStatus(stageTasks); got != JobFailed {
+		t.Fatalf("deriveStageStatus = %q, want %q", got, JobFailed)
+	}
+}
+
+func TestDeriveStageStatusTable(t *testing.T) {
+	tests := []struct {
+		name  string
+		tasks []*Task
+		want  JobStatus
+	}{
+		{
+			name:  "empty",
+			tasks: []*Task{},
+			want:  JobPending,
+		},
+		{
+			name: "all completed",
+			tasks: []*Task{
+				{Status: JobCompleted},
+				{Status: JobCompleted},
+			},
+			want: JobCompleted,
+		},
+		{
+			name: "running plus pending",
+			tasks: []*Task{
+				{Status: JobRunning},
+				{Status: JobPending},
+			},
+			want: JobRunning,
+		},
+		{
+			name: "failed plus running",
+			tasks: []*Task{
+				{Status: JobFailed},
+				{Status: JobRunning},
+			},
+			want: JobFailed,
+		},
+		{
+			name: "blocked treated as failed",
+			tasks: []*Task{
+				{Status: JobBlocked},
+				{Status: JobCompleted},
+			},
+			want: JobFailed,
+		},
+		{
+			name: "all pending",
+			tasks: []*Task{
+				{Status: JobPending},
+				{Status: JobPending},
+			},
+			want: JobPending,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := deriveStageStatus(tt.tasks); got != tt.want {
+				t.Fatalf("deriveStageStatus() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRecoverFromTransitionsGroupsMissingStageIDUnderRecovered(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+
+	records := []TransitionRecord{
+		{SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-stage-fallback", NewState: string(JobStateSubmitted), OccurredAt: now},
+		{SequenceID: 2, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated, JobID: "job-stage-fallback", TaskID: "task-1", NewState: string(TaskStatePending), OccurredAt: now.Add(time.Second)},
+		{SequenceID: 3, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated, JobID: "job-stage-fallback", TaskID: "task-2", NewState: string(TaskStatePending), OccurredAt: now.Add(2 * time.Second)},
+	}
+	for _, record := range records {
+		if err := store.AppendTransition(context.Background(), record); err != nil {
+			t.Fatalf("AppendTransition unexpected error: %v", err)
+		}
+	}
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:        "job-stage-fallback",
+		Name:         "job-stage-fallback",
+		CurrentState: JobStateSubmitted,
+		CreatedAt:    now,
+		UpdatedAt:    now.Add(2 * time.Second),
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
+	}
+
+	job, err := s.GetJob("job-stage-fallback")
+	if err != nil {
+		t.Fatalf("GetJob unexpected error: %v", err)
+	}
+	if len(job.Stages) != 1 {
+		t.Fatalf("stage count = %d, want 1", len(job.Stages))
+	}
+	if job.Stages[0].ID != "recovered" {
+		t.Fatalf("fallback stage id = %q, want %q", job.Stages[0].ID, "recovered")
+	}
+	if len(job.Stages[0].Tasks) != 2 {
+		t.Fatalf("task count in fallback stage = %d, want 2", len(job.Stages[0].Tasks))
+	}
+}
+
+func TestRecoverFromTransitionsSetsRecoveredMetadataOnly(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+
+	if err := store.AppendTransition(context.Background(), TransitionRecord{
+		SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted,
+		JobID: "job-metadata-reset", NewState: string(JobStateSubmitted), OccurredAt: now,
+	}); err != nil {
+		t.Fatalf("AppendTransition unexpected error: %v", err)
+	}
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:        "job-metadata-reset",
+		Name:         "job-metadata-reset",
+		CurrentState: JobStateSubmitted,
+		CreatedAt:    now,
+		UpdatedAt:    now,
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
+	}
+
+	job, err := s.GetJob("job-metadata-reset")
+	if err != nil {
+		t.Fatalf("GetJob unexpected error: %v", err)
+	}
+	if len(job.Metadata) != 1 {
+		t.Fatalf("metadata size = %d, want 1", len(job.Metadata))
+	}
+	if recovered, ok := job.Metadata["recovered"].(bool); !ok || !recovered {
+		t.Fatalf("metadata recovered marker = %v, want true", job.Metadata["recovered"])
+	}
+}
+
+func TestRecoverFromTransitionsEmptyStoreRecordsSuccessMetrics(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+
+	beforeRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "succeeded")
+	beforeRecovered := metricCounterValue(t, "spark_agent_scheduler_recovered_jobs_total")
+	logger := schedulerLogger()
+	beforeLogs := len(logger.GetLogs())
+
+	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
+	}
+
+	afterRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "succeeded")
+	if afterRuns != beforeRuns+1 {
+		t.Fatalf("scheduler recovery succeeded runs = %v, want %v", afterRuns, beforeRuns+1)
+	}
+	afterRecovered := metricCounterValue(t, "spark_agent_scheduler_recovered_jobs_total")
+	if afterRecovered != beforeRecovered {
+		t.Fatalf("scheduler recovered jobs total = %v, want %v", afterRecovered, beforeRecovered)
+	}
+
+	logs := logger.GetLogs()
+	if len(logs) != beforeLogs+1 {
+		t.Fatalf("log count = %d, want %d", len(logs), beforeLogs+1)
+	}
+	last := logs[len(logs)-1]
+	if last.Message != "scheduler startup recovery completed" {
+		t.Fatalf("log message = %q, want %q", last.Message, "scheduler startup recovery completed")
+	}
+	if last.Attributes["recovered_jobs"] != 0 {
+		t.Fatalf("recovered_jobs log attr = %v, want %d", last.Attributes["recovered_jobs"], 0)
+	}
+}
+
 func TestStartRejectsSubmitWhileRecovering(t *testing.T) {
 	base := NewInMemoryTransitionStore()
 	now := time.Now().UTC()
@@ -207,6 +526,106 @@ func TestStartRejectsSubmitWhileRecovering(t *testing.T) {
 	case <-time.After(2 * time.Second):
 		t.Fatal("timed out waiting for scheduler start to complete")
 	}
+	s.Stop()
+}
+
+func TestStopCancelsRecoveryAndPreventsRunLoopStart(t *testing.T) {
+	base := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+	if err := base.AppendTransition(context.Background(), TransitionRecord{
+		SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted,
+		JobID: "job-stop-cancel", NewState: string(JobStateSubmitted), OccurredAt: now,
+	}); err != nil {
+		t.Fatalf("AppendTransition unexpected error: %v", err)
+	}
+	if err := base.UpsertJob(context.Background(), DurableJobRecord{
+		JobID: "job-stop-cancel", CurrentState: JobStateSubmitted, CreatedAt: now, UpdatedAt: now,
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	blockStore := &blockingTransitionStore{
+		TransitionStore: base,
+		started:         make(chan struct{}, 1),
+		release:         make(chan struct{}),
+	}
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	if err := s.SetTransitionStore(blockStore); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+
+	startDone := make(chan struct{})
+	go func() {
+		s.Start()
+		close(startDone)
+	}()
+
+	select {
+	case <-blockStore.started:
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for recovery to start")
+	}
+
+	// Stop should cancel recovery context and allow Start() to return without
+	// launching the run loop.
+	s.Stop()
+
+	select {
+	case <-startDone:
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for Start() to return after Stop() cancellation")
+	}
+}
+
+func TestStartRespectsRecoveryTimeout(t *testing.T) {
+	base := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+	if err := base.UpsertJob(context.Background(), DurableJobRecord{
+		JobID: "job-timeout", CurrentState: JobStateSubmitted, CreatedAt: now, UpdatedAt: now,
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	blockStore := &blockingTransitionStore{
+		TransitionStore: base,
+		started:         make(chan struct{}, 1),
+		release:         make(chan struct{}), // never released; rely on context timeout
+	}
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:     1,
+		RecoveryTimeout:  50 * time.Millisecond,
+		EnableStickiness: false,
+	})
+	if err := s.SetTransitionStore(blockStore); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+
+	beforeRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "canceled")
+	startDone := make(chan struct{})
+	go func() {
+		s.Start()
+		close(startDone)
+	}()
+
+	select {
+	case <-blockStore.started:
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for recovery start")
+	}
+
+	select {
+	case <-startDone:
+	case <-time.After(2 * time.Second):
+		t.Fatal("Start did not return within timeout window")
+	}
+
+	afterRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "canceled")
+	if afterRuns != beforeRuns+1 {
+		t.Fatalf("scheduler recovery canceled runs = %v, want %v", afterRuns, beforeRuns+1)
+	}
+
 	s.Stop()
 }
 
@@ -309,6 +728,73 @@ func TestRecoverFromTransitionsRecordsFailureMetricsAndLog(t *testing.T) {
 	last := logs[len(logs)-1]
 	if last.Message != "scheduler startup recovery failed" {
 		t.Fatalf("log message = %q, want %q", last.Message, "scheduler startup recovery failed")
+	}
+	if last.Attributes["job_id"] != "job-metrics-fail" {
+		t.Fatalf("job_id log attr = %v, want %q", last.Attributes["job_id"], "job-metrics-fail")
+	}
+	if replayErr, ok := last.Attributes["replay_error"].(string); !ok || replayErr == "" {
+		t.Fatalf("replay_error log attr = %v, want non-empty string", last.Attributes["replay_error"])
+	}
+}
+
+func TestRecoverFromTransitionsRecordsCanceledMetricsAndLog(t *testing.T) {
+	base := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+	if err := base.UpsertJob(context.Background(), DurableJobRecord{
+		JobID: "job-metrics-canceled", CurrentState: JobStateSubmitted, CreatedAt: now, UpdatedAt: now,
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	blockStore := &blockingTransitionStore{
+		TransitionStore: base,
+		started:         make(chan struct{}, 1),
+		release:         make(chan struct{}),
+	}
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	if err := s.SetTransitionStore(blockStore); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+
+	beforeRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "canceled")
+	logger := schedulerLogger()
+	beforeLogs := len(logger.GetLogs())
+
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
+	go func() {
+		select {
+		case <-blockStore.started:
+			cancel()
+		case <-done:
+		}
+	}()
+
+	err := s.RecoverFromTransitions(ctx)
+	close(done)
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("RecoverFromTransitions error = %v, want %v", err, context.Canceled)
+	}
+
+	afterRuns := counterVecValue(t, "spark_agent_scheduler_recovery_runs_total", "status", "canceled")
+	if afterRuns != beforeRuns+1 {
+		t.Fatalf("scheduler recovery canceled runs = %v, want %v", afterRuns, beforeRuns+1)
+	}
+
+	logs := logger.GetLogs()
+	if len(logs) != beforeLogs+1 {
+		t.Fatalf("log count = %d, want %d", len(logs), beforeLogs+1)
+	}
+	last := logs[len(logs)-1]
+	if last.Message != "scheduler startup recovery failed" {
+		t.Fatalf("log message = %q, want %q", last.Message, "scheduler startup recovery failed")
+	}
+	if last.Attributes["status"] != "canceled" {
+		t.Fatalf("status log attr = %v, want %q", last.Attributes["status"], "canceled")
+	}
+	if replayErr, ok := last.Attributes["replay_error"].(string); !ok || replayErr == "" {
+		t.Fatalf("replay_error log attr = %v, want non-empty string", last.Attributes["replay_error"])
 	}
 }
 
