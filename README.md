@@ -165,6 +165,19 @@ Scheduler transition durability backend is configured on the API server:
 - `DATABASE_URL=<postgres dsn>` (fallback if `SCHEDULER_TRANSITION_POSTGRES_DSN` is not set)
 - `SCHEDULER_RECOVERY_TIMEOUT=<duration>` (default: `5m`, examples: `30s`, `2m`)
 
+### Recovery and Replay Summary
+
+- Startup recovery replays unfinished jobs from transition history before the scheduler run loop begins.
+- Replay is deterministic by `sequence_id` order and intended to restore control-plane visibility first.
+- Startup recovery is time-bounded by `SCHEDULER_RECOVERY_TIMEOUT`.
+- In-memory transition store does not survive process restart; use Postgres transition store for durable replay input.
+- Current replay behavior does not auto-redispatch previously running tasks.
+
+See:
+- [State Machine](docs/STATE_MACHINE.md)
+- [Durability](docs/DURABILITY.md)
+- [Backpressure Design](docs/BACKPRESSURE.md)
+
 ## Python SDK (Run a Distributed Job in 2 Minutes)
 
 Once the Compose stack is running:
