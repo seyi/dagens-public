@@ -4,13 +4,26 @@ import (
 	"testing"
 )
 
+func subtreeAsMap(t *testing.T, s State) map[string]interface{} {
+	t.Helper()
+	out := map[string]interface{}{}
+	for _, key := range s.Keys() {
+		v, ok := s.Get(key)
+		if !ok {
+			continue
+		}
+		out[key] = v
+	}
+	return out
+}
+
 func TestSubtree_Basic(t *testing.T) {
 	s := NewMemoryState()
 	s.Set("root/a", 1)
 	s.Set("root/b", "v")
 	s.Set("other/x", 99)
 
-	sub := s.Subtree("root/")
+	sub := subtreeAsMap(t, s.Subtree("root/"))
 	if len(sub) != 2 {
 		t.Fatalf("expected 2 entries, got %d: %+v", len(sub), sub)
 	}
@@ -25,7 +38,7 @@ func TestSubtree_Basic(t *testing.T) {
 func TestSubtree_NoMatch(t *testing.T) {
 	s := NewMemoryState()
 	s.Set("a", 1)
-	sub := s.Subtree("none/")
+	sub := subtreeAsMap(t, s.Subtree("none/"))
 	if len(sub) != 0 {
 		t.Fatalf("expected empty subtree, got %+v", sub)
 	}
@@ -34,7 +47,7 @@ func TestSubtree_NoMatch(t *testing.T) {
 func TestSubtree_Immutability(t *testing.T) {
 	s := NewMemoryState()
 	s.Set("root/list", []int{1, 2, 3})
-	sub := s.Subtree("root/")
+	sub := subtreeAsMap(t, s.Subtree("root/"))
 
 	list := sub["list"].([]int)
 	list[0] = 99
@@ -54,7 +67,7 @@ func TestSubtree_AfterRestore(t *testing.T) {
 	restored := NewMemoryState()
 	restored.Restore(snap)
 
-	sub := restored.Subtree("root/")
+	sub := subtreeAsMap(t, restored.Subtree("root/"))
 	if len(sub) != 2 || sub["a"] != "keep" || sub["b"] != "also" {
 		t.Fatalf("unexpected subtree after restore: %+v", sub)
 	}
@@ -101,7 +114,7 @@ func TestSubtree_EdgeCasesAndNestedPrefixes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := s.Subtree(tt.prefix)
+			got := subtreeAsMap(t, s.Subtree(tt.prefix))
 			if len(got) != len(tt.wantKeys) {
 				t.Errorf("Subtree(%q) returned %d keys, want %d", tt.prefix, len(got), len(tt.wantKeys))
 			}
@@ -122,7 +135,7 @@ func TestSubtree_DeeplyNested(t *testing.T) {
 	s.Set("services/api/config/port", 8080)
 
 	// Test deeply nested extraction
-	sub := s.Subtree("services/auth/config/")
+	sub := subtreeAsMap(t, s.Subtree("services/auth/config/"))
 	if len(sub) != 3 {
 		t.Fatalf("expected 3 entries, got %d: %+v", len(sub), sub)
 	}
@@ -145,7 +158,7 @@ func TestSubtree_DeeplyNested(t *testing.T) {
 	}
 
 	// Test even deeper nesting
-	dbSub := s.Subtree("services/auth/config/db/")
+	dbSub := subtreeAsMap(t, s.Subtree("services/auth/config/db/"))
 	if len(dbSub) != 2 {
 		t.Fatalf("expected 2 db entries, got %d: %+v", len(dbSub), dbSub)
 	}

@@ -5,9 +5,21 @@ import (
 	"encoding/json"
 	"errors"
 	"reflect"
+	"strings"
 	"sync"
 	"testing"
 )
+
+func collectIteratePrefix(state *MemoryState, prefix string) map[string]interface{} {
+	out := map[string]interface{}{}
+	state.Iterate(func(key string, value any) bool {
+		if strings.HasPrefix(key, prefix) {
+			out[key] = value
+		}
+		return true
+	})
+	return out
+}
 
 // ============================================
 // Phase 2A: Serialization Tests
@@ -106,7 +118,7 @@ func TestMemoryState_Iterate(t *testing.T) {
 	state.Set("agent.plan", "deploy")
 	state.Set("user.name", "Bob")
 
-	scoped := state.Iterate("agent.memory.")
+	scoped := collectIteratePrefix(state, "agent.memory.")
 	if len(scoped) != 2 {
 		t.Fatalf("expected 2 scoped entries, got %d", len(scoped))
 	}
@@ -123,7 +135,7 @@ func TestMemoryState_Iterate_DeepCopy(t *testing.T) {
 	state := NewMemoryState()
 	state.Set("key", map[string]interface{}{"nested": "value"})
 
-	scoped := state.Iterate("key")
+	scoped := collectIteratePrefix(state, "key")
 
 	// Mutate the returned map
 	if nested, ok := scoped["key"].(map[string]interface{}); ok {
@@ -145,7 +157,7 @@ func TestMemoryState_Iterate_EmptyPrefix(t *testing.T) {
 	state.Set("b", 2)
 
 	// Empty prefix should return all keys
-	all := state.Iterate("")
+	all := collectIteratePrefix(state, "")
 	if len(all) != 2 {
 		t.Fatalf("expected 2 entries with empty prefix, got %d", len(all))
 	}
@@ -389,7 +401,7 @@ func TestMemoryState_Concurrent_Iterate(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < 100; j++ {
-				_ = state.Iterate("key")
+				_ = collectIteratePrefix(state, "key")
 			}
 		}()
 	}
@@ -635,7 +647,7 @@ func TestStateSnapshot_Clone_Nil(t *testing.T) {
 // ============================================
 
 func TestStateHistory_Record_DeepCopy(t *testing.T) {
-	history := NewStateHistory()
+	history := NewStateHistory(100)
 
 	snapshot := &StateSnapshot{
 		Version: 1,
@@ -658,7 +670,7 @@ func TestStateHistory_Record_DeepCopy(t *testing.T) {
 }
 
 func TestStateHistory_Get_DeepCopy(t *testing.T) {
-	history := NewStateHistory()
+	history := NewStateHistory(100)
 	history.Record(&StateSnapshot{
 		Version: 1,
 		Data:    map[string]interface{}{"key": "original"},
@@ -703,7 +715,7 @@ func BenchmarkMemoryState_Iterate_100Keys(b *testing.B) {
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = state.Iterate("prefix.")
+		state.Iterate(func(key string, value any) bool { return true })
 	}
 }
 
@@ -714,7 +726,7 @@ func BenchmarkMemoryState_Iterate_1000Keys(b *testing.B) {
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = state.Iterate("prefix.")
+		state.Iterate(func(key string, value any) bool { return true })
 	}
 }
 

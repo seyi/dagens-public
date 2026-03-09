@@ -140,6 +140,70 @@ func TestPostgresTransitionStoreWithTxRollsBackOnError(t *testing.T) {
 	})
 }
 
+func TestPostgresTransitionStoreWithTxCommitsAppendAndUpsertsAtomically(t *testing.T) {
+	withSchedulerPostgres(t, func(ctx context.Context, pool *pgxpool.Pool) {
+		store, err := NewPostgresTransitionStore(ctx, pool)
+		require.NoError(t, err)
+
+		now := time.Now().UTC()
+		err = store.WithTx(ctx, func(tx TransitionStoreTx) error {
+			if err := tx.AppendTransition(ctx, TransitionRecord{
+				SequenceID: 11,
+				EntityType: TransitionEntityJob,
+				Transition: TransitionJobSubmitted,
+				JobID:      "job-atomic-commit",
+				NewState:   string(JobStateSubmitted),
+				OccurredAt: now,
+			}); err != nil {
+				return err
+			}
+			if err := tx.UpsertJob(ctx, DurableJobRecord{
+				JobID:          "job-atomic-commit",
+				Name:           "atomic-commit",
+				CurrentState:   JobStateQueued,
+				LastSequenceID: 11,
+				CreatedAt:      now,
+				UpdatedAt:      now,
+			}); err != nil {
+				return err
+			}
+			return tx.UpsertTask(ctx, DurableTaskRecord{
+				TaskID:       "task-atomic-commit",
+				JobID:        "job-atomic-commit",
+				StageID:      "stage-atomic",
+				NodeID:       "worker-atomic",
+				CurrentState: TaskStatePending,
+				LastAttempt:  0,
+				UpdatedAt:    now,
+			})
+		})
+		require.NoError(t, err)
+
+		transitions, err := store.ListTransitionsByJob(ctx, "job-atomic-commit")
+		require.NoError(t, err)
+		require.Len(t, transitions, 1)
+		require.Equal(t, TransitionJobSubmitted, transitions[0].Transition)
+
+		jobs, err := store.ListUnfinishedJobs(ctx)
+		require.NoError(t, err)
+		require.Condition(t, func() bool {
+			for _, job := range jobs {
+				if job.JobID == "job-atomic-commit" &&
+					job.CurrentState == JobStateQueued &&
+					job.LastSequenceID == 11 {
+					return true
+				}
+			}
+			return false
+		}, "expected durable job upsert committed with transition append")
+
+		var taskCount int
+		taskCountQuery := `SELECT COUNT(*) FROM ` + durableTasksTable + ` WHERE task_id = $1 AND job_id = $2`
+		require.NoError(t, pool.QueryRow(ctx, taskCountQuery, "task-atomic-commit", "job-atomic-commit").Scan(&taskCount))
+		require.Equal(t, 1, taskCount)
+	})
+}
+
 func TestRecoverFromTransitionsSeedsSequenceForPostgresStore(t *testing.T) {
 	withSchedulerPostgres(t, func(ctx context.Context, pool *pgxpool.Pool) {
 		store, err := NewPostgresTransitionStore(ctx, pool)
@@ -176,5 +240,28 @@ func TestRecoverFromTransitionsSeedsSequenceForPostgresStore(t *testing.T) {
 		require.NoError(t, s.RecoverFromTransitions(ctx))
 
 		require.EqualValues(t, 6, s.nextSequenceID("job-seq-pg"))
+	})
+}
+
+func TestPostgresTransitionStoreNextSequenceIDMonotonicPerJob(t *testing.T) {
+	withSchedulerPostgres(t, func(ctx context.Context, pool *pgxpool.Pool) {
+		store, err := NewPostgresTransitionStore(ctx, pool)
+		require.NoError(t, err)
+
+		seqA1, err := store.NextSequenceID(ctx, "job-seq-a")
+		require.NoError(t, err)
+		require.EqualValues(t, 1, seqA1)
+
+		seqA2, err := store.NextSequenceID(ctx, "job-seq-a")
+		require.NoError(t, err)
+		require.EqualValues(t, 2, seqA2)
+
+		seqB1, err := store.NextSequenceID(ctx, "job-seq-b")
+		require.NoError(t, err)
+		require.EqualValues(t, 1, seqB1)
+
+		seqA3, err := store.NextSequenceID(ctx, "job-seq-a")
+		require.NoError(t, err)
+		require.EqualValues(t, 3, seqA3)
 	})
 }

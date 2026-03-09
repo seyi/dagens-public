@@ -3,6 +3,7 @@ package scheduler
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 	"time"
 )
@@ -202,6 +203,100 @@ func TestRecoverFromTransitionsDoesNotResumeRunningJobsWhenEnabled(t *testing.T)
 
 	if got := len(s.jobQueue); got != 0 {
 		t.Fatalf("recovered queue depth for RUNNING job = %d, want 0", got)
+	}
+}
+
+func TestRecoverFromTransitionsRebuildsAwaitingHumanJob(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+
+	records := []TransitionRecord{
+		{SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-awaiting-human", NewState: string(JobStateSubmitted), OccurredAt: now},
+		{SequenceID: 2, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated, JobID: "job-awaiting-human", TaskID: "task-1", NewState: string(TaskStatePending), OccurredAt: now.Add(time.Second)},
+		{SequenceID: 3, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: "job-awaiting-human", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(2 * time.Second)},
+		{SequenceID: 4, EntityType: TransitionEntityJob, Transition: TransitionJobRunning, JobID: "job-awaiting-human", PreviousState: string(JobStateQueued), NewState: string(JobStateRunning), OccurredAt: now.Add(3 * time.Second)},
+		{SequenceID: 5, EntityType: TransitionEntityJob, Transition: TransitionJobAwaitingHuman, JobID: "job-awaiting-human", PreviousState: string(JobStateRunning), NewState: string(JobStateAwaitingHuman), OccurredAt: now.Add(4 * time.Second)},
+	}
+	for _, record := range records {
+		if err := store.AppendTransition(context.Background(), record); err != nil {
+			t.Fatalf("AppendTransition unexpected error: %v", err)
+		}
+	}
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:          "job-awaiting-human",
+		Name:           "job-awaiting-human",
+		CurrentState:   JobStateAwaitingHuman,
+		LastSequenceID: 5,
+		CreatedAt:      now,
+		UpdatedAt:      now.Add(4 * time.Second),
+	}); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:                    2,
+		EnableResumeRecoveredQueuedJobs: true,
+	})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+
+	if err := s.RecoverFromTransitions(context.Background()); err != nil {
+		t.Fatalf("RecoverFromTransitions unexpected error: %v", err)
+	}
+
+	job, err := s.GetJob("job-awaiting-human")
+	if err != nil {
+		t.Fatalf("GetJob unexpected error: %v", err)
+	}
+	if job.LifecycleState != JobStateAwaitingHuman {
+		t.Fatalf("job lifecycle state = %q, want %q", job.LifecycleState, JobStateAwaitingHuman)
+	}
+	if job.Status != JobAwaitingHuman {
+		t.Fatalf("job runtime status = %q, want %q", job.Status, JobAwaitingHuman)
+	}
+	if got := len(s.jobQueue); got != 0 {
+		t.Fatalf("recovered queue depth for awaiting-human job = %d, want 0", got)
+	}
+}
+
+func TestRecoverFromTransitionsFailsForMalformedNonInitialTransitionMissingPreviousState(t *testing.T) {
+	now := time.Now().UTC()
+	store := NewInMemoryTransitionStore()
+
+	// Seed unfinished job visibility row.
+	store.jobs["job-malformed-prev"] = DurableJobRecord{
+		JobID:          "job-malformed-prev",
+		Name:           "job-malformed-prev",
+		CurrentState:   JobStateQueued,
+		LastSequenceID: 2,
+		CreatedAt:      now,
+		UpdatedAt:      now.Add(time.Second),
+	}
+	// Inject malformed history directly to exercise replay fail-fast behavior.
+	// Sequence 2 is a non-initial QUEUED transition but omits PreviousState.
+	store.transitions["job-malformed-prev"] = []TransitionRecord{
+		{
+			SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted,
+			JobID: "job-malformed-prev", NewState: string(JobStateSubmitted), OccurredAt: now,
+		},
+		{
+			SequenceID: 2, EntityType: TransitionEntityJob, Transition: TransitionJobQueued,
+			JobID: "job-malformed-prev", PreviousState: "", NewState: string(JobStateQueued), OccurredAt: now.Add(time.Second),
+		},
+	}
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+
+	err := s.RecoverFromTransitions(context.Background())
+	if err == nil {
+		t.Fatal("expected recovery error for malformed transition history")
+	}
+	if !strings.Contains(err.Error(), "previous_state required") {
+		t.Fatalf("recovery error = %v, want previous_state validation failure", err)
 	}
 }
 

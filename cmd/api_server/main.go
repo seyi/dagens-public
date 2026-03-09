@@ -154,22 +154,39 @@ func main() {
 	port := ":8080"
 	log.Printf("Starting Dagens Control API on %s", port)
 
-	// Compose route tree with metrics endpoint.
-	mux := http.NewServeMux()
-	mux.Handle("/", server.Routes())
-	mux.Handle("/metrics", observability.Handler())
+	hitlRuntime, err := newHITLCallbackRuntimeFromEnv(context.Background())
+	if err != nil {
+		log.Fatalf("Failed to initialize HITL callback runtime: %v", err)
+	}
+	if hitlRuntime != nil {
+		defer hitlRuntime.close()
+		log.Printf("HITL callback endpoint enabled at %s", hitlRuntime.path)
+	}
+
+	// Compose protected route tree first.
+	protectedMux := http.NewServeMux()
+	protectedMux.Handle("/", server.Routes())
+	protectedMux.Handle("/metrics", observability.Handler())
 
 	// Apply auth middleware unless DEV_MODE is enabled
-	var handler http.Handler = mux
+	var protectedHandler http.Handler = protectedMux
 	if !devMode {
-		handler = auth.HTTPMiddleware(authenticator)(mux)
+		protectedHandler = auth.HTTPMiddleware(authenticator)(protectedMux)
 	} else {
 		log.Println("WARNING: DEV_MODE enabled - authentication is disabled")
 	}
 
+	// Root mux allows specific public endpoints (HITL callback) while keeping
+	// existing API routes under auth middleware.
+	mux := http.NewServeMux()
+	mux.Handle("/", protectedHandler)
+	if hitlRuntime != nil {
+		mux.Handle(hitlRuntime.path, hitlRuntime.handler)
+	}
+
 	srv := &http.Server{
 		Addr:    port,
-		Handler: handler,
+		Handler: mux,
 	}
 
 	go func() {
@@ -215,13 +232,13 @@ func (m *MockRegistry) GetNode(id string) (registry.NodeInfo, bool) {
 	}
 	return registry.NodeInfo{}, false
 }
-func (m *MockRegistry) GetNodes() []registry.NodeInfo                     { return m.nodes }
-func (m *MockRegistry) GetNodeID() string                                 { return "api-server" }
+func (m *MockRegistry) GetNodes() []registry.NodeInfo { return m.nodes }
+func (m *MockRegistry) GetNodeID() string             { return "api-server" }
 func (m *MockRegistry) GetNodesByCapability(c string) []registry.NodeInfo {
 	// Mock registry does not model per-capability filtering; return all nodes.
 	return m.nodes
 }
-func (m *MockRegistry) GetNodeCount() int                                 { return len(m.nodes) }
-func (m *MockRegistry) GetHealthyNodeCount() int                          { return len(m.nodes) }
-func (m *MockRegistry) Start(ctx context.Context) error                   { return nil }
-func (m *MockRegistry) Stop() error                                       { return nil }
+func (m *MockRegistry) GetNodeCount() int               { return len(m.nodes) }
+func (m *MockRegistry) GetHealthyNodeCount() int        { return len(m.nodes) }
+func (m *MockRegistry) Start(ctx context.Context) error { return nil }
+func (m *MockRegistry) Stop() error                     { return nil }

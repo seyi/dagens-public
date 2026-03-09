@@ -2,7 +2,9 @@ package graph
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/google/uuid"
@@ -20,6 +22,20 @@ type Graph struct {
 	finishNodes []string
 	mu          sync.RWMutex
 	metadata    map[string]interface{}
+}
+
+// ClonableNode is an optional extension for node implementations that support
+// true deep cloning semantics.
+type ClonableNode interface {
+	Node
+	Clone() Node
+}
+
+// ClonableEdge is an optional extension for edge implementations that support
+// true deep cloning semantics.
+type ClonableEdge interface {
+	Edge
+	Clone() Edge
 }
 
 // GraphConfig holds configuration for creating a new graph.
@@ -303,7 +319,11 @@ func (g *Graph) GetMetadata(key string) (interface{}, bool) {
 	return val, exists
 }
 
-// Clone creates a deep copy of the graph.
+// Clone creates a structural copy of the graph.
+//
+// By default, Node/Edge instances are shared by reference unless they implement
+// ClonableNode/ClonableEdge. This avoids breaking existing node implementations
+// while enabling callers to opt into deep clone behavior.
 func (g *Graph) Clone() *Graph {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
@@ -319,15 +339,25 @@ func (g *Graph) Clone() *Graph {
 		metadata:    make(map[string]interface{}),
 	}
 
-	// Copy nodes
+	// Copy nodes (prefer deep clone when supported).
 	for id, node := range g.nodes {
+		if clonable, ok := node.(ClonableNode); ok {
+			newGraph.nodes[id] = clonable.Clone()
+			continue
+		}
 		newGraph.nodes[id] = node
 	}
 
-	// Copy edges
+	// Copy edges (prefer deep clone when supported).
 	for from, edgeList := range g.edges {
 		newGraph.edges[from] = make([]Edge, len(edgeList))
-		copy(newGraph.edges[from], edgeList)
+		for i, edge := range edgeList {
+			if clonable, ok := edge.(ClonableEdge); ok {
+				newGraph.edges[from][i] = clonable.Clone()
+				continue
+			}
+			newGraph.edges[from][i] = edge
+		}
 	}
 
 	// Copy finish nodes
@@ -349,6 +379,228 @@ type ExecutionContext struct {
 	Context     context.Context
 }
 
+const (
+	// PauseRequestIDStateKey is the well-known state key set by HITL-style nodes
+	// before yielding execution for human interaction.
+	PauseRequestIDStateKey = "_hitl_request_id"
+)
+
+// PausedResult is returned when graph execution yields for human interaction.
+type PausedResult struct {
+	RequestID    string `json:"request_id"`
+	NodeID       string `json:"node_id"`
+	GraphVersion string `json:"graph_version"`
+	TraceID      string `json:"trace_id,omitempty"`
+	TraceParent  string `json:"trace_parent,omitempty"`
+}
+
+// ExecutionResult captures terminal graph execution outcomes.
+type ExecutionResult struct {
+	Paused *PausedResult `json:"paused,omitempty"`
+}
+
+// IsPaused reports whether execution yielded for a pause/resume boundary.
+func (r *ExecutionResult) IsPaused() bool {
+	return r != nil && r.Paused != nil
+}
+
+type graphPausedError struct {
+	result *PausedResult
+	cause  error
+}
+
+func (e *graphPausedError) Error() string { return e.cause.Error() }
+func (e *graphPausedError) Unwrap() error { return e.cause }
+
+var graphExecutionContextFactory = NewGraphExecutionContext
+
+// GraphPauseMetricsEvent is a graph-neutral pause transition signal.
+type GraphPauseMetricsEvent struct {
+	GraphID      string
+	NodeID       string
+	RequestID    string
+	GraphVersion string
+	TraceID      string
+	TraceParent  string
+}
+
+// GraphFailureMetricsEvent is a graph-neutral execution failure signal.
+type GraphFailureMetricsEvent struct {
+	GraphID   string
+	RequestID string
+	Operation string
+	Error     string
+}
+
+// GraphMetricsHooks allows external metrics bridges to consume graph execution transitions
+// without introducing direct pkg/graph -> pkg/hitl coupling.
+type GraphMetricsHooks struct {
+	OnPause   func(GraphPauseMetricsEvent)
+	OnFailure func(GraphFailureMetricsEvent)
+}
+
+var graphMetricsHooks = GraphMetricsHooks{
+	OnPause:   func(GraphPauseMetricsEvent) {},
+	OnFailure: func(GraphFailureMetricsEvent) {},
+}
+var graphMetricsHooksMu sync.RWMutex
+
+// SetGraphMetricsHooks sets graph-neutral execution hooks and returns a restore function.
+// Passing nil handlers leaves their previous values unchanged.
+func SetGraphMetricsHooks(hooks GraphMetricsHooks) func() {
+	graphMetricsHooksMu.Lock()
+	prev := graphMetricsHooks
+	if hooks.OnPause != nil {
+		graphMetricsHooks.OnPause = hooks.OnPause
+	}
+	if hooks.OnFailure != nil {
+		graphMetricsHooks.OnFailure = hooks.OnFailure
+	}
+	graphMetricsHooksMu.Unlock()
+	return func() {
+		graphMetricsHooksMu.Lock()
+		graphMetricsHooks = prev
+		graphMetricsHooksMu.Unlock()
+	}
+}
+
+func emitPauseHook(event GraphPauseMetricsEvent) {
+	graphMetricsHooksMu.RLock()
+	onPause := graphMetricsHooks.OnPause
+	graphMetricsHooksMu.RUnlock()
+	onPause(event)
+}
+
+func emitFailureHook(event GraphFailureMetricsEvent) {
+	graphMetricsHooksMu.RLock()
+	onFailure := graphMetricsHooks.OnFailure
+	graphMetricsHooksMu.RUnlock()
+	onFailure(event)
+}
+
+// ExecuteWithResult executes the graph and returns a first-class paused contract
+// when a node yields for human interaction.
+func (g *Graph) ExecuteWithResult(ctx context.Context, state State) (*ExecutionResult, error) {
+	logger := telemetry.GetGlobalTelemetry().GetLogger()
+	requestID := requestIDFromState(state)
+	if err := g.Validate(); err != nil {
+		logger.Error("graph validation failed", map[string]interface{}{
+			"operation":  "graph.execute.validate",
+			"graph_id":   g.ID(),
+			"request_id": requestID,
+			"error":      err.Error(),
+		})
+		emitFailureHook(GraphFailureMetricsEvent{
+			GraphID:   g.ID(),
+			RequestID: requestID,
+			Operation: "graph.execute.validate",
+			Error:     err.Error(),
+		})
+		return nil, fmt.Errorf("graph validation failed: %w", err)
+	}
+
+	entryNodeID := g.Entry()
+	if entryNodeID == "" {
+		return &ExecutionResult{}, nil
+	}
+
+	err := g.traverseNode(ctx, entryNodeID, state, make(map[string]bool))
+	if err == nil {
+		return &ExecutionResult{}, nil
+	}
+
+	var pausedErr *graphPausedError
+	if errors.As(err, &pausedErr) {
+		emitPauseHook(GraphPauseMetricsEvent{
+			GraphID:      g.ID(),
+			NodeID:       pausedErr.result.NodeID,
+			RequestID:    pausedErr.result.RequestID,
+			GraphVersion: pausedErr.result.GraphVersion,
+			TraceID:      pausedErr.result.TraceID,
+			TraceParent:  pausedErr.result.TraceParent,
+		})
+		return &ExecutionResult{Paused: pausedErr.result}, nil
+	}
+	logger.Error("graph execution failed", map[string]interface{}{
+		"operation":  "graph.execute.run",
+		"graph_id":   g.ID(),
+		"request_id": requestID,
+		"error":      err.Error(),
+	})
+	emitFailureHook(GraphFailureMetricsEvent{
+		GraphID:   g.ID(),
+		RequestID: requestID,
+		Operation: "graph.execute.run",
+		Error:     err.Error(),
+	})
+
+	return nil, err
+}
+
+// ResumeFromPaused resumes graph traversal from a previously paused node.
+// The paused node itself is not re-executed; traversal continues from its
+// outgoing edges.
+func (g *Graph) ResumeFromPaused(ctx context.Context, state State, paused *PausedResult) (*ExecutionResult, error) {
+	if paused == nil {
+		return nil, fmt.Errorf("paused result is required")
+	}
+	if paused.NodeID == "" {
+		return nil, fmt.Errorf("paused node_id is required")
+	}
+
+	if err := g.Validate(); err != nil {
+		return nil, fmt.Errorf("graph validation failed: %w", err)
+	}
+
+	// Validate node exists before attempting resume traversal.
+	if _, err := g.GetNode(paused.NodeID); err != nil {
+		return nil, fmt.Errorf("resume node lookup failed: %w", err)
+	}
+
+	// Optional compatibility check to prevent resuming with a mismatched graph build.
+	currentVersion := g.graphVersion()
+	if paused.GraphVersion != "" && currentVersion != "" && paused.GraphVersion != currentVersion {
+		return nil, fmt.Errorf("graph version mismatch: paused=%s current=%s", paused.GraphVersion, currentVersion)
+	}
+
+	// Preserve request_id context for downstream pause/resume boundaries.
+	if paused.RequestID != "" {
+		state.Set(PauseRequestIDStateKey, paused.RequestID)
+	}
+
+	edges := g.GetEdges(paused.NodeID)
+	if len(edges) == 0 {
+		return &ExecutionResult{}, nil
+	}
+
+	visited := map[string]bool{paused.NodeID: true}
+	for _, edge := range edges {
+		if err := g.traverseNode(ctx, edge.To(), state, visited); err != nil {
+			var pausedErr *graphPausedError
+			if errors.As(err, &pausedErr) {
+				emitPauseHook(GraphPauseMetricsEvent{
+					GraphID:      g.ID(),
+					NodeID:       pausedErr.result.NodeID,
+					RequestID:    pausedErr.result.RequestID,
+					GraphVersion: pausedErr.result.GraphVersion,
+					TraceID:      pausedErr.result.TraceID,
+					TraceParent:  pausedErr.result.TraceParent,
+				})
+				return &ExecutionResult{Paused: pausedErr.result}, nil
+			}
+			emitFailureHook(GraphFailureMetricsEvent{
+				GraphID:   g.ID(),
+				RequestID: requestIDFromState(state),
+				Operation: "graph.resume.run",
+				Error:     err.Error(),
+			})
+			return nil, err
+		}
+	}
+
+	return &ExecutionResult{}, nil
+}
+
 // NewExecutionContext creates a new execution context.
 func NewExecutionContext(ctx context.Context, graphID string) *ExecutionContext {
 	return &ExecutionContext{
@@ -359,6 +611,45 @@ func NewExecutionContext(ctx context.Context, graphID string) *ExecutionContext 
 	}
 }
 
+// traverseNode recursively executes nodes in the graph.
+func (g *Graph) traverseNode(ctx context.Context, nodeID string, state State, visited map[string]bool) error {
+	if ctx != nil {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+	}
+	if visited[nodeID] {
+		return nil // Already visited
+	}
+	visited[nodeID] = true
+
+	node, err := g.GetNode(nodeID)
+	if err != nil {
+		return err
+	}
+
+	if err := node.Execute(ctx, state); err != nil {
+		if paused, ok := g.extractPausedResult(ctx, err, nodeID, state); ok {
+			return &graphPausedError{result: paused, cause: err}
+		}
+		return err
+	}
+
+	edges := g.GetEdges(nodeID)
+	for _, edge := range edges {
+		if ctx != nil {
+			if err := ctx.Err(); err != nil {
+				return err
+			}
+		}
+		if err := g.traverseNode(ctx, edge.To(), state, visited); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ExecuteWithObservability executes the graph with full observability.
 func (g *Graph) ExecuteWithObservability(ctx context.Context, state State, collector *telemetry.TelemetryCollector) error {
 	// Validate the graph first
@@ -367,11 +658,29 @@ func (g *Graph) ExecuteWithObservability(ctx context.Context, state State, colle
 	}
 
 	// Create execution context with observability
-	execCtx, err := NewGraphExecutionContext(ctx, g, collector)
+	execCtx, err := graphExecutionContextFactory(ctx, g, collector)
 	if err != nil {
-		return fmt.Errorf("failed to create execution context: %w", err)
+		// Graceful degradation: continue execution via non-observability path.
+		result, runErr := g.ExecuteWithResult(ctx, state)
+		if runErr != nil {
+			return runErr
+		}
+		if result != nil && result.IsPaused() {
+			return NewPauseSignal(*result.Paused, nil)
+		}
+		return nil
 	}
-	defer execCtx.Finish(nil) // Will be updated with actual error
+
+	var runErr error
+	defer func() {
+		// Pause is a yield boundary, not an execution failure.
+		var pauseSig PauseSignal
+		if runErr != nil && (errors.As(runErr, &pauseSig) || isLegacyPauseSignal(runErr)) {
+			execCtx.Finish(nil)
+			return
+		}
+		execCtx.Finish(runErr)
+	}()
 
 	// Execute the graph
 	entryNodeID := g.Entry()
@@ -380,17 +689,109 @@ func (g *Graph) ExecuteWithObservability(ctx context.Context, state State, colle
 	}
 
 	// Execute from entry node with observability
-	err = g.traverseNodeWithObservability(execCtx.Context(), entryNodeID, state, make(map[string]bool), execCtx)
-	if err != nil {
-		execCtx.Finish(err) // Update with actual error
-		return err
+	runErr = g.traverseNodeWithObservability(execCtx.Context(), entryNodeID, state, make(map[string]bool), execCtx)
+	return runErr
+}
+
+func (g *Graph) extractPausedResult(ctx context.Context, err error, nodeID string, state State) (*PausedResult, bool) {
+	requestID := requestIDFromState(state)
+	graphVersion := g.graphVersion()
+	traceID, traceParent := traceContextFromContext(ctx)
+
+	// Preferred: typed pause signal contract.
+	var pauseSig PauseSignal
+	if errors.As(err, &pauseSig) {
+		paused := normalizePausedResult(pauseSig.PauseResult(), nodeID, graphVersion, requestID)
+		if paused.TraceID == "" {
+			paused.TraceID = traceID
+		}
+		if paused.TraceParent == "" {
+			paused.TraceParent = traceParent
+		}
+		return paused, true
 	}
 
-	return nil
+	// Compatibility: explicit request marker in state for legacy pause errors.
+	if requestID != "" && isLegacyPauseSignal(err) {
+		return &PausedResult{
+			RequestID:    requestID,
+			NodeID:       nodeID,
+			GraphVersion: graphVersion,
+			TraceID:      traceID,
+			TraceParent:  traceParent,
+		}, true
+	}
+
+	// Last-resort compatibility bridge for legacy error-only pause signals.
+	if isLegacyPauseSignal(err) {
+		return &PausedResult{
+			RequestID:    requestID,
+			NodeID:       nodeID,
+			GraphVersion: graphVersion,
+			TraceID:      traceID,
+			TraceParent:  traceParent,
+		}, true
+	}
+
+	return nil, false
+}
+
+func (g *Graph) graphVersion() string {
+	if v, ok := g.GetMetadata("graph_version"); ok {
+		return fmt.Sprint(v)
+	}
+	if v, ok := g.GetMetadata("version"); ok {
+		return fmt.Sprint(v)
+	}
+	return ""
+}
+
+func traceContextFromContext(ctx context.Context) (string, string) {
+	if ctx == nil {
+		return "", ""
+	}
+	span := telemetry.GetGlobalTelemetry().GetTracer().GetSpan(ctx)
+	if span == nil {
+		return "", ""
+	}
+	traceID := span.TraceID()
+	spanID := span.SpanID()
+	if traceID == "" {
+		return "", ""
+	}
+	traceParent := ""
+	if isW3CTraceID(traceID) && isW3CSpanID(spanID) {
+		traceParent = fmt.Sprintf("00-%s-%s-01", strings.ToLower(traceID), strings.ToLower(spanID))
+	} else if spanID != "" {
+		traceParent = fmt.Sprintf("trace_id=%s;span_id=%s", traceID, spanID)
+	}
+	return traceID, traceParent
+}
+
+func isW3CTraceID(v string) bool {
+	return len(v) == 32 && isHexString(v)
+}
+
+func isW3CSpanID(v string) bool {
+	return len(v) == 16 && isHexString(v)
+}
+
+func isHexString(v string) bool {
+	for _, ch := range v {
+		if (ch < '0' || ch > '9') && (ch < 'a' || ch > 'f') && (ch < 'A' || ch > 'F') {
+			return false
+		}
+	}
+	return true
 }
 
 // traverseNodeWithObservability recursively executes nodes in the graph with observability.
 func (g *Graph) traverseNodeWithObservability(ctx context.Context, nodeID string, state State, visited map[string]bool, execCtx *GraphExecutionContext) error {
+	if ctx != nil {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+	}
 	if visited[nodeID] {
 		return nil // Already visited
 	}
@@ -416,6 +817,11 @@ func (g *Graph) traverseNodeWithObservability(ctx context.Context, nodeID string
 	// Get edges from this node
 	edges := g.GetEdges(nodeID)
 	for _, edge := range edges {
+		if ctx != nil {
+			if err := ctx.Err(); err != nil {
+				return err
+			}
+		}
 		// Record edge execution with duration tracking
 		edgeSpan := execCtx.RecordEdge(nodeID, edge.To())
 

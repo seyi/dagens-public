@@ -25,6 +25,13 @@ Control-plane saturation model (v0.2):
 Durability and recovery model (v0.2):
 - [State Machine](docs/STATE_MACHINE.md)
 - [Durability](docs/DURABILITY.md)
+- [Recovery Runbook](docs/RECOVERY_RUNBOOK.md)
+
+Recent control-plane hardening:
+- Durable scheduler transition sequences support per-job monotonic allocation (memory or Postgres-backed).
+- Explicit `AWAITING_HUMAN -> RUNNING` resume lifecycle is recorded as `JOB_RESUMED`.
+- Transition writes reject illegal lifecycle moves before append.
+- Replay/recovery is fail-fast for malformed non-initial transitions missing `previous_state`.
 
 ## Integrations (Bring Your Own Agent Framework)
 

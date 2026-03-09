@@ -2,7 +2,6 @@ package hitl
 
 import (
 	"context"
-	"fmt"
 	"time"
 )
 
@@ -130,23 +129,36 @@ func NewLoggingService() *LoggingService {
 
 // LogCheckpointCreated logs when a checkpoint is created
 func (l *LoggingService) LogCheckpointCreated(requestID, graphID, graphVersion, nodeID string, stateSize int, traceID string) {
-	// In a real implementation, this would log with structured logging
-	fmt.Printf("INFO: checkpoint created - request_id=%s, graph_id=%s, graph_version=%s, node_id=%s, state_size_bytes=%d, trace_id=%s\n",
-		requestID, graphID, graphVersion, nodeID, stateSize, traceID)
+	hitlLogger().Info("hitl checkpoint created", safeLogFields(map[string]interface{}{
+		"operation":        "observability.log_checkpoint_created",
+		"request_id":       requestID,
+		"graph_id":         graphID,
+		"graph_version":    graphVersion,
+		"node_id":          nodeID,
+		"state_size_bytes": stateSize,
+		"trace_id":         traceID,
+	}))
 }
 
 // LogCallbackReceived logs when a callback is received
 func (l *LoggingService) LogCallbackReceived(requestID string, latency time.Duration, isDuplicate bool, traceID string) {
-	// In a real implementation, this would log with structured logging
-	fmt.Printf("INFO: callback received - request_id=%s, latency_seconds=%.3f, duplicate=%t, trace_id=%s\n",
-		requestID, latency.Seconds(), isDuplicate, traceID)
+	hitlLogger().Info("hitl callback received", safeLogFields(map[string]interface{}{
+		"operation":       "observability.log_callback_received",
+		"request_id":      requestID,
+		"latency_seconds": latency.Seconds(),
+		"duplicate":       isDuplicate,
+		"trace_id":        traceID,
+	}))
 }
 
 // LogVersionMismatch logs when a graph version mismatch occurs
 func (l *LoggingService) LogVersionMismatch(checkpointVersion, currentVersion, requestID string) {
-	// This is a P1 alert in production
-	fmt.Printf("ERROR: graph version mismatch - checkpoint_version=%s, current_version=%s, request_id=%s\n",
-		checkpointVersion, currentVersion, requestID)
+	hitlLogger().Error("hitl graph version mismatch", safeLogFields(map[string]interface{}{
+		"operation":          "observability.log_version_mismatch",
+		"checkpoint_version": checkpointVersion,
+		"current_version":    currentVersion,
+		"request_id":         requestID,
+	}))
 }
 
 // TracingService provides distributed tracing

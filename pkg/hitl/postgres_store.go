@@ -327,6 +327,45 @@ func (s *PostgresCheckpointStore) Delete(requestID string) error {
 	return nil
 }
 
+// Replace atomically replaces an existing checkpoint row with a new one.
+func (s *PostgresCheckpointStore) Replace(oldRequestID string, next *ExecutionCheckpoint) error {
+	if next == nil {
+		return fmt.Errorf("next checkpoint is nil")
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("begin checkpoint replace transaction: %w", err)
+	}
+	defer tx.Rollback(ctx) // safe if already committed
+
+	// Ensure old row exists and lock it to avoid concurrent replacement races.
+	lockQuery := fmt.Sprintf(`SELECT request_id FROM %s WHERE request_id = $1 FOR UPDATE;`, checkpointTable)
+	var found string
+	if err := tx.QueryRow(ctx, lockQuery, oldRequestID).Scan(&found); err != nil {
+		if err == pgx.ErrNoRows {
+			return ErrCheckpointNotFound
+		}
+		return fmt.Errorf("lock old checkpoint: %w", err)
+	}
+
+	if err := s.insertCheckpoint(ctx, tx, next); err != nil {
+		return fmt.Errorf("insert replacement checkpoint: %w", err)
+	}
+
+	deleteQuery := fmt.Sprintf(`DELETE FROM %s WHERE request_id = $1;`, checkpointTable)
+	if _, err := tx.Exec(ctx, deleteQuery, oldRequestID); err != nil {
+		return fmt.Errorf("delete old checkpoint after replacement: %w", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("commit checkpoint replace transaction: %w", err)
+	}
+	return nil
+}
+
 // ListOrphaned returns checkpoints older than the provided duration.
 func (s *PostgresCheckpointStore) ListOrphaned(olderThan time.Duration) ([]*ExecutionCheckpoint, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

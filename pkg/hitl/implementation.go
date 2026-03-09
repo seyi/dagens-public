@@ -45,6 +45,22 @@ func (r *RedisCheckpointStore) Delete(requestID string) error {
 	return nil
 }
 
+// Replace atomically swaps an existing checkpoint with a new checkpoint entry.
+func (r *RedisCheckpointStore) Replace(oldRequestID string, next *ExecutionCheckpoint) error {
+	if next == nil {
+		return fmt.Errorf("next checkpoint is nil")
+	}
+	if oldRequestID == "" {
+		return fmt.Errorf("old request id is empty")
+	}
+	if _, exists := r.store[oldRequestID]; !exists {
+		return ErrCheckpointNotFound
+	}
+	r.store[next.RequestID] = next
+	delete(r.store, oldRequestID)
+	return nil
+}
+
 func (r *RedisCheckpointStore) ListOrphaned(olderThan time.Duration) ([]*ExecutionCheckpoint, error) {
 	var orphaned []*ExecutionCheckpoint
 	cutoff := time.Now().Add(-olderThan)
@@ -81,8 +97,11 @@ func (r *RedisCheckpointStore) MoveToCheckpointDLQ(requestID string, finalError 
 	// For now, we'll just delete it
 	delete(r.store, requestID)
 
-	// Log the move to DLQ (in real implementation)
-	fmt.Printf("Moved checkpoint %s to DLQ: %s\n", requestID, finalError)
+	hitlLogger().Warn("moved checkpoint to in-memory DLQ fallback", safeLogFields(map[string]interface{}{
+		"operation":  "checkpoint_store.move_to_dlq",
+		"request_id": requestID,
+		"reason":     finalError,
+	}))
 
 	return nil
 }
@@ -130,15 +149,22 @@ func (s *SimpleInMemoryQueue) Ack(ctx context.Context, jobID string) error {
 	return nil
 }
 
+// QueueLength returns the current buffered queue length.
+func (s *SimpleInMemoryQueue) QueueLength(ctx context.Context) (int64, error) {
+	return int64(len(s.queue)), nil
+}
+
 // SimpleGraphRegistry is a simple implementation of GraphRegistry
 type SimpleGraphRegistry struct {
-	graphs map[string]GraphDefinition
+	graphs      map[string]GraphDefinition
+	executables map[string]*graph.Graph
 }
 
 // NewSimpleGraphRegistry creates a new simple graph registry
 func NewSimpleGraphRegistry() *SimpleGraphRegistry {
 	return &SimpleGraphRegistry{
-		graphs: make(map[string]GraphDefinition),
+		graphs:      make(map[string]GraphDefinition),
+		executables: make(map[string]*graph.Graph),
 	}
 }
 
@@ -152,6 +178,24 @@ func (s *SimpleGraphRegistry) GetGraph(graphID string) (GraphDefinition, error) 
 
 func (s *SimpleGraphRegistry) RegisterGraph(graphDef GraphDefinition) {
 	s.graphs[graphDef.ID] = graphDef
+}
+
+// RegisterExecutableGraph registers an executable graph for graph-native resume.
+func (s *SimpleGraphRegistry) RegisterExecutableGraph(g *graph.Graph, version string) {
+	if g == nil {
+		return
+	}
+	s.graphs[g.ID()] = GraphDefinition{ID: g.ID(), Version: version}
+	s.executables[g.ID()] = g
+}
+
+// GetExecutableGraph returns the executable graph if it is registered.
+func (s *SimpleGraphRegistry) GetExecutableGraph(graphID string) (*graph.Graph, error) {
+	g, exists := s.executables[graphID]
+	if !exists {
+		return nil, fmt.Errorf("executable graph not found: %s", graphID)
+	}
+	return g, nil
 }
 
 // SimpleResumableExecutor is a simple implementation of ResumableExecutor

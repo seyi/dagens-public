@@ -107,15 +107,19 @@ func (s *Scheduler) Start() {
 	recoveryCtx, cancel := context.WithTimeout(context.Background(), s.config.RecoveryTimeout)
 	s.recoveryCancel = cancel
 	s.mu.Unlock()
+	defer func() {
+		s.mu.Lock()
+		s.recovering = false
+		s.recoveryCancel = nil
+		s.mu.Unlock()
+	}()
+	defer cancel()
 
 	if err := s.RecoverFromTransitions(recoveryCtx); err != nil {
 		log.Printf("failed to recover scheduler state from transitions: %v", err)
 	}
-	cancel()
 
 	s.mu.Lock()
-	s.recovering = false
-	s.recoveryCancel = nil
 	if s.stopRequested {
 		s.mu.Unlock()
 		return
@@ -149,6 +153,12 @@ func (s *Scheduler) Stop() {
 
 // SubmitJob submits a job for execution
 func (s *Scheduler) SubmitJob(job *Job) error {
+	return s.SubmitJobWithContext(context.Background(), job)
+}
+
+// SubmitJobWithContext submits a job for execution and uses ctx for initial
+// lifecycle transition persistence.
+func (s *Scheduler) SubmitJobWithContext(ctx context.Context, job *Job) error {
 	s.mu.Lock()
 	if s.recovering {
 		s.mu.Unlock()
@@ -167,7 +177,7 @@ func (s *Scheduler) SubmitJob(job *Job) error {
 		s.jobs[job.ID] = job
 		metrics.SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
 		s.mu.Unlock()
-		s.recordInitialTransitions(job)
+		s.recordInitialTransitions(ctx, job)
 		return nil
 	default:
 		metrics.SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
@@ -278,7 +288,11 @@ func (s *Scheduler) executeJob(job *Job) {
 
 	span.SetAttribute("job.id", job.ID)
 	span.SetAttribute("job.name", job.Name)
-	s.recordJobTransition(ctx, span, job, TransitionJobRunning, JobStateRunning, "")
+	startTransition := TransitionJobRunning
+	if job.LifecycleState == JobStateAwaitingHuman {
+		startTransition = TransitionJobResumed
+	}
+	s.recordJobTransition(ctx, span, job, startTransition, JobStateRunning, "")
 
 	// Execute stages sequentially
 	for _, stage := range job.Stages {
@@ -291,6 +305,10 @@ func (s *Scheduler) executeJob(job *Job) {
 				s.updateJobStatus(job, JobBlocked)
 				s.recordJobTransition(ctx, span, job, TransitionJobFailed, JobStateFailed, err.Error())
 				span.SetStatus(telemetry.StatusError, "policy_blocked: "+policyErr.Reason)
+			} else if isHumanPauseError(err) {
+				s.updateJobStatus(job, JobAwaitingHuman)
+				s.recordJobTransition(ctx, span, job, TransitionJobAwaitingHuman, JobStateAwaitingHuman, err.Error())
+				span.SetStatus(telemetry.StatusOK, "job awaiting human input")
 			} else {
 				s.updateJobStatus(job, JobFailed)
 				s.recordJobTransition(ctx, span, job, TransitionJobFailed, JobStateFailed, err.Error())
@@ -304,6 +322,15 @@ func (s *Scheduler) executeJob(job *Job) {
 	s.recordJobTransition(ctx, span, job, TransitionJobSucceeded, JobStateSucceeded, "")
 	span.SetStatus(telemetry.StatusOK, "Job completed successfully")
 	log.Printf("Job %s completed successfully", job.ID)
+}
+
+func isHumanPauseError(err error) bool {
+	if err == nil {
+		return false
+	}
+	msg := strings.ToLower(err.Error())
+	return strings.Contains(msg, "human interaction pending") ||
+		strings.Contains(msg, "execution paused")
 }
 
 // executeStage executes a stage and its tasks
@@ -335,6 +362,10 @@ func (s *Scheduler) executeStage(ctx context.Context, stage *Stage) error {
 	var selectionErr error
 	startedTasks := 0
 	for _, task := range stage.Tasks {
+		if err := stageCtx.Err(); err != nil {
+			selectionErr = err
+			break
+		}
 		node, affinityResult, ok, err := s.selectNodeForTaskWithDeferral(stageCtx, task, nodes)
 		if err != nil {
 			selectionErr = err
@@ -542,12 +573,10 @@ func (s *Scheduler) updateJobStatus(job *Job, status JobStatus) {
 	job.UpdatedAt = time.Now()
 }
 
-func (s *Scheduler) recordInitialTransitions(job *Job) {
+func (s *Scheduler) recordInitialTransitions(ctx context.Context, job *Job) {
 	if job == nil {
 		return
 	}
-
-	ctx := context.Background()
 	s.recordJobTransition(ctx, nil, job, TransitionJobSubmitted, JobStateSubmitted, "")
 	for _, stage := range job.Stages {
 		for _, task := range stage.Tasks {
@@ -567,10 +596,24 @@ func (s *Scheduler) recordJobTransition(ctx context.Context, span telemetry.Span
 	if s.transitionStore == nil || job == nil {
 		return
 	}
-
 	previousState := job.LifecycleState
+	if previousState != "" && !CanTransitionJobState(previousState, newState) {
+		log.Printf("skipping invalid job lifecycle transition for job %s: %s -> %s (%s)", job.ID, previousState, newState, transition)
+		return
+	}
+	if previousState == "" && newState != JobStateSubmitted {
+		log.Printf("skipping non-initial job transition without previous state for job %s: -> %s (%s)", job.ID, newState, transition)
+		return
+	}
+
+	seqID, err := s.nextSequenceIDWithContext(ctx, job.ID)
+	if err != nil {
+		log.Printf("failed to allocate transition sequence for job %s: %v", job.ID, err)
+		return
+	}
+
 	record := TransitionRecord{
-		SequenceID:    s.nextSequenceID(job.ID),
+		SequenceID:    seqID,
 		EntityType:    TransitionEntityJob,
 		Transition:    transition,
 		JobID:         job.ID,
@@ -616,10 +659,24 @@ func (s *Scheduler) recordTaskTransition(ctx context.Context, span telemetry.Spa
 	if s.transitionStore == nil || task == nil {
 		return
 	}
-
 	previousState := task.LifecycleState
+	if previousState != "" && !CanTransitionTaskState(previousState, newState) {
+		log.Printf("skipping invalid task lifecycle transition for task %s: %s -> %s (%s)", task.ID, previousState, newState, transition)
+		return
+	}
+	if previousState == "" && newState != TaskStatePending {
+		log.Printf("skipping non-initial task transition without previous state for task %s: -> %s (%s)", task.ID, newState, transition)
+		return
+	}
+
+	seqID, err := s.nextSequenceIDWithContext(ctx, task.JobID)
+	if err != nil {
+		log.Printf("failed to allocate transition sequence for task %s: %v", task.ID, err)
+		return
+	}
+
 	record := TransitionRecord{
-		SequenceID:    s.nextSequenceID(task.JobID),
+		SequenceID:    seqID,
 		EntityType:    TransitionEntityTask,
 		Transition:    transition,
 		JobID:         task.JobID,
@@ -706,10 +763,25 @@ func (s *Scheduler) persistTransitionWrite(ctx context.Context, fn func(tx Trans
 }
 
 func (s *Scheduler) nextSequenceID(jobID string) uint64 {
+	seq, err := s.nextSequenceIDWithContext(context.Background(), jobID)
+	if err == nil {
+		return seq
+	}
+	log.Printf("falling back to in-memory sequence for job %s: %v", jobID, err)
 	s.transitionMu.Lock()
 	defer s.transitionMu.Unlock()
 	s.jobSequences[jobID]++
 	return s.jobSequences[jobID]
+}
+
+func (s *Scheduler) nextSequenceIDWithContext(ctx context.Context, jobID string) (uint64, error) {
+	if sequenceStore, ok := s.transitionStore.(SequenceIDStore); ok {
+		return sequenceStore.NextSequenceID(ctx, jobID)
+	}
+	s.transitionMu.Lock()
+	defer s.transitionMu.Unlock()
+	s.jobSequences[jobID]++
+	return s.jobSequences[jobID], nil
 }
 
 // selectNodeForTask selects a node for the given task using sticky scheduling

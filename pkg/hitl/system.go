@@ -140,6 +140,9 @@ func (s *System) CreateHumanNode(config HumanNodeConfig) *HumanNode {
 	if config.CheckpointStore == nil {
 		config.CheckpointStore = s.config.CheckpointStore
 	}
+	if config.Metrics == nil && s.config.MetricsCollector != nil {
+		config.Metrics = s.config.MetricsCollector.GetMetrics()
+	}
 
 	return NewHumanNode(config)
 }

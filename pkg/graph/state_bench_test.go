@@ -18,7 +18,9 @@ func BenchmarkMemoryState_Iterate_1K(b *testing.B) {
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = state.Iterate("pref/")
+		state.Iterate(func(key string, value any) bool {
+			return true
+		})
 	}
 }
 

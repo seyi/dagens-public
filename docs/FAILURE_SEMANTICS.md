@@ -193,6 +193,50 @@ Important caveat:
 - These guarantees are only as durable as the configured idempotency store.
 - If idempotency is process-local or unavailable, duplicate protection degrades.
 
+## HITL Runtime Contracts
+
+These are the explicit contracts for HITL pause/resume in the current implementation.
+
+### 1. Idempotency Scope: `request_id`
+
+- The idempotency boundary is the HITL `request_id`.
+- Duplicate callback delivery for the same `request_id` is expected and tolerated.
+- Duplicate suppression uses:
+  - `callback-done:<request_id>` as final marker
+  - `processing:<request_id>` as short-lived in-flight lock
+- Contract: resume requests are idempotent by `request_id` when durable idempotency storage is configured.
+
+Code references:
+
+- [`pkg/hitl/callback_handler.go`](../pkg/hitl/callback_handler.go)
+- [`pkg/hitl/resumption_worker.go`](../pkg/hitl/resumption_worker.go)
+- [`pkg/hitl/orchestrator.go`](../pkg/hitl/orchestrator.go)
+
+### 2. Resume Delivery Semantics: At-Least-Once
+
+- HITL resume processing is at-least-once with Redis Streams-backed queueing.
+- A control-plane/worker crash during resume can cause replay after restart if ACK was not recorded.
+- Contract: side-effecting node logic on resumed paths must be idempotent or externally compensated.
+- Dagens does not claim exactly-once execution semantics for resumed graph tails today.
+
+Code references:
+
+- [`pkg/hitl/redis_store.go`](../pkg/hitl/redis_store.go)
+- [`pkg/hitl/resumption_worker.go`](../pkg/hitl/resumption_worker.go)
+- [`pkg/graph/graph.go`](../pkg/graph/graph.go)
+
+### 3. Version Policy: Strict Graph Version Pinning
+
+- Checkpoints persist `graph_version` and resume validates it against the currently registered graph definition.
+- On mismatch, resume is rejected; worker path moves checkpoint to DLQ and acknowledges the queue message.
+- No compatibility-mode resume is attempted automatically in the runtime today.
+
+Code references:
+
+- [`pkg/hitl/models.go`](../pkg/hitl/models.go)
+- [`pkg/hitl/resumption_worker.go`](../pkg/hitl/resumption_worker.go)
+- [`pkg/hitl/orchestrator.go`](../pkg/hitl/orchestrator.go)
+
 ## Worker Health Semantics
 
 Today, “healthy” is relatively shallow.

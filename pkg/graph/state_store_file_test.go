@@ -60,7 +60,9 @@ func TestFileStateStore_ListExistsDeleteClear(t *testing.T) {
 		t.Fatalf("NewFileStateStore error: %v", err)
 	}
 
-	snap := (&MemoryState{data: map[string]interface{}{"a": 1}, metadata: map[string]interface{}{}}).Snapshot()
+	state := NewMemoryState()
+	state.Set("a", 1)
+	snap := state.Snapshot()
 	if err := store.Save(ctx, "exec-a", snap); err != nil {
 		t.Fatalf("Save exec-a: %v", err)
 	}

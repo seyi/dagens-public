@@ -6,7 +6,8 @@ This is intentionally conservative. If a guarantee is not clearly implemented in
 
 ## TL;DR
 
-- **Scheduler jobs and task results** are stored **in memory** on the API server.
+- **Scheduler runtime jobs and task results** are stored **in memory** on the API server.
+- **Scheduler transition history** can be stored durably in **Postgres** (`memory` or `postgres` backend).
 - **Cluster membership** can be stored in **etcd**, but only for node discovery/health metadata.
 - **HITL checkpoints** have a **durable PostgreSQL implementation available**, but default/simple implementations are in-memory.
 - **HITL idempotency and resumption queue** have **durable Redis implementations available**, but simple implementations are in-memory.
@@ -15,9 +16,9 @@ This is intentionally conservative. If a guarantee is not clearly implemented in
 
 Here, "task results" means response payloads attached to in-memory task/job structs, not a durable artifact store.
 
-## Defaults in v0.1.0
+## Defaults in v0.2
 
-- Scheduler store: in-memory
+- Scheduler transition store: in-memory by default (`postgres` when configured)
 - Event store: in-memory
 - Registry: static unless `ETCD_ENDPOINTS` is set
 - HITL checkpoint store: in-memory unless explicitly wired to PostgreSQL
@@ -28,7 +29,8 @@ Here, "task results" means response payloads attached to in-memory task/job stru
 
 | Component | Default store | Durable option | Enabled by default |
 | --- | --- | --- | --- |
-| Jobs | memory | (planned) | no |
+| Job/task runtime structs | memory | (planned) | no |
+| Scheduler transition log | memory | Postgres | only if configured |
 | Registry | static/memory | etcd | only if configured |
 | HITL checkpoints | memory | Postgres | no |
 | HITL idempotency | memory | Redis | no |
@@ -37,7 +39,7 @@ Here, "task results" means response payloads attached to in-memory task/job stru
 
 ## What Is Persisted Today
 
-### 1. Scheduler Jobs
+### 1. Scheduler Runtime Jobs
 
 Current behavior:
 
@@ -51,8 +53,24 @@ Code reference:
 
 Implication:
 
-- Jobs and results are lost if the API server process restarts.
-- There is no built-in durable job store for the core scheduler path.
+- Runtime job/task structs and task outputs are lost if the API server process restarts.
+- Visibility can be reconstructed when durable transition history is configured.
+
+### 1b. Scheduler Durable Transition History
+
+Current behavior:
+
+- Scheduler transition events can be persisted to either:
+  - in-memory transition store
+  - Postgres transition store
+- On restart, replay reconstructs control-plane visibility from transition history.
+- Replay is visibility-first and fail-fast for malformed streams.
+
+Code references:
+
+- [`pkg/scheduler/state_machine.go`](../pkg/scheduler/state_machine.go)
+- [`pkg/scheduler/replay.go`](../pkg/scheduler/replay.go)
+- [`pkg/scheduler/transition_store_postgres.go`](../pkg/scheduler/transition_store_postgres.go)
 
 ### 2. Cluster Membership and Node Metadata
 

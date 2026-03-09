@@ -12,12 +12,13 @@ import (
 type JobLifecycleState string
 
 const (
-	JobStateSubmitted JobLifecycleState = "SUBMITTED"
-	JobStateQueued    JobLifecycleState = "QUEUED"
-	JobStateRunning   JobLifecycleState = "RUNNING"
-	JobStateSucceeded JobLifecycleState = "SUCCEEDED"
-	JobStateFailed    JobLifecycleState = "FAILED"
-	JobStateCanceled  JobLifecycleState = "CANCELED"
+	JobStateSubmitted     JobLifecycleState = "SUBMITTED"
+	JobStateQueued        JobLifecycleState = "QUEUED"
+	JobStateRunning       JobLifecycleState = "RUNNING"
+	JobStateAwaitingHuman JobLifecycleState = "AWAITING_HUMAN"
+	JobStateSucceeded     JobLifecycleState = "SUCCEEDED"
+	JobStateFailed        JobLifecycleState = "FAILED"
+	JobStateCanceled      JobLifecycleState = "CANCELED"
 )
 
 // TaskLifecycleState is the durable control-plane state for a task.
@@ -43,17 +44,19 @@ const (
 type TransitionType string
 
 const (
-	TransitionJobSubmitted   TransitionType = "JOB_SUBMITTED"
-	TransitionJobQueued      TransitionType = "JOB_QUEUED"
-	TransitionJobRunning     TransitionType = "JOB_RUNNING"
-	TransitionJobSucceeded   TransitionType = "JOB_SUCCEEDED"
-	TransitionJobFailed      TransitionType = "JOB_FAILED"
-	TransitionJobCanceled    TransitionType = "JOB_CANCELED"
-	TransitionTaskCreated    TransitionType = "TASK_CREATED"
-	TransitionTaskDispatched TransitionType = "TASK_DISPATCHED"
-	TransitionTaskRunning    TransitionType = "TASK_RUNNING"
-	TransitionTaskSucceeded  TransitionType = "TASK_SUCCEEDED"
-	TransitionTaskFailed     TransitionType = "TASK_FAILED"
+	TransitionJobSubmitted     TransitionType = "JOB_SUBMITTED"
+	TransitionJobQueued        TransitionType = "JOB_QUEUED"
+	TransitionJobRunning       TransitionType = "JOB_RUNNING"
+	TransitionJobAwaitingHuman TransitionType = "JOB_AWAITING_HUMAN"
+	TransitionJobResumed       TransitionType = "JOB_RESUMED"
+	TransitionJobSucceeded     TransitionType = "JOB_SUCCEEDED"
+	TransitionJobFailed        TransitionType = "JOB_FAILED"
+	TransitionJobCanceled      TransitionType = "JOB_CANCELED"
+	TransitionTaskCreated      TransitionType = "TASK_CREATED"
+	TransitionTaskDispatched   TransitionType = "TASK_DISPATCHED"
+	TransitionTaskRunning      TransitionType = "TASK_RUNNING"
+	TransitionTaskSucceeded    TransitionType = "TASK_SUCCEEDED"
+	TransitionTaskFailed       TransitionType = "TASK_FAILED"
 )
 
 // DurableJobRecord is the materialized current-state view used for fast lookup.
@@ -84,6 +87,11 @@ type DurableTaskRecord struct {
 // within the chosen replay scope. For v0.2, per-job monotonic ordering is the
 // recommended default because replay correctness does not require a global
 // cross-job order.
+//
+// PreviousState must be present for non-initial transitions. Initial
+// transitions may leave PreviousState empty:
+//   - JOB transitions with NewState=SUBMITTED
+//   - TASK transitions with NewState=PENDING
 type TransitionRecord struct {
 	SequenceID    uint64
 	EntityType    TransitionEntityType
@@ -130,6 +138,14 @@ type AtomicTransitionStore interface {
 	WithTx(ctx context.Context, fn func(tx TransitionStoreTx) error) error
 }
 
+// SequenceIDStore optionally provides durable sequence allocation for transition
+// writes. Implementations should guarantee monotonic sequence IDs per job.
+// Scheduler writers call NextSequenceID when available; otherwise they fall
+// back to in-memory per-job counters.
+type SequenceIDStore interface {
+	NextSequenceID(ctx context.Context, jobID string) (uint64, error)
+}
+
 var validJobTransitions = map[JobLifecycleState]map[JobLifecycleState]struct{}{
 	JobStateSubmitted: {
 		JobStateQueued: {},
@@ -140,9 +156,15 @@ var validJobTransitions = map[JobLifecycleState]map[JobLifecycleState]struct{}{
 		JobStateCanceled: {},
 	},
 	JobStateRunning: {
-		JobStateSucceeded: {},
-		JobStateFailed:    {},
-		JobStateCanceled:  {},
+		JobStateAwaitingHuman: {},
+		JobStateSucceeded:     {},
+		JobStateFailed:        {},
+		JobStateCanceled:      {},
+	},
+	JobStateAwaitingHuman: {
+		JobStateRunning:  {},
+		JobStateFailed:   {},
+		JobStateCanceled: {},
 	},
 	JobStateSucceeded: {},
 	JobStateFailed:    {},
@@ -214,8 +236,11 @@ func IsTerminalTaskState(state TaskLifecycleState) bool {
 	}
 }
 
-// Validate checks that the transition record is internally consistent before it
-// is appended to durable storage.
+// Validate checks that the transition record is structurally consistent before
+// it is appended to durable storage.
+//
+// Lifecycle legality (for example SUBMITTED->QUEUED) is intentionally enforced
+// by scheduler transition writers where full in-memory context is available.
 func (r TransitionRecord) Validate() error {
 	if r.SequenceID == 0 {
 		return fmt.Errorf("sequence_id must be greater than zero")
@@ -247,6 +272,9 @@ func (r TransitionRecord) Validate() error {
 		if r.PreviousState != "" && !isValidJobLifecycleState(r.PreviousState) {
 			return fmt.Errorf("invalid job previous_state %q", r.PreviousState)
 		}
+		if r.PreviousState == "" && JobLifecycleState(r.NewState) != JobStateSubmitted {
+			return fmt.Errorf("previous_state required for non-initial job transition to %q", r.NewState)
+		}
 	case TransitionEntityTask:
 		if r.TaskID == "" {
 			return fmt.Errorf("task_id must be set for task transitions")
@@ -257,6 +285,9 @@ func (r TransitionRecord) Validate() error {
 		if r.PreviousState != "" && !isValidTaskLifecycleState(r.PreviousState) {
 			return fmt.Errorf("invalid task previous_state %q", r.PreviousState)
 		}
+		if r.PreviousState == "" && TaskLifecycleState(r.NewState) != TaskStatePending {
+			return fmt.Errorf("previous_state required for non-initial task transition to %q", r.NewState)
+		}
 	}
 
 	return nil
@@ -264,7 +295,7 @@ func (r TransitionRecord) Validate() error {
 
 func isValidJobLifecycleState(state string) bool {
 	switch JobLifecycleState(state) {
-	case JobStateSubmitted, JobStateQueued, JobStateRunning, JobStateSucceeded, JobStateFailed, JobStateCanceled:
+	case JobStateSubmitted, JobStateQueued, JobStateRunning, JobStateAwaitingHuman, JobStateSucceeded, JobStateFailed, JobStateCanceled:
 		return true
 	default:
 		return false

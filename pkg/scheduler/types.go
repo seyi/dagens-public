@@ -10,11 +10,13 @@ import (
 type JobStatus string
 
 const (
-	JobPending   JobStatus = "PENDING"
-	JobRunning   JobStatus = "RUNNING"
-	JobCompleted JobStatus = "COMPLETED"
-	JobFailed    JobStatus = "FAILED"
-	JobBlocked   JobStatus = "BLOCKED" // Added
+	JobPending       JobStatus = "PENDING"
+	JobRunning       JobStatus = "RUNNING"
+	JobCompleted     JobStatus = "COMPLETED"
+	JobFailed        JobStatus = "FAILED"
+	JobBlocked       JobStatus = "BLOCKED"
+	JobAwaitingHuman JobStatus = "AWAITING_HUMAN"
+	JobSuspended     JobStatus = "SUSPENDED"
 )
 
 // Job represents a distributed execution job derived from a Graph

@@ -92,6 +92,8 @@ Jobs represent the control-plane lifecycle of a submitted unit of work.
   - admitted into the scheduler queue
 - `RUNNING`
   - at least one task in the job has started execution
+- `AWAITING_HUMAN`
+  - job is paused at a HITL boundary awaiting callback/resume
 - `SUCCEEDED`
   - all required tasks completed successfully
 - `FAILED`
@@ -105,6 +107,10 @@ Jobs represent the control-plane lifecycle of a submitted unit of work.
 - `QUEUED -> RUNNING`
 - `QUEUED -> FAILED`
 - `QUEUED -> CANCELED`
+- `RUNNING -> AWAITING_HUMAN`
+- `AWAITING_HUMAN -> RUNNING`
+- `AWAITING_HUMAN -> FAILED`
+- `AWAITING_HUMAN -> CANCELED`
 - `RUNNING -> SUCCEEDED`
 - `RUNNING -> FAILED`
 - `RUNNING -> CANCELED`
@@ -198,6 +204,11 @@ At minimum, record:
 - new state
 - timestamp
 
+For non-initial transitions, `previous_state` must be present:
+
+- JOB initial transition may omit `previous_state` only when `new_state=SUBMITTED`
+- TASK initial transition may omit `previous_state` only when `new_state=PENDING`
+
 `sequence_id` must be monotonic within the replay scope.
 
 For the first implementation, Dagens should choose one of:
@@ -221,6 +232,8 @@ Examples:
 - `JobSubmitted`
 - `JobQueued`
 - `JobRunning`
+- `JobAwaitingHuman`
+- `JobResumed`
 - `JobSucceeded`
 - `JobFailed`
 - `JobCanceled`

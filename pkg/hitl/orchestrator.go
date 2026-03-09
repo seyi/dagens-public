@@ -1,6 +1,7 @@
 package hitl
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -11,6 +12,15 @@ import (
 
 // ExecuteGraph orchestrates the execution of a graph, handling human interaction checkpoints
 func ExecuteGraph(graphID, graphVersion string, initialState graph.State, executor ResumableExecutor, checkpointStore CheckpointStore, responseMgr *HumanResponseManager) (finalState graph.State, err error) {
+	return executeGraphWithMetrics(graphID, graphVersion, initialState, executor, checkpointStore, responseMgr, nil)
+}
+
+// ExecuteGraphWithMetrics orchestrates execution with optional metrics wiring.
+func ExecuteGraphWithMetrics(graphID, graphVersion string, initialState graph.State, executor ResumableExecutor, checkpointStore CheckpointStore, responseMgr *HumanResponseManager, metrics *HITLMetrics) (finalState graph.State, err error) {
+	return executeGraphWithMetrics(graphID, graphVersion, initialState, executor, checkpointStore, responseMgr, metrics)
+}
+
+func executeGraphWithMetrics(graphID, graphVersion string, initialState graph.State, executor ResumableExecutor, checkpointStore CheckpointStore, responseMgr *HumanResponseManager, metrics *HITLMetrics) (finalState graph.State, err error) {
 	for {
 		state, err := executor.ExecuteCurrent(initialState)
 		if err == nil {
@@ -37,12 +47,14 @@ func ExecuteGraph(graphID, graphVersion string, initialState graph.State, execut
 			if memState, ok := initialState.(*graph.MemoryState); ok {
 				stateData, err = memState.Marshal()
 				if err != nil {
+					metrics.IncStateSerializationFailures()
 					return nil, fmt.Errorf("serialize state: %w", err)
 				}
 			} else {
 				// Attempt to serialize through a generic interface if available
 				// If the graph.State interface doesn't have a marshal method,
 				// we need to implement one or use reflection/json marshaling
+				metrics.IncStateSerializationFailures()
 				return nil, fmt.Errorf("state type %T does not support marshaling", initialState)
 			}
 
@@ -60,6 +72,7 @@ func ExecuteGraph(graphID, graphVersion string, initialState graph.State, execut
 				LastAttempt:  time.Time{},
 			}
 
+			start := time.Now()
 			// CRITICAL: Atomic checkpoint creation with transaction
 			// Since the interface doesn't expose BeginTransaction, we need to handle this differently
 			// For now, we'll use the Create method which should be atomic in the implementation
@@ -68,8 +81,13 @@ func ExecuteGraph(graphID, graphVersion string, initialState graph.State, execut
 			// 2. Pass the concrete implementation type that supports transactions
 			// For this fix, we'll assume the Create method is atomic in the implementation
 			if err := checkpointStore.Create(cp); err != nil {
+				metrics.ObserveCheckpointCreationLatency(time.Since(start))
 				return nil, fmt.Errorf("create checkpoint: %w", err)
 			}
+			metrics.IncCheckpointCreations()
+			metrics.ObserveCheckpointCreationLatency(time.Since(start))
+			metrics.ObserveCheckpointSizeBytes(len(stateData))
+			metrics.IncActiveWaitingWorkflows()
 
 			// Clean up state keys
 			initialState.Delete(StateKeyHumanRequestID)
@@ -143,25 +161,42 @@ func ResumeGraphFromCheckpoint(requestID string, response *HumanResponse, checkp
 		return fmt.Errorf("mark as processed: %w", err)
 	}
 
-	// Resume execution from stored node
-	executor := executorFactory(cp.GraphID, cp.GraphVersion)
-	if err := executor.ResumeFromNode(cp.NodeID, state); err != nil {
+	// Resume execution from stored node (graph-native when executable graph registry is available)
+	result, err := resumeFromCheckpoint(context.Background(), cp, state, graphRegistry, executorFactory)
+	if err != nil {
 		// If execution fails, remove the idempotency marker so it can be retried
 		if deleteErr := idempotencyStore.Delete(idempotencyKey); deleteErr != nil {
-			// Log the error but don't mask the original error
-			fmt.Printf("WARN: failed to delete idempotency key after execution error: %v", deleteErr)
+			// Log the error but don't mask the original error.
+			hitlLogger().Warn("failed to delete idempotency key after resume error", safeLogFields(map[string]interface{}{
+				"operation":  "orchestrator.resume.cleanup_idempotency",
+				"request_id": requestID,
+				"error":      deleteErr.Error(),
+			}))
 		}
 		return fmt.Errorf("resume execution: %w", err)
+	}
+	if result != nil && result.IsPaused() {
+		if _, persistErr := persistNestedPauseCheckpoint(context.Background(), checkpointStore, cp, state, result.Paused); persistErr != nil {
+			return fmt.Errorf("persist nested pause checkpoint: %w", persistErr)
+		}
+		return ErrWorkflowPending
 	}
 
 	// Clean up checkpoint (success path only)
 	if err := checkpointStore.Delete(requestID); err != nil {
 		// Log but don't fail - idempotency will prevent duplicate execution
-		// In a real implementation, you'd want proper logging here
-		fmt.Printf("WARN: failed to delete checkpoint %s: %v", requestID, err)
+		hitlLogger().Warn("failed to delete checkpoint after resume", safeLogFields(map[string]interface{}{
+			"operation":  "orchestrator.resume.delete_checkpoint",
+			"request_id": requestID,
+			"error":      err.Error(),
+		}))
 		// Attempt to record the failure in the checkpoint store for monitoring
 		if _, recordErr := checkpointStore.RecordFailure(requestID, err); recordErr != nil {
-			fmt.Printf("WARN: failed to record checkpoint deletion failure: %v", recordErr)
+			hitlLogger().Warn("failed to record checkpoint deletion failure", safeLogFields(map[string]interface{}{
+				"operation":  "orchestrator.resume.record_failure",
+				"request_id": requestID,
+				"error":      recordErr.Error(),
+			}))
 		}
 	}
 

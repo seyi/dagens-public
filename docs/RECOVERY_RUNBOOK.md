@@ -6,6 +6,7 @@ Scope:
 - API server startup recovery in the scheduler
 - transition replay from configured transition store
 - visibility-first recovery semantics
+- HITL resume operational recovery for graph version mismatch and DLQ handling
 
 Code references:
 - [`pkg/scheduler/scheduler.go`](../pkg/scheduler/scheduler.go)
@@ -13,6 +14,9 @@ Code references:
 - [`pkg/scheduler/replay.go`](../pkg/scheduler/replay.go)
 - [`pkg/scheduler/transition_store_postgres.go`](../pkg/scheduler/transition_store_postgres.go)
 - [`cmd/api_server/main.go`](../cmd/api_server/main.go)
+- [`pkg/hitl/resumption_worker.go`](../pkg/hitl/resumption_worker.go)
+- [`pkg/hitl/orchestrator.go`](../pkg/hitl/orchestrator.go)
+- [`pkg/hitl/postgres_store.go`](../pkg/hitl/postgres_store.go)
 
 ## Quick Facts
 
@@ -61,15 +65,15 @@ Use these against the scheduler transition schema:
 ```sql
 -- Unfinished jobs currently tracked
 SELECT job_id, current_state, updated_at
-FROM durable_jobs
+FROM scheduler_durable_jobs
 WHERE current_state NOT IN ('SUCCEEDED', 'FAILED', 'CANCELED')
 ORDER BY updated_at DESC;
 ```
 
 ```sql
 -- Transition stream for one job
-SELECT sequence_id, entity_type, task_id, previous_state, new_state, transition_type, occurred_at
-FROM job_transitions
+SELECT sequence_id, entity_type, task_id, previous_state, new_state, transition, occurred_at
+FROM scheduler_job_transitions
 WHERE job_id = $1
 ORDER BY sequence_id ASC;
 ```
@@ -77,7 +81,7 @@ ORDER BY sequence_id ASC;
 ```sql
 -- Last known sequence baseline for one job
 SELECT job_id, last_sequence_id, current_state, updated_at
-FROM durable_jobs
+FROM scheduler_durable_jobs
 WHERE job_id = $1;
 ```
 
@@ -100,6 +104,48 @@ WHERE job_id = $1;
 - switch to `SCHEDULER_TRANSITION_STORE=memory`
 - restart API server
 - note: this bypasses durable replay input and should be temporary
+
+## HITL Version Mismatch and DLQ Remediation
+
+Use this flow when resumes fail with graph version mismatch or checkpoints are moved to DLQ.
+
+### Detection
+
+- Logs include: `hitl graph version mismatch during resume`
+- Error class includes: `ErrGraphVersionMismatch`
+- Metrics to watch:
+  - `GraphVersionMismatches`
+  - `CheckpointsMovedToDLQ`
+  - `DLQSize`
+
+### Immediate Triage
+
+1. Confirm the checkpoint graph version and current registered graph version for the same `graph_id`.
+2. Confirm whether deployment introduced an incompatible graph change after checkpoints were created.
+3. Confirm impact scope:
+- single request only
+- one graph only
+- broad mismatch across many pending checkpoints
+
+### Remediation Options
+
+1. Preferred: restore or re-register the prior graph version and replay affected checkpoints.
+2. Controlled migration: create a versioned migration path for checkpoint state and resume explicitly (outside automatic runtime path).
+3. Terminal handling: keep strict pinning, leave mismatched checkpoints in DLQ, and resolve manually with operator approval.
+
+### Runbook Policy
+
+- Do not auto-resume mismatched checkpoints by default.
+- Do not silently rewrite `graph_version` in stored checkpoints.
+- Treat mismatch as a release-management error until proven otherwise.
+
+### Verification
+
+After remediation:
+
+1. `GraphVersionMismatches` stops increasing.
+2. `DLQSize` stabilizes or decreases with planned replay/drain.
+3. No repeated mismatch logs for the same `request_id`.
 
 ## Recovery Verification Checklist
 

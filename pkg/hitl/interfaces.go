@@ -30,6 +30,12 @@ type CheckpointStore interface {
 	MoveToCheckpointDLQ(requestID string, finalError string) error
 }
 
+// CheckpointReplaceStore is an optional CheckpointStore extension for atomic
+// replacement of checkpoints during nested pause transitions.
+type CheckpointReplaceStore interface {
+	Replace(oldRequestID string, next *ExecutionCheckpoint) error
+}
+
 // Transaction represents a database transaction.
 type Transaction interface {
 	Commit() error
@@ -68,6 +74,12 @@ type ResumptionQueue interface {
 // GraphRegistry provides access to graph definitions.
 type GraphRegistry interface {
 	GetGraph(graphID string) (GraphDefinition, error)
+}
+
+// ExecutableGraphRegistry is an optional GraphRegistry extension that provides
+// access to executable graph instances for graph-native pause/resume semantics.
+type ExecutableGraphRegistry interface {
+	GetExecutableGraph(graphID string) (*graph.Graph, error)
 }
 
 // GraphDefinition represents a graph definition with its version.

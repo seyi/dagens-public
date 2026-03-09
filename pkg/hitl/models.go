@@ -29,9 +29,11 @@ type HumanResponse struct {
 // ResumptionJob defines the payload that is enqueued for asynchronous processing
 // by a ResumptionWorker.
 type ResumptionJob struct {
-	JobID     string
-	RequestID string
-	Timestamp int64
-	Signature string
-	Response  *HumanResponse
+	JobID       string
+	RequestID   string
+	Timestamp   int64
+	Signature   string
+	TraceID     string
+	TraceParent string
+	Response    *HumanResponse
 }

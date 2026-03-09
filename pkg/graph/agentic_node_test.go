@@ -26,8 +26,9 @@ func newMockNode(id string, failCount int) *mockNode {
 	}
 }
 
-func (m *mockNode) ID() string   { return m.id }
-func (m *mockNode) Type() string { return m.nodeType }
+func (m *mockNode) ID() string                       { return m.id }
+func (m *mockNode) Name() string                     { return m.id }
+func (m *mockNode) Type() string                     { return m.nodeType }
 func (m *mockNode) Metadata() map[string]interface{} { return m.metadata }
 
 func (m *mockNode) Execute(ctx context.Context, state State) error {

@@ -28,6 +28,7 @@ type HumanNode struct {
 	responseMgr     *HumanResponseManager
 	checkpointStore CheckpointStore
 	callbackSecret  []byte // For HMAC signing
+	metrics         *HITLMetrics
 
 	// Metrics
 	activeBlockingWaits atomic.Int32
@@ -44,6 +45,7 @@ type HumanNodeConfig struct {
 	ResponseManager    *HumanResponseManager
 	CheckpointStore    CheckpointStore
 	CallbackSecret     []byte
+	Metrics            *HITLMetrics
 }
 
 // NewHumanNode creates a new HumanNode
@@ -65,6 +67,7 @@ func NewHumanNode(config HumanNodeConfig) *HumanNode {
 		responseMgr:        config.ResponseManager,
 		checkpointStore:    config.CheckpointStore,
 		callbackSecret:     config.CallbackSecret,
+		metrics:            config.Metrics,
 	}
 
 	return node
@@ -121,6 +124,8 @@ func (n *HumanNode) blockWithTimeout(ctx context.Context, state graph.State, req
 	// Protect against resource exhaustion
 	current := n.activeBlockingWaits.Add(1)
 	defer n.activeBlockingWaits.Add(-1)
+	n.metrics.IncBlockingWaitsActive()
+	defer n.metrics.DecBlockingWaitsActive()
 
 	if current > int32(n.maxConcurrentWaits) {
 		return fmt.Errorf("max concurrent blocking waits reached (%d), use checkpoint mode",
@@ -144,6 +149,7 @@ func (n *HumanNode) blockWithTimeout(ctx context.Context, state graph.State, req
 	// Wait for response with timeout
 	select {
 	case resp := <-respChan:
+		n.metrics.ObserveHumanResponseTime(time.Since(req.Timestamp))
 		return n.processResponse(state, resp)
 	case <-time.After(n.timeout):
 		return ErrHumanTimeout
@@ -160,9 +166,12 @@ func (n *HumanNode) checkpointAndReturn(ctx context.Context, state graph.State, 
 	state.Set(StateKeyHumanRequestID, req.RequestID)
 	state.Set(StateKeyHumanTimeout, n.timeout.String())
 
-	// Return special error to trigger checkpoint
-	// Orchestrator will handle checkpoint creation with proper transaction boundary
-	return ErrHumanInteractionPending
+	// Return typed pause signal to the graph runner.
+	// Orchestrator/checkpoint systems can still inspect the wrapped cause.
+	return graph.NewPauseSignal(graph.PausedResult{
+		RequestID: req.RequestID,
+		NodeID:    n.ID(),
+	}, ErrHumanInteractionPending)
 }
 
 // buildCallbackURL: Generate HMAC-signed callback URL

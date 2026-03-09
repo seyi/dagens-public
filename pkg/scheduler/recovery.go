@@ -149,11 +149,11 @@ func (s *Scheduler) RecoverFromTransitions(ctx context.Context) error {
 	metrics.RecordSchedulerRecoveryResumeSkippedUnsafeQueuedJobs(skippedUnsafeQueuedJobs)
 	metrics.RecordSchedulerRecoveryDuration(time.Since(start))
 	logger.Info("scheduler startup recovery completed", map[string]interface{}{
-		"recovered_jobs":      recoveredJobs,
-		"seeded_jobs":         seededJobs,
-		"seeded_max_sequence": seededMaxSequence,
-		"resumed_queued_jobs": resumedQueuedJobs,
-		"skipped_queued_jobs": skippedQueuedJobs,
+		"recovered_jobs":             recoveredJobs,
+		"seeded_jobs":                seededJobs,
+		"seeded_max_sequence":        seededMaxSequence,
+		"resumed_queued_jobs":        resumedQueuedJobs,
+		"skipped_queued_jobs":        skippedQueuedJobs,
 		"skipped_unsafe_queued_jobs": skippedUnsafeQueuedJobs,
 	})
 
@@ -239,6 +239,8 @@ func runtimeJobStatusFromLifecycle(state JobLifecycleState) JobStatus {
 	switch state {
 	case JobStateRunning:
 		return JobRunning
+	case JobStateAwaitingHuman:
+		return JobAwaitingHuman
 	case JobStateSucceeded:
 		return JobCompleted
 	case JobStateFailed, JobStateCanceled:

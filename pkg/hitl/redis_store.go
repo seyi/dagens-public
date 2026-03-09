@@ -168,6 +168,11 @@ func (q *RedisResumptionQueue) Ack(ctx context.Context, jobID string) error {
 	return q.client.XAck(ctx, q.stream, q.group, jobID).Err()
 }
 
+// QueueLength returns the current stream length as a source-of-truth backlog signal.
+func (q *RedisResumptionQueue) QueueLength(ctx context.Context) (int64, error) {
+	return q.client.XLen(ctx, q.stream).Result()
+}
+
 func decodeJob(msg redis.XMessage) (*ResumptionJob, error) {
 	raw, ok := msg.Values["payload"]
 	if !ok {

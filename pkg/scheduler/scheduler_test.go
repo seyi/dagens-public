@@ -97,6 +97,110 @@ func TestSubmitJobRecordsInitialDurableTransitions(t *testing.T) {
 	}
 }
 
+func TestSubmitJobWithContext_PropagatesContextToInitialTransitions(t *testing.T) {
+	type ctxKey string
+	const key ctxKey = "submit-request-id"
+
+	store := &contextCaptureTransitionStore{
+		inner: NewInMemoryTransitionStore(),
+		key:   key,
+	}
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+
+	job := NewJob("job-ctx", "context")
+	stage := &Stage{
+		ID:    "stage-ctx",
+		JobID: job.ID,
+		Tasks: []*Task{{ID: "task-ctx", JobID: job.ID, StageID: "stage-ctx"}},
+	}
+	job.AddStage(stage)
+
+	ctx := context.WithValue(context.Background(), key, "req-ctx-123")
+	if err := s.SubmitJobWithContext(ctx, job); err != nil {
+		t.Fatalf("SubmitJobWithContext unexpected error: %v", err)
+	}
+
+	if got := store.lastValue; got != "req-ctx-123" {
+		t.Fatalf("captured context value = %v, want %q", got, "req-ctx-123")
+	}
+}
+
+func TestExecuteJob_RecordsResumedTransitionFromAwaitingHuman(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	job := NewJob("job-resumed", "resumed")
+	job.LifecycleState = JobStateAwaitingHuman
+
+	s.executeJob(job)
+
+	store, ok := s.TransitionStore().(*InMemoryTransitionStore)
+	if !ok {
+		t.Fatal("expected in-memory transition store")
+	}
+	records, err := store.ListTransitionsByJob(context.Background(), job.ID)
+	if err != nil {
+		t.Fatalf("ListTransitionsByJob unexpected error: %v", err)
+	}
+	if len(records) == 0 {
+		t.Fatal("expected at least one transition record")
+	}
+	if records[0].Transition != TransitionJobResumed {
+		t.Fatalf("first transition = %q, want %q", records[0].Transition, TransitionJobResumed)
+	}
+}
+
+func TestRecordJobTransition_SkipsInvalidLifecycleTransition(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	job := NewJob("job-invalid-transition", "invalid")
+	job.LifecycleState = JobStateSubmitted
+
+	s.recordJobTransition(context.Background(), nil, job, TransitionJobSucceeded, JobStateSucceeded, "")
+
+	store, ok := s.TransitionStore().(*InMemoryTransitionStore)
+	if !ok {
+		t.Fatal("expected in-memory transition store")
+	}
+	records, err := store.ListTransitionsByJob(context.Background(), job.ID)
+	if err != nil {
+		t.Fatalf("ListTransitionsByJob unexpected error: %v", err)
+	}
+	if len(records) != 0 {
+		t.Fatalf("transition count = %d, want 0 for invalid transition", len(records))
+	}
+	if job.LifecycleState != JobStateSubmitted {
+		t.Fatalf("job lifecycle state = %q, want %q", job.LifecycleState, JobStateSubmitted)
+	}
+}
+
+func TestRecordTaskTransition_SkipsInvalidLifecycleTransition(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	task := &Task{
+		ID:             "task-invalid-transition",
+		JobID:          "job-invalid-task-transition",
+		StageID:        "stage-1",
+		LifecycleState: TaskStatePending,
+	}
+
+	s.recordTaskTransition(context.Background(), nil, task, TransitionTaskSucceeded, TaskStateSucceeded, "worker-1", 1, "")
+
+	store, ok := s.TransitionStore().(*InMemoryTransitionStore)
+	if !ok {
+		t.Fatal("expected in-memory transition store")
+	}
+	records, err := store.ListTransitionsByJob(context.Background(), task.JobID)
+	if err != nil {
+		t.Fatalf("ListTransitionsByJob unexpected error: %v", err)
+	}
+	if len(records) != 0 {
+		t.Fatalf("transition count = %d, want 0 for invalid transition", len(records))
+	}
+	if task.LifecycleState != TaskStatePending {
+		t.Fatalf("task lifecycle state = %q, want %q", task.LifecycleState, TaskStatePending)
+	}
+}
+
 func TestSelectNodeByCapacityPrefersLeastBusyNode(t *testing.T) {
 	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
 		DefaultWorkerMaxConcurrency: 2,
@@ -441,6 +545,35 @@ func TestExecuteStageDeferralTimeoutReturnsNoWorkerCapacity(t *testing.T) {
 	err := s.executeStage(context.Background(), stage)
 	if !errors.Is(err, ErrNoWorkerCapacity) {
 		t.Fatalf("executeStage error = %v, want %v", err, ErrNoWorkerCapacity)
+	}
+	if stage.Status != JobFailed {
+		t.Fatalf("stage status = %q, want %q", stage.Status, JobFailed)
+	}
+}
+
+func TestExecuteStage_ContextCanceledBeforeSelection(t *testing.T) {
+	s := NewSchedulerWithConfig(capacityExhaustedRegistry{}, &sequenceTaskExecutor{}, SchedulerConfig{
+		DefaultWorkerMaxConcurrency: 1,
+	})
+	stage := &Stage{
+		ID:    "stage-canceled",
+		JobID: "job-canceled",
+		Tasks: []*Task{{
+			ID:      "task-canceled",
+			StageID: "stage-canceled",
+			JobID:   "job-canceled",
+		}},
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	err := s.executeStage(ctx, stage)
+	if err == nil {
+		t.Fatal("expected canceled context error")
+	}
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("executeStage error = %v, want %v", err, context.Canceled)
 	}
 	if stage.Status != JobFailed {
 		t.Fatalf("stage status = %q, want %q", stage.Status, JobFailed)
@@ -864,6 +997,92 @@ type sequenceTaskExecutor struct {
 	errs      []error
 	calls     int
 	callNodes []string
+}
+
+type contextCaptureTransitionStore struct {
+	inner     *InMemoryTransitionStore
+	key       interface{}
+	lastValue interface{}
+}
+
+func (s *contextCaptureTransitionStore) capture(ctx context.Context) {
+	if s.lastValue != nil {
+		return
+	}
+	if v := ctx.Value(s.key); v != nil {
+		s.lastValue = v
+	}
+}
+
+func (s *contextCaptureTransitionStore) AppendTransition(ctx context.Context, record TransitionRecord) error {
+	s.capture(ctx)
+	return s.inner.AppendTransition(ctx, record)
+}
+
+func (s *contextCaptureTransitionStore) UpsertJob(ctx context.Context, job DurableJobRecord) error {
+	s.capture(ctx)
+	return s.inner.UpsertJob(ctx, job)
+}
+
+func (s *contextCaptureTransitionStore) UpsertTask(ctx context.Context, task DurableTaskRecord) error {
+	s.capture(ctx)
+	return s.inner.UpsertTask(ctx, task)
+}
+
+func (s *contextCaptureTransitionStore) ListUnfinishedJobs(ctx context.Context) ([]DurableJobRecord, error) {
+	return s.inner.ListUnfinishedJobs(ctx)
+}
+
+func (s *contextCaptureTransitionStore) ListTransitionsByJob(ctx context.Context, jobID string) ([]TransitionRecord, error) {
+	return s.inner.ListTransitionsByJob(ctx, jobID)
+}
+
+func (s *contextCaptureTransitionStore) WithTx(ctx context.Context, fn func(tx TransitionStoreTx) error) error {
+	s.capture(ctx)
+	return fn(s)
+}
+
+type panicTransitionStore struct{}
+
+func (panicTransitionStore) AppendTransition(context.Context, TransitionRecord) error { return nil }
+func (panicTransitionStore) UpsertJob(context.Context, DurableJobRecord) error        { return nil }
+func (panicTransitionStore) UpsertTask(context.Context, DurableTaskRecord) error      { return nil }
+func (panicTransitionStore) ListUnfinishedJobs(context.Context) ([]DurableJobRecord, error) {
+	panic("boom in ListUnfinishedJobs")
+}
+func (panicTransitionStore) ListTransitionsByJob(context.Context, string) ([]TransitionRecord, error) {
+	return nil, nil
+}
+
+func TestStart_RecoveryFlagsResetAfterPanic(t *testing.T) {
+	s := NewSchedulerWithConfig(capacityExhaustedRegistry{}, &sequenceTaskExecutor{}, SchedulerConfig{})
+	if err := s.SetTransitionStore(panicTransitionStore{}); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+
+	var recovered interface{}
+	func() {
+		defer func() {
+			recovered = recover()
+		}()
+		s.Start()
+	}()
+
+	if recovered == nil {
+		t.Fatal("expected panic from transition store")
+	}
+
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	if s.recovering {
+		t.Fatal("expected recovering=false after panic cleanup")
+	}
+	if s.recoveryCancel != nil {
+		t.Fatal("expected recoveryCancel=nil after panic cleanup")
+	}
+	if s.started {
+		t.Fatal("expected started=false when recovery panics")
+	}
 }
 
 func (s *sequenceTaskExecutor) ExecuteOnNode(ctx context.Context, nodeID string, agentName string, input *agent.AgentInput) (*agent.AgentOutput, error) {

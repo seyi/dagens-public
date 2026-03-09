@@ -12,6 +12,7 @@ const (
 	jobTransitionsTable = "scheduler_job_transitions"
 	durableJobsTable    = "scheduler_durable_jobs"
 	durableTasksTable   = "scheduler_durable_tasks"
+	jobSequencesTable   = "scheduler_job_sequences"
 )
 
 // PostgresTransitionStore persists scheduler lifecycle transitions and
@@ -84,6 +85,12 @@ func (s *PostgresTransitionStore) ensureSchema(ctx context.Context) error {
 				updated_at TIMESTAMPTZ NOT NULL
 			);`, durableTasksTable),
 		fmt.Sprintf(`CREATE INDEX IF NOT EXISTS idx_%s_job_id ON %s (job_id);`, durableTasksTable, durableTasksTable),
+		fmt.Sprintf(`
+			CREATE TABLE IF NOT EXISTS %s (
+				job_id TEXT PRIMARY KEY,
+				last_sequence_id BIGINT NOT NULL DEFAULT 0,
+				updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+			);`, jobSequencesTable),
 	}
 
 	for _, stmt := range ddl {
@@ -92,6 +99,28 @@ func (s *PostgresTransitionStore) ensureSchema(ctx context.Context) error {
 		}
 	}
 	return nil
+}
+
+// NextSequenceID returns the next durable sequence ID for a given job.
+// Sequence IDs are monotonic per job across process restarts.
+func (s *PostgresTransitionStore) NextSequenceID(ctx context.Context, jobID string) (uint64, error) {
+	if jobID == "" {
+		return 0, fmt.Errorf("job_id is required")
+	}
+
+	query := fmt.Sprintf(`
+		INSERT INTO %s (job_id, last_sequence_id, updated_at)
+		VALUES ($1, 1, NOW())
+		ON CONFLICT (job_id) DO UPDATE SET
+			last_sequence_id = %s.last_sequence_id + 1,
+			updated_at = NOW()
+		RETURNING last_sequence_id;`, jobSequencesTable, jobSequencesTable)
+
+	var seq int64
+	if err := s.pool.QueryRow(ctx, query, jobID).Scan(&seq); err != nil {
+		return 0, fmt.Errorf("next durable sequence id: %w", err)
+	}
+	return uint64(seq), nil
 }
 
 // Close releases the underlying pool.

@@ -2,182 +2,190 @@ package graph
 
 import (
 	"context"
+	"sync"
 	"testing"
 	"time"
 )
 
-func TestStateObserverFanOut(t *testing.T) {
-	s := &MemoryState{}
-	obs1 := s.Watch()
-	if obs1 == nil {
-		t.Fatal("expected observer 1, got nil")
-	}
-	obs2 := s.Watch()
-	if obs2 == nil {
-		t.Fatal("expected observer 2, got nil")
-	}
-	defer obs1.Stop()
-	defer obs2.Stop()
-
-	evt := StateEvent{
-		Type:    StateEventSet,
-		Key:     "k",
-		Value:   "v",
-		Version: 1,
-		Time:    time.Now(),
-	}
-	s.publishEvent(evt)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+func TestMemoryState_WatchFanOut(t *testing.T) {
+	s := NewMemoryState()
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	recv := func(ch <-chan StateEvent) StateEvent {
+	ch1, stop1 := s.Watch(ctx)
+	ch2, stop2 := s.Watch(ctx)
+	defer stop1()
+	defer stop2()
+
+	s.Set("k", "v")
+
+	wait := func(ch <-chan StateEvent) StateEvent {
 		select {
-		case e := <-ch:
-			return e
-		case <-ctx.Done():
-			t.Fatalf("timeout waiting for event")
+		case evt := <-ch:
+			return evt
+		case <-time.After(time.Second):
+			t.Fatal("timeout waiting for state event")
+			return StateEvent{}
 		}
-		return StateEvent{}
 	}
 
-	e1 := recv(obs1.Events)
-	e2 := recv(obs2.Events)
+	e1 := wait(ch1)
+	e2 := wait(ch2)
 
 	if e1.Key != "k" || e2.Key != "k" {
-		t.Fatalf("unexpected keys: e1=%q e2=%q", e1.Key, e2.Key)
+		t.Fatalf("unexpected event key(s): %q, %q", e1.Key, e2.Key)
 	}
 	if e1.Type != StateEventSet || e2.Type != StateEventSet {
-		t.Fatalf("unexpected event types: e1=%v e2=%v", e1.Type, e2.Type)
+		t.Fatalf("unexpected event type(s): %v, %v", e1.Type, e2.Type)
 	}
 }
 
-func TestStateObserverDropOnSlowConsumer(t *testing.T) {
-	h := newStateObserverHub()
-
-	defer func() {
-		h.mu.Lock()
-		if !h.closed {
-			h.closed = true
-			close(h.in)
-		}
-		h.mu.Unlock()
-	}()
-
-	fast := h.addWatcher()
-	if fast == nil {
-		t.Fatal("expected fast watcher")
-	}
-	slow := h.addWatcher()
-	if slow == nil {
-		t.Fatal("expected slow watcher")
-	}
-	defer fast.Stop()
-	defer slow.Stop()
-
-	const total = 2000
-	for i := 0; i < total; i++ {
-		h.enqueue(StateEvent{
-			Type:    StateEventSet,
-			Key:     "k",
-			Value:   i,
-			Version: int64(i),
-			Time:    time.Now(),
-		})
-	}
-
-	waitCtx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+func TestMemoryState_WatchUnsubscribeIsIdempotent(t *testing.T) {
+	s := NewMemoryState()
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	sentinel := StateEvent{
-		Type:    StateEventSet,
-		Key:     "sentinel",
-		Version: -1,
-		Time:    time.Now(),
-	}
-	h.enqueue(sentinel)
+	ch, stop := s.Watch(ctx)
+	stop()
+	stop()
 
-	// Drain fast observer until we see the sentinel
-	for {
-		select {
-		case e, ok := <-fast.Events:
-			if !ok {
-				t.Fatalf("fast observer channel closed unexpectedly")
-			}
-			if e.Key == "sentinel" && e.Version == -1 {
-				goto Done
-			}
-		case <-waitCtx.Done():
-			t.Fatalf("timeout waiting for sentinel, possible deadlock")
+	select {
+	case _, ok := <-ch:
+		if ok {
+			t.Fatal("expected observer channel to be closed after unsubscribe")
 		}
+	case <-time.After(time.Second):
+		t.Fatal("timeout waiting for observer channel close")
 	}
-Done:
-
-	dropped := h.Dropped()
-	if dropped == 0 {
-		t.Fatalf("expected some dropped events due to slow consumer, got %d", dropped)
-	}
-
-	h.mu.Lock()
-	if !h.closed {
-		h.closed = true
-		close(h.in)
-	}
-	h.mu.Unlock()
 }
 
-func TestStateObserverLifecycleWatchStopUnwatch(t *testing.T) {
-	s := &MemoryState{}
-	obs := s.Watch()
-	if obs == nil {
-		t.Fatal("expected observer")
-	}
+// Run with -race to exercise cancel/stop synchronization.
+func TestMemoryState_WatchContextCancelAndManualStopRace(t *testing.T) {
+	s := NewMemoryState()
+	ctx, cancel := context.WithCancel(context.Background())
 
-	s.Unwatch(obs)
+	_, stop := s.Watch(ctx)
 
-	select {
-	case _, ok := <-obs.Events:
-		if ok {
-			t.Fatal("expected observer channel to be closed after Unwatch")
-		}
-	case <-time.After(time.Second):
-		t.Fatal("timeout waiting for observer channel close after Unwatch")
-	}
-
-	obs2 := s.Watch()
-	if obs2 == nil {
-		t.Fatal("expected second observer")
-	}
-
-	obs2.Stop()
-
-	select {
-	case _, ok := <-obs2.Events:
-		if ok {
-			t.Fatal("expected observer channel to be closed after Stop")
-		}
-	case <-time.After(time.Second):
-		t.Fatal("timeout waiting for observer channel close after Stop")
-	}
-
-	obs2.Stop()
-	s.Unwatch(obs2)
-
-	done := make(chan struct{})
+	var wg sync.WaitGroup
+	wg.Add(2)
 	go func() {
-		defer close(done)
-		s.publishEvent(StateEvent{
-			Type:    StateEventSet,
-			Key:     "k",
-			Value:   "v",
-			Version: 1,
-			Time:    time.Now(),
-		})
+		defer wg.Done()
+		stop()
 	}()
+	go func() {
+		defer wg.Done()
+		cancel()
+	}()
+	wg.Wait()
+}
+
+func TestMemoryState_Watch_BufferFullDropsEvents(t *testing.T) {
+	s := NewMemoryState()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	ch, stop := s.Watch(ctx)
+
+	// Publish without draining. Watch uses a 100-slot non-blocking buffer.
+	for i := 0; i < 200; i++ {
+		s.Set("k", i)
+	}
+
+	// Close observer and then drain what survived buffering.
+	stop()
+
+	received := 0
+	for range ch {
+		received++
+	}
+	if received > 100 {
+		t.Fatalf("received %d events, expected watch buffer/drop policy to cap at <=100", received)
+	}
+	if received == 0 {
+		t.Fatal("expected at least one event to be delivered")
+	}
+}
+
+func TestMemoryState_Watch_IndependentUnsubscribe(t *testing.T) {
+	s := NewMemoryState()
+	ctx := context.Background()
+
+	ch1, stop1 := s.Watch(ctx)
+	ch2, stop2 := s.Watch(ctx)
+	defer stop2()
+
+	stop1()
 
 	select {
-	case <-done:
+	case _, ok := <-ch1:
+		if ok {
+			t.Fatal("expected first observer channel to be closed after unsubscribe")
+		}
 	case <-time.After(time.Second):
-		t.Fatal("timeout publishing event after all watchers removed")
+		t.Fatal("timeout waiting for first observer channel close")
+	}
+
+	s.Set("k", "v")
+	select {
+	case evt := <-ch2:
+		if evt.Key != "k" || evt.Value != "v" {
+			t.Fatalf("unexpected event on second observer: %#v", evt)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("timeout waiting for event on second observer")
+	}
+}
+
+func TestMemoryState_Close_ClosesObserverChannels(t *testing.T) {
+	s := NewMemoryState()
+	ctx := context.Background()
+
+	ch1, stop1 := s.Watch(ctx)
+	ch2, stop2 := s.Watch(ctx)
+	defer stop1()
+	defer stop2()
+
+	if err := s.Close(); err != nil {
+		t.Fatalf("close failed: %v", err)
+	}
+
+	for i, ch := range []<-chan StateEvent{ch1, ch2} {
+		select {
+		case _, ok := <-ch:
+			if ok {
+				t.Fatalf("observer channel %d should be closed after Close()", i+1)
+			}
+		case <-time.After(time.Second):
+			t.Fatalf("timeout waiting for observer channel %d close", i+1)
+		}
+	}
+
+	if !s.IsClosed() {
+		t.Fatal("expected state to report closed")
+	}
+}
+
+func TestMemoryState_Watch_EventOrdering(t *testing.T) {
+	s := NewMemoryState()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	ch, stop := s.Watch(ctx)
+	defer stop()
+
+	expected := []string{"a", "b", "c", "d", "e"}
+	for _, v := range expected {
+		s.Set("k", v)
+	}
+
+	for i, want := range expected {
+		select {
+		case evt := <-ch:
+			if evt.Key != "k" || evt.Value != want {
+				t.Fatalf("event %d mismatch: got key=%q value=%v want key=%q value=%q", i, evt.Key, evt.Value, "k", want)
+			}
+		case <-time.After(time.Second):
+			t.Fatalf("timeout waiting for event %d", i)
+		}
 	}
 }

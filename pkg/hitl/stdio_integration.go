@@ -5,7 +5,6 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"strings"
@@ -21,7 +20,7 @@ type StdioCheckpointNode struct {
 	*graph.BaseNode
 	prompt             string
 	stateKey           string
-	continueKey        string // State key that determines if execution should continue
+	continueKey        string        // State key that determines if execution should continue
 	timeout            time.Duration // Duration before timeout
 	shortWaitThreshold time.Duration // Threshold to decide between short wait and checkpointing
 	checkpointStore    CheckpointStore
@@ -57,7 +56,7 @@ func NewStdioCheckpointNode(config StdioCheckpointNodeConfig) *StdioCheckpointNo
 	if config.ShortWaitThreshold == 0 {
 		config.ShortWaitThreshold = 5 * time.Second // Default 5 seconds
 	}
-	
+
 	node := &StdioCheckpointNode{
 		BaseNode:           graph.NewBaseNode(config.ID, "stdio_checkpoint"),
 		prompt:             config.Prompt,
@@ -71,7 +70,7 @@ func NewStdioCheckpointNode(config StdioCheckpointNodeConfig) *StdioCheckpointNo
 		graphID:            config.GraphID,
 		graphVersion:       config.GraphVersion,
 	}
-	
+
 	return node
 }
 
@@ -108,7 +107,7 @@ func (n *StdioCheckpointNode) directInput(ctx context.Context, state graph.State
 	// Use channels for communication
 	resultChan := make(chan string, 1)
 	errChan := make(chan error, 1)
-	
+
 	// Set up signal handling for clean interruption
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, os.Interrupt, syscall.SIGTERM)
@@ -157,8 +156,8 @@ func (n *StdioCheckpointNode) directInput(ctx context.Context, state graph.State
 
 		// Determine if execution should continue based on input
 		shouldContinue := strings.ToLower(processedInput) == "continue" ||
-		                  strings.ToLower(processedInput) == "yes" ||
-		                  strings.ToLower(processedInput) == "y"
+			strings.ToLower(processedInput) == "yes" ||
+			strings.ToLower(processedInput) == "y"
 
 		state.Set(n.continueKey, shouldContinue)
 
@@ -228,7 +227,11 @@ func (n *StdioCheckpointNode) createDurableCheckpoint(ctx context.Context, state
 
 		// Notify human - in a real implementation this might send an email, push notification, etc.
 		if err := n.responseManager.NotifyHuman(humanReq); err != nil {
-			log.Printf("Warning: failed to notify human for request %s: %v", requestID, err)
+			hitlLogger().Warn("failed to notify human for stdio checkpoint", safeLogFields(map[string]interface{}{
+				"operation":  "stdio.notify_human",
+				"request_id": requestID,
+				"error":      err.Error(),
+			}))
 			// Don't fail the checkpoint creation if notification fails
 		}
 	}
@@ -254,7 +257,7 @@ func (n *StdioCheckpointNode) createDurableCheckpoint(ctx context.Context, state
 func (n *StdioCheckpointNode) handleResume(ctx context.Context, state graph.State) error {
 	// The state should already be restored from the checkpoint at this point
 	// Look for the pending response that was injected during resume
-	
+
 	// Check if the required keys exist in the state
 	if _, exists := state.Get(n.stateKey); !exists {
 		// If the input key doesn't exist, this might be the first resume
@@ -266,23 +269,23 @@ func (n *StdioCheckpointNode) handleResume(ctx context.Context, state graph.Stat
 				// For stdio checkpoint, we expect the response to contain the input
 				// This would be set by the resume mechanism
 				state.Set(n.stateKey, string(respBytes))
-				
+
 				// Determine continuation based on the input
 				inputStr := string(respBytes)
 				shouldContinue := strings.ToLower(inputStr) == "continue" ||
-				                  strings.ToLower(inputStr) == "yes" ||
-				                  strings.ToLower(inputStr) == "y"
+					strings.ToLower(inputStr) == "yes" ||
+					strings.ToLower(inputStr) == "y"
 				state.Set(n.continueKey, shouldContinue)
 			}
 		}
 	}
-	
+
 	// Clean up the checkpoint request ID from state
 	state.Delete(StateKeyHumanRequestID)
-	
+
 	// Clean up pending key if it exists
 	pendingKey := fmt.Sprintf(StateKeyHumanPendingFmt, n.ID())
 	state.Delete(pendingKey)
-	
+
 	return nil
 }

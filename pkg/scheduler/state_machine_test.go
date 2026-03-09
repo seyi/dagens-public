@@ -14,6 +14,8 @@ func TestCanTransitionJobState(t *testing.T) {
 	}{
 		{name: "submitted to queued", from: JobStateSubmitted, to: JobStateQueued, want: true},
 		{name: "queued to running", from: JobStateQueued, to: JobStateRunning, want: true},
+		{name: "running to awaiting human", from: JobStateRunning, to: JobStateAwaitingHuman, want: true},
+		{name: "awaiting human to running", from: JobStateAwaitingHuman, to: JobStateRunning, want: true},
 		{name: "running to succeeded", from: JobStateRunning, to: JobStateSucceeded, want: true},
 		{name: "same state is no-op", from: JobStateCanceled, to: JobStateCanceled, want: true},
 		{name: "submitted to succeeded invalid", from: JobStateSubmitted, to: JobStateSucceeded, want: false},
@@ -59,8 +61,14 @@ func TestTerminalStateHelpers(t *testing.T) {
 	if !IsTerminalJobState(JobStateSucceeded) {
 		t.Fatal("expected succeeded job state to be terminal")
 	}
+	if !IsTerminalJobState(JobStateCanceled) {
+		t.Fatal("expected canceled job state to be terminal")
+	}
 	if IsTerminalJobState(JobStateRunning) {
 		t.Fatal("expected running job state to be non-terminal")
+	}
+	if IsTerminalJobState(JobStateAwaitingHuman) {
+		t.Fatal("expected awaiting-human job state to be non-terminal")
 	}
 	if !IsTerminalTaskState(TaskStateFailed) {
 		t.Fatal("expected failed task state to be terminal")
@@ -104,6 +112,57 @@ func TestTransitionRecordValidate(t *testing.T) {
 			},
 		},
 		{
+			name: "valid resumed transition",
+			record: TransitionRecord{
+				SequenceID:    7,
+				EntityType:    TransitionEntityJob,
+				Transition:    TransitionJobResumed,
+				JobID:         "job-resume",
+				PreviousState: string(JobStateAwaitingHuman),
+				NewState:      string(JobStateRunning),
+				OccurredAt:    now,
+			},
+		},
+		{
+			name: "task transition with optional fields populated",
+			record: TransitionRecord{
+				SequenceID:    8,
+				EntityType:    TransitionEntityTask,
+				Transition:    TransitionTaskFailed,
+				JobID:         "job-1",
+				TaskID:        "task-1",
+				PreviousState: string(TaskStateRunning),
+				NewState:      string(TaskStateFailed),
+				NodeID:        "node-42",
+				Attempt:       3,
+				ErrorSummary:  "timeout after 30s",
+				OccurredAt:    now,
+			},
+		},
+		{
+			name: "valid initial job transition without previous state",
+			record: TransitionRecord{
+				SequenceID: 3,
+				EntityType: TransitionEntityJob,
+				Transition: TransitionJobSubmitted,
+				JobID:      "job-init",
+				NewState:   string(JobStateSubmitted),
+				OccurredAt: now,
+			},
+		},
+		{
+			name: "valid initial task transition without previous state",
+			record: TransitionRecord{
+				SequenceID: 4,
+				EntityType: TransitionEntityTask,
+				Transition: TransitionTaskCreated,
+				JobID:      "job-init",
+				TaskID:     "task-init",
+				NewState:   string(TaskStatePending),
+				OccurredAt: now,
+			},
+		},
+		{
 			name: "missing sequence id",
 			record: TransitionRecord{
 				EntityType: TransitionEntityJob,
@@ -111,6 +170,17 @@ func TestTransitionRecordValidate(t *testing.T) {
 				JobID:      "job-1",
 				NewState:   string(JobStateSubmitted),
 				OccurredAt: now,
+			},
+			wantErr: true,
+		},
+		{
+			name: "missing occurred_at",
+			record: TransitionRecord{
+				SequenceID: 9,
+				EntityType: TransitionEntityJob,
+				Transition: TransitionJobSubmitted,
+				JobID:      "job-1",
+				NewState:   string(JobStateSubmitted),
 			},
 			wantErr: true,
 		},
@@ -147,6 +217,31 @@ func TestTransitionRecordValidate(t *testing.T) {
 				Transition: TransitionJobRunning,
 				JobID:      "job-1",
 				NewState:   "BROKEN",
+				OccurredAt: now,
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-initial job transition missing previous state invalid",
+			record: TransitionRecord{
+				SequenceID: 5,
+				EntityType: TransitionEntityJob,
+				Transition: TransitionJobQueued,
+				JobID:      "job-2",
+				NewState:   string(JobStateQueued),
+				OccurredAt: now,
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-initial task transition missing previous state invalid",
+			record: TransitionRecord{
+				SequenceID: 6,
+				EntityType: TransitionEntityTask,
+				Transition: TransitionTaskRunning,
+				JobID:      "job-2",
+				TaskID:     "task-2",
+				NewState:   string(TaskStateRunning),
 				OccurredAt: now,
 			},
 			wantErr: true,
