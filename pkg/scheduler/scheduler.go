@@ -2,9 +2,11 @@ package scheduler
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -31,6 +33,7 @@ var ErrDispatchClaimRejected = errors.New("dispatch claim rejected by transition
 
 const schedulerMetricsID = "default"
 const maxTransitionErrorSummaryRunes = 1024
+const malformedReplayQuarantineTTL = 30 * time.Second
 
 type nodeCapacity struct {
 	ReservedInFlight int
@@ -45,6 +48,7 @@ type Scheduler struct {
 	executor          TaskExecutor
 	jobs              map[string]*Job
 	jobQueue          chan *Job
+	queuedJobs        map[string]struct{}
 	mu                sync.RWMutex
 	stopChan          chan struct{}
 	wg                sync.WaitGroup
@@ -63,6 +67,12 @@ type Scheduler struct {
 	recoveryCancel    context.CancelFunc
 	leadershipCancel  context.CancelFunc
 	leadershipStop    func()
+	executionCtx      context.Context
+	executionCancel   context.CancelFunc
+	replayQuarantine  map[string]time.Time
+	metrics           *observability.Metrics
+	tracer            telemetry.Tracer
+	logger            telemetry.Logger
 	stopOnce          sync.Once
 }
 
@@ -77,8 +87,21 @@ func NewScheduler(reg registry.Registry, executor TaskExecutor) *Scheduler {
 	return NewSchedulerWithConfig(reg, executor, DefaultSchedulerConfig())
 }
 
+// SchedulerDependencies allows callers to inject observability dependencies.
+// Any nil dependency falls back to package-level defaults.
+type SchedulerDependencies struct {
+	Metrics *observability.Metrics
+	Tracer  telemetry.Tracer
+	Logger  telemetry.Logger
+}
+
 // NewSchedulerWithConfig creates a new scheduler with the specified configuration
 func NewSchedulerWithConfig(reg registry.Registry, executor TaskExecutor, config SchedulerConfig) *Scheduler {
+	return NewSchedulerWithConfigAndDeps(reg, executor, config, SchedulerDependencies{})
+}
+
+// NewSchedulerWithConfigAndDeps creates a scheduler with explicit dependencies.
+func NewSchedulerWithConfigAndDeps(reg registry.Registry, executor TaskExecutor, config SchedulerConfig, deps SchedulerDependencies) *Scheduler {
 	config.Validate()
 
 	var affinityMap *AffinityMap
@@ -86,11 +109,25 @@ func NewSchedulerWithConfig(reg registry.Registry, executor TaskExecutor, config
 		affinityMap = NewAffinityMap(config.AffinityTTL, config.AffinityCleanupInterval)
 	}
 
+	metrics := deps.Metrics
+	if metrics == nil {
+		metrics = observability.GetMetrics()
+	}
+	tracer := deps.Tracer
+	if tracer == nil {
+		tracer = telemetry.GetGlobalTelemetry().GetTracer()
+	}
+	logger := deps.Logger
+	if logger == nil {
+		logger = telemetry.GetGlobalTelemetry().GetLogger()
+	}
+
 	s := &Scheduler{
 		registry:          reg,
 		executor:          executor,
 		jobs:              make(map[string]*Job),
 		jobQueue:          make(chan *Job, config.JobQueueSize),
+		queuedJobs:        make(map[string]struct{}),
 		stopChan:          make(chan struct{}),
 		config:            config,
 		affinityMap:       affinityMap,
@@ -99,8 +136,12 @@ func NewSchedulerWithConfig(reg registry.Registry, executor TaskExecutor, config
 		transitionStore:   NewInMemoryTransitionStore(),
 		jobSequences:      make(map[string]uint64),
 		leadership:        defaultLeadershipProvider(),
+		replayQuarantine:  make(map[string]time.Time),
+		metrics:           metrics,
+		tracer:            tracer,
+		logger:            logger,
 	}
-	observability.GetMetrics().SetTaskQueueDepths(schedulerMetricsID, 0, cap(s.jobQueue))
+	s.metrics.SetTaskQueueDepths(schedulerMetricsID, 0, cap(s.jobQueue))
 	return s
 }
 
@@ -138,9 +179,18 @@ func (s *Scheduler) Start() {
 		return
 	}
 	s.started = true
+	s.executionCtx, s.executionCancel = context.WithCancel(context.Background())
 	s.mu.Unlock()
 	s.wg.Add(1)
 	go s.run()
+	if s.config.EnableLeaderDurableRequeueLoop {
+		s.wg.Add(1)
+		go s.durableQueuedRequeueLoop()
+	}
+	if s.config.EnableJobRetentionCleanup {
+		s.wg.Add(1)
+		go s.jobRetentionCleanupLoop()
+	}
 }
 
 // Stop stops the scheduler and cleans up resources
@@ -150,8 +200,11 @@ func (s *Scheduler) Stop() {
 	cancel := s.recoveryCancel
 	leadershipCancel := s.leadershipCancel
 	leadershipStop := s.leadershipStop
+	executionCancel := s.executionCancel
 	s.leadershipCancel = nil
 	s.leadershipStop = nil
+	s.executionCancel = nil
+	s.executionCtx = nil
 	s.mu.Unlock()
 	if cancel != nil {
 		cancel()
@@ -161,6 +214,9 @@ func (s *Scheduler) Stop() {
 	}
 	if leadershipStop != nil {
 		leadershipStop()
+	}
+	if executionCancel != nil {
+		executionCancel()
 	}
 
 	s.stopOnce.Do(func() {
@@ -193,20 +249,17 @@ func (s *Scheduler) SubmitJobWithContext(ctx context.Context, job *Job) error {
 		return fmt.Errorf("job %s already exists", job.ID)
 	}
 
-	metrics := observability.GetMetrics()
-	select {
-	case s.jobQueue <- job:
+	metrics := s.metrics
+	if s.enqueueJobLocked(job) {
 		job.Status = JobPending
 		s.jobs[job.ID] = job
-		metrics.SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
 		s.mu.Unlock()
 		s.recordInitialTransitions(ctx, job)
 		return nil
-	default:
-		metrics.SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
-		s.mu.Unlock()
-		return ErrJobQueueFull
 	}
+	metrics.SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
+	s.mu.Unlock()
+	return ErrJobQueueFull
 }
 
 // GetJob returns a job by ID
@@ -288,7 +341,7 @@ func (s *Scheduler) UpdateNodeCapacityAt(nodeID string, inFlight, maxConcurrency
 		maxConcurrency = s.config.MaxWorkerConcurrencyCap
 	}
 	if reportedAt.IsZero() {
-		telemetry.GetGlobalTelemetry().GetLogger().Warn("node capacity report missing timestamp; using server receipt time", map[string]interface{}{
+		s.logger.Warn("node capacity report missing timestamp; using server receipt time", map[string]interface{}{
 			"node_id": nodeID,
 		})
 		reportedAt = time.Now()
@@ -308,7 +361,11 @@ func (s *Scheduler) run() {
 		case <-s.stopChan:
 			return
 		case job := <-s.jobQueue:
-			observability.GetMetrics().SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
+			s.markJobDequeued(job)
+			s.metrics.SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
+			if !s.isExecutableDequeuedJob(job) {
+				continue
+			}
 			authority, err := s.dispatchAuthority(context.Background())
 			if err != nil {
 				log.Printf("scheduler leadership check failed; dispatch deferred for job %s: %v", job.ID, err)
@@ -327,9 +384,226 @@ func (s *Scheduler) run() {
 				}
 				continue
 			}
-			s.executeJob(job)
+			s.executeJob(s.executionContextOrBackground(), job)
 		}
 	}
+}
+
+func (s *Scheduler) durableQueuedRequeueLoop() {
+	defer s.wg.Done()
+	ticker := time.NewTicker(s.config.LeaderDurableRequeuePollInterval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-s.stopChan:
+			return
+		case <-ticker.C:
+			if err := s.reconcileDurableQueuedJobsOnce(s.executionContextOrBackground()); err != nil {
+				log.Printf("scheduler durable queued-job reconcile failed: %v", err)
+			}
+		}
+	}
+}
+
+func (s *Scheduler) isExecutableDequeuedJob(job *Job) bool {
+	if job == nil {
+		return false
+	}
+	s.mu.RLock()
+	state := job.LifecycleState
+	s.mu.RUnlock()
+	switch state {
+	case JobStateSubmitted, JobStateQueued, JobStateAwaitingHuman:
+		return true
+	default:
+		log.Printf("scheduler skipped dequeued job %s with non-executable lifecycle state %s", job.ID, state)
+		return false
+	}
+}
+
+func (s *Scheduler) reconcileDurableQueuedJobsOnce(ctx context.Context) error {
+	authority, err := s.dispatchAuthority(ctx)
+	if err != nil {
+		return err
+	}
+	if !authority.IsLeader {
+		return nil
+	}
+	if s.transitionStore == nil {
+		return nil
+	}
+
+	jobs, err := s.transitionStore.ListUnfinishedJobs(ctx)
+	if err != nil {
+		return err
+	}
+
+	sort.Slice(jobs, func(i, j int) bool {
+		if jobs[i].CreatedAt.Equal(jobs[j].CreatedAt) {
+			return jobs[i].JobID < jobs[j].JobID
+		}
+		return jobs[i].CreatedAt.Before(jobs[j].CreatedAt)
+	})
+
+	for _, durableJob := range jobs {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		if until, ok := s.replayQuarantineUntil(durableJob.JobID); ok {
+			if time.Now().Before(until) {
+				continue
+			}
+			s.clearReplayQuarantine(durableJob.JobID)
+		}
+
+		if s.tryEnqueueExistingQueuedJob(durableJob.JobID) {
+			continue
+		}
+
+		replayed, err := ReplayJobState(ctx, s.transitionStore, durableJob.JobID)
+		if err != nil {
+			s.setReplayQuarantine(durableJob.JobID, time.Now().Add(malformedReplayQuarantineTTL))
+			log.Printf("scheduler durable queued-job reconcile skipped malformed replay for job %s: %v", durableJob.JobID, err)
+			s.failDurableQueuedJobForReconcile(ctx, durableJob, fmt.Sprintf("reconcile replay failed: %v", err))
+			continue
+		}
+		s.clearReplayQuarantine(durableJob.JobID)
+
+		replayed.Job.Name = durableJob.Name
+		replayed.Job.LastSequenceID = durableJob.LastSequenceID
+		if replayed.Job.CreatedAt.IsZero() {
+			replayed.Job.CreatedAt = durableJob.CreatedAt
+		}
+		if replayed.Job.UpdatedAt.IsZero() {
+			replayed.Job.UpdatedAt = durableJob.UpdatedAt
+		}
+		if len(replayed.Transitions) > 0 {
+			last := replayed.Transitions[len(replayed.Transitions)-1].SequenceID
+			if last > replayed.Job.LastSequenceID {
+				replayed.Job.LastSequenceID = last
+			}
+		}
+
+		if replayed.Job.CurrentState != JobStateQueued {
+			continue
+		}
+
+		s.mu.Lock()
+
+		job, exists := s.jobs[replayed.Job.JobID]
+		if !exists {
+			job = buildRecoveredRuntimeJob(replayed)
+			s.jobs[job.ID] = job
+			s.seedJobSequenceLocked(job.ID, replayed.Job.LastSequenceID, replayed.Transitions)
+		}
+		if job.LifecycleState != JobStateQueued {
+			s.mu.Unlock()
+			continue
+		}
+		if !isSafeForQueuedResume(job) {
+			s.mu.Unlock()
+			continue
+		}
+		if missingTaskFields := recoveredQueuedMissingExecutionFieldCount(job, s.config.EnableStickiness); missingTaskFields > 0 {
+			s.mu.Unlock()
+			s.failDurableQueuedJobForReconcile(ctx, durableJob, fmt.Sprintf("reconcile skipped auto-resume: recovered queued job missing execution fields (%d)", missingTaskFields))
+			continue
+		}
+		s.enqueueJobLocked(job)
+		s.mu.Unlock()
+	}
+	return nil
+}
+
+func (s *Scheduler) tryEnqueueExistingQueuedJob(jobID string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	job, exists := s.jobs[jobID]
+	if !exists || job == nil || job.LifecycleState != JobStateQueued {
+		return false
+	}
+	if !isSafeForQueuedResume(job) {
+		return false
+	}
+	if recoveredQueuedMissingExecutionFieldCount(job, s.config.EnableStickiness) > 0 {
+		return false
+	}
+	if _, alreadyQueued := s.queuedJobs[job.ID]; alreadyQueued {
+		return true
+	}
+	return s.enqueueJobLocked(job)
+}
+
+func (s *Scheduler) failDurableQueuedJobForReconcile(ctx context.Context, durableJob DurableJobRecord, reason string) {
+	if durableJob.JobID == "" {
+		return
+	}
+
+	s.mu.Lock()
+	job, exists := s.jobs[durableJob.JobID]
+	if !exists || job == nil {
+		job = &Job{
+			ID:             durableJob.JobID,
+			Name:           durableJob.Name,
+			Stages:         make([]*Stage, 0),
+			Status:         runtimeJobStatusFromLifecycle(durableJob.CurrentState),
+			LifecycleState: durableJob.CurrentState,
+			CreatedAt:      durableJob.CreatedAt,
+			UpdatedAt:      durableJob.UpdatedAt,
+			Metadata: map[string]interface{}{
+				"recovered": true,
+			},
+		}
+		s.jobs[job.ID] = job
+	}
+	currentState := job.LifecycleState
+	s.mu.Unlock()
+	if currentState != JobStateQueued {
+		return
+	}
+
+	s.updateJobStatus(job, JobFailed)
+	if CanTransitionJobState(job.LifecycleState, JobStateFailed) {
+		s.recordJobTransition(ctx, nil, job, TransitionJobFailed, JobStateFailed, reason)
+		return
+	}
+
+	// Force terminal quarantine for unrecoverable histories that cannot accept
+	// a legal lifecycle transition (for example SUBMITTED-only orphaned jobs).
+	now := time.Now().UTC()
+	job.LifecycleState = JobStateFailed
+	job.UpdatedAt = now
+	if err := s.transitionStore.UpsertJob(ctx, DurableJobRecord{
+		JobID:          durableJob.JobID,
+		Name:           durableJob.Name,
+		CurrentState:   JobStateFailed,
+		LastSequenceID: durableJob.LastSequenceID,
+		CreatedAt:      durableJob.CreatedAt,
+		UpdatedAt:      now,
+	}); err != nil {
+		log.Printf("scheduler durable queued-job reconcile failed to force-quarantine job %s: %v", durableJob.JobID, err)
+	}
+}
+
+func (s *Scheduler) setReplayQuarantine(jobID string, until time.Time) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.replayQuarantine[jobID] = until
+}
+
+func (s *Scheduler) replayQuarantineUntil(jobID string) (time.Time, bool) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	until, ok := s.replayQuarantine[jobID]
+	return until, ok
+}
+
+func (s *Scheduler) clearReplayQuarantine(jobID string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	delete(s.replayQuarantine, jobID)
 }
 
 func (s *Scheduler) dispatchAuthority(ctx context.Context) (LeadershipAuthority, error) {
@@ -374,9 +648,11 @@ func (s *Scheduler) requeueJob(job *Job) {
 	select {
 	case <-s.stopChan:
 		return
-	case s.jobQueue <- job:
-		observability.GetMetrics().SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
+	default:
 	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.enqueueJobLocked(job)
 }
 
 func (s *Scheduler) waitLeadershipRetry() bool {
@@ -390,14 +666,43 @@ func (s *Scheduler) waitLeadershipRetry() bool {
 	}
 }
 
-// executeJob executes a single job
-func (s *Scheduler) executeJob(job *Job) {
+func (s *Scheduler) enqueueJobLocked(job *Job) bool {
+	if job == nil {
+		return false
+	}
+	if _, exists := s.queuedJobs[job.ID]; exists {
+		return false
+	}
+	select {
+	case s.jobQueue <- job:
+		s.queuedJobs[job.ID] = struct{}{}
+		s.metrics.SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
+		return true
+	default:
+		s.metrics.SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
+		return false
+	}
+}
+
+func (s *Scheduler) markJobDequeued(job *Job) {
+	if job == nil {
+		return
+	}
+	s.mu.Lock()
+	delete(s.queuedJobs, job.ID)
+	s.mu.Unlock()
+}
+
+// executeJob executes a single job.
+func (s *Scheduler) executeJob(ctx context.Context, job *Job) {
 	s.updateJobStatus(job, JobRunning)
 	log.Printf("Starting execution of job %s (%s)", job.ID, job.Name)
 
-	// Create a root span for the job
-	tracer := telemetry.GetGlobalTelemetry().GetTracer()
-	ctx, span := tracer.StartSpan(context.Background(), "job.execute")
+	// Preserve parent cancellation/trace context when available.
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	ctx, span := s.tracer.StartSpan(ctx, "job.execute")
 	defer span.End()
 
 	span.SetAttribute("job.id", job.ID)
@@ -475,14 +780,24 @@ func normalizeTransitionErrorSummary(summary string) string {
 	return string(runes[:maxTransitionErrorSummaryRunes])
 }
 
+func marshalAgentInput(input *agent.AgentInput) string {
+	if input == nil {
+		return ""
+	}
+	data, err := json.Marshal(input)
+	if err != nil {
+		return ""
+	}
+	return string(data)
+}
+
 // executeStage executes a stage and its tasks
 func (s *Scheduler) executeStage(ctx context.Context, stage *Stage) error {
 	stage.Status = JobRunning
 	log.Printf("Starting stage %s with %d tasks", stage.ID, len(stage.Tasks))
 
 	// Create a span for the stage
-	tracer := telemetry.GetGlobalTelemetry().GetTracer()
-	stageCtx, span := tracer.StartSpan(ctx, "stage.execute")
+	stageCtx, span := s.tracer.StartSpan(ctx, "stage.execute")
 	defer span.End()
 
 	span.SetAttribute("stage.id", stage.ID)
@@ -530,7 +845,11 @@ func (s *Scheduler) executeStage(ctx context.Context, stage *Stage) error {
 		go func(t *Task, n registry.NodeInfo) {
 			defer wg.Done()
 			if err := s.executeTaskWithRetry(stageCtx, t, n, nodes); err != nil {
-				errChan <- err
+				select {
+				case <-stageCtx.Done():
+					return
+				case errChan <- err:
+				}
 			}
 		}(task, node)
 	}
@@ -540,8 +859,8 @@ func (s *Scheduler) executeStage(ctx context.Context, stage *Stage) error {
 	close(errChan)
 
 	if selectionErr != nil {
-		observability.GetMetrics().RecordSchedulerAllWorkersFull()
-		telemetry.GetGlobalTelemetry().GetLogger().Warn("no worker capacity available", map[string]interface{}{
+		s.metrics.RecordSchedulerAllWorkersFull()
+		s.logger.Warn("no worker capacity available", map[string]interface{}{
 			"stage_id":        stage.ID,
 			"healthy_workers": len(nodes),
 			"started_tasks":   startedTasks,
@@ -582,7 +901,7 @@ func (s *Scheduler) selectNodeForTaskWithDeferral(ctx context.Context, task *Tas
 		return registry.NodeInfo{}, affinity, false, nil
 	}
 
-	observability.GetMetrics().RecordSchedulerCapacityDeferral()
+	s.metrics.RecordSchedulerCapacityDeferral()
 
 	timeout := s.config.StageCapacityDeferralTimeout
 	poll := s.config.StageCapacityDeferralPollInterval
@@ -602,7 +921,7 @@ func (s *Scheduler) selectNodeForTaskWithDeferral(ctx context.Context, task *Tas
 		case <-timer.C:
 			return registry.NodeInfo{}, affinity, false, nil
 		case <-ticker.C:
-			observability.GetMetrics().RecordSchedulerCapacityDeferralPoll()
+			s.metrics.RecordSchedulerCapacityDeferralPoll()
 			if s.registry == nil {
 				return registry.NodeInfo{}, affinity, false, nil
 			}
@@ -653,16 +972,16 @@ func (s *Scheduler) executeTaskWithRetry(ctx context.Context, task *Task, initia
 
 	for attempt := 1; attempt <= maxAttempts; attempt++ {
 		task.Attempts = attempt
-		if err := s.claimTaskDispatchTransition(ctx, telemetry.GetGlobalTelemetry().GetTracer().GetSpan(ctx), task, node.ID, attempt); err != nil {
+		if err := s.claimTaskDispatchTransition(ctx, s.tracer.GetSpan(ctx), task, node.ID, attempt); err != nil {
 			if !errors.Is(err, ErrDispatchClaimRejected) {
 				return err
 			}
-			observability.GetMetrics().RecordSchedulerDispatchRejection("fencing_conflict")
+			s.metrics.RecordSchedulerDispatchRejection("fencing_conflict")
 			if attempt == maxAttempts {
-				observability.GetMetrics().RecordTaskFailedMaxDispatchAttempts()
+				s.metrics.RecordTaskFailedMaxDispatchAttempts()
 				return err
 			}
-			observability.GetMetrics().RecordTaskDispatchRetry()
+			s.metrics.RecordTaskDispatchRetry()
 			nextNode, _, ok := s.selectNodeForTask(task, healthyNodes)
 			if !ok {
 				return ErrNoWorkerCapacity
@@ -682,11 +1001,11 @@ func (s *Scheduler) executeTaskWithRetry(ctx context.Context, task *Task, initia
 			return err
 		}
 		if attempt == maxAttempts {
-			observability.GetMetrics().RecordTaskFailedMaxDispatchAttempts()
+			s.metrics.RecordTaskFailedMaxDispatchAttempts()
 			return err
 		}
 
-		observability.GetMetrics().RecordTaskDispatchRetry()
+		s.metrics.RecordTaskDispatchRetry()
 		nextNode, _, ok := s.selectNodeForTask(task, healthyNodes)
 		if !ok {
 			return ErrNoWorkerCapacity
@@ -735,6 +1054,11 @@ func (s *Scheduler) claimTaskDispatchTransition(ctx context.Context, span teleme
 		OccurredAt:    time.Now().UTC(),
 	}
 
+	// Dispatch-claim write path:
+	// 1. Allocate monotonic sequence (durable when SequenceIDStore is available).
+	// 2. In one persistence callback, attempt CAS-style task claim when supported.
+	// 3. Append transition and refresh durable job snapshot in same write boundary.
+	// 4. If CAS reject occurs, return ErrDispatchClaimRejected for retry/alternate node.
 	snapshot, hasSnapshot := s.durableJobSnapshot(task.JobID, record.SequenceID, record.OccurredAt)
 	err = s.persistTransitionWrite(ctx, func(tx TransitionStoreTx) error {
 		claimed := true
@@ -757,6 +1081,10 @@ func (s *Scheduler) claimTaskDispatchTransition(ctx context.Context, span teleme
 				JobID:        task.JobID,
 				StageID:      task.StageID,
 				NodeID:       nodeID,
+				AgentID:      task.AgentID,
+				AgentName:    task.AgentName,
+				InputJSON:    marshalAgentInput(task.Input),
+				PartitionKey: task.PartitionKey,
 				CurrentState: newState,
 				LastAttempt:  attempt,
 				UpdatedAt:    record.OccurredAt,
@@ -803,8 +1131,7 @@ func (s *Scheduler) executeTask(ctx context.Context, task *Task, node registry.N
 	task.Status = JobRunning
 
 	// Create span for task
-	tracer := telemetry.GetGlobalTelemetry().GetTracer()
-	taskCtx, span := tracer.StartSpan(ctx, "task.execute")
+	taskCtx, span := s.tracer.StartSpan(ctx, "task.execute")
 	defer span.End()
 
 	span.SetAttribute("task.id", task.ID)
@@ -828,11 +1155,11 @@ func (s *Scheduler) executeTask(ctx context.Context, task *Task, node registry.N
 		}
 
 		if isDispatchCapacityConflict(err) {
-			observability.GetMetrics().RecordSchedulerDispatchRejection("capacity_conflict")
+			s.metrics.RecordSchedulerDispatchRejection("capacity_conflict")
 			s.markDispatchCooldown(node.ID)
 			span.SetAttribute("scheduler.dispatch_cooldown", true)
 		} else {
-			observability.GetMetrics().RecordSchedulerDispatchRejection(dispatchRejectionReason(err))
+			s.metrics.RecordSchedulerDispatchRejection(dispatchRejectionReason(err))
 		}
 
 		task.Status = JobFailed
@@ -990,6 +1317,10 @@ func (s *Scheduler) recordTaskTransition(ctx context.Context, span telemetry.Spa
 			JobID:        task.JobID,
 			StageID:      task.StageID,
 			NodeID:       nodeID,
+			AgentID:      task.AgentID,
+			AgentName:    task.AgentName,
+			InputJSON:    marshalAgentInput(task.Input),
+			PartitionKey: task.PartitionKey,
 			CurrentState: newState,
 			LastAttempt:  attempt,
 			UpdatedAt:    record.OccurredAt,
@@ -1104,7 +1435,7 @@ func (s *Scheduler) selectNodeForTask(task *Task, healthyNodes []registry.NodeIn
 			if s.nodeHasAvailableCapacity(entry.NodeID) {
 				// HIT: Use the sticky node
 				s.affinityMap.Touch(task.PartitionKey)
-				observability.GetMetrics().RecordSchedulerAffinityHit()
+				s.metrics.RecordSchedulerAffinityHit()
 				result.NodeID = entry.NodeID
 				result.IsHit = true
 				log.Printf("[AFFINITY] HIT: PartitionKey=%s -> Node=%s (hits=%d)",
@@ -1121,7 +1452,7 @@ func (s *Scheduler) selectNodeForTask(task *Task, healthyNodes []registry.NodeIn
 			log.Printf("[AFFINITY] STALE: PartitionKey=%s, Node=%s is unhealthy, re-routing",
 				task.PartitionKey, entry.NodeID)
 			s.affinityMap.Delete(task.PartitionKey)
-			observability.GetMetrics().RecordSchedulerAffinityStale()
+			s.metrics.RecordSchedulerAffinityStale()
 			result.IsStale = true
 		}
 	}
@@ -1132,7 +1463,7 @@ func (s *Scheduler) selectNodeForTask(task *Task, healthyNodes []registry.NodeIn
 		return registry.NodeInfo{}, result, false
 	}
 	s.affinityMap.Set(task.PartitionKey, selectedNode.ID)
-	observability.GetMetrics().RecordSchedulerAffinityMiss()
+	s.metrics.RecordSchedulerAffinityMiss()
 	result.NodeID = selectedNode.ID
 
 	log.Printf("[AFFINITY] MISS: PartitionKey=%s -> Node=%s (new affinity)",
@@ -1200,7 +1531,7 @@ func (s *Scheduler) selectNodeByCapacity(nodes []registry.NodeInfo) (registry.No
 		return registry.NodeInfo{}, false
 	}
 
-	observability.GetMetrics().RecordSchedulerDegradedMode()
+	s.metrics.RecordSchedulerDegradedMode()
 	selected := nodes[staleBestIndexes[s.nodeIndex%len(staleBestIndexes)]]
 	s.nodeIndex++
 	return selected, true
@@ -1292,7 +1623,67 @@ func (s *Scheduler) markDispatchCooldown(nodeID string) {
 	defer s.mu.Unlock()
 
 	s.dispatchCooldowns[nodeID] = time.Now().Add(s.config.DispatchRejectCooldown)
-	observability.GetMetrics().RecordSchedulerDispatchCooldownActivation()
+	s.metrics.RecordSchedulerDispatchCooldownActivation()
+}
+
+func (s *Scheduler) executionContextOrBackground() context.Context {
+	s.mu.RLock()
+	ctx := s.executionCtx
+	s.mu.RUnlock()
+	if ctx == nil {
+		return context.Background()
+	}
+	return ctx
+}
+
+func (s *Scheduler) jobRetentionCleanupLoop() {
+	defer s.wg.Done()
+	ticker := time.NewTicker(s.config.JobRetentionCleanupInterval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-s.stopChan:
+			return
+		case <-ticker.C:
+			pruned := s.cleanupTerminalJobsOnce(time.Now())
+			if pruned > 0 {
+				s.logger.Info("scheduler terminal job cleanup complete", map[string]interface{}{
+					"pruned_jobs": pruned,
+				})
+			}
+		}
+	}
+}
+
+func (s *Scheduler) cleanupTerminalJobsOnce(now time.Time) int {
+	if s.config.JobRetentionTTL <= 0 {
+		return 0
+	}
+	cutoff := now.Add(-s.config.JobRetentionTTL)
+	pruned := 0
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for jobID, job := range s.jobs {
+		if job == nil {
+			delete(s.jobs, jobID)
+			delete(s.jobSequences, jobID)
+			delete(s.queuedJobs, jobID)
+			continue
+		}
+		if !IsTerminalJobState(job.LifecycleState) {
+			continue
+		}
+		if job.UpdatedAt.After(cutoff) {
+			continue
+		}
+		delete(s.jobs, jobID)
+		delete(s.jobSequences, jobID)
+		delete(s.queuedJobs, jobID)
+		pruned++
+	}
+	return pruned
 }
 
 func isDispatchCapacityConflict(err error) bool {

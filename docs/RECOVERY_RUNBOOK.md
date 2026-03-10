@@ -170,7 +170,8 @@ Script:
 1. Scheduler leadership is enabled (for example `SCHEDULER_LEADERSHIP_BACKEND=etcd`).
 2. At least two control-plane instances are deployed.
 3. API endpoint is reachable (`API_URL`).
-4. Optional SQL verification: `psql` installed and `DATABASE_URL` set.
+4. SQL verification requires `DATABASE_URL`; either host `psql` or `docker` must be available.
+5. A concrete leader stop command is known (`LEADER_STOP_CMD`) for takeover validation.
 
 ### Example Commands
 
@@ -191,8 +192,11 @@ docker compose -f docker-compose.yml -f deploy/ha/docker-compose.ha.yml up -d --
 Then run takeover drill through the HA load balancer:
 
 ```bash
-API_URL=http://localhost:8083 \
-LEADER_STOP_CMD="docker kill dagens-api-server-1" \
+API_URL=http://localhost:18083 \
+JOB_COUNT=3 \
+DRILL_TIMEOUT_SECONDS=180 \
+LEADER_STOP_CMD="docker kill ha-api-server-b-1" \
+DATABASE_URL="postgres://postgres:postgres@localhost:55432/dagens?sslmode=disable" \
 ./scripts/failover_drill.sh
 ```
 
@@ -205,11 +209,34 @@ DATABASE_URL="postgres://postgres:postgres@localhost:5432/dagens?sslmode=disable
 ./scripts/failover_drill.sh
 ```
 
+### Standard Operator Flow
+
+1. Verify both API instances and LB are healthy.
+2. Identify current leader (for example via etcd key inspection).
+3. Set `LEADER_STOP_CMD` to terminate the current leader instance.
+4. Run `scripts/failover_drill.sh` through the LB endpoint.
+5. Confirm:
+   - all canary jobs reached terminal state before timeout
+   - duplicate `TASK_DISPATCHED` check reports none
+   - leadership moved to follower
+6. Restore the stopped API instance and confirm both instances are healthy.
+
 ### Pass Criteria
 
 1. All canary jobs reach terminal state (`COMPLETED`/`SUCCEEDED`/`FAILED`/`CANCELED`) before timeout.
 2. No duplicate `TASK_DISPATCHED` rows for the same `(task_id, attempt)` in the drill window.
 3. No prolonged dispatch outage after leader termination.
+4. Former follower becomes leader within expected failover window.
+
+### SQL Check Behavior
+
+When `DATABASE_URL` is set, the drill performs duplicate-dispatch validation:
+
+1. Uses host `psql` if installed.
+2. Falls back to containerized `psql` (`postgres:15-alpine`) when `psql` is not installed.
+3. For localhost DSNs, containerized fallback uses host networking to reach Postgres.
+
+If neither `psql` nor `docker` is available, SQL fence check is skipped and must be run manually.
 
 ### Follow-up If Drill Fails
 
@@ -217,6 +244,16 @@ DATABASE_URL="postgres://postgres:postgres@localhost:5432/dagens?sslmode=disable
 2. Verify etcd leadership key health and lease turnover timing.
 3. Query `scheduler_job_transitions` for duplicate dispatch claims and inspect `attempt`.
 4. Re-run drill after remediation and attach outputs to release evidence.
+
+### Evidence Capture Template
+
+For release evidence, record:
+
+1. Drill command used (including `API_URL`, `JOB_COUNT`, `DRILL_TIMEOUT_SECONDS`).
+2. Leader stop action (`LEADER_STOP_CMD`) and timestamp.
+3. Final canary statuses.
+4. SQL duplicate-claim check output.
+5. Post-drill service state (API A/API B/LB healthy).
 
 ## Escalation Criteria
 

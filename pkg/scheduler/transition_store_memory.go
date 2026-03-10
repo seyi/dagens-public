@@ -87,6 +87,23 @@ func (s *InMemoryTransitionStore) ListTransitionsByJob(_ context.Context, jobID 
 	return out, nil
 }
 
+func (s *InMemoryTransitionStore) ListTasksByJob(_ context.Context, jobID string) ([]DurableTaskRecord, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	out := make([]DurableTaskRecord, 0)
+	for _, task := range s.tasks {
+		if task.JobID != jobID {
+			continue
+		}
+		out = append(out, task)
+	}
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].TaskID < out[j].TaskID
+	})
+	return out, nil
+}
+
 // WithTx executes transition writes atomically against the in-memory store by
 // applying changes to a snapshot and committing only on successful callback
 // return.

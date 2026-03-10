@@ -1,15 +1,17 @@
 package main
 
 import (
-	"context"
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -267,8 +269,8 @@ func startWorkerCapacityHeartbeat(ctx context.Context, nodeID string, service *r
 	}
 
 	workerToken := os.Getenv("WORKER_HEARTBEAT_TOKEN")
-	client := &http.Client{Timeout: 5 * time.Second}
-	endpoint := apiServerURL + "/v1/internal/worker_capacity"
+	client := &http.Client{Timeout: 1500 * time.Millisecond}
+	endpoints := workerHeartbeatEndpoints(apiServerURL)
 
 	send := func() {
 		payload := map[string]interface{}{
@@ -284,25 +286,33 @@ func startWorkerCapacityHeartbeat(ctx context.Context, nodeID string, service *r
 			return
 		}
 
-		req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(body))
-		if err != nil {
-			log.Printf("worker heartbeat request build failed: %v", err)
+		var lastErr error
+		for _, endpoint := range endpoints {
+			req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(body))
+			if err != nil {
+				lastErr = err
+				continue
+			}
+			req.Header.Set("Content-Type", "application/json")
+			if workerToken != "" {
+				req.Header.Set("X-Dagens-Worker-Token", workerToken)
+			}
+
+			resp, err := client.Do(req)
+			if err != nil {
+				lastErr = err
+				continue
+			}
+			if resp.StatusCode >= http.StatusMultipleChoices {
+				lastErr = fmt.Errorf("status=%s", resp.Status)
+				resp.Body.Close()
+				continue
+			}
+			resp.Body.Close()
 			return
 		}
-		req.Header.Set("Content-Type", "application/json")
-		if workerToken != "" {
-			req.Header.Set("X-Dagens-Worker-Token", workerToken)
-		}
-
-		resp, err := client.Do(req)
-		if err != nil {
-			log.Printf("worker heartbeat failed: %v", err)
-			return
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode >= http.StatusMultipleChoices {
-			log.Printf("worker heartbeat rejected: status=%s", resp.Status)
+		if lastErr != nil {
+			log.Printf("worker heartbeat failed across all endpoints: %v", lastErr)
 		}
 	}
 
@@ -320,4 +330,38 @@ func startWorkerCapacityHeartbeat(ctx context.Context, nodeID string, service *r
 			}
 		}
 	}()
+}
+
+func workerHeartbeatEndpoints(primary string) []string {
+	endpointSet := make(map[string]struct{})
+	ordered := make([]string, 0, 4)
+
+	add := func(base string) {
+		base = strings.TrimSpace(base)
+		if base == "" {
+			return
+		}
+		base = strings.TrimSuffix(base, "/")
+		full := base + "/v1/internal/worker_capacity"
+		if _, ok := endpointSet[full]; ok {
+			return
+		}
+		endpointSet[full] = struct{}{}
+		ordered = append(ordered, full)
+	}
+
+	add(primary)
+	if raw := os.Getenv("API_SERVER_FALLBACK_URLS"); raw != "" {
+		for _, part := range strings.Split(raw, ",") {
+			add(part)
+		}
+	}
+
+	u, err := url.Parse(primary)
+	if err == nil && strings.EqualFold(u.Hostname(), "api-lb") {
+		add("http://api-server:8080")
+		add("http://api-server-b:8080")
+	}
+
+	return ordered
 }

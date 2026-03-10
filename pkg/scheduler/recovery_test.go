@@ -3,6 +3,7 @@ package scheduler
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -1269,6 +1270,102 @@ func TestRecoverFromTransitionsRecordsCanceledMetricsAndLog(t *testing.T) {
 	}
 	if replayErr, ok := last.Attributes["replay_error"].(string); !ok || replayErr == "" {
 		t.Fatalf("replay_error log attr = %v, want non-empty string", last.Attributes["replay_error"])
+	}
+}
+
+func TestRecoverFromTransitionsCancelsDuringBatchApply(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+	jobCount := 4000
+	for i := 0; i < jobCount; i++ {
+		jobID := fmt.Sprintf("job-cancel-apply-%d", i)
+		taskID := fmt.Sprintf("task-cancel-apply-%d", i)
+		createdAt := now.Add(time.Duration(i) * time.Millisecond)
+		if err := store.UpsertJob(context.Background(), DurableJobRecord{
+			JobID:          jobID,
+			Name:           jobID,
+			CurrentState:   JobStateQueued,
+			LastSequenceID: 3,
+			CreatedAt:      createdAt,
+			UpdatedAt:      createdAt.Add(2 * time.Millisecond),
+		}); err != nil {
+			t.Fatalf("UpsertJob(%s) unexpected error: %v", jobID, err)
+		}
+		if err := store.UpsertTask(context.Background(), DurableTaskRecord{
+			TaskID:       taskID,
+			JobID:        jobID,
+			StageID:      "stage-1",
+			CurrentState: TaskStatePending,
+			LastAttempt:  0,
+			UpdatedAt:    createdAt.Add(time.Millisecond),
+		}); err != nil {
+			t.Fatalf("UpsertTask(%s) unexpected error: %v", taskID, err)
+		}
+		transitions := []TransitionRecord{
+			{
+				SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted,
+				JobID: jobID, NewState: string(JobStateSubmitted), OccurredAt: createdAt,
+			},
+			{
+				SequenceID: 2, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated,
+				JobID: jobID, TaskID: taskID, NewState: string(TaskStatePending), OccurredAt: createdAt.Add(time.Millisecond),
+			},
+			{
+				SequenceID: 3, EntityType: TransitionEntityJob, Transition: TransitionJobQueued,
+				JobID: jobID, PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: createdAt.Add(2 * time.Millisecond),
+			},
+		}
+		for _, tr := range transitions {
+			if err := store.AppendTransition(context.Background(), tr); err != nil {
+				t.Fatalf("AppendTransition(%s,%d) unexpected error: %v", jobID, tr.SequenceID, err)
+			}
+		}
+	}
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:                    32,
+		RecoveryBatchSize:               64,
+		EnableResumeRecoveredQueuedJobs: false,
+	})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+
+	beforeRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "canceled")
+	logger := schedulerLogger(t)
+	beforeLogs := len(logger.GetLogs())
+
+	ctx, cancel := context.WithCancel(context.Background())
+	// Use a short timer to cancel while recovery is still processing the large replay set.
+	time.AfterFunc(5*time.Millisecond, cancel)
+
+	err := s.RecoverFromTransitions(ctx)
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("RecoverFromTransitions error = %v, want %v", err, context.Canceled)
+	}
+
+	afterRuns := counterVecValue(t, "dagens_scheduler_recovery_runs_total", "status", "canceled")
+	if afterRuns != beforeRuns+1 {
+		t.Fatalf("scheduler recovery canceled runs = %v, want %v", afterRuns, beforeRuns+1)
+	}
+
+	logs := logger.GetLogs()
+	if len(logs) <= beforeLogs {
+		t.Fatalf("expected at least one new cancellation log, got before=%d after=%d", beforeLogs, len(logs))
+	}
+	foundCanceledApplyLog := false
+	for _, entry := range logs[beforeLogs:] {
+		if strings.Contains(entry.Message, "scheduler startup recovery canceled") {
+			foundCanceledApplyLog = true
+			break
+		}
+		if entry.Message == "scheduler startup recovery failed" && entry.Attributes["status"] == "canceled" {
+			foundCanceledApplyLog = true
+			break
+		}
+	}
+	if !foundCanceledApplyLog {
+		t.Fatal("expected canceled recovery log during/after batch apply")
 	}
 }
 

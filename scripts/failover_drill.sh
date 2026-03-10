@@ -24,6 +24,28 @@ DATABASE_URL="${DATABASE_URL:-${SCHEDULER_TRANSITION_POSTGRES_DSN:-}}"
 command -v curl >/dev/null 2>&1 || { echo "curl is required"; exit 1; }
 command -v jq >/dev/null 2>&1 || { echo "jq is required"; exit 1; }
 
+run_sql_check() {
+  local sql="$1"
+
+  if command -v psql >/dev/null 2>&1; then
+    psql "${DATABASE_URL}" -At -F '|' -c "${sql}"
+    return $?
+  fi
+
+  if command -v docker >/dev/null 2>&1; then
+    local docker_network_args=()
+    # Host networking allows localhost-based DATABASE_URL values to resolve.
+    if [[ "${DATABASE_URL}" == *"@localhost"* || "${DATABASE_URL}" == *"@127.0.0.1"* ]]; then
+      docker_network_args=(--network host)
+    fi
+    docker run --rm "${docker_network_args[@]}" postgres:15-alpine \
+      psql "${DATABASE_URL}" -At -F '|' -c "${sql}"
+    return $?
+  fi
+
+  return 127
+}
+
 echo "== Dagens HA Failover Drill =="
 echo "API_URL=${API_URL}"
 echo "JOB_COUNT=${JOB_COUNT}"
@@ -126,7 +148,7 @@ if [[ -n "${DATABASE_URL}" ]] && command -v psql >/dev/null 2>&1; then
     HAVING COUNT(*) > 1
     ORDER BY dispatch_count DESC, task_id, attempt;
   "
-  dupes="$(psql "${DATABASE_URL}" -At -F '|' -c "${sql}" || true)"
+  dupes="$(run_sql_check "${sql}" || true)"
   if [[ -n "${dupes}" ]]; then
     echo "Potential duplicate dispatch claims detected:"
     echo "${dupes}"
@@ -135,7 +157,28 @@ if [[ -n "${DATABASE_URL}" ]] && command -v psql >/dev/null 2>&1; then
     echo "No duplicate TASK_DISPATCHED claims detected for the drill window."
   fi
 elif [[ -n "${DATABASE_URL}" ]]; then
-  echo "DATABASE_URL was set but psql was not found; skipping SQL fence check."
+  if command -v docker >/dev/null 2>&1; then
+    echo "Running fencing duplicate-claim check via containerized psql..."
+    sql="
+      SELECT task_id, attempt, COUNT(*) AS dispatch_count
+      FROM scheduler_job_transitions
+      WHERE transition = 'TASK_DISPATCHED'
+        AND occurred_at > NOW() - INTERVAL '30 minutes'
+      GROUP BY task_id, attempt
+      HAVING COUNT(*) > 1
+      ORDER BY dispatch_count DESC, task_id, attempt;
+    "
+    dupes="$(run_sql_check "${sql}" || true)"
+    if [[ -n "${dupes}" ]]; then
+      echo "Potential duplicate dispatch claims detected:"
+      echo "${dupes}"
+      fencing_violation=1
+    else
+      echo "No duplicate TASK_DISPATCHED claims detected for the drill window."
+    fi
+  else
+    echo "DATABASE_URL was set but neither psql nor docker was found; skipping SQL fence check."
+  fi
 else
   echo "DATABASE_URL not set; skipping SQL fence check."
 fi

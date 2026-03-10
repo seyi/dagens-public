@@ -102,6 +102,8 @@ rsync -a /data/repos/dagens/docs/REPO_TREE_AND_RUNTIME.md /data/repos/dagens-pub
 rsync -a /data/repos/dagens/docs/SCALING_AND_DISPATCH_CLARIFICATION.md /data/repos/dagens-public/docs/
 rsync -a /data/repos/dagens/docs/DURABILITY.md /data/repos/dagens-public/docs/
 rsync -a /data/repos/dagens/docs/FAILURE_SEMANTICS.md /data/repos/dagens-public/docs/
+rsync -a /data/repos/dagens/docs/CONTROL_PLANE_HA.md /data/repos/dagens-public/docs/
+rsync -a /data/repos/dagens/docs/RECOVERY_RUNBOOK.md /data/repos/dagens-public/docs/
 rsync -a /data/repos/dagens/docs/INFRASTRUCTURE_THESIS.md /data/repos/dagens-public/docs/
 rsync -a /data/repos/dagens/docs/GETTING_STARTED.md /data/repos/dagens-public/docs/
 rsync -a /data/repos/dagens/docs/DEPLOYMENT_PATTERNS.md /data/repos/dagens-public/docs/

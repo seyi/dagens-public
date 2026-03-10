@@ -16,6 +16,7 @@ import (
 	"github.com/seyi/dagens/pkg/observability"
 	"github.com/seyi/dagens/pkg/registry"
 	"github.com/seyi/dagens/pkg/telemetry"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func TestSubmitJobReturnsQueueFullWithoutRetainingRejectedJob(t *testing.T) {
@@ -259,7 +260,7 @@ func TestExecuteJob_RecordsResumedTransitionFromAwaitingHuman(t *testing.T) {
 	job := NewJob("job-resumed", "resumed")
 	job.LifecycleState = JobStateAwaitingHuman
 
-	s.executeJob(job)
+	s.executeJob(context.Background(), job)
 
 	store, ok := s.TransitionStore().(*InMemoryTransitionStore)
 	if !ok {
@@ -274,6 +275,188 @@ func TestExecuteJob_RecordsResumedTransitionFromAwaitingHuman(t *testing.T) {
 	}
 	if records[0].Transition != TransitionJobResumed {
 		t.Fatalf("first transition = %q, want %q", records[0].Transition, TransitionJobResumed)
+	}
+}
+
+func TestCleanupTerminalJobsOnce_PrunesExpiredTerminalJobs(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:                8,
+		EnableJobRetentionCleanup:   false,
+		JobRetentionTTL:             time.Minute,
+		JobRetentionCleanupInterval: 30 * time.Second,
+	})
+
+	now := time.Now()
+	terminalOld := &Job{
+		ID:             "job-terminal-old",
+		Name:           "old",
+		LifecycleState: JobStateSucceeded,
+		Status:         JobCompleted,
+		UpdatedAt:      now.Add(-2 * time.Minute),
+	}
+	terminalFresh := &Job{
+		ID:             "job-terminal-fresh",
+		Name:           "fresh",
+		LifecycleState: JobStateFailed,
+		Status:         JobFailed,
+		UpdatedAt:      now.Add(-10 * time.Second),
+	}
+	running := &Job{
+		ID:             "job-running",
+		Name:           "running",
+		LifecycleState: JobStateRunning,
+		Status:         JobRunning,
+		UpdatedAt:      now.Add(-10 * time.Minute),
+	}
+
+	s.mu.Lock()
+	s.jobs[terminalOld.ID] = terminalOld
+	s.jobs[terminalFresh.ID] = terminalFresh
+	s.jobs[running.ID] = running
+	s.jobSequences[terminalOld.ID] = 5
+	s.jobSequences[terminalFresh.ID] = 4
+	s.jobSequences[running.ID] = 3
+	s.queuedJobs[terminalOld.ID] = struct{}{}
+	s.mu.Unlock()
+
+	pruned := s.cleanupTerminalJobsOnce(now)
+	if pruned != 1 {
+		t.Fatalf("cleanupTerminalJobsOnce pruned = %d, want 1", pruned)
+	}
+
+	if _, err := s.GetJob(terminalOld.ID); err == nil {
+		t.Fatalf("expected %s to be pruned", terminalOld.ID)
+	}
+	if _, err := s.GetJob(terminalFresh.ID); err != nil {
+		t.Fatalf("expected %s to remain, got error: %v", terminalFresh.ID, err)
+	}
+	if _, err := s.GetJob(running.ID); err != nil {
+		t.Fatalf("expected %s to remain, got error: %v", running.ID, err)
+	}
+}
+
+func TestExecuteJob_UsesProvidedContextForSpan(t *testing.T) {
+	tracer := &captureTracer{}
+	s := NewSchedulerWithConfigAndDeps(nil, nil, SchedulerConfig{JobQueueSize: 1}, SchedulerDependencies{
+		Tracer: tracer,
+	})
+
+	ctx := context.WithValue(context.Background(), testContextKey("parent"), "ctx-marker")
+	job := NewJob("job-context-span", "context-span")
+	s.executeJob(ctx, job)
+
+	if !tracer.lastStartCtxHasMarker {
+		t.Fatal("expected executeJob to start span from provided parent context")
+	}
+}
+
+func TestReconcileDurableQueuedJobsOnce_LeaderRequeuesQueuedJob(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	seedDurableQueuedJobForReconcileTest(t, store, "job-durable-queued")
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:                   4,
+		EnableLeaderDurableRequeueLoop: false,
+	})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+	lp := &toggleLeadershipProvider{}
+	lp.setLeader(true)
+	if err := s.SetLeadershipProvider(lp); err != nil {
+		t.Fatalf("SetLeadershipProvider unexpected error: %v", err)
+	}
+	seedHydratedQueuedRuntimeJobForReconcileTest(s, "job-durable-queued")
+
+	if err := s.reconcileDurableQueuedJobsOnce(context.Background()); err != nil {
+		t.Fatalf("reconcileDurableQueuedJobsOnce unexpected error: %v", err)
+	}
+	if got := len(s.jobQueue); got != 1 {
+		t.Fatalf("job queue depth after first reconcile = %d, want 1", got)
+	}
+	if _, err := s.GetJob("job-durable-queued"); err != nil {
+		t.Fatalf("GetJob expected recovered queued job, got error: %v", err)
+	}
+
+	// Repeat reconcile should not duplicate the queued in-memory entry.
+	if err := s.reconcileDurableQueuedJobsOnce(context.Background()); err != nil {
+		t.Fatalf("second reconcileDurableQueuedJobsOnce unexpected error: %v", err)
+	}
+	if got := len(s.jobQueue); got != 1 {
+		t.Fatalf("job queue depth after second reconcile = %d, want 1", got)
+	}
+	reconciled, err := s.GetJob("job-durable-queued")
+	if err != nil {
+		t.Fatalf("expected queued job after second reconcile, got error: %v", err)
+	}
+	if reconciled.LifecycleState != JobStateQueued {
+		t.Fatalf("queued job lifecycle after second reconcile = %q, want %q", reconciled.LifecycleState, JobStateQueued)
+	}
+}
+
+func TestReconcileDurableQueuedJobsOnce_FollowerSkipsRequeue(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	seedDurableQueuedJobForReconcileTest(t, store, "job-follower-skip")
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:                   2,
+		EnableLeaderDurableRequeueLoop: false,
+	})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+	lp := &toggleLeadershipProvider{}
+	lp.setLeader(false)
+	if err := s.SetLeadershipProvider(lp); err != nil {
+		t.Fatalf("SetLeadershipProvider unexpected error: %v", err)
+	}
+
+	if err := s.reconcileDurableQueuedJobsOnce(context.Background()); err != nil {
+		t.Fatalf("reconcileDurableQueuedJobsOnce unexpected error: %v", err)
+	}
+	if got := len(s.jobQueue); got != 0 {
+		t.Fatalf("job queue depth = %d, want 0 in follower mode", got)
+	}
+	if _, err := s.GetJob("job-follower-skip"); err == nil {
+		t.Fatal("expected follower reconcile to avoid recovering queued job into in-memory state")
+	}
+}
+
+func TestReconcileDurableQueuedJobsOnce_SkipsMalformedReplayAndContinues(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	seedDurableQueuedJobForReconcileTest(t, store, "job-reconcile-good")
+	seedDurableMalformedQueuedJobForReconcileTest(t, store, "job-reconcile-bad")
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:                   4,
+		EnableLeaderDurableRequeueLoop: false,
+	})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+	lp := &toggleLeadershipProvider{}
+	lp.setLeader(true)
+	if err := s.SetLeadershipProvider(lp); err != nil {
+		t.Fatalf("SetLeadershipProvider unexpected error: %v", err)
+	}
+	seedHydratedQueuedRuntimeJobForReconcileTest(s, "job-reconcile-good")
+
+	if err := s.reconcileDurableQueuedJobsOnce(context.Background()); err != nil {
+		t.Fatalf("reconcileDurableQueuedJobsOnce unexpected error: %v", err)
+	}
+
+	if got := len(s.jobQueue); got != 1 {
+		t.Fatalf("job queue depth = %d, want 1 (good queued job only)", got)
+	}
+	if _, err := s.GetJob("job-reconcile-good"); err != nil {
+		t.Fatalf("expected recovered good queued job, got error: %v", err)
+	}
+	bad, err := s.GetJob("job-reconcile-bad")
+	if err != nil {
+		t.Fatalf("expected malformed job to be quarantined to terminal state, got error: %v", err)
+	}
+	if bad.LifecycleState != JobStateFailed {
+		t.Fatalf("malformed recovered job lifecycle = %q, want %q", bad.LifecycleState, JobStateFailed)
 	}
 }
 
@@ -1320,6 +1503,8 @@ type contextCaptureTransitionStore struct {
 	lastValue interface{}
 }
 
+type testContextKey string
+
 type toggleLeadershipProvider struct {
 	isLeader atomic.Bool
 }
@@ -1342,6 +1527,30 @@ type lifecycleLeadershipProvider struct {
 	started   atomic.Bool
 	stopped   atomic.Bool
 }
+
+type captureTracer struct {
+	lastStartCtxHasMarker bool
+}
+
+func (t *captureTracer) StartSpan(ctx context.Context, name string) (context.Context, telemetry.Span) {
+	_, t.lastStartCtxHasMarker = ctx.Value(testContextKey("parent")).(string)
+	return ctx, &captureSpan{}
+}
+
+func (t *captureTracer) GetSpan(ctx context.Context) telemetry.Span {
+	return &captureSpan{}
+}
+
+type captureSpan struct{}
+
+func (s *captureSpan) SetAttribute(string, interface{})        {}
+func (s *captureSpan) SetStatus(telemetry.StatusCode, string)  {}
+func (s *captureSpan) AddEvent(string, map[string]interface{}) {}
+func (s *captureSpan) End()                                    {}
+func (s *captureSpan) Context() context.Context                { return context.Background() }
+func (s *captureSpan) TraceID() string                         { return "" }
+func (s *captureSpan) SpanID() string                          { return "" }
+func (s *captureSpan) SpanContext() trace.SpanContext          { return trace.SpanContext{} }
 
 func (p *lifecycleLeadershipProvider) Start(context.Context) error {
 	if p.startErr != nil {
@@ -1483,6 +1692,130 @@ func (s *sequenceTaskExecutor) ExecuteOnNode(ctx context.Context, nodeID string,
 		return nil, err
 	}
 	return &agent.AgentOutput{}, nil
+}
+
+func seedDurableQueuedJobForReconcileTest(t *testing.T, store *InMemoryTransitionStore, jobID string) {
+	t.Helper()
+	now := time.Now()
+	job := DurableJobRecord{
+		JobID:          jobID,
+		Name:           jobID,
+		CurrentState:   JobStateQueued,
+		LastSequenceID: 3,
+		CreatedAt:      now,
+		UpdatedAt:      now.Add(2 * time.Second),
+	}
+	task := DurableTaskRecord{
+		TaskID:       jobID + "-task-1",
+		JobID:        jobID,
+		StageID:      "stage-1",
+		CurrentState: TaskStatePending,
+		LastAttempt:  0,
+		UpdatedAt:    now.Add(time.Second),
+	}
+	transitions := []TransitionRecord{
+		{
+			SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted,
+			JobID: jobID, NewState: string(JobStateSubmitted), OccurredAt: now,
+		},
+		{
+			SequenceID: 2, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated,
+			JobID: jobID, TaskID: task.TaskID, NewState: string(TaskStatePending), OccurredAt: now.Add(time.Second),
+		},
+		{
+			SequenceID: 3, EntityType: TransitionEntityJob, Transition: TransitionJobQueued,
+			JobID: jobID, PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(2 * time.Second),
+		},
+	}
+	if err := store.UpsertJob(context.Background(), job); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+	if err := store.UpsertTask(context.Background(), task); err != nil {
+		t.Fatalf("UpsertTask unexpected error: %v", err)
+	}
+	for _, tr := range transitions {
+		if err := store.AppendTransition(context.Background(), tr); err != nil {
+			t.Fatalf("AppendTransition(%d) unexpected error: %v", tr.SequenceID, err)
+		}
+	}
+}
+
+func seedDurableMalformedQueuedJobForReconcileTest(t *testing.T, store *InMemoryTransitionStore, jobID string) {
+	t.Helper()
+	now := time.Now()
+	job := DurableJobRecord{
+		JobID:          jobID,
+		Name:           jobID,
+		CurrentState:   JobStateQueued,
+		LastSequenceID: 5,
+		CreatedAt:      now,
+		UpdatedAt:      now.Add(4 * time.Second),
+	}
+	task := DurableTaskRecord{
+		TaskID:       jobID + "-task-1",
+		JobID:        jobID,
+		StageID:      "stage-1",
+		CurrentState: TaskStatePending,
+		LastAttempt:  1,
+		UpdatedAt:    now.Add(3 * time.Second),
+	}
+	transitions := []TransitionRecord{
+		{
+			SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted,
+			JobID: jobID, NewState: string(JobStateSubmitted), OccurredAt: now,
+		},
+		{
+			SequenceID: 2, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated,
+			JobID: jobID, TaskID: task.TaskID, NewState: string(TaskStatePending), OccurredAt: now.Add(time.Second),
+		},
+		{
+			SequenceID: 3, EntityType: TransitionEntityTask, Transition: TransitionTaskDispatched,
+			JobID: jobID, TaskID: task.TaskID, PreviousState: string(TaskStatePending), NewState: string(TaskStateDispatched), OccurredAt: now.Add(2 * time.Second),
+		},
+		{
+			SequenceID: 4, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated,
+			JobID: jobID, TaskID: task.TaskID, PreviousState: string(TaskStateDispatched), NewState: string(TaskStatePending), OccurredAt: now.Add(3 * time.Second),
+		},
+		{
+			SequenceID: 5, EntityType: TransitionEntityJob, Transition: TransitionJobQueued,
+			JobID: jobID, PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(4 * time.Second),
+		},
+	}
+	if err := store.UpsertJob(context.Background(), job); err != nil {
+		t.Fatalf("UpsertJob unexpected error: %v", err)
+	}
+	if err := store.UpsertTask(context.Background(), task); err != nil {
+		t.Fatalf("UpsertTask unexpected error: %v", err)
+	}
+	for _, tr := range transitions {
+		if err := store.AppendTransition(context.Background(), tr); err != nil {
+			t.Fatalf("AppendTransition(%d) unexpected error: %v", tr.SequenceID, err)
+		}
+	}
+}
+
+func seedHydratedQueuedRuntimeJobForReconcileTest(s *Scheduler, jobID string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	job := NewJob(jobID, jobID)
+	job.LifecycleState = JobStateQueued
+	job.Status = JobPending
+	stage := &Stage{ID: "stage-1", JobID: jobID, Status: JobPending}
+	stage.Tasks = []*Task{
+		{
+			ID:             jobID + "-task-hydrated",
+			StageID:        stage.ID,
+			JobID:          jobID,
+			AgentID:        "agent-1",
+			AgentName:      "Start",
+			Input:          &agent.AgentInput{Instruction: "reconcile test"},
+			PartitionKey:   "pk-1",
+			Status:         JobPending,
+			LifecycleState: TaskStatePending,
+		},
+	}
+	job.Stages = []*Stage{stage}
+	s.jobs[jobID] = job
 }
 
 func jobStatusForTest(s *Scheduler, jobID string) (JobStatus, error) {

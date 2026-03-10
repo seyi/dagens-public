@@ -2,21 +2,24 @@ package scheduler
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"sort"
+	"strings"
 	"time"
 
-	"github.com/seyi/dagens/pkg/observability"
-	"github.com/seyi/dagens/pkg/telemetry"
+	"github.com/seyi/dagens/pkg/agent"
 )
+
+const recoveryContextCheckEvery = 32
 
 // RecoverFromTransitions rebuilds the scheduler's in-memory visibility state
 // from transition replay. This is visibility-first recovery: it restores job
 // and task views but does not enqueue or redispatch work.
 func (s *Scheduler) RecoverFromTransitions(ctx context.Context) error {
 	start := time.Now()
-	metrics := observability.GetMetrics()
-	logger := telemetry.GetGlobalTelemetry().GetLogger()
+	metrics := s.metrics
+	logger := s.logger
 
 	if s.transitionStore == nil {
 		metrics.RecordSchedulerRecoveryRun("no_store")
@@ -51,9 +54,6 @@ func (s *Scheduler) RecoverFromTransitions(ctx context.Context) error {
 		return err
 	}
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
 	recoveredJobs := 0
 	seededJobs := 0
 	resumedQueuedJobs := 0
@@ -61,85 +61,86 @@ func (s *Scheduler) RecoverFromTransitions(ctx context.Context) error {
 	skippedUnsafeQueuedJobs := 0
 	var seededMaxSequence uint64
 	recoveredForResume := make([]*Job, 0, len(replayed))
-	for _, r := range replayed {
-		if _, exists := s.jobs[r.Job.JobID]; exists {
-			seeded, maxSeq := s.seedJobSequenceLocked(r.Job.JobID, r.Job.LastSequenceID, r.Transitions)
+	processed := 0
+	batchSize := s.config.RecoveryBatchSize
+	if batchSize <= 0 {
+		batchSize = 128
+	}
+	for batchStart := 0; batchStart < len(replayed); batchStart += batchSize {
+		if err := ctx.Err(); err != nil {
+			metrics.RecordSchedulerRecoveryRun("canceled")
+			metrics.RecordSchedulerRecoveryDuration(time.Since(start))
+			logger.Warn("scheduler startup recovery canceled during apply", map[string]interface{}{
+				"error":          err.Error(),
+				"processed_jobs": processed,
+				"total_jobs":     len(replayed),
+			})
+			return err
+		}
+
+		batchEnd := batchStart + batchSize
+		if batchEnd > len(replayed) {
+			batchEnd = len(replayed)
+		}
+
+		s.mu.Lock()
+		for _, r := range replayed[batchStart:batchEnd] {
+			processed++
+			if processed%recoveryContextCheckEvery == 0 {
+				if err := ctx.Err(); err != nil {
+					s.mu.Unlock()
+					metrics.RecordSchedulerRecoveryRun("canceled")
+					metrics.RecordSchedulerRecoveryDuration(time.Since(start))
+					logger.Warn("scheduler startup recovery canceled during locked apply", map[string]interface{}{
+						"error":          err.Error(),
+						"processed_jobs": processed,
+						"total_jobs":     len(replayed),
+					})
+					return err
+				}
+			}
+
+			if _, exists := s.jobs[r.Job.JobID]; exists {
+				seeded, maxSeq := s.seedJobSequenceLocked(r.Job.JobID, r.Job.LastSequenceID, r.Transitions)
+				if seeded {
+					seededJobs++
+					if maxSeq > seededMaxSequence {
+						seededMaxSequence = maxSeq
+					}
+				}
+				continue
+			}
+
+			job := buildRecoveredRuntimeJob(r)
+
+			s.jobs[job.ID] = job
+			recoveredForResume = append(recoveredForResume, job)
+			seeded, maxSeq := s.seedJobSequenceLocked(job.ID, r.Job.LastSequenceID, r.Transitions)
 			if seeded {
 				seededJobs++
 				if maxSeq > seededMaxSequence {
 					seededMaxSequence = maxSeq
 				}
 			}
-			continue
+			recoveredJobs++
 		}
-
-		job := &Job{
-			ID:             r.Job.JobID,
-			Name:           r.Job.Name,
-			Stages:         make([]*Stage, 0),
-			Status:         runtimeJobStatusFromLifecycle(r.Job.CurrentState),
-			LifecycleState: r.Job.CurrentState,
-			CreatedAt:      r.Job.CreatedAt,
-			UpdatedAt:      r.Job.UpdatedAt,
-			// Recovery currently rebuilds a minimal visibility view and does not
-			// preserve arbitrary prior runtime metadata keys.
-			Metadata: map[string]interface{}{
-				"recovered": true,
-			},
-		}
-
-		stageByID := make(map[string]*Stage)
-		for _, taskRecord := range r.Tasks {
-			stageID := taskRecord.StageID
-			if stageID == "" {
-				stageID = "recovered"
-			}
-
-			stage, ok := stageByID[stageID]
-			if !ok {
-				stage = &Stage{
-					ID:     stageID,
-					JobID:  job.ID,
-					Tasks:  make([]*Task, 0),
-					Status: JobPending,
-				}
-				stageByID[stageID] = stage
-			}
-
-			stage.Tasks = append(stage.Tasks, &Task{
-				ID:             taskRecord.TaskID,
-				StageID:        stageID,
-				JobID:          taskRecord.JobID,
-				Status:         runtimeTaskStatusFromLifecycle(taskRecord.CurrentState),
-				LifecycleState: taskRecord.CurrentState,
-				Attempts:       taskRecord.LastAttempt,
+		s.mu.Unlock()
+		if err := ctx.Err(); err != nil {
+			metrics.RecordSchedulerRecoveryRun("canceled")
+			metrics.RecordSchedulerRecoveryDuration(time.Since(start))
+			logger.Warn("scheduler startup recovery canceled after batch apply", map[string]interface{}{
+				"error":          err.Error(),
+				"processed_jobs": processed,
+				"total_jobs":     len(replayed),
 			})
+			return err
 		}
-
-		stageIDs := make([]string, 0, len(stageByID))
-		for id := range stageByID {
-			stageIDs = append(stageIDs, id)
-		}
-		sort.Strings(stageIDs)
-		for _, id := range stageIDs {
-			stage := stageByID[id]
-			stage.Status = deriveStageStatus(stage.Tasks)
-			job.Stages = append(job.Stages, stage)
-		}
-
-		s.jobs[job.ID] = job
-		recoveredForResume = append(recoveredForResume, job)
-		seeded, maxSeq := s.seedJobSequenceLocked(job.ID, r.Job.LastSequenceID, r.Transitions)
-		if seeded {
-			seededJobs++
-			if maxSeq > seededMaxSequence {
-				seededMaxSequence = maxSeq
-			}
-		}
-		recoveredJobs++
 	}
+
 	if s.config.EnableResumeRecoveredQueuedJobs {
+		s.mu.Lock()
 		resumedQueuedJobs, skippedQueuedJobs, skippedUnsafeQueuedJobs = s.resumeRecoveredQueuedJobsLocked(recoveredForResume)
+		s.mu.Unlock()
 	}
 
 	metrics.RecordSchedulerRecoveryRun("succeeded")
@@ -164,7 +165,7 @@ func (s *Scheduler) resumeRecoveredQueuedJobsLocked(recoveredJobs []*Job) (int, 
 	resumed := 0
 	skipped := 0
 	skippedUnsafe := 0
-	logger := telemetry.GetGlobalTelemetry().GetLogger()
+	logger := s.logger
 	for _, job := range recoveredJobs {
 		if job == nil || job.LifecycleState != JobStateQueued {
 			continue
@@ -176,20 +177,107 @@ func (s *Scheduler) resumeRecoveredQueuedJobsLocked(recoveredJobs []*Job) (int, 
 			})
 			continue
 		}
-		select {
-		case s.jobQueue <- job:
-			resumed++
-		default:
-			skipped++
-			logger.Warn("recovered queued job skipped due to queue saturation", map[string]interface{}{
-				"job_id":         job.ID,
-				"queue_depth":    len(s.jobQueue),
-				"queue_capacity": cap(s.jobQueue),
+		if missingTaskFields := recoveredQueuedMissingExecutionFieldCount(job, s.config.EnableStickiness); missingTaskFields > 0 {
+			// Recovery intentionally rebuilds visibility-first task state only. We
+			// warn here to make it explicit when queued auto-resume proceeds with
+			// tasks that do not carry full execution payload fields.
+			logger.Warn("recovered queued job has tasks missing execution fields; resume relies on downstream task hydration", map[string]interface{}{
+				"job_id":               job.ID,
+				"missing_task_fields":  missingTaskFields,
+				"total_stages":         len(job.Stages),
+				"visibility_only_view": true,
 			})
 		}
+		if s.enqueueJobLocked(job) {
+			resumed++
+			continue
+		}
+		skipped++
+		logger.Warn("recovered queued job skipped due to queue saturation", map[string]interface{}{
+			"job_id":         job.ID,
+			"queue_depth":    len(s.jobQueue),
+			"queue_capacity": cap(s.jobQueue),
+		})
 	}
-	observability.GetMetrics().SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
+	s.metrics.SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
 	return resumed, skipped, skippedUnsafe
+}
+
+func buildRecoveredRuntimeJob(r ReplayedJobState) *Job {
+	job := &Job{
+		ID:             r.Job.JobID,
+		Name:           r.Job.Name,
+		Stages:         make([]*Stage, 0),
+		Status:         runtimeJobStatusFromLifecycle(r.Job.CurrentState),
+		LifecycleState: r.Job.CurrentState,
+		CreatedAt:      r.Job.CreatedAt,
+		UpdatedAt:      r.Job.UpdatedAt,
+		// Recovery currently rebuilds a minimal visibility view and does not
+		// preserve arbitrary prior runtime metadata keys.
+		Metadata: map[string]interface{}{
+			"recovered": true,
+		},
+	}
+	// NOTE: This is a visibility-first reconstruction. Task execution payload
+	// fields (AgentID, AgentName, Input, Output, PartitionKey) are not restored
+	// from transition replay and must be hydrated by higher-level job/task state
+	// sources before full re-execution assumptions are made.
+
+	stageByID := make(map[string]*Stage)
+	for _, taskRecord := range r.Tasks {
+		stageID := taskRecord.StageID
+		if stageID == "" {
+			stageID = "recovered"
+		}
+
+		stage, ok := stageByID[stageID]
+		if !ok {
+			stage = &Stage{
+				ID:     stageID,
+				JobID:  job.ID,
+				Tasks:  make([]*Task, 0),
+				Status: JobPending,
+			}
+			stageByID[stageID] = stage
+		}
+
+		stage.Tasks = append(stage.Tasks, &Task{
+			ID:             taskRecord.TaskID,
+			StageID:        stageID,
+			JobID:          taskRecord.JobID,
+			AgentID:        taskRecord.AgentID,
+			AgentName:      taskRecord.AgentName,
+			Input:          unmarshalRecoveredAgentInput(taskRecord.InputJSON),
+			PartitionKey:   taskRecord.PartitionKey,
+			Status:         runtimeTaskStatusFromLifecycle(taskRecord.CurrentState),
+			LifecycleState: taskRecord.CurrentState,
+			Attempts:       taskRecord.LastAttempt,
+		})
+	}
+
+	stageIDs := make([]string, 0, len(stageByID))
+	for id := range stageByID {
+		stageIDs = append(stageIDs, id)
+	}
+	sort.Strings(stageIDs)
+	for _, id := range stageIDs {
+		stage := stageByID[id]
+		stage.Status = deriveStageStatus(stage.Tasks)
+		job.Stages = append(job.Stages, stage)
+	}
+
+	return job
+}
+
+func unmarshalRecoveredAgentInput(raw string) *agent.AgentInput {
+	if strings.TrimSpace(raw) == "" {
+		return nil
+	}
+	var input agent.AgentInput
+	if err := json.Unmarshal([]byte(raw), &input); err != nil {
+		return nil
+	}
+	return &input
 }
 
 // isSafeForQueuedResume enforces the startup queued-job resume safety policy.
@@ -216,6 +304,29 @@ func isSafeForQueuedResume(job *Job) bool {
 		}
 	}
 	return true
+}
+
+func recoveredQueuedMissingExecutionFieldCount(job *Job, stickinessRequired bool) int {
+	if job == nil {
+		return 0
+	}
+	missing := 0
+	for _, stage := range job.Stages {
+		if stage == nil {
+			continue
+		}
+		for _, task := range stage.Tasks {
+			if task == nil {
+				continue
+			}
+			missingExecutionFields := task.AgentID == "" || task.AgentName == "" || task.Input == nil
+			missingStickinessField := stickinessRequired && task.PartitionKey == ""
+			if missingExecutionFields || missingStickinessField {
+				missing++
+			}
+		}
+	}
+	return missing
 }
 
 func (s *Scheduler) seedJobSequenceLocked(jobID string, durableLastSeq uint64, transitions []TransitionRecord) (bool, uint64) {
@@ -268,6 +379,9 @@ func runtimeTaskStatusFromLifecycle(state TaskLifecycleState) JobStatus {
 }
 
 func deriveStageStatus(tasks []*Task) JobStatus {
+	// INVARIANT: task.Status is expected to be synchronized with
+	// task.LifecycleState (via runtimeTaskStatusFromLifecycle during recovery
+	// reconstruction) before this helper is called.
 	if len(tasks) == 0 {
 		return JobPending
 	}

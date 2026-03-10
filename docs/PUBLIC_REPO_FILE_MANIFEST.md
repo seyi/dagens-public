@@ -157,6 +157,8 @@ These docs are strong candidates for the public repo because they support the pr
 - `docs/SCALING_AND_DISPATCH_CLARIFICATION.md`
 - `docs/DURABILITY.md`
 - `docs/FAILURE_SEMANTICS.md`
+- `docs/CONTROL_PLANE_HA.md`
+- `docs/RECOVERY_RUNBOOK.md`
 - `docs/INFRASTRUCTURE_THESIS.md`
 - `docs/GETTING_STARTED.md`
 - `docs/DEPLOYMENT_PATTERNS.md`

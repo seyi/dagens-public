@@ -114,6 +114,15 @@ func ReplayJobState(ctx context.Context, store TransitionStore, jobID string) (R
 		Tasks:       make(map[string]DurableTaskRecord),
 		Transitions: transitions,
 	}
+	if taskLookup, ok := store.(DurableTaskLookupStore); ok {
+		durableTasks, err := taskLookup.ListTasksByJob(ctx, jobID)
+		if err != nil {
+			return ReplayedJobState{}, fmt.Errorf("list durable tasks by job: %w", err)
+		}
+		for _, task := range durableTasks {
+			state.Tasks[task.TaskID] = task
+		}
+	}
 
 	for _, record := range transitions {
 		if err := ctx.Err(); err != nil {

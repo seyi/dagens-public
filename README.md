@@ -201,10 +201,10 @@ Reference:
 
 ```bash
 # Unit/race checks
-docker run --rm -v /data/repos/dagens:/src -w /src golang:1.25.2 go test -race ./pkg/scheduler
+docker run --rm -v "$(pwd)":/src -w /src golang:1.25.2 go test -race ./pkg/scheduler
 
 # Integration-tagged checks (embedded etcd/postgres test surfaces as configured by package tests)
-docker run --rm -v /data/repos/dagens:/src -w /src -v /var/run/docker.sock:/var/run/docker.sock -e DOCKER_HOST=unix:///var/run/docker.sock golang:1.25.2 go test -tags=integration ./pkg/scheduler -v
+docker run --rm -v "$(pwd)":/src -w /src -v /var/run/docker.sock:/var/run/docker.sock -e DOCKER_HOST=unix:///var/run/docker.sock golang:1.25.2 go test -tags=integration ./pkg/scheduler -v
 ```
 
 HA failover drill helper:
@@ -212,6 +212,18 @@ HA failover drill helper:
 ```bash
 API_URL=http://localhost:8080 ./scripts/failover_drill.sh
 ```
+
+For takeover drills in dual-control-plane HA:
+
+```bash
+API_URL=http://localhost:18083 \
+LEADER_STOP_CMD="docker kill <active-api-container>" \
+DATABASE_URL="postgres://postgres:postgres@localhost:55432/dagens?sslmode=disable" \
+./scripts/failover_drill.sh
+```
+
+See the operator procedure and pass/fail criteria in:
+- [Recovery Runbook](docs/RECOVERY_RUNBOOK.md)
 
 ## Python SDK (Run a Distributed Job in 2 Minutes)
 
@@ -481,6 +493,7 @@ See [Philosophy](docs/PHILOSOPHY.md) for a deeper discussion of architectural di
 - [Philosophy](docs/PHILOSOPHY.md) - Architectural beliefs and comparisons
 - [Discipline](docs/DISCIPLINE.md) - What Dagens will not become
 - [Recovery Runbook](docs/RECOVERY_RUNBOOK.md) - Operator actions for replay/recovery failures
+- [Control Plane HA Design](docs/CONTROL_PLANE_HA.md) - Leadership/fencing model and failover semantics
 - [Postgres Transition Quickstart](docs/POSTGRES_TRANSITION_QUICKSTART.md) - Enable durable transition storage and replay input
 - [Scaling and Dispatch Clarification](docs/SCALING_AND_DISPATCH_CLARIFICATION.md)
 - [Repo Tree and Runtime Snapshot](docs/REPO_TREE_AND_RUNTIME.md)

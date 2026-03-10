@@ -92,6 +92,10 @@ type DurableTaskRecord struct {
 	JobID        string
 	StageID      string
 	NodeID       string
+	AgentID      string
+	AgentName    string
+	InputJSON    string
+	PartitionKey string
 	CurrentState TaskLifecycleState
 	LastAttempt  int
 	UpdatedAt    time.Time
@@ -180,6 +184,12 @@ type AtomicTransitionStore interface {
 // back to in-memory per-job counters.
 type SequenceIDStore interface {
 	NextSequenceID(ctx context.Context, jobID string) (uint64, error)
+}
+
+// DurableTaskLookupStore is an optional replay extension for reading the
+// materialized durable task view by job.
+type DurableTaskLookupStore interface {
+	ListTasksByJob(ctx context.Context, jobID string) ([]DurableTaskRecord, error)
 }
 
 var validJobTransitions = map[JobLifecycleState]map[JobLifecycleState]struct{}{

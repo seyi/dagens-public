@@ -2,6 +2,35 @@ package scheduler
 
 import "time"
 
+const (
+	defaultAffinityTTL                  = 1 * time.Hour
+	defaultAffinityCleanupInterval      = 5 * time.Minute
+	defaultJobQueueSize                 = 100
+	defaultWorkerMaxConcurrency         = 1
+	defaultMaxWorkerConcurrencyCap      = 100
+	defaultCapacityTTL                  = 5 * time.Second
+	defaultDispatchRejectCooldown       = 5 * time.Second
+	defaultMaxDispatchAttempts          = 3
+	defaultStageCapacityDeferralTimeout = 2 * time.Second
+	defaultStageCapacityDeferralPoll    = 100 * time.Millisecond
+	defaultRecoveryTimeout              = 5 * time.Minute
+	defaultRecoveryBatchSize            = 128
+	defaultLeadershipRetryInterval      = 200 * time.Millisecond
+	defaultJobRetentionTTL              = 24 * time.Hour
+	defaultJobRetentionCleanupInterval  = 5 * time.Minute
+	defaultLeaderRequeuePollInterval    = 500 * time.Millisecond
+
+	maxJobQueueSize            = 10000
+	maxRecoveryBatchSize       = 4096
+	maxDispatchAttempts        = 50
+	maxWorkerConcurrencyCapCfg = 10000
+
+	minAffinityCleanupInterval = 100 * time.Millisecond
+	minDeferralPollInterval    = 10 * time.Millisecond
+	minRetentionCleanup        = 1 * time.Second
+	minRecoveryTimeout         = 1 * time.Second
+)
+
 // SchedulerConfig holds configuration options for the Scheduler.
 //
 // The config is copied into the scheduler at construction time. Mutating a
@@ -76,6 +105,11 @@ type SchedulerConfig struct {
 	// Default: 5 minutes
 	RecoveryTimeout time.Duration
 
+	// RecoveryBatchSize controls how many replayed jobs are applied per locked
+	// recovery batch before yielding lock scope.
+	// Default: 128
+	RecoveryBatchSize int
+
 	// EnableResumeRecoveredQueuedJobs enables startup replay to re-enqueue jobs
 	// recovered in QUEUED lifecycle state.
 	//
@@ -90,85 +124,167 @@ type SchedulerConfig struct {
 	// retrying leadership checks when this instance is not the current leader.
 	// Default: 200 milliseconds
 	LeadershipRetryInterval time.Duration
+
+	// JobRetentionTTL controls how long terminal jobs are kept in memory before
+	// background cleanup prunes them.
+	// Default: 24 hours
+	JobRetentionTTL time.Duration
+
+	// JobRetentionCleanupInterval controls how frequently terminal-job cleanup
+	// scans run.
+	// Default: 5 minutes
+	JobRetentionCleanupInterval time.Duration
+
+	// EnableJobRetentionCleanup enables background pruning for terminal jobs.
+	// Default: true
+	EnableJobRetentionCleanup bool
+
+	// EnableLeaderDurableRequeueLoop enables leader-only reconciliation of
+	// durable QUEUED jobs into the in-memory scheduler queue.
+	//
+	// This hardens takeover behavior: after leadership changes, the new leader
+	// can repopulate schedulable queued work from durable state.
+	//
+	// Default: true
+	EnableLeaderDurableRequeueLoop bool
+
+	// LeaderDurableRequeuePollInterval controls how frequently the leader
+	// reconciler polls durable state for QUEUED jobs to enqueue.
+	// Default: 500 milliseconds
+	LeaderDurableRequeuePollInterval time.Duration
 }
 
 // DefaultSchedulerConfig returns the default scheduler configuration
 func DefaultSchedulerConfig() SchedulerConfig {
 	return SchedulerConfig{
-		AffinityTTL:                       1 * time.Hour,
-		AffinityCleanupInterval:           5 * time.Minute,
+		AffinityTTL:                       defaultAffinityTTL,
+		AffinityCleanupInterval:           defaultAffinityCleanupInterval,
 		EnableStickiness:                  true,
-		JobQueueSize:                      100,
-		DefaultWorkerMaxConcurrency:       1,
-		MaxWorkerConcurrencyCap:           100,
-		CapacityTTL:                       5 * time.Second,
-		DispatchRejectCooldown:            5 * time.Second,
-		MaxDispatchAttempts:               3,
+		JobQueueSize:                      defaultJobQueueSize,
+		DefaultWorkerMaxConcurrency:       defaultWorkerMaxConcurrency,
+		MaxWorkerConcurrencyCap:           defaultMaxWorkerConcurrencyCap,
+		CapacityTTL:                       defaultCapacityTTL,
+		DispatchRejectCooldown:            defaultDispatchRejectCooldown,
+		MaxDispatchAttempts:               defaultMaxDispatchAttempts,
 		EnableStageCapacityDeferral:       false,
-		StageCapacityDeferralTimeout:      2 * time.Second,
-		StageCapacityDeferralPollInterval: 100 * time.Millisecond,
-		RecoveryTimeout:                   5 * time.Minute,
+		StageCapacityDeferralTimeout:      defaultStageCapacityDeferralTimeout,
+		StageCapacityDeferralPollInterval: defaultStageCapacityDeferralPoll,
+		RecoveryTimeout:                   defaultRecoveryTimeout,
+		RecoveryBatchSize:                 defaultRecoveryBatchSize,
 		EnableResumeRecoveredQueuedJobs:   false,
-		LeadershipRetryInterval:           200 * time.Millisecond,
+		LeadershipRetryInterval:           defaultLeadershipRetryInterval,
+		JobRetentionTTL:                   defaultJobRetentionTTL,
+		JobRetentionCleanupInterval:       defaultJobRetentionCleanupInterval,
+		EnableJobRetentionCleanup:         true,
+		EnableLeaderDurableRequeueLoop:    true,
+		LeaderDurableRequeuePollInterval:  defaultLeaderRequeuePollInterval,
 	}
 }
 
-// Validate checks the configuration and applies defaults for zero values.
+// Validate checks the configuration and applies defaults for numeric/time fields.
+//
+// Boolean fields are intentionally not auto-defaulted here; they retain the
+// zero-value unless callers set them explicitly. For production defaults,
+// prefer DefaultSchedulerConfig() and override specific fields.
 // Validate mutates the receiver and is not thread-safe; call before sharing
 // config across goroutines.
 func (c *SchedulerConfig) Validate() {
 	if c.AffinityTTL <= 0 {
-		c.AffinityTTL = 1 * time.Hour
+		c.AffinityTTL = defaultAffinityTTL
 	}
 	if c.AffinityCleanupInterval <= 0 {
-		c.AffinityCleanupInterval = 5 * time.Minute
+		c.AffinityCleanupInterval = defaultAffinityCleanupInterval
 	}
 	if c.JobQueueSize <= 0 {
-		c.JobQueueSize = 100
+		c.JobQueueSize = defaultJobQueueSize
+	} else if c.JobQueueSize > maxJobQueueSize {
+		c.JobQueueSize = maxJobQueueSize
 	}
 	if c.DefaultWorkerMaxConcurrency <= 0 {
-		c.DefaultWorkerMaxConcurrency = 1
+		c.DefaultWorkerMaxConcurrency = defaultWorkerMaxConcurrency
 	}
 	if c.MaxWorkerConcurrencyCap <= 0 {
-		c.MaxWorkerConcurrencyCap = 100
+		c.MaxWorkerConcurrencyCap = defaultMaxWorkerConcurrencyCap
+	} else if c.MaxWorkerConcurrencyCap > maxWorkerConcurrencyCapCfg {
+		c.MaxWorkerConcurrencyCap = maxWorkerConcurrencyCapCfg
 	}
 	if c.CapacityTTL <= 0 {
-		c.CapacityTTL = 5 * time.Second
+		c.CapacityTTL = defaultCapacityTTL
 	}
 	if c.DispatchRejectCooldown <= 0 {
-		c.DispatchRejectCooldown = 5 * time.Second
+		c.DispatchRejectCooldown = defaultDispatchRejectCooldown
 	}
 	if c.MaxDispatchAttempts <= 0 {
-		c.MaxDispatchAttempts = 3
+		c.MaxDispatchAttempts = defaultMaxDispatchAttempts
+	} else if c.MaxDispatchAttempts > maxDispatchAttempts {
+		c.MaxDispatchAttempts = maxDispatchAttempts
 	}
 	if c.StageCapacityDeferralTimeout <= 0 {
-		c.StageCapacityDeferralTimeout = 2 * time.Second
+		c.StageCapacityDeferralTimeout = defaultStageCapacityDeferralTimeout
 	}
 	if c.StageCapacityDeferralPollInterval <= 0 {
-		c.StageCapacityDeferralPollInterval = 100 * time.Millisecond
+		c.StageCapacityDeferralPollInterval = defaultStageCapacityDeferralPoll
 	}
 	if c.RecoveryTimeout <= 0 {
-		c.RecoveryTimeout = 5 * time.Minute
+		c.RecoveryTimeout = defaultRecoveryTimeout
+	} else if c.RecoveryTimeout < minRecoveryTimeout {
+		c.RecoveryTimeout = minRecoveryTimeout
+	}
+	if c.RecoveryBatchSize <= 0 {
+		c.RecoveryBatchSize = defaultRecoveryBatchSize
+	} else if c.RecoveryBatchSize > maxRecoveryBatchSize {
+		c.RecoveryBatchSize = maxRecoveryBatchSize
 	}
 	if c.LeadershipRetryInterval <= 0 {
-		c.LeadershipRetryInterval = 200 * time.Millisecond
+		c.LeadershipRetryInterval = defaultLeadershipRetryInterval
+	}
+	if c.JobRetentionTTL <= 0 {
+		c.JobRetentionTTL = defaultJobRetentionTTL
+	}
+	if c.JobRetentionCleanupInterval <= 0 {
+		c.JobRetentionCleanupInterval = defaultJobRetentionCleanupInterval
+	}
+	if c.LeaderDurableRequeuePollInterval <= 0 {
+		c.LeaderDurableRequeuePollInterval = defaultLeaderRequeuePollInterval
 	}
 
 	// Keep cleanup cadence comfortably below expiry to avoid stale affinity
 	// entries persisting for long windows.
 	if c.AffinityCleanupInterval >= c.AffinityTTL {
-		c.AffinityCleanupInterval = c.AffinityTTL / 4
-		if c.AffinityCleanupInterval <= 0 {
-			c.AffinityCleanupInterval = time.Second
-		}
+		c.AffinityCleanupInterval = adjustBoundedInterval(c.AffinityCleanupInterval, c.AffinityTTL, minAffinityCleanupInterval)
 	}
 
 	// Ensure deferred-capacity polling has at least one practical interval
 	// before timeout.
 	if c.StageCapacityDeferralPollInterval >= c.StageCapacityDeferralTimeout {
-		c.StageCapacityDeferralPollInterval = c.StageCapacityDeferralTimeout / 4
-		if c.StageCapacityDeferralPollInterval <= 0 {
-			c.StageCapacityDeferralPollInterval = 10 * time.Millisecond
-		}
+		c.StageCapacityDeferralPollInterval = adjustBoundedInterval(c.StageCapacityDeferralPollInterval, c.StageCapacityDeferralTimeout, minDeferralPollInterval)
 	}
+
+	if c.JobRetentionCleanupInterval >= c.JobRetentionTTL {
+		c.JobRetentionCleanupInterval = adjustBoundedInterval(c.JobRetentionCleanupInterval, c.JobRetentionTTL, minRetentionCleanup)
+	}
+}
+
+// Validated returns a validated copy of the receiver.
+//
+// Usage:
+//
+//	cfg := userCfg.Validated()
+//	scheduler := NewSchedulerWithConfig(reg, exec, cfg)
+//
+// This avoids mutating shared config values directly.
+func (c SchedulerConfig) Validated() SchedulerConfig {
+	c.Validate()
+	return c
+}
+
+func adjustBoundedInterval(interval, bound, minimum time.Duration) time.Duration {
+	if interval < bound {
+		return interval
+	}
+	adjusted := bound / 4
+	if adjusted < minimum {
+		return minimum
+	}
+	return adjusted
 }

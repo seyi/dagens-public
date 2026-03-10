@@ -80,10 +80,18 @@ func (s *PostgresTransitionStore) ensureSchema(ctx context.Context) error {
 				job_id TEXT NOT NULL,
 				stage_id TEXT NOT NULL DEFAULT '',
 				node_id TEXT NOT NULL DEFAULT '',
+				agent_id TEXT NOT NULL DEFAULT '',
+				agent_name TEXT NOT NULL DEFAULT '',
+				input_json TEXT NOT NULL DEFAULT '',
+				partition_key TEXT NOT NULL DEFAULT '',
 				current_state TEXT NOT NULL,
 				last_attempt INTEGER NOT NULL DEFAULT 0,
 				updated_at TIMESTAMPTZ NOT NULL
 			);`, durableTasksTable),
+		fmt.Sprintf(`ALTER TABLE %s ADD COLUMN IF NOT EXISTS agent_id TEXT NOT NULL DEFAULT '';`, durableTasksTable),
+		fmt.Sprintf(`ALTER TABLE %s ADD COLUMN IF NOT EXISTS agent_name TEXT NOT NULL DEFAULT '';`, durableTasksTable),
+		fmt.Sprintf(`ALTER TABLE %s ADD COLUMN IF NOT EXISTS input_json TEXT NOT NULL DEFAULT '';`, durableTasksTable),
+		fmt.Sprintf(`ALTER TABLE %s ADD COLUMN IF NOT EXISTS partition_key TEXT NOT NULL DEFAULT '';`, durableTasksTable),
 		fmt.Sprintf(`CREATE INDEX IF NOT EXISTS idx_%s_job_id ON %s (job_id);`, durableTasksTable, durableTasksTable),
 		fmt.Sprintf(`
 			CREATE TABLE IF NOT EXISTS %s (
@@ -93,10 +101,28 @@ func (s *PostgresTransitionStore) ensureSchema(ctx context.Context) error {
 			);`, jobSequencesTable),
 	}
 
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("ensure transition store schema begin: %w", err)
+	}
+	defer func() {
+		_ = tx.Rollback(ctx)
+	}()
+
+	// Serialize schema initialization across concurrent control-plane startups.
+	// The lock key is deterministic and local to this deployment.
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(743209155197540836)`); err != nil {
+		return fmt.Errorf("ensure transition store schema advisory lock: %w", err)
+	}
+
 	for _, stmt := range ddl {
-		if _, err := s.pool.Exec(ctx, stmt); err != nil {
+		if _, err := tx.Exec(ctx, stmt); err != nil {
 			return fmt.Errorf("ensure transition store schema: %w", err)
 		}
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("ensure transition store schema commit: %w", err)
 	}
 	return nil
 }
@@ -236,12 +262,16 @@ func (p *postgresTransitionStoreTx) UpsertJob(ctx context.Context, job DurableJo
 
 func (p *postgresTransitionStoreTx) UpsertTask(ctx context.Context, task DurableTaskRecord) error {
 	query := fmt.Sprintf(`
-		INSERT INTO %s (task_id, job_id, stage_id, node_id, current_state, last_attempt, updated_at)
-		VALUES ($1,$2,$3,$4,$5,$6,$7)
+		INSERT INTO %s (task_id, job_id, stage_id, node_id, agent_id, agent_name, input_json, partition_key, current_state, last_attempt, updated_at)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
 		ON CONFLICT (task_id) DO UPDATE SET
 			job_id = EXCLUDED.job_id,
 			stage_id = EXCLUDED.stage_id,
 			node_id = EXCLUDED.node_id,
+			agent_id = EXCLUDED.agent_id,
+			agent_name = EXCLUDED.agent_name,
+			input_json = EXCLUDED.input_json,
+			partition_key = EXCLUDED.partition_key,
 			current_state = EXCLUDED.current_state,
 			last_attempt = EXCLUDED.last_attempt,
 			updated_at = EXCLUDED.updated_at;`, durableTasksTable)
@@ -251,6 +281,10 @@ func (p *postgresTransitionStoreTx) UpsertTask(ctx context.Context, task Durable
 		task.JobID,
 		task.StageID,
 		task.NodeID,
+		task.AgentID,
+		task.AgentName,
+		task.InputJSON,
+		task.PartitionKey,
 		string(task.CurrentState),
 		task.LastAttempt,
 		task.UpdatedAt,
@@ -365,6 +399,47 @@ func (s *PostgresTransitionStore) ListTransitionsByJob(ctx context.Context, jobI
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("iterate transitions by job: %w", err)
+	}
+	return out, nil
+}
+
+func (s *PostgresTransitionStore) ListTasksByJob(ctx context.Context, jobID string) ([]DurableTaskRecord, error) {
+	query := fmt.Sprintf(`
+		SELECT task_id, job_id, stage_id, node_id, agent_id, agent_name, input_json, partition_key, current_state, last_attempt, updated_at
+		FROM %s
+		WHERE job_id = $1
+		ORDER BY task_id ASC;`, durableTasksTable)
+
+	rows, err := s.pool.Query(ctx, query, jobID)
+	if err != nil {
+		return nil, fmt.Errorf("list tasks by job: %w", err)
+	}
+	defer rows.Close()
+
+	out := make([]DurableTaskRecord, 0)
+	for rows.Next() {
+		var task DurableTaskRecord
+		var state string
+		if err := rows.Scan(
+			&task.TaskID,
+			&task.JobID,
+			&task.StageID,
+			&task.NodeID,
+			&task.AgentID,
+			&task.AgentName,
+			&task.InputJSON,
+			&task.PartitionKey,
+			&state,
+			&task.LastAttempt,
+			&task.UpdatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("scan task by job: %w", err)
+		}
+		task.CurrentState = TaskLifecycleState(state)
+		out = append(out, task)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate tasks by job: %w", err)
 	}
 	return out, nil
 }
