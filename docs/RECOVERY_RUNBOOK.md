@@ -157,6 +157,53 @@ After remediation and restart:
 4. New submissions are accepted and executed
 5. No repeated replay error for the same `job_id`
 
+## HA Failover Drill (Scripted)
+
+Use this drill to validate leader failover behavior and dispatch fencing in a
+multi-control-plane deployment.
+
+Script:
+- [`scripts/failover_drill.sh`](../scripts/failover_drill.sh)
+
+### Prerequisites
+
+1. Scheduler leadership is enabled (for example `SCHEDULER_LEADERSHIP_BACKEND=etcd`).
+2. At least two control-plane instances are deployed.
+3. API endpoint is reachable (`API_URL`).
+4. Optional SQL verification: `psql` installed and `DATABASE_URL` set.
+
+### Example Commands
+
+Canary-only validation:
+
+```bash
+API_URL=http://localhost:8080 \
+JOB_COUNT=3 \
+./scripts/failover_drill.sh
+```
+
+Failover + fencing validation:
+
+```bash
+API_URL=http://localhost:8080 \
+LEADER_STOP_CMD="kubectl delete pod <leader-pod> -n <namespace>" \
+DATABASE_URL="postgres://postgres:postgres@localhost:5432/dagens?sslmode=disable" \
+./scripts/failover_drill.sh
+```
+
+### Pass Criteria
+
+1. All canary jobs reach terminal state (`COMPLETED`/`SUCCEEDED`/`FAILED`/`CANCELED`) before timeout.
+2. No duplicate `TASK_DISPATCHED` rows for the same `(task_id, attempt)` in the drill window.
+3. No prolonged dispatch outage after leader termination.
+
+### Follow-up If Drill Fails
+
+1. Check scheduler logs for leadership errors and dispatch deferrals.
+2. Verify etcd leadership key health and lease turnover timing.
+3. Query `scheduler_job_transitions` for duplicate dispatch claims and inspect `attempt`.
+4. Re-run drill after remediation and attach outputs to release evidence.
+
 ## Escalation Criteria
 
 Escalate for code-level investigation when:

@@ -21,6 +21,10 @@ const (
 	JobStateCanceled      JobLifecycleState = "CANCELED"
 )
 
+func (s JobLifecycleState) String() string {
+	return string(s)
+}
+
 // TaskLifecycleState is the durable control-plane state for a task.
 type TaskLifecycleState string
 
@@ -32,6 +36,10 @@ const (
 	TaskStateFailed     TaskLifecycleState = "FAILED"
 )
 
+func (s TaskLifecycleState) String() string {
+	return string(s)
+}
+
 // TransitionEntityType identifies whether a transition applies to a job or task.
 type TransitionEntityType string
 
@@ -39,6 +47,10 @@ const (
 	TransitionEntityJob  TransitionEntityType = "JOB"
 	TransitionEntityTask TransitionEntityType = "TASK"
 )
+
+func (t TransitionEntityType) String() string {
+	return string(t)
+}
 
 // TransitionType describes the durable lifecycle event being appended.
 type TransitionType string
@@ -58,6 +70,10 @@ const (
 	TransitionTaskSucceeded    TransitionType = "TASK_SUCCEEDED"
 	TransitionTaskFailed       TransitionType = "TASK_FAILED"
 )
+
+func (t TransitionType) String() string {
+	return string(t)
+}
 
 // DurableJobRecord is the materialized current-state view used for fast lookup.
 // The transition log remains authoritative; this record is a rebuildable index.
@@ -129,6 +145,26 @@ type TransitionStoreTx interface {
 	AppendTransition(ctx context.Context, record TransitionRecord) error
 	UpsertJob(ctx context.Context, job DurableJobRecord) error
 	UpsertTask(ctx context.Context, task DurableTaskRecord) error
+}
+
+// TaskDispatchClaim is the atomic claim payload used to guard dispatch
+// ownership transitions against stale or duplicate dispatch attempts.
+type TaskDispatchClaim struct {
+	TaskID    string
+	JobID     string
+	StageID   string
+	NodeID    string
+	Attempt   int
+	UpdatedAt time.Time
+}
+
+// DispatchClaimTransitionStoreTx is an optional TransitionStoreTx extension for
+// state-guarded dispatch claims (CAS semantics).
+type DispatchClaimTransitionStoreTx interface {
+	TransitionStoreTx
+	// ClaimTaskDispatch attempts to claim dispatch ownership for the provided
+	// task attempt. It returns true only when ownership was newly claimed.
+	ClaimTaskDispatch(ctx context.Context, claim TaskDispatchClaim) (bool, error)
 }
 
 // AtomicTransitionStore extends TransitionStore with transactional writes for

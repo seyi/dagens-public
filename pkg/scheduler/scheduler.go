@@ -8,6 +8,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode"
 
 	"github.com/seyi/dagens/pkg/agent"
 	"github.com/seyi/dagens/pkg/observability"
@@ -25,8 +26,11 @@ var ErrJobQueueFull = errors.New("job queue is full")
 var ErrNoWorkerCapacity = errors.New("all healthy workers are at capacity")
 var ErrSchedulerRecovering = errors.New("scheduler is recovering state")
 var ErrTransitionStoreSetAfterStart = errors.New("transition store can only be set before scheduler start")
+var ErrLeadershipProviderSetAfterStart = errors.New("leadership provider can only be set before scheduler start")
+var ErrDispatchClaimRejected = errors.New("dispatch claim rejected by transition store fencing")
 
 const schedulerMetricsID = "default"
+const maxTransitionErrorSummaryRunes = 1024
 
 type nodeCapacity struct {
 	ReservedInFlight int
@@ -52,10 +56,13 @@ type Scheduler struct {
 	transitionStore   TransitionStore
 	transitionMu      sync.Mutex
 	jobSequences      map[string]uint64
+	leadership        LeadershipProvider
 	started           bool
 	recovering        bool
 	stopRequested     bool
 	recoveryCancel    context.CancelFunc
+	leadershipCancel  context.CancelFunc
+	leadershipStop    func()
 	stopOnce          sync.Once
 }
 
@@ -91,6 +98,7 @@ func NewSchedulerWithConfig(reg registry.Registry, executor TaskExecutor, config
 		dispatchCooldowns: make(map[string]time.Time),
 		transitionStore:   NewInMemoryTransitionStore(),
 		jobSequences:      make(map[string]uint64),
+		leadership:        defaultLeadershipProvider(),
 	}
 	observability.GetMetrics().SetTaskQueueDepths(schedulerMetricsID, 0, cap(s.jobQueue))
 	return s
@@ -119,6 +127,11 @@ func (s *Scheduler) Start() {
 		log.Printf("failed to recover scheduler state from transitions: %v", err)
 	}
 
+	if err := s.startLeadershipProvider(); err != nil {
+		log.Printf("failed to start scheduler leadership provider: %v", err)
+		return
+	}
+
 	s.mu.Lock()
 	if s.stopRequested {
 		s.mu.Unlock()
@@ -135,9 +148,19 @@ func (s *Scheduler) Stop() {
 	s.mu.Lock()
 	s.stopRequested = true
 	cancel := s.recoveryCancel
+	leadershipCancel := s.leadershipCancel
+	leadershipStop := s.leadershipStop
+	s.leadershipCancel = nil
+	s.leadershipStop = nil
 	s.mu.Unlock()
 	if cancel != nil {
 		cancel()
+	}
+	if leadershipCancel != nil {
+		leadershipCancel()
+	}
+	if leadershipStop != nil {
+		leadershipStop()
 	}
 
 	s.stopOnce.Do(func() {
@@ -227,6 +250,21 @@ func (s *Scheduler) SetTransitionStore(store TransitionStore) error {
 	return nil
 }
 
+// SetLeadershipProvider sets the HA leadership provider used to gate dispatch.
+// Intended for startup wiring and tests. It must be called before Start().
+func (s *Scheduler) SetLeadershipProvider(provider LeadershipProvider) error {
+	if provider == nil {
+		provider = defaultLeadershipProvider()
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.started || s.recovering {
+		return ErrLeadershipProviderSetAfterStart
+	}
+	s.leadership = provider
+	return nil
+}
+
 // UpdateNodeCapacity updates the scheduler's latest capacity snapshot for a node.
 // This uses server receipt time and is kept for compatibility.
 func (s *Scheduler) UpdateNodeCapacity(nodeID string, inFlight, maxConcurrency int) {
@@ -271,8 +309,84 @@ func (s *Scheduler) run() {
 			return
 		case job := <-s.jobQueue:
 			observability.GetMetrics().SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
+			authority, err := s.dispatchAuthority(context.Background())
+			if err != nil {
+				log.Printf("scheduler leadership check failed; dispatch deferred for job %s: %v", job.ID, err)
+				s.requeueJob(job)
+				if !s.waitLeadershipRetry() {
+					return
+				}
+				continue
+			}
+			if !authority.IsLeader {
+				log.Printf("scheduler dispatch blocked: follower mode for job %s (leader_id=%s epoch=%s)",
+					job.ID, authority.LeaderID, authority.Epoch)
+				s.requeueJob(job)
+				if !s.waitLeadershipRetry() {
+					return
+				}
+				continue
+			}
 			s.executeJob(job)
 		}
+	}
+}
+
+func (s *Scheduler) dispatchAuthority(ctx context.Context) (LeadershipAuthority, error) {
+	s.mu.RLock()
+	provider := s.leadership
+	s.mu.RUnlock()
+	if provider == nil {
+		provider = defaultLeadershipProvider()
+	}
+	return provider.DispatchAuthority(ctx)
+}
+
+func (s *Scheduler) startLeadershipProvider() error {
+	s.mu.Lock()
+	provider := s.leadership
+	if provider == nil {
+		provider = defaultLeadershipProvider()
+		s.leadership = provider
+	}
+	leaderCtx, cancel := context.WithCancel(context.Background())
+	s.leadershipCancel = cancel
+	s.mu.Unlock()
+
+	cleanup, err := StartLeadershipProviderIfLifecycle(leaderCtx, provider)
+	if err != nil {
+		cancel()
+		s.mu.Lock()
+		s.leadershipCancel = nil
+		s.mu.Unlock()
+		return err
+	}
+	s.mu.Lock()
+	s.leadershipStop = cleanup
+	s.mu.Unlock()
+	return nil
+}
+
+func (s *Scheduler) requeueJob(job *Job) {
+	if job == nil {
+		return
+	}
+	select {
+	case <-s.stopChan:
+		return
+	case s.jobQueue <- job:
+		observability.GetMetrics().SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
+	}
+}
+
+func (s *Scheduler) waitLeadershipRetry() bool {
+	timer := time.NewTimer(s.config.LeadershipRetryInterval)
+	defer timer.Stop()
+	select {
+	case <-s.stopChan:
+		return false
+	case <-timer.C:
+		return true
 	}
 }
 
@@ -331,6 +445,34 @@ func isHumanPauseError(err error) bool {
 	msg := strings.ToLower(err.Error())
 	return strings.Contains(msg, "human interaction pending") ||
 		strings.Contains(msg, "execution paused")
+}
+
+func normalizeTransitionErrorSummary(summary string) string {
+	if summary == "" {
+		return ""
+	}
+
+	// Replace non-printable control characters and collapse whitespace so
+	// transition rows stay query-friendly across stores.
+	var b strings.Builder
+	b.Grow(len(summary))
+	for _, r := range summary {
+		if unicode.IsPrint(r) || r == '\n' || r == '\r' || r == '\t' {
+			b.WriteRune(r)
+			continue
+		}
+		b.WriteRune(' ')
+	}
+	normalized := strings.Join(strings.Fields(strings.TrimSpace(b.String())), " ")
+	if normalized == "" {
+		return ""
+	}
+
+	if runeCount := len([]rune(normalized)); runeCount <= maxTransitionErrorSummaryRunes {
+		return normalized
+	}
+	runes := []rune(normalized)
+	return string(runes[:maxTransitionErrorSummaryRunes])
 }
 
 // executeStage executes a stage and its tasks
@@ -485,7 +627,23 @@ func (s *Scheduler) executeTaskWithRetry(ctx context.Context, task *Task, initia
 
 	for attempt := 1; attempt <= maxAttempts; attempt++ {
 		task.Attempts = attempt
-		s.recordTaskTransition(ctx, telemetry.GetGlobalTelemetry().GetTracer().GetSpan(ctx), task, TransitionTaskDispatched, TaskStateDispatched, node.ID, attempt, "")
+		if err := s.claimTaskDispatchTransition(ctx, telemetry.GetGlobalTelemetry().GetTracer().GetSpan(ctx), task, node.ID, attempt); err != nil {
+			if !errors.Is(err, ErrDispatchClaimRejected) {
+				return err
+			}
+			observability.GetMetrics().RecordSchedulerDispatchRejection("fencing_conflict")
+			if attempt == maxAttempts {
+				observability.GetMetrics().RecordTaskFailedMaxDispatchAttempts()
+				return err
+			}
+			observability.GetMetrics().RecordTaskDispatchRetry()
+			nextNode, _, ok := s.selectNodeForTask(task, healthyNodes)
+			if !ok {
+				return ErrNoWorkerCapacity
+			}
+			node = nextNode
+			continue
+		}
 
 		s.reserveNodeSlot(node.ID)
 		err := s.executeTask(ctx, task, node)
@@ -510,6 +668,107 @@ func (s *Scheduler) executeTaskWithRetry(ctx context.Context, task *Task, initia
 		node = nextNode
 	}
 
+	return nil
+}
+
+func (s *Scheduler) claimTaskDispatchTransition(ctx context.Context, span telemetry.Span, task *Task, nodeID string, attempt int) error {
+	if task == nil {
+		return nil
+	}
+	// Legacy/unit-test compatibility path: if no JobID is present there is no
+	// durable sequence scope to claim against. Preserve runtime behavior without
+	// enforcing durable dispatch fencing in this path.
+	if task.JobID == "" || s.transitionStore == nil {
+		task.LifecycleState = TaskStateDispatched
+		return nil
+	}
+	previousState := task.LifecycleState
+	newState := TaskStateDispatched
+	if previousState == "" {
+		previousState = TaskStatePending
+	}
+	if !CanTransitionTaskState(previousState, newState) {
+		return ErrDispatchClaimRejected
+	}
+
+	seqID, err := s.nextSequenceIDWithContext(ctx, task.JobID)
+	if err != nil {
+		return fmt.Errorf("allocate dispatch transition sequence: %w", err)
+	}
+
+	record := TransitionRecord{
+		SequenceID:    seqID,
+		EntityType:    TransitionEntityTask,
+		Transition:    TransitionTaskDispatched,
+		JobID:         task.JobID,
+		TaskID:        task.ID,
+		PreviousState: string(previousState),
+		NewState:      string(newState),
+		NodeID:        nodeID,
+		Attempt:       attempt,
+		OccurredAt:    time.Now().UTC(),
+	}
+
+	snapshot, hasSnapshot := s.durableJobSnapshot(task.JobID, record.SequenceID, record.OccurredAt)
+	err = s.persistTransitionWrite(ctx, func(tx TransitionStoreTx) error {
+		claimed := true
+		if claimTx, ok := tx.(DispatchClaimTransitionStoreTx); ok {
+			claimResult, claimErr := claimTx.ClaimTaskDispatch(ctx, TaskDispatchClaim{
+				TaskID:    task.ID,
+				JobID:     task.JobID,
+				StageID:   task.StageID,
+				NodeID:    nodeID,
+				Attempt:   attempt,
+				UpdatedAt: record.OccurredAt,
+			})
+			if claimErr != nil {
+				return claimErr
+			}
+			claimed = claimResult
+		} else {
+			if err := tx.UpsertTask(ctx, DurableTaskRecord{
+				TaskID:       task.ID,
+				JobID:        task.JobID,
+				StageID:      task.StageID,
+				NodeID:       nodeID,
+				CurrentState: newState,
+				LastAttempt:  attempt,
+				UpdatedAt:    record.OccurredAt,
+			}); err != nil {
+				return err
+			}
+		}
+
+		if !claimed {
+			return ErrDispatchClaimRejected
+		}
+		if err := tx.AppendTransition(ctx, record); err != nil {
+			return err
+		}
+		if hasSnapshot {
+			if err := tx.UpsertJob(ctx, snapshot); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		if errors.Is(err, ErrDispatchClaimRejected) {
+			return ErrDispatchClaimRejected
+		}
+		return fmt.Errorf("persist dispatch claim transition: %w", err)
+	}
+
+	task.LifecycleState = newState
+	if span != nil {
+		span.AddEvent("scheduler.dispatch_claim", map[string]interface{}{
+			"task_id":     task.ID,
+			"job_id":      task.JobID,
+			"node_id":     nodeID,
+			"attempt":     attempt,
+			"sequence_id": record.SequenceID,
+		})
+	}
 	return nil
 }
 
@@ -597,6 +856,7 @@ func (s *Scheduler) recordJobTransition(ctx context.Context, span telemetry.Span
 		return
 	}
 	previousState := job.LifecycleState
+	errorSummary = normalizeTransitionErrorSummary(errorSummary)
 	if previousState != "" && !CanTransitionJobState(previousState, newState) {
 		log.Printf("skipping invalid job lifecycle transition for job %s: %s -> %s (%s)", job.ID, previousState, newState, transition)
 		return
@@ -660,6 +920,7 @@ func (s *Scheduler) recordTaskTransition(ctx context.Context, span telemetry.Spa
 		return
 	}
 	previousState := task.LifecycleState
+	errorSummary = normalizeTransitionErrorSummary(errorSummary)
 	if previousState != "" && !CanTransitionTaskState(previousState, newState) {
 		log.Printf("skipping invalid task lifecycle transition for task %s: %s -> %s (%s)", task.ID, previousState, newState, transition)
 		return

@@ -85,6 +85,11 @@ type SchedulerConfig struct {
 	//
 	// Default: false
 	EnableResumeRecoveredQueuedJobs bool
+
+	// LeadershipRetryInterval controls how long the run loop waits before
+	// retrying leadership checks when this instance is not the current leader.
+	// Default: 200 milliseconds
+	LeadershipRetryInterval time.Duration
 }
 
 // DefaultSchedulerConfig returns the default scheduler configuration
@@ -104,6 +109,7 @@ func DefaultSchedulerConfig() SchedulerConfig {
 		StageCapacityDeferralPollInterval: 100 * time.Millisecond,
 		RecoveryTimeout:                   5 * time.Minute,
 		EnableResumeRecoveredQueuedJobs:   false,
+		LeadershipRetryInterval:           200 * time.Millisecond,
 	}
 }
 
@@ -143,6 +149,9 @@ func (c *SchedulerConfig) Validate() {
 	}
 	if c.RecoveryTimeout <= 0 {
 		c.RecoveryTimeout = 5 * time.Minute
+	}
+	if c.LeadershipRetryInterval <= 0 {
+		c.LeadershipRetryInterval = 200 * time.Millisecond
 	}
 
 	// Keep cleanup cadence comfortably below expiry to avoid stale affinity

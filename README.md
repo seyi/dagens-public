@@ -26,6 +26,7 @@ Durability and recovery model (v0.2):
 - [State Machine](docs/STATE_MACHINE.md)
 - [Durability](docs/DURABILITY.md)
 - [Recovery Runbook](docs/RECOVERY_RUNBOOK.md)
+- [Control Plane HA Design](docs/CONTROL_PLANE_HA.md)
 
 Recent control-plane hardening:
 - Durable scheduler transition sequences support per-job monotonic allocation (memory or Postgres-backed).
@@ -172,6 +173,45 @@ Scheduler transition durability backend is configured on the API server:
 - `DATABASE_URL=<postgres dsn>` (fallback if `SCHEDULER_TRANSITION_POSTGRES_DSN` is not set)
 - `SCHEDULER_RECOVERY_TIMEOUT=<duration>` (default: `5m`, examples: `30s`, `2m`)
 - `SCHEDULER_RESUME_RECOVERED_QUEUED_JOBS=true|false` (default: `false`; resumes recovered `QUEUED` jobs only)
+
+### Scheduler Leadership Configuration (HA Dispatch Gating)
+
+Scheduler dispatch authority is pluggable. By default, Dagens uses a static
+single-node leadership provider (`is_leader=true`) for local compatibility.
+
+Enable etcd-backed leadership gating:
+
+- `SCHEDULER_LEADERSHIP_BACKEND=etcd`
+- `ETCD_ENDPOINTS=<comma-separated endpoints>` (required)
+- `SCHEDULER_LEADERSHIP_KEY=<etcd election key>` (default: `/dagens/control-plane/scheduler`)
+- `SCHEDULER_LEADERSHIP_TTL_SECONDS=<int>` (default: `10`)
+- `SCHEDULER_LEADERSHIP_DIAL_TIMEOUT=<duration>` (default: `5s`)
+
+Runtime semantics in v0.2:
+
+- only the current leader dispatches work
+- followers defer dispatch and requeue jobs
+- dispatch claims are fenced with state-guarded CAS in the transition store
+- authority scopes are validated (`ErrInvalidScope`, `IsValidScope`) before scoped checks
+
+Reference:
+- [Control Plane HA Design](docs/CONTROL_PLANE_HA.md)
+
+### Scheduler Validation Commands
+
+```bash
+# Unit/race checks
+docker run --rm -v /data/repos/dagens:/src -w /src golang:1.25.2 go test -race ./pkg/scheduler
+
+# Integration-tagged checks (embedded etcd/postgres test surfaces as configured by package tests)
+docker run --rm -v /data/repos/dagens:/src -w /src -v /var/run/docker.sock:/var/run/docker.sock -e DOCKER_HOST=unix:///var/run/docker.sock golang:1.25.2 go test -tags=integration ./pkg/scheduler -v
+```
+
+HA failover drill helper:
+
+```bash
+API_URL=http://localhost:8080 ./scripts/failover_drill.sh
+```
 
 ## Python SDK (Run a Distributed Job in 2 Minutes)
 

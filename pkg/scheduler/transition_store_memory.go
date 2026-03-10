@@ -152,6 +152,40 @@ func (tx *inMemoryTransitionStoreTx) UpsertTask(_ context.Context, task DurableT
 	return nil
 }
 
+func (tx *inMemoryTransitionStoreTx) ClaimTaskDispatch(_ context.Context, claim TaskDispatchClaim) (bool, error) {
+	if claim.TaskID == "" {
+		return false, nil
+	}
+	existing, ok := tx.tasks[claim.TaskID]
+	if !ok {
+		tx.tasks[claim.TaskID] = DurableTaskRecord{
+			TaskID:       claim.TaskID,
+			JobID:        claim.JobID,
+			StageID:      claim.StageID,
+			NodeID:       claim.NodeID,
+			CurrentState: TaskStateDispatched,
+			LastAttempt:  claim.Attempt,
+			UpdatedAt:    claim.UpdatedAt,
+		}
+		return true, nil
+	}
+
+	if existing.LastAttempt < claim.Attempt &&
+		existing.CurrentState != TaskStateRunning &&
+		existing.CurrentState != TaskStateSucceeded {
+		existing.JobID = claim.JobID
+		existing.StageID = claim.StageID
+		existing.NodeID = claim.NodeID
+		existing.CurrentState = TaskStateDispatched
+		existing.LastAttempt = claim.Attempt
+		existing.UpdatedAt = claim.UpdatedAt
+		tx.tasks[claim.TaskID] = existing
+		return true, nil
+	}
+
+	return false, nil
+}
+
 func cloneTransitionMap(in map[string][]TransitionRecord) map[string][]TransitionRecord {
 	out := make(map[string][]TransitionRecord, len(in))
 	for jobID, records := range in {

@@ -115,6 +115,72 @@ func main() {
 	sched := scheduler.NewSchedulerWithConfig(reg, realExec, schedulerCfg)
 	var closeTransitionStore func()
 
+	if strings.EqualFold(strings.TrimSpace(os.Getenv("SCHEDULER_LEADERSHIP_BACKEND")), "etcd") {
+		identity := strings.TrimSpace(os.Getenv("CONTROL_PLANE_ID"))
+		if identity == "" {
+			identity = strings.TrimSpace(os.Getenv("HOSTNAME"))
+		}
+		if identity == "" {
+			identity = "api-server"
+		}
+
+		leaderKey := strings.TrimSpace(os.Getenv("SCHEDULER_LEADERSHIP_KEY"))
+		if leaderKey == "" {
+			leaderKey = "/dagens/control-plane/scheduler"
+		}
+
+		raw := strings.TrimSpace(os.Getenv("ETCD_ENDPOINTS"))
+		if raw == "" {
+			log.Fatal("SCHEDULER_LEADERSHIP_BACKEND=etcd requires ETCD_ENDPOINTS")
+		}
+		endpoints := make([]string, 0, 3)
+		for _, part := range strings.Split(raw, ",") {
+			part = strings.TrimSpace(part)
+			if part != "" {
+				endpoints = append(endpoints, part)
+			}
+		}
+		if len(endpoints) == 0 {
+			log.Fatal("SCHEDULER_LEADERSHIP_BACKEND=etcd requires at least one non-empty ETCD_ENDPOINTS value")
+		}
+
+		leadershipTTL := 10
+		if ttlRaw := strings.TrimSpace(os.Getenv("SCHEDULER_LEADERSHIP_TTL_SECONDS")); ttlRaw != "" {
+			parsed, err := time.ParseDuration(ttlRaw + "s")
+			if err != nil {
+				log.Fatalf("Invalid SCHEDULER_LEADERSHIP_TTL_SECONDS %q: %v", ttlRaw, err)
+			}
+			leadershipTTL = int(parsed / time.Second)
+			if leadershipTTL <= 0 {
+				log.Fatal("SCHEDULER_LEADERSHIP_TTL_SECONDS must be >= 1")
+			}
+		}
+
+		dialTimeout := 5 * time.Second
+		if timeoutRaw := strings.TrimSpace(os.Getenv("SCHEDULER_LEADERSHIP_DIAL_TIMEOUT")); timeoutRaw != "" {
+			parsed, err := time.ParseDuration(timeoutRaw)
+			if err != nil {
+				log.Fatalf("Invalid SCHEDULER_LEADERSHIP_DIAL_TIMEOUT %q: %v", timeoutRaw, err)
+			}
+			dialTimeout = parsed
+		}
+
+		leadershipProvider, err := scheduler.NewEtcdLeadershipProvider(scheduler.EtcdLeadershipProviderConfig{
+			Endpoints:   endpoints,
+			ElectionKey: leaderKey,
+			Identity:    identity,
+			SessionTTL:  leadershipTTL,
+			DialTimeout: dialTimeout,
+		})
+		if err != nil {
+			log.Fatalf("Failed to initialize etcd leadership provider: %v", err)
+		}
+		if err := sched.SetLeadershipProvider(leadershipProvider); err != nil {
+			log.Fatalf("Failed to set scheduler leadership provider: %v", err)
+		}
+		log.Printf("Using etcd scheduler leadership provider (identity=%s key=%s endpoints=%s)", identity, leaderKey, strings.Join(endpoints, ","))
+	}
+
 	transitionBackend := strings.ToLower(strings.TrimSpace(os.Getenv("SCHEDULER_TRANSITION_STORE")))
 	if transitionBackend == "" {
 		transitionBackend = "memory"

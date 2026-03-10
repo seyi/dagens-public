@@ -261,6 +261,37 @@ func (p *postgresTransitionStoreTx) UpsertTask(ctx context.Context, task Durable
 	return nil
 }
 
+func (p *postgresTransitionStoreTx) ClaimTaskDispatch(ctx context.Context, claim TaskDispatchClaim) (bool, error) {
+	query := fmt.Sprintf(`
+		INSERT INTO %s (task_id, job_id, stage_id, node_id, current_state, last_attempt, updated_at)
+		VALUES ($1,$2,$3,$4,$5,$6,$7)
+		ON CONFLICT (task_id) DO UPDATE SET
+			job_id = EXCLUDED.job_id,
+			stage_id = EXCLUDED.stage_id,
+			node_id = EXCLUDED.node_id,
+			current_state = EXCLUDED.current_state,
+			last_attempt = EXCLUDED.last_attempt,
+			updated_at = EXCLUDED.updated_at
+		WHERE %s.last_attempt < EXCLUDED.last_attempt
+		  AND %s.current_state NOT IN ($8, $9);`, durableTasksTable, durableTasksTable, durableTasksTable)
+
+	tag, err := p.tx.Exec(ctx, query,
+		claim.TaskID,
+		claim.JobID,
+		claim.StageID,
+		claim.NodeID,
+		string(TaskStateDispatched),
+		claim.Attempt,
+		claim.UpdatedAt,
+		string(TaskStateRunning),
+		string(TaskStateSucceeded),
+	)
+	if err != nil {
+		return false, fmt.Errorf("claim task dispatch: %w", err)
+	}
+	return tag.RowsAffected() > 0, nil
+}
+
 func (s *PostgresTransitionStore) ListUnfinishedJobs(ctx context.Context) ([]DurableJobRecord, error) {
 	query := fmt.Sprintf(`
 		SELECT job_id, name, current_state, last_sequence_id, created_at, updated_at

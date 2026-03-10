@@ -3,9 +3,12 @@ package scheduler
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
+	"unicode/utf8"
 
 	"github.com/prometheus/client_golang/prometheus"
 	dto "github.com/prometheus/client_model/go"
@@ -128,6 +131,129 @@ func TestSubmitJobWithContext_PropagatesContextToInitialTransitions(t *testing.T
 	}
 }
 
+func TestSetLeadershipProvider_AfterStartRejected(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	s.Start()
+	defer s.Stop()
+
+	err := s.SetLeadershipProvider(staticLeadershipProvider{
+		authority: LeadershipAuthority{IsLeader: true, Epoch: "e1", LeaderID: "node-a"},
+	})
+	if !errors.Is(err, ErrLeadershipProviderSetAfterStart) {
+		t.Fatalf("SetLeadershipProvider error = %v, want %v", err, ErrLeadershipProviderSetAfterStart)
+	}
+}
+
+func TestRun_FollowerDefersDispatchUntilLeadershipAcquired(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:                      1,
+		LeadershipRetryInterval:           5 * time.Millisecond,
+		AffinityCleanupInterval:           10 * time.Millisecond,
+		StageCapacityDeferralPollInterval: 5 * time.Millisecond,
+	})
+	provider := &toggleLeadershipProvider{}
+	provider.setLeader(false)
+	if err := s.SetLeadershipProvider(provider); err != nil {
+		t.Fatalf("SetLeadershipProvider unexpected error: %v", err)
+	}
+
+	s.Start()
+	defer s.Stop()
+
+	job := NewJob("job-ha-follower", "ha-follower")
+	if err := s.SubmitJob(job); err != nil {
+		t.Fatalf("SubmitJob unexpected error: %v", err)
+	}
+
+	time.Sleep(40 * time.Millisecond)
+	gotStatus, err := jobStatusForTest(s, job.ID)
+	if err != nil {
+		t.Fatalf("jobStatusForTest unexpected error: %v", err)
+	}
+	if gotStatus != JobPending {
+		t.Fatalf("job status before leadership = %q, want %q", gotStatus, JobPending)
+	}
+
+	provider.setLeader(true)
+
+	deadline := time.Now().Add(2 * time.Second)
+	for time.Now().Before(deadline) {
+		currentStatus, getErr := jobStatusForTest(s, job.ID)
+		if getErr != nil {
+			t.Fatalf("jobStatusForTest unexpected error: %v", getErr)
+		}
+		if currentStatus == JobCompleted {
+			return
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	finalStatus, err := jobStatusForTest(s, job.ID)
+	if err != nil {
+		t.Fatalf("jobStatusForTest unexpected error: %v", err)
+	}
+	t.Fatalf("job status = %q, want %q after leadership acquisition", finalStatus, JobCompleted)
+}
+
+func TestStart_LeadershipProviderStartFailurePreventsSchedulerStart(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	lp := &lifecycleLeadershipProvider{
+		authority: LeadershipAuthority{IsLeader: true, Epoch: "1", LeaderID: "leader"},
+		startErr:  errors.New("leadership unavailable"),
+	}
+	if err := s.SetLeadershipProvider(lp); err != nil {
+		t.Fatalf("SetLeadershipProvider unexpected error: %v", err)
+	}
+
+	s.Start()
+	defer s.Stop()
+
+	if s.started {
+		t.Fatal("expected scheduler to remain stopped when leadership provider start fails")
+	}
+	if s.recovering {
+		t.Fatal("expected recovering=false after failed start")
+	}
+	if lp.started.Load() {
+		t.Fatal("expected lifecycle provider start marker to remain false on start error")
+	}
+}
+
+func TestStop_LeadershipProviderStopCalled(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	lp := &lifecycleLeadershipProvider{
+		authority: LeadershipAuthority{IsLeader: true, Epoch: "1", LeaderID: "leader"},
+	}
+	if err := s.SetLeadershipProvider(lp); err != nil {
+		t.Fatalf("SetLeadershipProvider unexpected error: %v", err)
+	}
+
+	s.Start()
+	s.Stop()
+
+	if !lp.started.Load() {
+		t.Fatal("expected lifecycle provider start to be called")
+	}
+	if !lp.stopped.Load() {
+		t.Fatal("expected lifecycle provider stop to be called")
+	}
+}
+
+func TestNewEtcdLeadershipProvider_RequiresIdentityAndEndpoints(t *testing.T) {
+	_, err := NewEtcdLeadershipProvider(EtcdLeadershipProviderConfig{
+		Identity: "cp-a",
+	})
+	if err == nil {
+		t.Fatal("expected endpoints validation error")
+	}
+
+	_, err = NewEtcdLeadershipProvider(EtcdLeadershipProviderConfig{
+		Endpoints: []string{"http://127.0.0.1:2379"},
+	})
+	if err == nil {
+		t.Fatal("expected identity validation error")
+	}
+}
+
 func TestExecuteJob_RecordsResumedTransitionFromAwaitingHuman(t *testing.T) {
 	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
 	job := NewJob("job-resumed", "resumed")
@@ -198,6 +324,120 @@ func TestRecordTaskTransition_SkipsInvalidLifecycleTransition(t *testing.T) {
 	}
 	if task.LifecycleState != TaskStatePending {
 		t.Fatalf("task lifecycle state = %q, want %q", task.LifecycleState, TaskStatePending)
+	}
+}
+
+func TestRecordJobTransition_NormalizesAndTruncatesErrorSummary(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	job := NewJob("job-summary", "summary")
+	job.LifecycleState = JobStateSubmitted
+
+	raw := strings.Repeat("x", maxTransitionErrorSummaryRunes+25) + "\x00\n\t" + "tail"
+	s.recordJobTransition(context.Background(), nil, job, TransitionJobQueued, JobStateQueued, raw)
+
+	store, ok := s.TransitionStore().(*InMemoryTransitionStore)
+	if !ok {
+		t.Fatal("expected in-memory transition store")
+	}
+	records, err := store.ListTransitionsByJob(context.Background(), job.ID)
+	if err != nil {
+		t.Fatalf("ListTransitionsByJob unexpected error: %v", err)
+	}
+	if len(records) != 1 {
+		t.Fatalf("transition count = %d, want 1", len(records))
+	}
+	summary := records[0].ErrorSummary
+	if summary == "" {
+		t.Fatal("expected non-empty normalized error summary")
+	}
+	if strings.ContainsRune(summary, '\x00') {
+		t.Fatalf("summary contains raw control character: %q", summary)
+	}
+	if got := len([]rune(summary)); got != maxTransitionErrorSummaryRunes {
+		t.Fatalf("summary rune length = %d, want %d", got, maxTransitionErrorSummaryRunes)
+	}
+}
+
+func TestRecordTaskTransition_NormalizesErrorSummaryWhitespace(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	task := &Task{
+		ID:             "task-summary",
+		JobID:          "job-task-summary",
+		StageID:        "stage-1",
+		LifecycleState: TaskStatePending,
+	}
+
+	raw := fmt.Sprintf("   timeout\tafter\nretry\x00count=%d   ", 3)
+	s.recordTaskTransition(context.Background(), nil, task, TransitionTaskDispatched, TaskStateDispatched, "worker-1", 1, raw)
+
+	store, ok := s.TransitionStore().(*InMemoryTransitionStore)
+	if !ok {
+		t.Fatal("expected in-memory transition store")
+	}
+	records, err := store.ListTransitionsByJob(context.Background(), task.JobID)
+	if err != nil {
+		t.Fatalf("ListTransitionsByJob unexpected error: %v", err)
+	}
+	if len(records) != 1 {
+		t.Fatalf("transition count = %d, want 1", len(records))
+	}
+	if got, want := records[0].ErrorSummary, "timeout after retry count=3"; got != want {
+		t.Fatalf("normalized summary = %q, want %q", got, want)
+	}
+}
+
+func TestNormalizeTransitionErrorSummary(t *testing.T) {
+	tests := []struct {
+		name   string
+		input  string
+		assert func(t *testing.T, got string)
+	}{
+		{
+			name:  "empty",
+			input: "",
+			assert: func(t *testing.T, got string) {
+				if got != "" {
+					t.Fatalf("got %q, want empty", got)
+				}
+			},
+		},
+		{
+			name:  "whitespace only collapses to empty",
+			input: "  \t \n  ",
+			assert: func(t *testing.T, got string) {
+				if got != "" {
+					t.Fatalf("got %q, want empty", got)
+				}
+			},
+		},
+		{
+			name:  "control chars replaced and whitespace normalized",
+			input: " error\x00with\x01control \n\t chars ",
+			assert: func(t *testing.T, got string) {
+				if got != "error with control chars" {
+					t.Fatalf("got %q, want %q", got, "error with control chars")
+				}
+			},
+		},
+		{
+			name:  "unicode truncation honors rune boundary",
+			input: strings.Repeat("🎉", maxTransitionErrorSummaryRunes+10),
+			assert: func(t *testing.T, got string) {
+				if !utf8.ValidString(got) {
+					t.Fatal("truncated summary is not valid UTF-8")
+				}
+				if gotRunes := len([]rune(got)); gotRunes != maxTransitionErrorSummaryRunes {
+					t.Fatalf("rune length = %d, want %d", gotRunes, maxTransitionErrorSummaryRunes)
+				}
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := normalizeTransitionErrorSummary(tt.input)
+			tt.assert(t, got)
+		})
 	}
 }
 
@@ -840,6 +1080,81 @@ func TestExecuteTaskWithRetryFailsAtMaxDispatchAttempts(t *testing.T) {
 	}
 }
 
+func TestClaimTaskDispatchTransitionRejectsDuplicateClaim(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	task := &Task{
+		ID:             "task-claim-dup",
+		JobID:          "job-claim-dup",
+		StageID:        "stage-1",
+		LifecycleState: TaskStatePending,
+	}
+
+	if err := s.claimTaskDispatchTransition(context.Background(), nil, task, "worker-1", 1); err != nil {
+		t.Fatalf("first claimTaskDispatchTransition error = %v, want nil", err)
+	}
+	if err := s.claimTaskDispatchTransition(context.Background(), nil, task, "worker-2", 1); !errors.Is(err, ErrDispatchClaimRejected) {
+		t.Fatalf("second claimTaskDispatchTransition error = %v, want %v", err, ErrDispatchClaimRejected)
+	}
+
+	store, ok := s.TransitionStore().(*InMemoryTransitionStore)
+	if !ok {
+		t.Fatal("expected in-memory transition store")
+	}
+	records, err := store.ListTransitionsByJob(context.Background(), task.JobID)
+	if err != nil {
+		t.Fatalf("ListTransitionsByJob unexpected error: %v", err)
+	}
+	if len(records) != 1 {
+		t.Fatalf("transition count = %d, want 1 after duplicate claim rejection", len(records))
+	}
+	if records[0].Transition != TransitionTaskDispatched {
+		t.Fatalf("transition[0] = %q, want %q", records[0].Transition, TransitionTaskDispatched)
+	}
+}
+
+func TestExecuteTaskWithRetryRejectsFencingConflictWithoutExecuting(t *testing.T) {
+	executor := &sequenceTaskExecutor{}
+	s := NewSchedulerWithConfig(nil, executor, SchedulerConfig{
+		MaxDispatchAttempts:         1,
+		DispatchRejectCooldown:      5 * time.Second,
+		DefaultWorkerMaxConcurrency: 1,
+	})
+
+	store, ok := s.TransitionStore().(*InMemoryTransitionStore)
+	if !ok {
+		t.Fatal("expected in-memory transition store")
+	}
+	task := &Task{
+		ID:             "task-fencing-conflict",
+		JobID:          "job-fencing-conflict",
+		StageID:        "stage-1",
+		AgentID:        "agent-1",
+		AgentName:      "agent",
+		Input:          &agent.AgentInput{},
+		LifecycleState: TaskStatePending,
+	}
+	if err := store.UpsertTask(context.Background(), DurableTaskRecord{
+		TaskID:       task.ID,
+		JobID:        task.JobID,
+		StageID:      task.StageID,
+		NodeID:       "worker-locked",
+		CurrentState: TaskStateDispatched,
+		LastAttempt:  1,
+		UpdatedAt:    time.Now().UTC(),
+	}); err != nil {
+		t.Fatalf("UpsertTask unexpected error: %v", err)
+	}
+
+	nodes := []registry.NodeInfo{{ID: "worker-1"}, {ID: "worker-2"}}
+	err := s.executeTaskWithRetry(context.Background(), task, nodes[0], nodes)
+	if !errors.Is(err, ErrDispatchClaimRejected) {
+		t.Fatalf("executeTaskWithRetry error = %v, want %v", err, ErrDispatchClaimRejected)
+	}
+	if len(executor.callNodes) != 0 {
+		t.Fatalf("executor call count = %d, want 0 when fencing claim rejected", len(executor.callNodes))
+	}
+}
+
 func newCapacityExhaustedScheduler() *Scheduler {
 	s := NewSchedulerWithConfig(capacityExhaustedRegistry{}, nil, SchedulerConfig{
 		DefaultWorkerMaxConcurrency: 1,
@@ -1005,6 +1320,45 @@ type contextCaptureTransitionStore struct {
 	lastValue interface{}
 }
 
+type toggleLeadershipProvider struct {
+	isLeader atomic.Bool
+}
+
+func (p *toggleLeadershipProvider) setLeader(v bool) {
+	p.isLeader.Store(v)
+}
+
+func (p *toggleLeadershipProvider) DispatchAuthority(context.Context) (LeadershipAuthority, error) {
+	return LeadershipAuthority{
+		IsLeader: p.isLeader.Load(),
+		Epoch:    "test-epoch",
+		LeaderID: "leader-test",
+	}, nil
+}
+
+type lifecycleLeadershipProvider struct {
+	authority LeadershipAuthority
+	startErr  error
+	started   atomic.Bool
+	stopped   atomic.Bool
+}
+
+func (p *lifecycleLeadershipProvider) Start(context.Context) error {
+	if p.startErr != nil {
+		return p.startErr
+	}
+	p.started.Store(true)
+	return nil
+}
+
+func (p *lifecycleLeadershipProvider) Stop() {
+	p.stopped.Store(true)
+}
+
+func (p *lifecycleLeadershipProvider) DispatchAuthority(context.Context) (LeadershipAuthority, error) {
+	return p.authority, nil
+}
+
 func (s *contextCaptureTransitionStore) capture(ctx context.Context) {
 	if s.lastValue != nil {
 		return
@@ -1096,4 +1450,14 @@ func (s *sequenceTaskExecutor) ExecuteOnNode(ctx context.Context, nodeID string,
 		return nil, err
 	}
 	return &agent.AgentOutput{}, nil
+}
+
+func jobStatusForTest(s *Scheduler, jobID string) (JobStatus, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	job, ok := s.jobs[jobID]
+	if !ok {
+		return "", fmt.Errorf("job %s not found", jobID)
+	}
+	return job.Status, nil
 }
