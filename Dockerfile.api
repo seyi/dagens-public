@@ -15,8 +15,8 @@ RUN go mod download
 # Copy the rest of the source code
 COPY . .
 
-# Build the API server
-RUN CGO_ENABLED=1 GOOS=linux go build -o dagens-api ./cmd/api_server/main.go
+# Build the API server package (includes all files in cmd/api_server)
+RUN CGO_ENABLED=1 GOOS=linux go build -o dagens-api ./cmd/api_server
 
 # Stage 2: Final lightweight image
 FROM alpine:latest

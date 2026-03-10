@@ -489,7 +489,7 @@ func (s *Scheduler) executeStage(ctx context.Context, stage *Stage) error {
 	span.SetAttribute("task_count", len(stage.Tasks))
 
 	// Get healthy nodes
-	nodes := s.registry.GetHealthyNodes()
+	nodes := s.dispatchEligibleNodes(s.registry.GetHealthyNodes())
 	if len(nodes) == 0 {
 		err := fmt.Errorf("no healthy nodes available for execution")
 		span.SetStatus(telemetry.StatusError, err.Error())
@@ -606,7 +606,7 @@ func (s *Scheduler) selectNodeForTaskWithDeferral(ctx context.Context, task *Tas
 			if s.registry == nil {
 				return registry.NodeInfo{}, affinity, false, nil
 			}
-			nodes := s.registry.GetHealthyNodes()
+			nodes := s.dispatchEligibleNodes(s.registry.GetHealthyNodes())
 			if len(nodes) == 0 {
 				continue
 			}
@@ -616,6 +616,32 @@ func (s *Scheduler) selectNodeForTaskWithDeferral(ctx context.Context, task *Tas
 			}
 		}
 	}
+}
+
+func (s *Scheduler) dispatchEligibleNodes(nodes []registry.NodeInfo) []registry.NodeInfo {
+	if len(nodes) == 0 {
+		return nil
+	}
+	eligible := make([]registry.NodeInfo, 0, len(nodes))
+	for _, node := range nodes {
+		if node.Metadata != nil {
+			if role, ok := node.Metadata["role"]; ok && strings.EqualFold(strings.TrimSpace(role), "control-plane") {
+				continue
+			}
+		}
+		skip := false
+		for _, capability := range node.Capabilities {
+			if strings.EqualFold(strings.TrimSpace(capability), "control-plane") {
+				skip = true
+				break
+			}
+		}
+		if skip {
+			continue
+		}
+		eligible = append(eligible, node)
+	}
+	return eligible
 }
 
 func (s *Scheduler) executeTaskWithRetry(ctx context.Context, task *Task, initialNode registry.NodeInfo, healthyNodes []registry.NodeInfo) error {

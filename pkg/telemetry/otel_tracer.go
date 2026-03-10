@@ -5,6 +5,7 @@ package telemetry
 import (
 	"context"
 	"fmt"
+	"math"
 	"os"
 	"sync"
 	"time"
@@ -261,6 +262,13 @@ func attributeValue(v interface{}) attribute.Value {
 		return attribute.IntValue(val)
 	case int64:
 		return attribute.Int64Value(val)
+	case uint:
+		return attribute.Int64Value(int64(val))
+	case uint64:
+		if val > uint64(math.MaxInt64) {
+			return attribute.StringValue(fmt.Sprintf("%d", val))
+		}
+		return attribute.Int64Value(int64(val))
 	case float64:
 		return attribute.Float64Value(val)
 	case bool:
@@ -275,5 +283,8 @@ func toString(v interface{}) string {
 	if v == nil {
 		return ""
 	}
-	return string(v.(string)) // This is a simplified version - in practice, you'd want more robust conversion
+	if s, ok := v.(string); ok {
+		return s
+	}
+	return fmt.Sprintf("%v", v)
 }

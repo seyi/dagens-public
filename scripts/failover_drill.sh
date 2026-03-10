@@ -52,10 +52,21 @@ for i in $(seq 1 "${JOB_COUNT}"); do
 }
 JSON
 )"
-  resp="$(curl -sS -X POST "${API_URL}/v1/jobs" -H "Content-Type: application/json" -d "${payload}")"
-  job_id="$(echo "${resp}" | jq -r '.job_id // .id // empty')"
+  job_id=""
+  submit_attempt=0
+  while [[ ${submit_attempt} -lt 5 ]]; do
+    submit_attempt=$((submit_attempt + 1))
+    resp="$(curl -sS -X POST "${API_URL}/v1/jobs" -H "Content-Type: application/json" -d "${payload}" || true)"
+    job_id="$(echo "${resp}" | jq -r '.job_id // .id // empty' 2>/dev/null || true)"
+    if [[ -n "${job_id}" && "${job_id}" != "null" ]]; then
+      break
+    fi
+    if [[ ${submit_attempt} -lt 5 ]]; then
+      sleep 1
+    fi
+  done
   if [[ -z "${job_id}" || "${job_id}" == "null" ]]; then
-    echo "Failed to parse job id from response: ${resp}"
+    echo "Failed to parse job id from response after retries: ${resp}"
     exit 1
   fi
   echo "  submitted: ${job_id}"
@@ -76,8 +87,8 @@ while [[ $(date +%s) -lt ${deadline} ]]; do
       ((complete+=1))
       continue
     fi
-    status_resp="$(curl -sS "${API_URL}/v1/jobs/${id}")"
-    status="$(echo "${status_resp}" | jq -r '.status // .Status // .state // .State // empty')"
+    status_resp="$(curl -sS "${API_URL}/v1/jobs/${id}" || true)"
+    status="$(echo "${status_resp}" | jq -r '.status // .Status // .state // .State // empty' 2>/dev/null || true)"
     case "${status}" in
       COMPLETED|SUCCEEDED|FAILED|CANCELED)
         final_status["${id}"]="${status}"

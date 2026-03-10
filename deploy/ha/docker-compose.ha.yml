@@ -1,0 +1,104 @@
+services:
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.15
+    environment:
+      ETCD_NAME: etcd
+      ETCD_DATA_DIR: /etcd-data
+      ETCD_ADVERTISE_CLIENT_URLS: http://etcd:2379
+      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: http://etcd:2380
+      ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
+      ETCD_INITIAL_CLUSTER: etcd=http://etcd:2380
+      ETCD_INITIAL_CLUSTER_STATE: new
+      ETCD_INITIAL_CLUSTER_TOKEN: dagens-local-ha
+    healthcheck:
+      test: ["CMD", "etcdctl", "--endpoints=http://127.0.0.1:2379", "endpoint", "health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api-server:
+    environment:
+      DEV_MODE: "true"
+      ETCD_ENDPOINTS: "http://etcd:2379"
+      CONTROL_PLANE_ID: "api-a"
+      POD_IP: "api-server"
+      SCHEDULER_LEADERSHIP_BACKEND: "etcd"
+      SCHEDULER_LEADERSHIP_KEY: "/dagens/control-plane/scheduler"
+      SCHEDULER_LEADERSHIP_TTL_SECONDS: "10"
+      SCHEDULER_LEADERSHIP_DIAL_TIMEOUT: "5s"
+      SCHEDULER_TRANSITION_STORE: "postgres"
+      SCHEDULER_TRANSITION_POSTGRES_DSN: "postgres://postgres:postgres@postgres:5432/dagens?sslmode=disable"
+    ports:
+      - "8081:8080"
+    depends_on:
+      - etcd
+      - postgres
+      - jaeger
+
+  api-server-b:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      DEV_MODE: "true"
+      ETCD_ENDPOINTS: "http://etcd:2379"
+      CONTROL_PLANE_ID: "api-b"
+      POD_IP: "api-server-b"
+      SCHEDULER_LEADERSHIP_BACKEND: "etcd"
+      SCHEDULER_LEADERSHIP_KEY: "/dagens/control-plane/scheduler"
+      SCHEDULER_LEADERSHIP_TTL_SECONDS: "10"
+      SCHEDULER_LEADERSHIP_DIAL_TIMEOUT: "5s"
+      SCHEDULER_TRANSITION_STORE: "postgres"
+      SCHEDULER_TRANSITION_POSTGRES_DSN: "postgres://postgres:postgres@postgres:5432/dagens?sslmode=disable"
+      OTEL_EXPORTER_TYPE: "otlp"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "jaeger:4317"
+      OTEL_SERVICE_NAME: "dagens-api-b"
+    depends_on:
+      - etcd
+      - postgres
+      - jaeger
+    ports:
+      - "8082:8080"
+
+  api-lb:
+    image: nginx:1.27-alpine
+    depends_on:
+      - api-server
+      - api-server-b
+    ports:
+      - "8083:8080"
+    volumes:
+      - ./deploy/ha/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+  worker-1:
+    environment:
+      NODE_ID: "worker-1"
+      PORT: "50051"
+      POD_IP: "worker-1"
+      ETCD_ENDPOINTS: "http://etcd:2379"
+      API_SERVER_URL: "http://api-lb:8080"
+      OTEL_EXPORTER_TYPE: "otlp"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "jaeger:4317"
+      OTEL_SERVICE_NAME: "dagens-worker"
+      OPENROUTER_API_KEY: "${OPENROUTER_API_KEY}"
+    depends_on:
+      - etcd
+      - jaeger
+      - api-lb
+
+  worker-2:
+    environment:
+      NODE_ID: "worker-2"
+      PORT: "50051"
+      POD_IP: "worker-2"
+      ETCD_ENDPOINTS: "http://etcd:2379"
+      API_SERVER_URL: "http://api-lb:8080"
+      OTEL_EXPORTER_TYPE: "otlp"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "jaeger:4317"
+      OTEL_SERVICE_NAME: "dagens-worker"
+      OPENROUTER_API_KEY: "${OPENROUTER_API_KEY}"
+    depends_on:
+      - etcd
+      - jaeger
+      - api-lb

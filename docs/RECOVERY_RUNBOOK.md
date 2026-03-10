@@ -182,6 +182,20 @@ JOB_COUNT=3 \
 ./scripts/failover_drill.sh
 ```
 
+Local two-control-plane HA topology (etcd + dual API + LB):
+
+```bash
+docker compose -f docker-compose.yml -f deploy/ha/docker-compose.ha.yml up -d --build
+```
+
+Then run takeover drill through the HA load balancer:
+
+```bash
+API_URL=http://localhost:8083 \
+LEADER_STOP_CMD="docker kill dagens-api-server-1" \
+./scripts/failover_drill.sh
+```
+
 Failover + fencing validation:
 
 ```bash

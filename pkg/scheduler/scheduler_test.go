@@ -1439,6 +1439,39 @@ func TestStart_RecoveryFlagsResetAfterPanic(t *testing.T) {
 	}
 }
 
+func TestDispatchEligibleNodes_FiltersControlPlaneNodes(t *testing.T) {
+	s := NewSchedulerWithConfig(capacityExhaustedRegistry{}, nil, SchedulerConfig{})
+
+	nodes := []registry.NodeInfo{
+		{ID: "worker-1", Healthy: true, Port: 50051, Capabilities: []string{"generic-agent"}},
+		{ID: "api-capability", Healthy: true, Port: 8080, Capabilities: []string{"control-plane"}},
+		{ID: "api-metadata", Healthy: true, Port: 8080, Metadata: map[string]string{"role": "control-plane"}},
+		{ID: "worker-2", Healthy: true, Port: 50051, Metadata: map[string]string{"role": "execution-plane"}},
+	}
+
+	eligible := s.dispatchEligibleNodes(nodes)
+	if len(eligible) != 2 {
+		t.Fatalf("eligible node count = %d, want 2", len(eligible))
+	}
+
+	ids := map[string]struct{}{}
+	for _, node := range eligible {
+		ids[node.ID] = struct{}{}
+	}
+	if _, ok := ids["worker-1"]; !ok {
+		t.Fatal("expected worker-1 to be eligible")
+	}
+	if _, ok := ids["worker-2"]; !ok {
+		t.Fatal("expected worker-2 to be eligible")
+	}
+	if _, ok := ids["api-capability"]; ok {
+		t.Fatal("api-capability must be filtered from eligible nodes")
+	}
+	if _, ok := ids["api-metadata"]; ok {
+		t.Fatal("api-metadata must be filtered from eligible nodes")
+	}
+}
+
 func (s *sequenceTaskExecutor) ExecuteOnNode(ctx context.Context, nodeID string, agentName string, input *agent.AgentInput) (*agent.AgentOutput, error) {
 	s.callNodes = append(s.callNodes, nodeID)
 	if s.calls >= len(s.errs) {

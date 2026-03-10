@@ -71,6 +71,10 @@ func main() {
 			NodeName:      "API Server",
 			NodeAddress:   os.Getenv("POD_IP"), // Kubernetes pod IP
 			NodePort:      8080,
+			NodeCapabilities: []string{"control-plane"},
+			NodeMetadata: map[string]string{
+				"role": "control-plane",
+			},
 			LeaseTTL:      10,
 		})
 		if err != nil {
