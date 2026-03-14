@@ -508,6 +508,7 @@ See [Philosophy](docs/PHILOSOPHY.md) for a deeper discussion of architectural di
 - [Control Plane HA Design](docs/CONTROL_PLANE_HA.md) - Leadership/fencing model and failover semantics
 - [Postgres Transition Quickstart](docs/POSTGRES_TRANSITION_QUICKSTART.md) - Enable durable transition storage and replay input
 - [Scaling and Dispatch Clarification](docs/SCALING_AND_DISPATCH_CLARIFICATION.md)
+- [Dagens vs Kubernetes](docs/KUBERNETES_VS_DAGENS.md)
 - [Repo Tree and Runtime Snapshot](docs/REPO_TREE_AND_RUNTIME.md)
 
 ## License

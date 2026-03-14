@@ -172,6 +172,8 @@ Script:
 - [`scripts/failover_drill.sh`](../scripts/failover_drill.sh)
 - [`scripts/repeat_failover_drill.sh`](../scripts/repeat_failover_drill.sh) for repeated-gate evidence capture
 - [`scripts/hitl_failover_drill.sh`](../scripts/hitl_failover_drill.sh) for operator-facing HITL pause/resume takeover validation
+- [`scripts/chaos_load_suite.sh`](../scripts/chaos_load_suite.sh) for combined repeat/backpressure/HITL evidence capture with machine-readable `results.json`
+- [`scripts/failback_chaos_drill.sh`](../scripts/failback_chaos_drill.sh) for follower-readiness-gated reclaim back to a restored former leader, with `result.env` and `result.json`
 
 ### Prerequisites
 
@@ -234,6 +236,24 @@ EVIDENCE_ROOT=/tmp/dagens-backpressure-ha-evidence-$(date -u +%Y%m%dT%H%M%SZ) \
 ./scripts/backpressure_failover_drill.sh
 ```
 
+Combined chaos/load validation in one pass:
+
+```bash
+API_URL=http://localhost:18083 \
+DATABASE_URL="postgres://postgres:postgres@localhost:55432/dagens?sslmode=disable" \
+EVIDENCE_ROOT=/tmp/dagens-chaos-suite-$(date -u +%Y%m%dT%H%M%SZ) \
+./scripts/chaos_load_suite.sh
+```
+
+Planned failback validation with follower-readiness gating:
+
+```bash
+API_URL=http://localhost:18083 \
+DATABASE_URL="postgres://postgres:postgres@localhost:55432/dagens?sslmode=disable" \
+EVIDENCE_ROOT=/tmp/dagens-failback-chaos-$(date -u +%Y%m%dT%H%M%SZ) \
+./scripts/failback_chaos_drill.sh
+```
+
 Failover + fencing validation:
 
 ```bash
@@ -270,6 +290,27 @@ The harness restores the killed API instance between runs and captures:
 - failover drill logs
 - compose status/log snapshots
 - load-balancer health output
+
+### Chaos/Load Suite Gate
+
+Use `scripts/chaos_load_suite.sh` when you want one evidence root containing:
+- repeated failover validation
+- backpressure recovery validation
+- HITL pause/resume takeover validation
+- optional failback reclaim validation
+
+The suite:
+- runs the enabled drill scripts sequentially
+- restores HA topology after every attempted drill, including failed ones
+- writes per-drill logs plus a shared summary under one `EVIDENCE_ROOT`
+- continues collecting later drill evidence even if an earlier drill fails
+- is suitable for CI artifact retention and release evidence collection
+
+Set `RUN_FAILBACK_CHAOS=true` when you also want the suite to validate:
+- failover away from the current leader
+- follower warm-replay/readiness freshness on the restored former leader
+- controlled reclaim back to that restored leader
+- post-reclaim continuity through the LB
 
 ### HITL Takeover Gate
 
@@ -359,6 +400,14 @@ controlled reclaim path without dispatch disruption.
    promote.
 3. Execute failback command to prefer or restore target leader topology.
 4. Run post-failback continuity/fencing validation.
+
+For the local HA compose topology, [`scripts/failback_chaos_drill.sh`](../scripts/failback_chaos_drill.sh)
+automates that sequence by:
+1. failing over away from the current leader
+2. restoring that former leader as a follower
+3. waiting for a fresh `scheduler_last_reconcile_timestamp_seconds` signal on the restored follower
+4. reclaiming leadership back to that node
+5. re-running continuity validation through the LB
 
 Scripted wrapper:
 
