@@ -4,13 +4,14 @@ import (
 	"context"
 	"crypto/hmac"
 	"crypto/sha256"
-	"encoding/json"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
+	"sync"
 	"testing"
 	"time"
 
@@ -66,6 +67,73 @@ func (q *testQueue) QueueLength(ctx context.Context) (int64, error) {
 	return q.queueLen, nil
 }
 
+type sharedQueue struct {
+	mu      sync.Mutex
+	acked   int
+	queue   []*ResumptionJob
+	queueID int
+}
+
+func (q *sharedQueue) Enqueue(ctx context.Context, job *ResumptionJob) error {
+	q.mu.Lock()
+	defer q.mu.Unlock()
+	if job.JobID == "" {
+		q.queueID++
+		job.JobID = fmt.Sprintf("queue-job-%d", q.queueID)
+	}
+	q.queue = append(q.queue, job)
+	return nil
+}
+
+func (q *sharedQueue) Dequeue(ctx context.Context) (*ResumptionJob, error) {
+	q.mu.Lock()
+	defer q.mu.Unlock()
+	if len(q.queue) == 0 {
+		return nil, context.Canceled
+	}
+	job := q.queue[0]
+	q.queue = q.queue[1:]
+	return job, nil
+}
+
+func (q *sharedQueue) Ack(ctx context.Context, jobID string) error {
+	q.mu.Lock()
+	defer q.mu.Unlock()
+	q.acked++
+	return nil
+}
+
+func (q *sharedQueue) QueueLength(ctx context.Context) (int64, error) {
+	q.mu.Lock()
+	defer q.mu.Unlock()
+	return int64(len(q.queue)), nil
+}
+
+type blockingQueue struct {
+	dequeueStarted chan struct{}
+}
+
+func (q *blockingQueue) Enqueue(ctx context.Context, job *ResumptionJob) error {
+	return nil
+}
+
+func (q *blockingQueue) Dequeue(ctx context.Context) (*ResumptionJob, error) {
+	select {
+	case q.dequeueStarted <- struct{}{}:
+	default:
+	}
+	<-ctx.Done()
+	return nil, ctx.Err()
+}
+
+func (q *blockingQueue) Ack(ctx context.Context, jobID string) error {
+	return nil
+}
+
+func (q *blockingQueue) QueueLength(ctx context.Context) (int64, error) {
+	return 0, nil
+}
+
 type testIdempotency struct {
 	exists   bool
 	setNX    bool
@@ -86,6 +154,48 @@ func (s *testIdempotency) SetNX(key string, ttl time.Duration) (bool, error) {
 	return s.setNX, nil
 }
 func (s *testIdempotency) Delete(key string) error { return nil }
+
+type sharedIdempotencyStore struct {
+	mu   sync.Mutex
+	keys map[string]time.Time
+}
+
+func newSharedIdempotencyStore() *sharedIdempotencyStore {
+	return &sharedIdempotencyStore{
+		keys: make(map[string]time.Time),
+	}
+}
+
+func (s *sharedIdempotencyStore) Exists(key string) (bool, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	_, ok := s.keys[key]
+	return ok, nil
+}
+
+func (s *sharedIdempotencyStore) Set(key string, ttl time.Duration) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.keys[key] = time.Now().Add(ttl)
+	return nil
+}
+
+func (s *sharedIdempotencyStore) SetNX(key string, ttl time.Duration) (bool, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if _, exists := s.keys[key]; exists {
+		return false, nil
+	}
+	s.keys[key] = time.Now().Add(ttl)
+	return true, nil
+}
+
+func (s *sharedIdempotencyStore) Delete(key string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	delete(s.keys, key)
+	return nil
+}
 
 type testCheckpointStore struct {
 	cp           *ExecutionCheckpoint
@@ -266,8 +376,8 @@ func TestCallbackHandlerObservability_EnqueueSuccess(t *testing.T) {
 func TestCallbackHandler_InvalidSignature_Rejected(t *testing.T) {
 	securityFailures := &testCounter{}
 	metrics := &HITLMetrics{
-		CallbacksReceived:       &testCounter{},
-		CallbacksEnqueued:       &testCounter{},
+		CallbacksReceived:        &testCounter{},
+		CallbacksEnqueued:        &testCounter{},
 		CallbackSecurityFailures: securityFailures,
 	}
 
@@ -436,6 +546,38 @@ func TestResumptionWorker_ContextCanceled_MapsToPermanentFailurePath(t *testing.
 	}
 	if waiting.val != 0 {
 		t.Fatalf("active waiting workflows = %v, want 0 after DLQ move", waiting.val)
+	}
+}
+
+func TestResumptionWorker_StopCancelsBlockingDequeue(t *testing.T) {
+	queue := &blockingQueue{dequeueStarted: make(chan struct{}, 1)}
+	worker := NewResumptionWorker(
+		queue,
+		&testCheckpointStore{},
+		&testIdempotency{},
+		&testGraphRegistry{},
+		nil,
+		&HITLMetrics{ResumptionWorkerBusy: &testGauge{}},
+	)
+
+	worker.Start(context.Background(), 1)
+
+	select {
+	case <-queue.dequeueStarted:
+	case <-time.After(2 * time.Second):
+		t.Fatal("worker did not enter dequeue")
+	}
+
+	stopped := make(chan struct{})
+	go func() {
+		worker.Stop()
+		close(stopped)
+	}()
+
+	select {
+	case <-stopped:
+	case <-time.After(2 * time.Second):
+		t.Fatal("worker stop blocked on dequeue")
 	}
 }
 
@@ -688,6 +830,164 @@ func TestHITL_EndToEnd_CallbackQueueResumeFinish(t *testing.T) {
 	}
 	if got := metrics.CallbacksSuccessful.(*testCounter).val; got != 1 {
 		t.Fatalf("callbacks_successful = %v, want 1", got)
+	}
+}
+
+func TestHITL_CallbackFailoverDuplicateStaysIdempotent(t *testing.T) {
+	var tailExecutions int
+	var selectedOptions []string
+
+	g := graph.NewGraphWithConfig(graph.GraphConfig{
+		ID:   "g-hitl-failover",
+		Name: "hitl-failover",
+		Metadata: map[string]interface{}{
+			"graph_version": "v1",
+		},
+	})
+	if err := g.AddNode(graph.NewFunctionNode("human", func(ctx context.Context, state graph.State) error { return nil })); err != nil {
+		t.Fatalf("add human node: %v", err)
+	}
+	if err := g.AddNode(graph.NewFunctionNode("tail", func(ctx context.Context, state graph.State) error {
+		raw, ok := state.Get(fmt.Sprintf(StateKeyHumanPendingFmt, "human"))
+		if !ok {
+			return fmt.Errorf("missing pending human response payload")
+		}
+		payload, ok := raw.([]byte)
+		if !ok {
+			return fmt.Errorf("pending response payload type=%T, want []byte", raw)
+		}
+		var resp HumanResponse
+		if err := json.Unmarshal(payload, &resp); err != nil {
+			return fmt.Errorf("decode pending response: %w", err)
+		}
+		tailExecutions++
+		selectedOptions = append(selectedOptions, resp.SelectedOption)
+		state.Set("tail_done", true)
+		return nil
+	})); err != nil {
+		t.Fatalf("add tail node: %v", err)
+	}
+	if err := g.AddEdge(graph.NewDirectEdge("human", "tail")); err != nil {
+		t.Fatalf("add edge: %v", err)
+	}
+	if err := g.SetEntry("human"); err != nil {
+		t.Fatalf("set entry: %v", err)
+	}
+	if err := g.AddFinish("tail"); err != nil {
+		t.Fatalf("add finish: %v", err)
+	}
+
+	baseState := graph.NewMemoryState()
+	stateData, err := baseState.Marshal()
+	if err != nil {
+		t.Fatalf("marshal state: %v", err)
+	}
+
+	requestID := "req-hitl-failover-1"
+	cpStore := &testCheckpointStore{
+		cp: &ExecutionCheckpoint{
+			RequestID:    requestID,
+			GraphID:      "g-hitl-failover",
+			GraphVersion: "v1",
+			NodeID:       "human",
+			StateData:    stateData,
+		},
+	}
+	queue := &sharedQueue{}
+	idStore := newSharedIdempotencyStore()
+	metricsA := &HITLMetrics{
+		CallbacksReceived:     &testCounter{},
+		CallbacksEnqueued:     &testCounter{},
+		CallbackDuplicates:    &testCounter{},
+		CallbackLatency:       &testHistogram{},
+		ResumptionQueueLength: &testGauge{},
+	}
+	metricsB := &HITLMetrics{
+		CallbacksReceived:      &testCounter{},
+		CallbacksEnqueued:      &testCounter{},
+		CallbackDuplicates:     &testCounter{},
+		CallbacksSuccessful:    &testCounter{},
+		CallbackLatency:        &testHistogram{},
+		ResumptionWorkerBusy:   &testGauge{},
+		ResumptionQueueLength:  &testGauge{},
+		ActiveWaitingWorkflows: &testGauge{},
+	}
+	metricsB.IncActiveWaitingWorkflows()
+
+	secret := []byte("hitl-failover-secret")
+	handlerA := NewCallbackHandler(queue, idStore, nil, secret, metricsA)
+	handlerB := NewCallbackHandler(queue, idStore, nil, secret, metricsB)
+
+	ts := time.Now().Unix()
+	mac := hmac.New(sha256.New, secret)
+	mac.Write([]byte(requestID + ":" + strconv.FormatInt(ts, 10)))
+	signature := hex.EncodeToString(mac.Sum(nil))
+
+	reqA := httptest.NewRequest(http.MethodPost, "/callback", nil)
+	recA := httptest.NewRecorder()
+	handlerA.HandleHumanCallback(recA, reqA, requestID, ts, signature, &HumanResponse{SelectedOption: "approve"})
+	if recA.Code != http.StatusAccepted {
+		t.Fatalf("first callback status = %d, want %d", recA.Code, http.StatusAccepted)
+	}
+	if qlen, _ := queue.QueueLength(context.Background()); qlen != 1 {
+		t.Fatalf("queue length after first callback = %d, want 1", qlen)
+	}
+
+	reqDupInflight := httptest.NewRequest(http.MethodPost, "/callback", nil)
+	recDupInflight := httptest.NewRecorder()
+	handlerB.HandleHumanCallback(recDupInflight, reqDupInflight, requestID, ts, signature, &HumanResponse{SelectedOption: "approve"})
+	if recDupInflight.Code != http.StatusAccepted {
+		t.Fatalf("duplicate in-flight callback status = %d, want %d", recDupInflight.Code, http.StatusAccepted)
+	}
+	if qlen, _ := queue.QueueLength(context.Background()); qlen != 1 {
+		t.Fatalf("queue length after duplicate in-flight callback = %d, want 1", qlen)
+	}
+
+	job, err := queue.Dequeue(context.Background())
+	if err != nil {
+		t.Fatalf("Dequeue unexpected error: %v", err)
+	}
+	worker := NewResumptionWorker(
+		queue,
+		cpStore,
+		idStore,
+		&testExecutableGraphRegistry{
+			definition: GraphDefinition{ID: "g-hitl-failover", Version: "v1"},
+			executable: g,
+		},
+		nil,
+		metricsB,
+	)
+	if err := worker.processJob(context.Background(), job); err != nil {
+		t.Fatalf("processJob failed: %v", err)
+	}
+
+	reqDupDone := httptest.NewRequest(http.MethodPost, "/callback", nil)
+	recDupDone := httptest.NewRecorder()
+	handlerB.HandleHumanCallback(recDupDone, reqDupDone, requestID, ts, signature, &HumanResponse{SelectedOption: "approve"})
+	if recDupDone.Code != http.StatusOK {
+		t.Fatalf("duplicate post-failover callback status = %d, want %d", recDupDone.Code, http.StatusOK)
+	}
+	if qlen, _ := queue.QueueLength(context.Background()); qlen != 0 {
+		t.Fatalf("queue length after completed duplicate callback = %d, want 0", qlen)
+	}
+	if queue.acked != 1 {
+		t.Fatalf("queue ack count = %d, want 1", queue.acked)
+	}
+	if tailExecutions != 1 {
+		t.Fatalf("tail executions = %d, want 1", tailExecutions)
+	}
+	if len(selectedOptions) != 1 || selectedOptions[0] != "approve" {
+		t.Fatalf("selected options = %#v, want [approve]", selectedOptions)
+	}
+	if cpStore.deleteCalls == 0 {
+		t.Fatal("expected checkpoint deletion after successful post-failover resume")
+	}
+	if got := metricsB.CallbacksSuccessful.(*testCounter).val; got != 1 {
+		t.Fatalf("callbacks_successful = %v, want 1", got)
+	}
+	if got := metricsB.CallbackDuplicates.(*testCounter).val; got != 2 {
+		t.Fatalf("callbacks_duplicate = %v, want 2", got)
 	}
 }
 

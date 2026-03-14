@@ -19,6 +19,11 @@ const (
 	defaultJobRetentionTTL              = 24 * time.Hour
 	defaultJobRetentionCleanupInterval  = 5 * time.Minute
 	defaultLeaderRequeuePollInterval    = 500 * time.Millisecond
+	defaultFollowerRequeuePollInterval  = 5 * time.Second
+	defaultReconcileTimeout             = 5 * time.Second
+	defaultAlertRequestTimeout          = 3 * time.Second
+	defaultAlertMaxAttempts             = 3
+	defaultAlertRetryBaseInterval       = 200 * time.Millisecond
 
 	maxJobQueueSize            = 10000
 	maxRecoveryBatchSize       = 4096
@@ -29,6 +34,9 @@ const (
 	minDeferralPollInterval    = 10 * time.Millisecond
 	minRetentionCleanup        = 1 * time.Second
 	minRecoveryTimeout         = 1 * time.Second
+	minAlertRetryBaseInterval  = 50 * time.Millisecond
+	minRequeuePollInterval     = 10 * time.Millisecond
+	minReconcileTimeout        = 100 * time.Millisecond
 )
 
 // SchedulerConfig holds configuration options for the Scheduler.
@@ -152,32 +160,75 @@ type SchedulerConfig struct {
 	// reconciler polls durable state for QUEUED jobs to enqueue.
 	// Default: 500 milliseconds
 	LeaderDurableRequeuePollInterval time.Duration
+
+	// EnableFollowerDurableRequeueLoop enables follower-only reconciliation of
+	// durable transitions into the in-memory visibility state (warm replay).
+	//
+	// This reduces promotion time during leadership failover by ensuring the
+	// new leader's in-memory view is already synchronized with durable state.
+	//
+	// Default: true
+	EnableFollowerDurableRequeueLoop bool
+
+	// FollowerDurableRequeuePollInterval controls how frequently the follower
+	// synchronizes durable state for warm replay.
+	// Default: 5 seconds
+	FollowerDurableRequeuePollInterval time.Duration
+
+	// ReconcileTimeout bounds a single durable reconcile cycle, including
+	// listing unfinished jobs and replaying their durable state.
+	// Default: 5 seconds
+	ReconcileTimeout time.Duration
+
+	// AlertWebhookURL is an optional operator notification endpoint for
+	// scheduler critical failures (for example recovery/leadership startup).
+	// Empty disables webhook alert emission.
+	AlertWebhookURL string
+
+	// AlertRequestTimeout bounds webhook alert send time.
+	// Default: 3 seconds
+	AlertRequestTimeout time.Duration
+
+	// AlertMaxAttempts controls the maximum webhook delivery attempts per alert.
+	// Default: 3
+	AlertMaxAttempts int
+
+	// AlertRetryBaseInterval controls the base retry delay for alert delivery.
+	// Delay grows exponentially (base * 2^(attempt-1)).
+	// Default: 200 milliseconds
+	AlertRetryBaseInterval time.Duration
 }
 
 // DefaultSchedulerConfig returns the default scheduler configuration
 func DefaultSchedulerConfig() SchedulerConfig {
 	return SchedulerConfig{
-		AffinityTTL:                       defaultAffinityTTL,
-		AffinityCleanupInterval:           defaultAffinityCleanupInterval,
-		EnableStickiness:                  true,
-		JobQueueSize:                      defaultJobQueueSize,
-		DefaultWorkerMaxConcurrency:       defaultWorkerMaxConcurrency,
-		MaxWorkerConcurrencyCap:           defaultMaxWorkerConcurrencyCap,
-		CapacityTTL:                       defaultCapacityTTL,
-		DispatchRejectCooldown:            defaultDispatchRejectCooldown,
-		MaxDispatchAttempts:               defaultMaxDispatchAttempts,
-		EnableStageCapacityDeferral:       false,
-		StageCapacityDeferralTimeout:      defaultStageCapacityDeferralTimeout,
-		StageCapacityDeferralPollInterval: defaultStageCapacityDeferralPoll,
-		RecoveryTimeout:                   defaultRecoveryTimeout,
-		RecoveryBatchSize:                 defaultRecoveryBatchSize,
-		EnableResumeRecoveredQueuedJobs:   false,
-		LeadershipRetryInterval:           defaultLeadershipRetryInterval,
-		JobRetentionTTL:                   defaultJobRetentionTTL,
-		JobRetentionCleanupInterval:       defaultJobRetentionCleanupInterval,
-		EnableJobRetentionCleanup:         true,
-		EnableLeaderDurableRequeueLoop:    true,
-		LeaderDurableRequeuePollInterval:  defaultLeaderRequeuePollInterval,
+		AffinityTTL:                        defaultAffinityTTL,
+		AffinityCleanupInterval:            defaultAffinityCleanupInterval,
+		EnableStickiness:                   true,
+		JobQueueSize:                       defaultJobQueueSize,
+		DefaultWorkerMaxConcurrency:        defaultWorkerMaxConcurrency,
+		MaxWorkerConcurrencyCap:            defaultMaxWorkerConcurrencyCap,
+		CapacityTTL:                        defaultCapacityTTL,
+		DispatchRejectCooldown:             defaultDispatchRejectCooldown,
+		MaxDispatchAttempts:                defaultMaxDispatchAttempts,
+		EnableStageCapacityDeferral:        false,
+		StageCapacityDeferralTimeout:       defaultStageCapacityDeferralTimeout,
+		StageCapacityDeferralPollInterval:  defaultStageCapacityDeferralPoll,
+		RecoveryTimeout:                    defaultRecoveryTimeout,
+		RecoveryBatchSize:                  defaultRecoveryBatchSize,
+		EnableResumeRecoveredQueuedJobs:    false,
+		LeadershipRetryInterval:            defaultLeadershipRetryInterval,
+		JobRetentionTTL:                    defaultJobRetentionTTL,
+		JobRetentionCleanupInterval:        defaultJobRetentionCleanupInterval,
+		EnableJobRetentionCleanup:          true,
+		EnableLeaderDurableRequeueLoop:     true,
+		LeaderDurableRequeuePollInterval:   defaultLeaderRequeuePollInterval,
+		EnableFollowerDurableRequeueLoop:   true,
+		FollowerDurableRequeuePollInterval: defaultFollowerRequeuePollInterval,
+		ReconcileTimeout:                   defaultReconcileTimeout,
+		AlertRequestTimeout:                defaultAlertRequestTimeout,
+		AlertMaxAttempts:                   defaultAlertMaxAttempts,
+		AlertRetryBaseInterval:             defaultAlertRetryBaseInterval,
 	}
 }
 
@@ -246,6 +297,29 @@ func (c *SchedulerConfig) Validate() {
 	}
 	if c.LeaderDurableRequeuePollInterval <= 0 {
 		c.LeaderDurableRequeuePollInterval = defaultLeaderRequeuePollInterval
+	} else if c.LeaderDurableRequeuePollInterval < minRequeuePollInterval {
+		c.LeaderDurableRequeuePollInterval = minRequeuePollInterval
+	}
+	if c.FollowerDurableRequeuePollInterval <= 0 {
+		c.FollowerDurableRequeuePollInterval = defaultFollowerRequeuePollInterval
+	} else if c.FollowerDurableRequeuePollInterval < minRequeuePollInterval {
+		c.FollowerDurableRequeuePollInterval = minRequeuePollInterval
+	}
+	if c.ReconcileTimeout <= 0 {
+		c.ReconcileTimeout = defaultReconcileTimeout
+	} else if c.ReconcileTimeout < minReconcileTimeout {
+		c.ReconcileTimeout = minReconcileTimeout
+	}
+	if c.AlertRequestTimeout <= 0 {
+		c.AlertRequestTimeout = defaultAlertRequestTimeout
+	}
+	if c.AlertMaxAttempts <= 0 {
+		c.AlertMaxAttempts = defaultAlertMaxAttempts
+	}
+	if c.AlertRetryBaseInterval <= 0 {
+		c.AlertRetryBaseInterval = defaultAlertRetryBaseInterval
+	} else if c.AlertRetryBaseInterval < minAlertRetryBaseInterval {
+		c.AlertRetryBaseInterval = minAlertRetryBaseInterval
 	}
 
 	// Keep cleanup cadence comfortably below expiry to avoid stale affinity

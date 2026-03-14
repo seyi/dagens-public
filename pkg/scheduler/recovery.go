@@ -51,6 +51,13 @@ func (s *Scheduler) RecoverFromTransitions(ctx context.Context) error {
 			"job_id":       jobID,
 			"replay_error": replayReason,
 		})
+		s.emitOperationalAlert(ctx, "scheduler.recovery.failed", "critical",
+			"scheduler startup recovery failed", map[string]interface{}{
+				"status":       status,
+				"job_id":       jobID,
+				"replay_error": replayReason,
+				"error":        err.Error(),
+			})
 		return err
 	}
 

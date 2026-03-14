@@ -71,11 +71,14 @@ type Metrics struct {
 	SchedulerRecoveryResumeSkippedQueued prometheus.Counter
 	SchedulerRecoveryResumeSkippedUnsafe prometheus.Counter
 	SchedulerRecoveryDuration            prometheus.Histogram
+	SchedulerReconcileRuns               *prometheus.CounterVec
+	SchedulerLastReconcileTimestamp      prometheus.Gauge
 	WorkerHeartbeatsReceived             prometheus.Counter
 	WorkerHeartbeatsSucceeded            prometheus.Counter
 	WorkerHeartbeatAuthFailed            prometheus.Counter
 	WorkerHeartbeatInvalidPayload        prometheus.Counter
 	WorkerHeartbeatProcessingTime        prometheus.Histogram
+	WorkerDispatchRejections             *prometheus.CounterVec
 
 	// Coordination metrics
 	BarrierWaitSeconds *prometheus.HistogramVec
@@ -487,6 +490,23 @@ func NewMetricsWithRegistry(namespace string, reg prometheus.Registerer) *Metric
 		},
 	)
 
+	m.SchedulerReconcileRuns = auto.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "scheduler_reconcile_runs_total",
+			Help:      "Total number of successful durable reconciliation runs by mode",
+		},
+		[]string{"mode"},
+	)
+
+	m.SchedulerLastReconcileTimestamp = auto.NewGauge(
+		prometheus.GaugeOpts{
+			Namespace: namespace,
+			Name:      "scheduler_last_reconcile_timestamp_seconds",
+			Help:      "Unix timestamp of the last successful durable transition store reconciliation",
+		},
+	)
+
 	m.WorkerHeartbeatsReceived = auto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
@@ -526,6 +546,15 @@ func NewMetricsWithRegistry(namespace string, reg prometheus.Registerer) *Metric
 			Help:      "Worker capacity heartbeat processing duration in seconds",
 			Buckets:   []float64{0.0005, 0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5},
 		},
+	)
+
+	m.WorkerDispatchRejections = auto.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "worker_dispatch_rejections_total",
+			Help:      "Total number of worker-side dispatch rejections by reason",
+		},
+		[]string{"reason"},
 	)
 
 	// Coordination metrics
@@ -770,6 +799,12 @@ func (m *Metrics) RecordSchedulerRecoveryDuration(duration time.Duration) {
 	m.SchedulerRecoveryDuration.Observe(duration.Seconds())
 }
 
+// RecordSchedulerReconcileSucceeded records a successful durable state reconciliation.
+func (m *Metrics) RecordSchedulerReconcileSucceeded(mode string) {
+	m.SchedulerReconcileRuns.WithLabelValues(mode).Inc()
+	m.SchedulerLastReconcileTimestamp.SetToCurrentTime()
+}
+
 // RecordWorkerHeartbeatReceived records that a worker heartbeat request was received.
 func (m *Metrics) RecordWorkerHeartbeatReceived() {
 	m.WorkerHeartbeatsReceived.Inc()
@@ -793,6 +828,11 @@ func (m *Metrics) RecordWorkerHeartbeatInvalidPayload() {
 // RecordWorkerHeartbeatProcessing records the duration of processing a worker heartbeat request.
 func (m *Metrics) RecordWorkerHeartbeatProcessing(duration time.Duration) {
 	m.WorkerHeartbeatProcessingTime.Observe(duration.Seconds())
+}
+
+// RecordWorkerDispatchRejection records a worker-side dispatch rejection by reason.
+func (m *Metrics) RecordWorkerDispatchRejection(reason string) {
+	m.WorkerDispatchRejections.WithLabelValues(reason).Inc()
 }
 
 // RecordBarrierWait records time spent waiting at a barrier.

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/seyi/dagens/pkg/telemetry"
@@ -20,6 +21,9 @@ type ResumptionWorker struct {
 	executorFactory  func(graphID, graphVersion string) ResumableExecutor
 	metrics          *HITLMetrics
 	shutdown         chan struct{}
+	cancel           context.CancelFunc
+	stopOnce         sync.Once
+	wg               sync.WaitGroup
 }
 
 // NewResumptionWorker creates and initializes a new worker.
@@ -44,9 +48,13 @@ func NewResumptionWorker(
 // Start launches the worker loop in a new goroutine.
 func (w *ResumptionWorker) Start(ctx context.Context, numWorkers int) {
 	w.shutdown = make(chan struct{})
+	workerCtx, cancel := context.WithCancel(ctx)
+	w.cancel = cancel
+	w.stopOnce = sync.Once{}
 	logger := hitlLogger()
 	for i := 0; i < numWorkers; i++ {
-		go w.work(ctx)
+		w.wg.Add(1)
+		go w.work(workerCtx)
 	}
 	logger.Info("started hitl resumption workers", safeLogFields(map[string]interface{}{
 		"operation":   "worker.start",
@@ -56,13 +64,22 @@ func (w *ResumptionWorker) Start(ctx context.Context, numWorkers int) {
 
 // Stop gracefully shuts down the worker.
 func (w *ResumptionWorker) Stop() {
-	close(w.shutdown)
+	w.stopOnce.Do(func() {
+		if w.cancel != nil {
+			w.cancel()
+		}
+		if w.shutdown != nil {
+			close(w.shutdown)
+		}
+	})
+	w.wg.Wait()
 	hitlLogger().Info("shutting down hitl resumption workers", safeLogFields(map[string]interface{}{
 		"operation": "worker.stop",
 	}))
 }
 
 func (w *ResumptionWorker) work(ctx context.Context) {
+	defer w.wg.Done()
 	for {
 		select {
 		case <-w.shutdown:

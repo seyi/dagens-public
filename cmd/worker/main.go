@@ -18,8 +18,8 @@ import (
 	"github.com/seyi/dagens/pkg/agent"
 	"github.com/seyi/dagens/pkg/registry"
 	"github.com/seyi/dagens/pkg/remote"
-	"github.com/seyi/dagens/pkg/secrets"
 	pb "github.com/seyi/dagens/pkg/remote/proto"
+	"github.com/seyi/dagens/pkg/secrets"
 	"github.com/seyi/dagens/pkg/telemetry"
 	"google.golang.org/grpc"
 )
@@ -37,7 +37,8 @@ func main() {
 	// 2. Setup Infrastructure
 	var distReg *registry.DistributedAgentRegistry
 	etcdEndpoints := os.Getenv("ETCD_ENDPOINTS")
-	
+	var authorityValidator *remote.EtcdDispatchAuthorityValidator
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "50051"
@@ -50,6 +51,7 @@ func main() {
 		var err error
 		distReg, err = registry.NewDistributedAgentRegistry(registry.RegistryConfig{
 			EtcdEndpoints:    []string{etcdEndpoints},
+			KeyPrefix:        os.Getenv("REGISTRY_KEY_PREFIX"),
 			NodeID:           nodeID,
 			NodeName:         fmt.Sprintf("Worker Node %s", nodeID),
 			NodeAddress:      os.Getenv("POD_IP"), // Kubernetes pod IP or Host IP
@@ -60,7 +62,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Failed to create distributed registry: %v", err)
 		}
-		
+
 		// Start registry to register this node
 		if err := distReg.Start(context.Background()); err != nil {
 			log.Fatalf("Failed to start distributed registry: %v", err)
@@ -92,6 +94,45 @@ func main() {
 
 	// 5. Setup Remote Execution Service
 	service := remote.NewRemoteExecutionService(distReg, agentManager, nodeID)
+	if strings.EqualFold(strings.TrimSpace(os.Getenv("SCHEDULER_LEADERSHIP_BACKEND")), "etcd") {
+		endpoints := splitNonEmptyCSV(etcdEndpoints)
+		if len(endpoints) == 0 {
+			log.Fatal("SCHEDULER_LEADERSHIP_BACKEND=etcd on worker requires ETCD_ENDPOINTS")
+		}
+		leaderKey := strings.TrimSpace(os.Getenv("SCHEDULER_LEADERSHIP_KEY"))
+		if leaderKey == "" {
+			leaderKey = "/dagens/control-plane/scheduler"
+		}
+		dialTimeout := 5 * time.Second
+		if raw := strings.TrimSpace(os.Getenv("SCHEDULER_LEADERSHIP_DIAL_TIMEOUT")); raw != "" {
+			timeout, err := time.ParseDuration(raw)
+			if err != nil {
+				log.Fatalf("Invalid SCHEDULER_LEADERSHIP_DIAL_TIMEOUT %q: %v", raw, err)
+			}
+			dialTimeout = timeout
+		}
+		queryTimeout := 2 * time.Second
+		if raw := strings.TrimSpace(os.Getenv("SCHEDULER_LEADERSHIP_QUERY_TIMEOUT")); raw != "" {
+			timeout, err := time.ParseDuration(raw)
+			if err != nil {
+				log.Fatalf("Invalid SCHEDULER_LEADERSHIP_QUERY_TIMEOUT %q: %v", raw, err)
+			}
+			queryTimeout = timeout
+		}
+		var err error
+		authorityValidator, err = remote.NewEtcdDispatchAuthorityValidator(remote.EtcdDispatchAuthorityValidatorConfig{
+			Endpoints:    endpoints,
+			ElectionKey:  leaderKey,
+			DialTimeout:  dialTimeout,
+			QueryTimeout: queryTimeout,
+		})
+		if err != nil {
+			log.Fatalf("Failed to initialize worker dispatch authority validator: %v", err)
+		}
+		defer authorityValidator.Close()
+		service.SetDispatchAuthorityValidator(authorityValidator)
+		log.Printf("Worker dispatch authority validation enabled (key=%s endpoints=%s)", leaderKey, strings.Join(endpoints, ","))
+	}
 	grpcHandler := remote.NewGRPCRemoteExecutionService(service)
 
 	heartbeatCtx, cancelHeartbeats := context.WithCancel(context.Background())
@@ -100,7 +141,7 @@ func main() {
 
 	// 6. Start gRPC Server
 	// Port already parsed above
-	
+
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -138,7 +179,41 @@ func (m *SimpleAgentManager) GetAgent(name string) (agent.Agent, error) {
 
 func (m *SimpleAgentManager) ExecuteAgent(ctx context.Context, agentName string, input *agent.AgentInput) (*agent.AgentOutput, error) {
 	log.Printf("Executing agent %s: %s", agentName, input.Instruction)
-	
+
+	if delay := simulatedAgentDelay(input); delay > 0 {
+		timer := time.NewTimer(delay)
+		defer timer.Stop()
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		case <-timer.C:
+		}
+	}
+
+	if agentName == "hitl-drill-human" {
+		resumeReady := false
+		selectedOption := ""
+		if input != nil && input.Context != nil {
+			if raw, ok := input.Context["hitl_drill_resume_ready"].(bool); ok {
+				resumeReady = raw
+			}
+			if raw, ok := input.Context["hitl_callback_selected_option"].(string); ok {
+				selectedOption = raw
+			}
+		}
+		if !resumeReady {
+			return nil, fmt.Errorf("human interaction pending: checkpoint required")
+		}
+		return &agent.AgentOutput{
+			Result: fmt.Sprintf("HITL drill resumed with selection=%s", selectedOption),
+			Metadata: map[string]interface{}{
+				"worker_id":        os.Getenv("NODE_ID"),
+				"hitl_drill_agent": true,
+				"selected_option":  selectedOption,
+			},
+		}, nil
+	}
+
 	// Use SecretManager to get the API Key
 	apiKey := ""
 	if m.secretMgr != nil {
@@ -274,9 +349,9 @@ func startWorkerCapacityHeartbeat(ctx context.Context, nodeID string, service *r
 
 	send := func() {
 		payload := map[string]interface{}{
-			"node_id":         nodeID,
-			"in_flight":       service.CurrentInFlight(),
-			"max_concurrency": maxConcurrency,
+			"node_id":          nodeID,
+			"in_flight":        service.CurrentInFlight(),
+			"max_concurrency":  maxConcurrency,
 			"report_timestamp": time.Now().UTC(),
 		}
 
@@ -364,4 +439,48 @@ func workerHeartbeatEndpoints(primary string) []string {
 	}
 
 	return ordered
+}
+
+func simulatedAgentDelay(input *agent.AgentInput) time.Duration {
+	if input == nil || input.Context == nil {
+		return 0
+	}
+
+	raw, ok := input.Context["dagens_simulated_sleep_ms"]
+	if !ok || raw == nil {
+		return 0
+	}
+
+	switch value := raw.(type) {
+	case float64:
+		if value > 0 {
+			return time.Duration(value) * time.Millisecond
+		}
+	case int:
+		if value > 0 {
+			return time.Duration(value) * time.Millisecond
+		}
+	case int64:
+		if value > 0 {
+			return time.Duration(value) * time.Millisecond
+		}
+	case json.Number:
+		if parsed, err := value.Int64(); err == nil && parsed > 0 {
+			return time.Duration(parsed) * time.Millisecond
+		}
+	}
+
+	return 0
+}
+
+func splitNonEmptyCSV(raw string) []string {
+	parts := strings.Split(raw, ",")
+	out := make([]string, 0, len(parts))
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		if part != "" {
+			out = append(out, part)
+		}
+	}
+	return out
 }

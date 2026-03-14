@@ -82,3 +82,59 @@ jobs:
 
       - name: Run scheduler integration tests
         run: go test -tags=integration ./pkg/scheduler -v -timeout 15m
+
+  scheduler-ha-failover-repeatability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build and start HA stack
+        run: |
+          docker compose -f deploy/ha/docker-compose.ha.yml up -d --build
+
+      - name: Wait for HA endpoint readiness
+        run: |
+          set -euo pipefail
+          deadline=$(( $(date +%s) + 240 ))
+          until curl -fsS http://localhost:18083/health >/dev/null; do
+            if [[ $(date +%s) -ge ${deadline} ]]; then
+              echo "HA LB healthcheck timed out"
+              exit 1
+            fi
+            sleep 3
+          done
+
+      - name: Run repeated failover drill gate
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          API_URL="http://localhost:18083" \
+          DRILL_TIMEOUT_SECONDS=180 \
+          DATABASE_URL="postgres://postgres:postgres@localhost:55432/dagens?sslmode=disable" \
+          EVIDENCE_ROOT="artifacts/repeat-failover" \
+          ./scripts/repeat_failover_drill.sh | tee artifacts/repeat-failover.log
+
+      - name: Capture HA diagnostics
+        if: always()
+        run: |
+          set +e
+          mkdir -p artifacts
+          docker compose -f deploy/ha/docker-compose.ha.yml ps > artifacts/compose-ps.txt
+          docker compose -f deploy/ha/docker-compose.ha.yml logs --no-color > artifacts/compose-logs.txt
+          curl -sS http://localhost:18083/health > artifacts/lb-health.json
+
+      - name: Upload failover drill artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scheduler-ha-failover-repeatability-artifacts
+          path: artifacts/
+          retention-days: 7
+
+      - name: Teardown HA stack
+        if: always()
+        run: |
+          docker compose -f deploy/ha/docker-compose.ha.yml down -v

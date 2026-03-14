@@ -4,6 +4,7 @@ package coordination
 import (
 	"context"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
@@ -13,15 +14,17 @@ import (
 
 // LeaderElector manages leader election for distributed coordination
 type LeaderElector struct {
-	client     *clientv3.Client
-	session    *concurrency.Session
-	key        string
-	identity   string
-	callbacks  LeaderCallbacks
-	mu         sync.RWMutex
-	isLeader   bool
-	cancelFunc context.CancelFunc
-	wg         sync.WaitGroup
+	client        *clientv3.Client
+	session       *concurrency.Session
+	key           string
+	identity      string
+	callbacks     LeaderCallbacks
+	mu            sync.RWMutex
+	isLeader      bool
+	election      *concurrency.Election
+	resignTimeout time.Duration
+	cancelFunc    context.CancelFunc
+	wg            sync.WaitGroup
 }
 
 // LeaderCallbacks defines callbacks for leader election events
@@ -33,17 +36,28 @@ type LeaderCallbacks struct {
 
 // LeaderElectionConfig configures leader election
 type LeaderElectionConfig struct {
-	Client    *clientv3.Client
-	SessionTTL  int // Session TTL in seconds
-	Key         string // Etcd key for leader election
-	Identity    string // Unique identity for this instance
-	Callbacks   LeaderCallbacks
+	Client        *clientv3.Client
+	SessionTTL    int           // Session TTL in seconds
+	Key           string        // Etcd key for leader election
+	Identity      string        // Unique identity for this instance
+	ResignTimeout time.Duration // Optional explicit resign timeout on Stop
+	Callbacks     LeaderCallbacks
 }
 
 // NewLeaderElector creates a new leader elector
 func NewLeaderElector(config LeaderElectionConfig) (*LeaderElector, error) {
 	if config.SessionTTL == 0 {
 		config.SessionTTL = 10 // Default 10 seconds
+	}
+	if config.ResignTimeout <= 0 {
+		derived := time.Duration(config.SessionTTL) * time.Second / 2
+		if derived < 2*time.Second {
+			derived = 2 * time.Second
+		}
+		if derived > 10*time.Second {
+			derived = 10 * time.Second
+		}
+		config.ResignTimeout = derived
 	}
 	if config.Key == "" {
 		config.Key = "/dagens/leader/election"
@@ -59,11 +73,12 @@ func NewLeaderElector(config LeaderElectionConfig) (*LeaderElector, error) {
 	}
 
 	elector := &LeaderElector{
-		client:    config.Client,
-		session:   session,
-		key:       config.Key,
-		identity:  config.Identity,
-		callbacks: config.Callbacks,
+		client:        config.Client,
+		session:       session,
+		key:           config.Key,
+		identity:      config.Identity,
+		resignTimeout: config.ResignTimeout,
+		callbacks:     config.Callbacks,
 	}
 
 	return elector, nil
@@ -83,11 +98,14 @@ func (le *LeaderElector) Start(ctx context.Context) error {
 
 // Stop stops the leader election process
 func (le *LeaderElector) Stop() {
+	// Best-effort explicit resignation reduces handoff ambiguity during
+	// planned shutdown, rather than waiting for lease expiry alone.
+	le.resign(context.Background())
 	if le.cancelFunc != nil {
 		le.cancelFunc()
 	}
 	le.wg.Wait()
-	
+
 	if le.session != nil {
 		le.session.Close()
 	}
@@ -130,6 +148,7 @@ func (le *LeaderElector) electionLoop(ctx context.Context) {
 
 			// Create a new election instance
 			election := concurrency.NewElection(le.session, le.key)
+			le.setElection(election)
 
 			// Campaign to become leader
 			err := election.Campaign(ctx, le.identity)
@@ -154,6 +173,7 @@ func (le *LeaderElector) electionLoop(ctx context.Context) {
 
 			// Leadership was lost
 			le.setLeaderStatus(false)
+			le.setElection(nil)
 
 			if le.callbacks.OnRevoked != nil {
 				le.callbacks.OnRevoked()
@@ -201,6 +221,32 @@ func (le *LeaderElector) setLeaderStatus(isLeader bool) {
 	le.isLeader = isLeader
 }
 
+func (le *LeaderElector) setElection(e *concurrency.Election) {
+	le.mu.Lock()
+	defer le.mu.Unlock()
+	le.election = e
+}
+
+func (le *LeaderElector) resign(ctx context.Context) {
+	le.mu.RLock()
+	election := le.election
+	wasLeader := le.isLeader
+	le.mu.RUnlock()
+	if election == nil || !wasLeader {
+		return
+	}
+	resignTimeout := le.resignTimeout
+	if resignTimeout <= 0 {
+		resignTimeout = 2 * time.Second
+	}
+	resignCtx, cancel := context.WithTimeout(ctx, resignTimeout)
+	defer cancel()
+	if err := election.Resign(resignCtx); err != nil {
+		// Best-effort on shutdown: log and fall back to lease-expiry semantics.
+		log.Printf("leader elector best-effort resign failed: %v", err)
+	}
+}
+
 // LeaderTaskRunner runs tasks that should only execute on the leader node
 type LeaderTaskRunner struct {
 	elector *LeaderElector
@@ -210,10 +256,10 @@ type LeaderTaskRunner struct {
 
 // LeaderTask defines a task that runs only on the leader
 type LeaderTask struct {
-	Name        string
-	Function    func(context.Context) error
-	Interval    time.Duration
-	RunUntil    func() bool // Function that returns true when task should stop
+	Name     string
+	Function func(context.Context) error
+	Interval time.Duration
+	RunUntil func() bool // Function that returns true when task should stop
 }
 
 // NewLeaderTaskRunner creates a new leader task runner

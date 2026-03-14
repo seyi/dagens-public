@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -65,17 +67,19 @@ func main() {
 	etcdEndpoints := os.Getenv("ETCD_ENDPOINTS")
 	if etcdEndpoints != "" {
 		log.Printf("Using Distributed Registry with etcd: %s", etcdEndpoints)
+		registryNodeID := resolveControlPlaneRegistryNodeID()
 		distReg, err := registry.NewDistributedAgentRegistry(registry.RegistryConfig{
-			EtcdEndpoints: []string{etcdEndpoints},
-			NodeID:        "api-server",
-			NodeName:      "API Server",
-			NodeAddress:   os.Getenv("POD_IP"), // Kubernetes pod IP
-			NodePort:      8080,
+			EtcdEndpoints:    []string{etcdEndpoints},
+			KeyPrefix:        os.Getenv("REGISTRY_KEY_PREFIX"),
+			NodeID:           registryNodeID,
+			NodeName:         "API Server",
+			NodeAddress:      os.Getenv("POD_IP"), // Kubernetes pod IP
+			NodePort:         8080,
 			NodeCapabilities: []string{"control-plane"},
 			NodeMetadata: map[string]string{
 				"role": "control-plane",
 			},
-			LeaseTTL:      10,
+			LeaseTTL: 10,
 		})
 		if err != nil {
 			log.Fatalf("Failed to create distributed registry: %v", err)
@@ -105,6 +109,79 @@ func main() {
 	realExec := remote.NewRemoteExecutor(reg, 30*time.Second)
 
 	schedulerCfg := scheduler.DefaultSchedulerConfig()
+	if raw := strings.TrimSpace(os.Getenv("SCHEDULER_JOB_QUEUE_SIZE")); raw != "" {
+		value, err := strconv.Atoi(raw)
+		if err != nil {
+			log.Fatalf("Invalid SCHEDULER_JOB_QUEUE_SIZE %q: %v", raw, err)
+		}
+		if err := validateIntEnv("SCHEDULER_JOB_QUEUE_SIZE", value, 1, 100000); err != nil {
+			log.Fatal(err)
+		}
+		schedulerCfg.JobQueueSize = value
+	}
+	if raw := strings.TrimSpace(os.Getenv("SCHEDULER_DEFAULT_WORKER_MAX_CONCURRENCY")); raw != "" {
+		value, err := strconv.Atoi(raw)
+		if err != nil {
+			log.Fatalf("Invalid SCHEDULER_DEFAULT_WORKER_MAX_CONCURRENCY %q: %v", raw, err)
+		}
+		if err := validateIntEnv("SCHEDULER_DEFAULT_WORKER_MAX_CONCURRENCY", value, 1, 100000); err != nil {
+			log.Fatal(err)
+		}
+		schedulerCfg.DefaultWorkerMaxConcurrency = value
+	}
+	if raw := strings.TrimSpace(os.Getenv("SCHEDULER_MAX_DISPATCH_ATTEMPTS")); raw != "" {
+		value, err := strconv.Atoi(raw)
+		if err != nil {
+			log.Fatalf("Invalid SCHEDULER_MAX_DISPATCH_ATTEMPTS %q: %v", raw, err)
+		}
+		if err := validateIntEnv("SCHEDULER_MAX_DISPATCH_ATTEMPTS", value, 1, 1000); err != nil {
+			log.Fatal(err)
+		}
+		schedulerCfg.MaxDispatchAttempts = value
+	}
+	if raw := strings.TrimSpace(os.Getenv("SCHEDULER_CAPACITY_TTL")); raw != "" {
+		value, err := time.ParseDuration(raw)
+		if err != nil {
+			log.Fatalf("Invalid SCHEDULER_CAPACITY_TTL %q: %v", raw, err)
+		}
+		if err := validateDurationEnv("SCHEDULER_CAPACITY_TTL", value, 100*time.Millisecond, 24*time.Hour); err != nil {
+			log.Fatal(err)
+		}
+		schedulerCfg.CapacityTTL = value
+	}
+	if raw := strings.TrimSpace(os.Getenv("SCHEDULER_DISPATCH_REJECT_COOLDOWN")); raw != "" {
+		value, err := time.ParseDuration(raw)
+		if err != nil {
+			log.Fatalf("Invalid SCHEDULER_DISPATCH_REJECT_COOLDOWN %q: %v", raw, err)
+		}
+		if err := validateDurationEnv("SCHEDULER_DISPATCH_REJECT_COOLDOWN", value, 0, time.Hour); err != nil {
+			log.Fatal(err)
+		}
+		schedulerCfg.DispatchRejectCooldown = value
+	}
+	if raw := strings.TrimSpace(os.Getenv("SCHEDULER_ENABLE_STAGE_CAPACITY_DEFERRAL")); raw != "" {
+		schedulerCfg.EnableStageCapacityDeferral = strings.EqualFold(raw, "true")
+	}
+	if raw := strings.TrimSpace(os.Getenv("SCHEDULER_STAGE_CAPACITY_DEFERRAL_TIMEOUT")); raw != "" {
+		value, err := time.ParseDuration(raw)
+		if err != nil {
+			log.Fatalf("Invalid SCHEDULER_STAGE_CAPACITY_DEFERRAL_TIMEOUT %q: %v", raw, err)
+		}
+		if err := validateDurationEnv("SCHEDULER_STAGE_CAPACITY_DEFERRAL_TIMEOUT", value, 0, time.Hour); err != nil {
+			log.Fatal(err)
+		}
+		schedulerCfg.StageCapacityDeferralTimeout = value
+	}
+	if raw := strings.TrimSpace(os.Getenv("SCHEDULER_STAGE_CAPACITY_DEFERRAL_POLL_INTERVAL")); raw != "" {
+		value, err := time.ParseDuration(raw)
+		if err != nil {
+			log.Fatalf("Invalid SCHEDULER_STAGE_CAPACITY_DEFERRAL_POLL_INTERVAL %q: %v", raw, err)
+		}
+		if err := validateDurationEnv("SCHEDULER_STAGE_CAPACITY_DEFERRAL_POLL_INTERVAL", value, 10*time.Millisecond, time.Minute); err != nil {
+			log.Fatal(err)
+		}
+		schedulerCfg.StageCapacityDeferralPollInterval = value
+	}
 	if timeoutRaw := strings.TrimSpace(os.Getenv("SCHEDULER_RECOVERY_TIMEOUT")); timeoutRaw != "" {
 		timeout, err := time.ParseDuration(timeoutRaw)
 		if err != nil {
@@ -114,6 +191,33 @@ func main() {
 	}
 	if resumeRaw := strings.TrimSpace(os.Getenv("SCHEDULER_RESUME_RECOVERED_QUEUED_JOBS")); resumeRaw != "" {
 		schedulerCfg.EnableResumeRecoveredQueuedJobs = strings.EqualFold(resumeRaw, "true")
+	}
+	if webhookURL := strings.TrimSpace(os.Getenv("SCHEDULER_ALERT_WEBHOOK_URL")); webhookURL != "" {
+		schedulerCfg.AlertWebhookURL = webhookURL
+	}
+	if alertTimeoutRaw := strings.TrimSpace(os.Getenv("SCHEDULER_ALERT_REQUEST_TIMEOUT")); alertTimeoutRaw != "" {
+		alertTimeout, err := time.ParseDuration(alertTimeoutRaw)
+		if err != nil {
+			log.Printf("Warning: invalid SCHEDULER_ALERT_REQUEST_TIMEOUT %q: %v; using default %s", alertTimeoutRaw, err, scheduler.DefaultSchedulerConfig().AlertRequestTimeout)
+		} else {
+			schedulerCfg.AlertRequestTimeout = alertTimeout
+		}
+	}
+	if attemptsRaw := strings.TrimSpace(os.Getenv("SCHEDULER_ALERT_MAX_ATTEMPTS")); attemptsRaw != "" {
+		attempts, err := strconv.Atoi(attemptsRaw)
+		if err != nil || attempts <= 0 {
+			log.Printf("Warning: invalid SCHEDULER_ALERT_MAX_ATTEMPTS %q: %v; using default %d", attemptsRaw, err, scheduler.DefaultSchedulerConfig().AlertMaxAttempts)
+		} else {
+			schedulerCfg.AlertMaxAttempts = attempts
+		}
+	}
+	if retryBaseRaw := strings.TrimSpace(os.Getenv("SCHEDULER_ALERT_RETRY_BASE_INTERVAL")); retryBaseRaw != "" {
+		retryBase, err := time.ParseDuration(retryBaseRaw)
+		if err != nil {
+			log.Printf("Warning: invalid SCHEDULER_ALERT_RETRY_BASE_INTERVAL %q: %v; using default %s", retryBaseRaw, err, scheduler.DefaultSchedulerConfig().AlertRetryBaseInterval)
+		} else {
+			schedulerCfg.AlertRetryBaseInterval = retryBase
+		}
 	}
 
 	sched := scheduler.NewSchedulerWithConfig(reg, realExec, schedulerCfg)
@@ -168,13 +272,22 @@ func main() {
 			}
 			dialTimeout = parsed
 		}
+		resignTimeout := time.Duration(0)
+		if timeoutRaw := strings.TrimSpace(os.Getenv("SCHEDULER_LEADERSHIP_RESIGN_TIMEOUT")); timeoutRaw != "" {
+			parsed, err := time.ParseDuration(timeoutRaw)
+			if err != nil {
+				log.Fatalf("Invalid SCHEDULER_LEADERSHIP_RESIGN_TIMEOUT %q: %v", timeoutRaw, err)
+			}
+			resignTimeout = parsed
+		}
 
 		leadershipProvider, err := scheduler.NewEtcdLeadershipProvider(scheduler.EtcdLeadershipProviderConfig{
-			Endpoints:   endpoints,
-			ElectionKey: leaderKey,
-			Identity:    identity,
-			SessionTTL:  leadershipTTL,
-			DialTimeout: dialTimeout,
+			Endpoints:     endpoints,
+			ElectionKey:   leaderKey,
+			Identity:      identity,
+			SessionTTL:    leadershipTTL,
+			ResignTimeout: resignTimeout,
+			DialTimeout:   dialTimeout,
 		})
 		if err != nil {
 			log.Fatalf("Failed to initialize etcd leadership provider: %v", err)
@@ -224,7 +337,7 @@ func main() {
 	port := ":8080"
 	log.Printf("Starting Dagens Control API on %s", port)
 
-	hitlRuntime, err := newHITLCallbackRuntimeFromEnv(context.Background())
+	hitlRuntime, err := newHITLCallbackRuntimeFromEnv(context.Background(), sched)
 	if err != nil {
 		log.Fatalf("Failed to initialize HITL callback runtime: %v", err)
 	}
@@ -252,6 +365,9 @@ func main() {
 	mux.Handle("/", protectedHandler)
 	if hitlRuntime != nil {
 		mux.Handle(hitlRuntime.path, hitlRuntime.handler)
+		if hitlRuntime.drillHandler != nil && hitlRuntime.drillPath != "" {
+			mux.Handle(hitlRuntime.drillPath, hitlRuntime.drillHandler)
+		}
 	}
 
 	srv := &http.Server{
@@ -286,6 +402,40 @@ func main() {
 		closeTransitionStore()
 	}
 	log.Println("Server exiting")
+}
+
+func validateIntEnv(name string, value, min, max int) error {
+	if value < min || value > max {
+		return fmt.Errorf("invalid %s: must be between %d and %d, got %d", name, min, max, value)
+	}
+	return nil
+}
+
+func validateDurationEnv(name string, value, min, max time.Duration) error {
+	if value < min || value > max {
+		return fmt.Errorf("invalid %s: must be between %s and %s, got %s", name, min, max, value)
+	}
+	return nil
+}
+
+// resolveControlPlaneRegistryNodeID returns the registry identity for this
+// control-plane process. Priority order is:
+// 1. CONTROL_PLANE_ID for explicit operator-provided identity.
+// 2. POD_NAME for Kubernetes downward-API style identity.
+// 3. HOSTNAME for runtime/container identity.
+// 4. "api-server" as a single-instance local-development fallback.
+func resolveControlPlaneRegistryNodeID() string {
+	for _, raw := range []string{
+		os.Getenv("CONTROL_PLANE_ID"),
+		os.Getenv("POD_NAME"),
+		os.Getenv("HOSTNAME"),
+	} {
+		value := strings.TrimSpace(raw)
+		if value != "" {
+			return value
+		}
+	}
+	return "api-server"
 }
 
 // Cluster-aware MockRegistry for the showcase

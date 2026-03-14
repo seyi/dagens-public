@@ -5,11 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
 
 	"github.com/seyi/dagens/pkg/agent"
+	"github.com/seyi/dagens/pkg/observability"
 	"github.com/seyi/dagens/pkg/registry"
 	proto "github.com/seyi/dagens/pkg/remote/proto"
 	"google.golang.org/grpc"
@@ -19,10 +21,12 @@ import (
 
 // RemoteExecutionService handles remote agent execution requests
 type RemoteExecutionService struct {
-	registry     registry.Registry
-	localNodeID  string
-	agentManager AgentManager
-	inFlight     atomic.Int64
+	registry           registry.Registry
+	localNodeID        string
+	agentManager       AgentManager
+	authorityValidator DispatchAuthorityValidator
+	metrics            *observability.Metrics
+	inFlight           atomic.Int64
 }
 
 // AgentManager provides access to local agents for execution
@@ -34,19 +38,19 @@ type AgentManager interface {
 // RemoteExecutionRequest represents a request to execute an agent remotely
 type RemoteExecutionRequest struct {
 	AgentName string                 `json:"agent_name"`
-	Input     *agent.AgentInput     `json:"input"`
-	NodeID    string                `json:"node_id"`
-	RequestID string                `json:"request_id"`
+	Input     *agent.AgentInput      `json:"input"`
+	NodeID    string                 `json:"node_id"`
+	RequestID string                 `json:"request_id"`
 	Metadata  map[string]interface{} `json:"metadata"`
 }
 
 // RemoteExecutionResponse represents the response from remote execution
 type RemoteExecutionResponse struct {
-	Output   *agent.AgentOutput     `json:"output"`
-	Error    string                 `json:"error,omitempty"`
-	NodeID   string                 `json:"node_id"`
-	RequestID string                `json:"request_id"`
-	Duration time.Duration          `json:"duration"`
+	Output    *agent.AgentOutput `json:"output"`
+	Error     string             `json:"error,omitempty"`
+	NodeID    string             `json:"node_id"`
+	RequestID string             `json:"request_id"`
+	Duration  time.Duration      `json:"duration"`
 }
 
 // NewRemoteExecutionService creates a new remote execution service
@@ -55,6 +59,17 @@ func NewRemoteExecutionService(registry registry.Registry, agentManager AgentMan
 		registry:     registry,
 		localNodeID:  localNodeID,
 		agentManager: agentManager,
+		metrics:      observability.GetMetrics(),
+	}
+}
+
+func (s *RemoteExecutionService) SetDispatchAuthorityValidator(validator DispatchAuthorityValidator) {
+	s.authorityValidator = validator
+}
+
+func (s *RemoteExecutionService) SetMetrics(metrics *observability.Metrics) {
+	if metrics != nil {
+		s.metrics = metrics
 	}
 }
 
@@ -65,20 +80,33 @@ func (s *RemoteExecutionService) Execute(ctx context.Context, request *RemoteExe
 	// Validate the request
 	if request.AgentName == "" {
 		return &RemoteExecutionResponse{
-			Error:    "agent name is required",
-			NodeID:   s.localNodeID,
+			Error:     "agent name is required",
+			NodeID:    s.localNodeID,
 			RequestID: request.RequestID,
-			Duration: time.Since(startTime),
+			Duration:  time.Since(startTime),
 		}, nil
 	}
 
 	if request.Input == nil {
 		return &RemoteExecutionResponse{
-			Error:    "input is required",
-			NodeID:   s.localNodeID,
+			Error:     "input is required",
+			NodeID:    s.localNodeID,
 			RequestID: request.RequestID,
-			Duration: time.Since(startTime),
+			Duration:  time.Since(startTime),
 		}, nil
+	}
+
+	if s.authorityValidator != nil {
+		authority := authorityFromMetadata(request.Metadata)
+		if err := s.authorityValidator.Validate(ctx, authority); err != nil {
+			recordAuthorityValidationFailure(s.metrics, err)
+			return &RemoteExecutionResponse{
+				Error:     err.Error(),
+				NodeID:    s.localNodeID,
+				RequestID: request.RequestID,
+				Duration:  time.Since(startTime),
+			}, nil
+		}
 	}
 
 	s.inFlight.Add(1)
@@ -91,18 +119,18 @@ func (s *RemoteExecutionService) Execute(ctx context.Context, request *RemoteExe
 
 	if err != nil {
 		return &RemoteExecutionResponse{
-			Error:    err.Error(),
-			NodeID:   s.localNodeID,
+			Error:     err.Error(),
+			NodeID:    s.localNodeID,
 			RequestID: request.RequestID,
-			Duration: duration,
+			Duration:  duration,
 		}, nil
 	}
 
 	return &RemoteExecutionResponse{
-		Output:   output,
-		NodeID:   s.localNodeID,
+		Output:    output,
+		NodeID:    s.localNodeID,
 		RequestID: request.RequestID,
-		Duration: duration,
+		Duration:  duration,
 	}, nil
 }
 
@@ -207,6 +235,11 @@ func (re *RemoteExecutor) ExecuteOnNode(ctx context.Context, nodeID string, agen
 			"timestamp":   time.Now().Unix(),
 		},
 	}
+	if authority, ok := dispatchAuthorityFromContext(ctx); ok {
+		for key, value := range authority.metadata() {
+			request.Metadata[key] = value
+		}
+	}
 
 	// Create connection to remote node
 	addr := fmt.Sprintf("%s:%d", node.Address, node.Port)
@@ -255,6 +288,12 @@ func (re *RemoteExecutor) ExecuteRemote(ctx context.Context, request *RemoteExec
 	}
 
 	if resp.Error != "" {
+		switch {
+		case strings.Contains(resp.Error, ErrStaleDispatchAuthority.Error()):
+			return nil, ErrStaleDispatchAuthority
+		case strings.Contains(resp.Error, ErrMissingDispatchAuthority.Error()):
+			return nil, ErrMissingDispatchAuthority
+		}
 		return nil, fmt.Errorf("remote agent execution failed: %s", resp.Error)
 	}
 

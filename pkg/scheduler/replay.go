@@ -120,7 +120,19 @@ func ReplayJobState(ctx context.Context, store TransitionStore, jobID string) (R
 			return ReplayedJobState{}, fmt.Errorf("list durable tasks by job: %w", err)
 		}
 		for _, task := range durableTasks {
-			state.Tasks[task.TaskID] = task
+			// Seed static execution payload fields from durable task snapshots,
+			// but keep lifecycle fields empty so transition history remains the
+			// sole source of ordering/state truth during replay.
+			state.Tasks[task.TaskID] = DurableTaskRecord{
+				TaskID:       task.TaskID,
+				JobID:        task.JobID,
+				StageID:      task.StageID,
+				NodeID:       task.NodeID,
+				AgentID:      task.AgentID,
+				AgentName:    task.AgentName,
+				InputJSON:    task.InputJSON,
+				PartitionKey: task.PartitionKey,
+			}
 		}
 	}
 

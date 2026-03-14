@@ -46,6 +46,9 @@ This document does not define:
 - HA scheduling/fencing
 - a final storage backend choice
 
+It does formalize the current durable dispatch-claim boundary used by the
+scheduler (`TASK_DISPATCHED`), including replay and failover interpretation.
+
 ## Design Goals
 
 The first state machine implementation should provide:
@@ -164,6 +167,26 @@ Those are intentionally deferred until the first durable model is in place.
 - `RUNNING -> SUCCEEDED`
 - `RUNNING -> FAILED`
 
+### Dispatch Claim Semantics (v0.2)
+
+In v0.2, Dagens reuses `TASK_DISPATCHED` as the durable dispatch claim
+boundary.
+
+Operational meaning:
+
+- no durable dispatch claim record (`TASK_DISPATCHED`) means no dispatch
+- `TASK_DISPATCHED` records ownership and attempt metadata for replay/fencing
+- only the leader that successfully persists the claim may proceed to execution
+
+This means Dagens does not currently require a separate
+`TASK_DISPATCH_CLAIMED` state to enforce claim-before-dispatch behavior.
+
+Future extension:
+
+- Dagens may introduce explicit `TASK_DISPATCH_CLAIMED` /
+  claim-expiry transitions if claim timeout/reclaim semantics need independent
+  lifecycle visibility beyond `TASK_DISPATCHED`.
+
 ### Illegal Task Transitions
 
 The control plane should reject or ignore invalid transitions such as:
@@ -222,6 +245,8 @@ Useful additional fields:
 
 - `node_id`
 - dispatch attempt number
+- leader identity
+- leader epoch/fencing token
 - error summary
 - graph or stage ID
 
@@ -328,6 +353,12 @@ Tasks recovered after restart may be operationally uncertain when their last dur
 
 - `DISPATCHED`
 - `RUNNING`
+
+This includes stale in-flight task claims after leader loss:
+
+- `DISPATCHED`/`RUNNING` tasks may be quarantined to a terminal-safe path when
+  replay shows stale in-flight ownership beyond configured timeout
+- this preserves fencing safety and avoids indefinite ambiguity
 
 In the first implementation, Dagens should treat these as:
 
@@ -446,6 +477,8 @@ The first version should optimize for correctness and clarity before optimizing 
   - describes what is durable today and what is not
 - [`docs/FAILURE_SEMANTICS.md`](FAILURE_SEMANTICS.md)
   - describes current execution guarantees and ambiguity boundaries
+- [`docs/execution-model.md`](execution-model.md)
+  - describes dispatch ownership, replay rules, and failover semantics in one place
 - [`docs/BACKPRESSURE.md`](BACKPRESSURE.md)
   - describes saturation and scheduling behavior under load
 

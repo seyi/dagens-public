@@ -16,6 +16,7 @@ import (
 	"github.com/seyi/dagens/pkg/observability"
 	"github.com/seyi/dagens/pkg/policy"
 	"github.com/seyi/dagens/pkg/registry"
+	"github.com/seyi/dagens/pkg/remote"
 	"github.com/seyi/dagens/pkg/telemetry"
 )
 
@@ -34,6 +35,7 @@ var ErrDispatchClaimRejected = errors.New("dispatch claim rejected by transition
 const schedulerMetricsID = "default"
 const maxTransitionErrorSummaryRunes = 1024
 const malformedReplayQuarantineTTL = 30 * time.Second
+const staleInFlightReconcileTimeout = time.Minute
 
 type nodeCapacity struct {
 	ReservedInFlight int
@@ -41,6 +43,16 @@ type nodeCapacity struct {
 	MaxConcurrency   int
 	LastUpdated      time.Time
 }
+
+// ReconcileMode defines the target behavior for durable state reconciliation.
+type ReconcileMode int
+
+const (
+	// ReconcileModeLeader enables full reconciliation including job enqueueing.
+	ReconcileModeLeader ReconcileMode = iota
+	// ReconcileModeFollower enables warm-replay only (no enqueueing).
+	ReconcileModeFollower
+)
 
 // Scheduler manages the execution of jobs and their tasks
 type Scheduler struct {
@@ -70,6 +82,8 @@ type Scheduler struct {
 	executionCtx      context.Context
 	executionCancel   context.CancelFunc
 	replayQuarantine  map[string]time.Time
+	pendingEnqueue    int
+	lastReconcileTime time.Time
 	metrics           *observability.Metrics
 	tracer            telemetry.Tracer
 	logger            telemetry.Logger
@@ -166,10 +180,18 @@ func (s *Scheduler) Start() {
 
 	if err := s.RecoverFromTransitions(recoveryCtx); err != nil {
 		log.Printf("failed to recover scheduler state from transitions: %v", err)
+		s.emitOperationalAlert(context.Background(), "scheduler.recovery.failed", "critical",
+			"scheduler startup recovery failed", map[string]interface{}{
+				"error": err.Error(),
+			})
 	}
 
 	if err := s.startLeadershipProvider(); err != nil {
 		log.Printf("failed to start scheduler leadership provider: %v", err)
+		s.emitOperationalAlert(context.Background(), "scheduler.leadership.start_failed", "critical",
+			"failed to start scheduler leadership provider", map[string]interface{}{
+				"error": err.Error(),
+			})
 		return
 	}
 
@@ -178,12 +200,17 @@ func (s *Scheduler) Start() {
 		s.mu.Unlock()
 		return
 	}
+	if !s.config.EnableJobRetentionCleanup {
+		s.logger.Warn("job retention cleanup disabled; terminal jobs will accumulate in memory", map[string]interface{}{
+			"job_retention_cleanup_enabled": false,
+		})
+	}
 	s.started = true
 	s.executionCtx, s.executionCancel = context.WithCancel(context.Background())
 	s.mu.Unlock()
 	s.wg.Add(1)
 	go s.run()
-	if s.config.EnableLeaderDurableRequeueLoop {
+	if s.config.EnableLeaderDurableRequeueLoop || s.config.EnableFollowerDurableRequeueLoop {
 		s.wg.Add(1)
 		go s.durableQueuedRequeueLoop()
 	}
@@ -235,6 +262,12 @@ func (s *Scheduler) SubmitJob(job *Job) error {
 	return s.SubmitJobWithContext(context.Background(), job)
 }
 
+// CurrentDispatchAuthority returns whether this scheduler instance is currently
+// allowed to accept and dispatch work under the active leadership provider.
+func (s *Scheduler) CurrentDispatchAuthority(ctx context.Context) (LeadershipAuthority, error) {
+	return s.dispatchAuthority(ctx)
+}
+
 // SubmitJobWithContext submits a job for execution and uses ctx for initial
 // lifecycle transition persistence.
 func (s *Scheduler) SubmitJobWithContext(ctx context.Context, job *Job) error {
@@ -250,11 +283,29 @@ func (s *Scheduler) SubmitJobWithContext(ctx context.Context, job *Job) error {
 	}
 
 	metrics := s.metrics
-	if s.enqueueJobLocked(job) {
+	if len(s.jobQueue)+s.pendingEnqueue < cap(s.jobQueue) {
+		// Reserve queue capacity before unlocking so concurrent submissions cannot
+		// over-admit while initial transitions are being persisted.
+		s.pendingEnqueue++
 		job.Status = JobPending
 		s.jobs[job.ID] = job
 		s.mu.Unlock()
+
 		s.recordInitialTransitions(ctx, job)
+
+		s.mu.Lock()
+		s.pendingEnqueue--
+		enqueued := s.enqueueJobLocked(job)
+		s.mu.Unlock()
+		if enqueued {
+			return nil
+		}
+
+		// Rare fallback if queue was filled by non-submission paths (for example
+		// requeue/reconcile) while this submission was persisting transitions.
+		s.logger.Warn("job accepted but immediate enqueue deferred; durable reconcile will retry", map[string]interface{}{
+			"job_id": job.ID,
+		})
 		return nil
 	}
 	metrics.SetTaskQueueDepths(schedulerMetricsID, len(s.jobQueue), cap(s.jobQueue))
@@ -265,13 +316,101 @@ func (s *Scheduler) SubmitJobWithContext(ctx context.Context, job *Job) error {
 // GetJob returns a job by ID
 func (s *Scheduler) GetJob(jobID string) (*Job, error) {
 	s.mu.RLock()
-	defer s.mu.RUnlock()
-
 	job, exists := s.jobs[jobID]
-	if !exists {
+	store := s.transitionStore
+	s.mu.RUnlock()
+	if exists {
+		return job, nil
+	}
+	if store == nil {
 		return nil, fmt.Errorf("job %s not found", jobID)
 	}
-	return job, nil
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	replayed, err := ReplayJobState(ctx, store, jobID)
+	if err != nil {
+		return nil, fmt.Errorf("job %s not found", jobID)
+	}
+	if replayed.Job.CurrentState == "" && len(replayed.Tasks) == 0 && len(replayed.Transitions) == 0 {
+		return nil, fmt.Errorf("job %s not found", jobID)
+	}
+	hydrated := buildRecoveredRuntimeJob(replayed)
+	if hydrated == nil {
+		return nil, fmt.Errorf("job %s not found", jobID)
+	}
+
+	s.mu.Lock()
+	if existing, ok := s.jobs[jobID]; ok {
+		s.mu.Unlock()
+		return existing, nil
+	}
+	s.jobs[jobID] = hydrated
+	s.seedJobSequenceLocked(jobID, replayed.Job.LastSequenceID, replayed.Transitions)
+	s.mu.Unlock()
+
+	return hydrated, nil
+}
+
+// ResumeAwaitingHumanJob resumes a job that is currently waiting on a HITL
+// pause boundary. The supplied context fields are merged into each task input
+// before the job is re-executed so resumed work can observe callback outcome.
+func (s *Scheduler) ResumeAwaitingHumanJob(ctx context.Context, jobID string, resumeContext map[string]interface{}) error {
+	job, err := s.GetJob(jobID)
+	if err != nil {
+		return err
+	}
+	if job == nil {
+		return fmt.Errorf("job %s not found", jobID)
+	}
+
+	s.mu.RLock()
+	state := job.LifecycleState
+	s.mu.RUnlock()
+	if state != JobStateAwaitingHuman && !IsTerminalJobState(state) {
+		if refreshed := s.refreshJobFromDurableState(ctx, jobID); refreshed != nil {
+			job = refreshed
+			s.mu.RLock()
+			state = job.LifecycleState
+			s.mu.RUnlock()
+		}
+	}
+
+	if IsTerminalJobState(state) {
+		return nil
+	}
+	if state != JobStateAwaitingHuman {
+		return fmt.Errorf("job %s is not awaiting human input (state=%s)", jobID, state)
+	}
+
+	if len(resumeContext) > 0 {
+		for _, stage := range job.Stages {
+			if stage == nil {
+				continue
+			}
+			stage.Status = JobPending
+			for _, task := range stage.Tasks {
+				if task == nil {
+					continue
+				}
+				if task.Input == nil {
+					task.Input = &agent.AgentInput{}
+				}
+				if task.Input.Context == nil {
+					task.Input.Context = make(map[string]interface{})
+				}
+				for key, value := range resumeContext {
+					task.Input.Context[key] = value
+				}
+				task.Status = JobPending
+				task.LifecycleState = TaskStatePending
+				task.Output = nil
+			}
+		}
+	}
+
+	s.executeJob(ctx, job)
+	return nil
 }
 
 // GetAllJobs returns all jobs
@@ -284,6 +423,44 @@ func (s *Scheduler) GetAllJobs() []*Job {
 		jobs = append(jobs, job)
 	}
 	return jobs
+}
+
+// SchedulerReadiness describes the current synchronization state of the scheduler.
+type SchedulerReadiness struct {
+	// IsRecovering is true during initial startup recovery.
+	IsRecovering bool
+	// IsLeader is true when this instance currently holds dispatch authority.
+	IsLeader bool
+	// LastReconcileTime is the last time the scheduler successfully synchronized
+	// with the durable transition store.
+	LastReconcileTime time.Time
+}
+
+// Readiness returns a snapshot of the scheduler's current synchronization state.
+func (s *Scheduler) Readiness() SchedulerReadiness {
+	s.mu.RLock()
+	started := s.started
+	recovering := s.recovering
+	lastReconcileTime := s.lastReconcileTime
+	provider := s.leadership
+	s.mu.RUnlock()
+
+	isLeader := false
+	if started && !recovering && provider != nil {
+		// Use a short-timeout context for the internal readiness check to avoid
+		// blocking the caller on etcd/network issues.
+		ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+		defer cancel()
+		if auth, err := provider.DispatchAuthority(ctx); err == nil {
+			isLeader = auth.IsLeader
+		}
+	}
+
+	return SchedulerReadiness{
+		IsRecovering:      recovering,
+		IsLeader:          isLeader,
+		LastReconcileTime: lastReconcileTime,
+	}
 }
 
 // TransitionStore exposes the configured lifecycle transition store.
@@ -384,6 +561,12 @@ func (s *Scheduler) run() {
 				}
 				continue
 			}
+			if refreshed := s.refreshJobFromDurableState(s.executionContextOrBackground(), job.ID); refreshed != nil {
+				job = refreshed
+			}
+			if !s.isExecutableDequeuedJob(job) {
+				continue
+			}
 			s.executeJob(s.executionContextOrBackground(), job)
 		}
 	}
@@ -391,7 +574,15 @@ func (s *Scheduler) run() {
 
 func (s *Scheduler) durableQueuedRequeueLoop() {
 	defer s.wg.Done()
-	ticker := time.NewTicker(s.config.LeaderDurableRequeuePollInterval)
+
+	// Initial poll interval depends on leadership status
+	pollInterval := s.config.FollowerDurableRequeuePollInterval
+	authority, err := s.dispatchAuthority(s.executionContextOrBackground())
+	if err == nil && authority.IsLeader {
+		pollInterval = s.config.LeaderDurableRequeuePollInterval
+	}
+
+	ticker := time.NewTicker(pollInterval)
 	defer ticker.Stop()
 
 	for {
@@ -399,8 +590,35 @@ func (s *Scheduler) durableQueuedRequeueLoop() {
 		case <-s.stopChan:
 			return
 		case <-ticker.C:
-			if err := s.reconcileDurableQueuedJobsOnce(s.executionContextOrBackground()); err != nil {
-				log.Printf("scheduler durable queued-job reconcile failed: %v", err)
+			authority, err := s.dispatchAuthority(s.executionContextOrBackground())
+			if err != nil {
+				log.Printf("scheduler leadership check failed during reconcile: %v", err)
+				continue
+			}
+
+			// Adjust ticker if leadership changed
+			newInterval := s.config.FollowerDurableRequeuePollInterval
+			mode := ReconcileModeFollower
+			if authority.IsLeader {
+				newInterval = s.config.LeaderDurableRequeuePollInterval
+				mode = ReconcileModeLeader
+			}
+			if newInterval != pollInterval {
+				pollInterval = newInterval
+				ticker.Reset(pollInterval)
+			}
+
+			// Skip if mode is disabled
+			if (mode == ReconcileModeLeader && !s.config.EnableLeaderDurableRequeueLoop) ||
+				(mode == ReconcileModeFollower && !s.config.EnableFollowerDurableRequeueLoop) {
+				continue
+			}
+
+			reconcileCtx, cancel := s.reconcileContext()
+			err = s.reconcileDurableQueuedJobsOnce(reconcileCtx, mode)
+			cancel()
+			if err != nil {
+				log.Printf("scheduler durable queued-job reconcile failed (mode=%v): %v", mode, err)
 			}
 		}
 	}
@@ -411,10 +629,14 @@ func (s *Scheduler) isExecutableDequeuedJob(job *Job) bool {
 		return false
 	}
 	s.mu.RLock()
-	state := job.LifecycleState
+	current := job
+	if latest, ok := s.jobs[job.ID]; ok && latest != nil {
+		current = latest
+	}
+	state := current.LifecycleState
 	s.mu.RUnlock()
 	switch state {
-	case JobStateSubmitted, JobStateQueued, JobStateAwaitingHuman:
+	case JobStateSubmitted, JobStateQueued:
 		return true
 	default:
 		log.Printf("scheduler skipped dequeued job %s with non-executable lifecycle state %s", job.ID, state)
@@ -422,14 +644,50 @@ func (s *Scheduler) isExecutableDequeuedJob(job *Job) bool {
 	}
 }
 
-func (s *Scheduler) reconcileDurableQueuedJobsOnce(ctx context.Context) error {
-	authority, err := s.dispatchAuthority(ctx)
-	if err != nil {
-		return err
-	}
-	if !authority.IsLeader {
+func (s *Scheduler) refreshJobFromDurableState(ctx context.Context, jobID string) *Job {
+	if strings.TrimSpace(jobID) == "" || s.transitionStore == nil {
 		return nil
 	}
+	replayed, err := ReplayJobState(ctx, s.transitionStore, jobID)
+	if err != nil {
+		return nil
+	}
+	if replayed.Job.CurrentState == "" && len(replayed.Tasks) == 0 && len(replayed.Transitions) == 0 {
+		return nil
+	}
+
+	hydrated := buildRecoveredRuntimeJob(replayed)
+	if hydrated == nil {
+		return nil
+	}
+	hydrated.Name = replayed.Job.Name
+	if hydrated.CreatedAt.IsZero() {
+		hydrated.CreatedAt = replayed.Job.CreatedAt
+	}
+	if hydrated.UpdatedAt.IsZero() {
+		hydrated.UpdatedAt = replayed.Job.UpdatedAt
+	}
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if existing, ok := s.jobs[jobID]; ok && existing != nil {
+		if hydrated.Name == "" {
+			hydrated.Name = existing.Name
+		}
+		if hydrated.CreatedAt.IsZero() {
+			hydrated.CreatedAt = existing.CreatedAt
+		}
+		if len(hydrated.Metadata) == 0 && len(existing.Metadata) > 0 {
+			hydrated.Metadata = existing.Metadata
+		}
+	}
+	s.jobs[jobID] = hydrated
+	s.seedJobSequenceLocked(jobID, replayed.Job.LastSequenceID, replayed.Transitions)
+	return hydrated
+}
+
+func (s *Scheduler) reconcileDurableQueuedJobsOnce(ctx context.Context, mode ReconcileMode) error {
 	if s.transitionStore == nil {
 		return nil
 	}
@@ -457,15 +715,17 @@ func (s *Scheduler) reconcileDurableQueuedJobsOnce(ctx context.Context) error {
 			s.clearReplayQuarantine(durableJob.JobID)
 		}
 
-		if s.tryEnqueueExistingQueuedJob(durableJob.JobID) {
+		if mode == ReconcileModeLeader && s.tryEnqueueExistingQueuedJob(durableJob.JobID) {
 			continue
 		}
 
 		replayed, err := ReplayJobState(ctx, s.transitionStore, durableJob.JobID)
 		if err != nil {
-			s.setReplayQuarantine(durableJob.JobID, time.Now().Add(malformedReplayQuarantineTTL))
-			log.Printf("scheduler durable queued-job reconcile skipped malformed replay for job %s: %v", durableJob.JobID, err)
-			s.failDurableQueuedJobForReconcile(ctx, durableJob, fmt.Sprintf("reconcile replay failed: %v", err))
+			if mode == ReconcileModeLeader {
+				s.setReplayQuarantine(durableJob.JobID, time.Now().Add(malformedReplayQuarantineTTL))
+				log.Printf("scheduler durable queued-job reconcile skipped malformed replay for job %s: %v", durableJob.JobID, err)
+				s.failDurableQueuedJobForReconcile(ctx, durableJob, fmt.Sprintf("reconcile replay failed: %v", err))
+			}
 			continue
 		}
 		s.clearReplayQuarantine(durableJob.JobID)
@@ -485,7 +745,13 @@ func (s *Scheduler) reconcileDurableQueuedJobsOnce(ctx context.Context) error {
 			}
 		}
 
-		if replayed.Job.CurrentState != JobStateQueued {
+		if mode == ReconcileModeLeader && replayed.Job.CurrentState == JobStateRunning && allReplayedTasksPending(replayed.Tasks) {
+			s.failDurableQueuedJobForReconcile(ctx, durableJob, "reconcile detected orphan running state without dispatched/running tasks after leadership loss")
+			continue
+		}
+		if mode == ReconcileModeLeader && replayed.Job.CurrentState == JobStateRunning &&
+			hasStaleInFlightReplayedTask(replayed.Tasks, time.Now().UTC(), staleInFlightReconcileTimeout) {
+			s.failDurableQueuedJobForReconcile(ctx, durableJob, "reconcile detected stale in-flight task after leadership loss")
 			continue
 		}
 
@@ -496,6 +762,20 @@ func (s *Scheduler) reconcileDurableQueuedJobsOnce(ctx context.Context) error {
 			job = buildRecoveredRuntimeJob(replayed)
 			s.jobs[job.ID] = job
 			s.seedJobSequenceLocked(job.ID, replayed.Job.LastSequenceID, replayed.Transitions)
+		} else if replayed.Job.LastSequenceID > s.jobSequences[replayed.Job.JobID] {
+			// Warm replay update for existing job visibility
+			job.LifecycleState = replayed.Job.CurrentState
+			job.UpdatedAt = replayed.Job.UpdatedAt
+			s.seedJobSequenceLocked(job.ID, replayed.Job.LastSequenceID, replayed.Transitions)
+		}
+
+		if mode != ReconcileModeLeader {
+			s.mu.Unlock()
+			continue
+		}
+
+		if job.LifecycleState == JobStateSubmitted {
+			s.recordJobTransition(ctx, nil, job, TransitionJobQueued, JobStateQueued, "")
 		}
 		if job.LifecycleState != JobStateQueued {
 			s.mu.Unlock()
@@ -513,7 +793,50 @@ func (s *Scheduler) reconcileDurableQueuedJobsOnce(ctx context.Context) error {
 		s.enqueueJobLocked(job)
 		s.mu.Unlock()
 	}
+	s.recordReconcileSuccess(time.Now(), mode)
 	return nil
+}
+
+func (s *Scheduler) recordReconcileSuccess(at time.Time, mode ReconcileMode) {
+	s.mu.Lock()
+	s.lastReconcileTime = at
+	s.mu.Unlock()
+	s.metrics.RecordSchedulerReconcileSucceeded(reconcileModeLabel(mode))
+}
+
+func reconcileModeLabel(mode ReconcileMode) string {
+	if mode == ReconcileModeLeader {
+		return "leader"
+	}
+	return "follower"
+}
+
+func allReplayedTasksPending(tasks map[string]DurableTaskRecord) bool {
+	if len(tasks) == 0 {
+		return true
+	}
+	for _, task := range tasks {
+		if task.CurrentState != "" && task.CurrentState != TaskStatePending {
+			return false
+		}
+	}
+	return true
+}
+
+func hasStaleInFlightReplayedTask(tasks map[string]DurableTaskRecord, now time.Time, timeout time.Duration) bool {
+	if timeout <= 0 {
+		return false
+	}
+	cutoff := now.Add(-timeout)
+	for _, task := range tasks {
+		switch task.CurrentState {
+		case TaskStateDispatched, TaskStateRunning:
+			if task.UpdatedAt.IsZero() || task.UpdatedAt.Before(cutoff) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func (s *Scheduler) tryEnqueueExistingQueuedJob(jobID string) bool {
@@ -540,6 +863,11 @@ func (s *Scheduler) failDurableQueuedJobForReconcile(ctx context.Context, durabl
 	if durableJob.JobID == "" {
 		return
 	}
+	authority, err := s.dispatchAuthority(ctx)
+	if err != nil || !authority.IsLeader {
+		log.Printf("scheduler durable queued-job reconcile failure blocked without leadership for job %s: %v", durableJob.JobID, err)
+		return
+	}
 
 	s.mu.Lock()
 	job, exists := s.jobs[durableJob.JobID]
@@ -560,7 +888,7 @@ func (s *Scheduler) failDurableQueuedJobForReconcile(ctx context.Context, durabl
 	}
 	currentState := job.LifecycleState
 	s.mu.Unlock()
-	if currentState != JobStateQueued {
+	if IsTerminalJobState(currentState) {
 		return
 	}
 
@@ -695,6 +1023,14 @@ func (s *Scheduler) markJobDequeued(job *Job) {
 
 // executeJob executes a single job.
 func (s *Scheduler) executeJob(ctx context.Context, job *Job) {
+	s.mu.Lock()
+	if job != nil {
+		if _, exists := s.jobs[job.ID]; !exists {
+			s.jobs[job.ID] = job
+		}
+	}
+	s.mu.Unlock()
+
 	s.updateJobStatus(job, JobRunning)
 	log.Printf("Starting execution of job %s (%s)", job.ID, job.Name)
 
@@ -707,11 +1043,29 @@ func (s *Scheduler) executeJob(ctx context.Context, job *Job) {
 
 	span.SetAttribute("job.id", job.ID)
 	span.SetAttribute("job.name", job.Name)
-	startTransition := TransitionJobRunning
-	if job.LifecycleState == JobStateAwaitingHuman {
-		startTransition = TransitionJobResumed
+
+	// Submission can enqueue before initial transitions are fully persisted.
+	// Preserve SUBMITTED -> QUEUED ordering up front, but defer RUNNING/RESUMED
+	// for jobs with tasks until first durable dispatch claim succeeds. This
+	// avoids orphan RUNNING jobs on leader loss before any task is dispatched.
+	if job.LifecycleState == JobStateSubmitted {
+		s.recordJobTransition(ctx, span, job, TransitionJobQueued, JobStateQueued, "")
 	}
-	s.recordJobTransition(ctx, span, job, startTransition, JobStateRunning, "")
+
+	hasTasks := false
+	for _, stage := range job.Stages {
+		if stage != nil && len(stage.Tasks) > 0 {
+			hasTasks = true
+			break
+		}
+	}
+	if !hasTasks {
+		startTransition := TransitionJobRunning
+		if job.LifecycleState == JobStateAwaitingHuman {
+			startTransition = TransitionJobResumed
+		}
+		s.recordJobTransition(ctx, span, job, startTransition, JobStateRunning, "")
+	}
 
 	// Execute stages sequentially
 	for _, stage := range job.Stages {
@@ -811,7 +1165,9 @@ func (s *Scheduler) executeStage(ctx context.Context, stage *Stage) error {
 		return err
 	}
 
-	// Create a task queue and error channel
+	// Create a task queue and error channel.
+	// errChan is buffered to len(stage.Tasks) so task goroutines can report one
+	// error each without blocking on receiver timing.
 	var wg sync.WaitGroup
 	errChan := make(chan error, len(stage.Tasks))
 
@@ -1114,6 +1470,7 @@ func (s *Scheduler) claimTaskDispatchTransition(ctx context.Context, span teleme
 	}
 
 	task.LifecycleState = newState
+	s.recordJobRunningOnFirstDispatch(ctx, span, task)
 	if span != nil {
 		span.AddEvent("scheduler.dispatch_claim", map[string]interface{}{
 			"task_id":     task.ID,
@@ -1124,6 +1481,27 @@ func (s *Scheduler) claimTaskDispatchTransition(ctx context.Context, span teleme
 		})
 	}
 	return nil
+}
+
+func (s *Scheduler) recordJobRunningOnFirstDispatch(ctx context.Context, span telemetry.Span, task *Task) {
+	if task == nil || task.JobID == "" {
+		return
+	}
+	s.mu.RLock()
+	job := s.jobs[task.JobID]
+	s.mu.RUnlock()
+	if job == nil {
+		return
+	}
+	switch job.LifecycleState {
+	case JobStateSubmitted:
+		s.recordJobTransition(ctx, span, job, TransitionJobQueued, JobStateQueued, "")
+		s.recordJobTransition(ctx, span, job, TransitionJobRunning, JobStateRunning, "")
+	case JobStateQueued:
+		s.recordJobTransition(ctx, span, job, TransitionJobRunning, JobStateRunning, "")
+	case JobStateAwaitingHuman:
+		s.recordJobTransition(ctx, span, job, TransitionJobResumed, JobStateRunning, "")
+	}
 }
 
 // executeTask executes a single task on a specific node
@@ -1140,6 +1518,19 @@ func (s *Scheduler) executeTask(ctx context.Context, task *Task, node registry.N
 	s.recordTaskTransition(taskCtx, span, task, TransitionTaskRunning, TaskStateRunning, node.ID, task.Attempts, "")
 
 	log.Printf("Dispatching task %s (Agent: %s) to node %s", task.ID, task.AgentID, node.ID)
+
+	authority, err := s.dispatchAuthority(taskCtx)
+	if err != nil {
+		return fmt.Errorf("resolve dispatch authority before remote execution: %w", err)
+	}
+	if !authority.IsLeader {
+		return fmt.Errorf("%w: leader_id=%s epoch=%s", remote.ErrStaleDispatchAuthority, authority.LeaderID, authority.Epoch)
+	}
+	taskCtx = remote.WithDispatchAuthority(taskCtx, remote.DispatchAuthority{
+		LeaderID: authority.LeaderID,
+		Epoch:    authority.Epoch,
+		Scope:    authority.Scope,
+	})
 
 	// Execute via TaskExecutor
 	output, err := s.executor.ExecuteOnNode(taskCtx, node.ID, task.AgentName, task.Input)
@@ -1517,6 +1908,10 @@ func (s *Scheduler) selectNodeByCapacity(nodes []registry.NodeInfo) (registry.No
 		}
 	}
 
+	// Selection precedence:
+	// 1) fresh-capacity nodes with available slots (best available, round-robin tie-break)
+	// 2) if fresh nodes exist but all are full, fail fast (do not pick stale nodes)
+	// 3) use stale-capacity nodes only when no fresh node data exists (degraded mode)
 	if freshBestAvailable > 0 && len(freshBestIndexes) > 0 {
 		selected := nodes[freshBestIndexes[s.nodeIndex%len(freshBestIndexes)]]
 		s.nodeIndex++
@@ -1636,6 +2031,10 @@ func (s *Scheduler) executionContextOrBackground() context.Context {
 	return ctx
 }
 
+func (s *Scheduler) reconcileContext() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(s.executionContextOrBackground(), s.config.ReconcileTimeout)
+}
+
 func (s *Scheduler) jobRetentionCleanupLoop() {
 	defer s.wg.Done()
 	ticker := time.NewTicker(s.config.JobRetentionCleanupInterval)
@@ -1701,6 +2100,9 @@ func dispatchRejectionReason(err error) string {
 
 	lowered := strings.ToLower(err.Error())
 	switch {
+	case errors.Is(err, remote.ErrStaleDispatchAuthority),
+		errors.Is(err, remote.ErrMissingDispatchAuthority):
+		return remote.AuthorityRejectionReason(err)
 	case strings.Contains(lowered, "timeout"):
 		return "network_timeout"
 	case strings.Contains(lowered, "connection refused"),

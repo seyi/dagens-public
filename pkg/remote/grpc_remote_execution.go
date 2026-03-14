@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/seyi/dagens/pkg/agent"
@@ -154,6 +155,11 @@ func (re *GRPCRemoteExecutor) ExecuteOnNode(ctx context.Context, nodeID string, 
 		RequestId: fmt.Sprintf("grpc-remote-exec-%d", time.Now().UnixNano()),
 		Metadata:  map[string]string{"source_node": "TODO"}, // Would get from registry
 	}
+	if authority, ok := dispatchAuthorityFromContext(ctx); ok {
+		for key, value := range authority.metadata() {
+			req.Metadata[key] = fmt.Sprintf("%v", value)
+		}
+	}
 
 	// Execute the request
 	resp, err := client.Execute(ctx, req)
@@ -162,6 +168,12 @@ func (re *GRPCRemoteExecutor) ExecuteOnNode(ctx context.Context, nodeID string, 
 	}
 
 	if resp.Error != "" {
+		switch {
+		case strings.Contains(resp.Error, ErrStaleDispatchAuthority.Error()):
+			return nil, ErrStaleDispatchAuthority
+		case strings.Contains(resp.Error, ErrMissingDispatchAuthority.Error()):
+			return nil, ErrMissingDispatchAuthority
+		}
 		return nil, fmt.Errorf("remote agent error: %s", resp.Error)
 	}
 

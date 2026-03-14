@@ -70,6 +70,73 @@ func TestReplayJobStateReconstructsCurrentState(t *testing.T) {
 	}
 }
 
+func TestReplayJobState_DurableTaskSnapshotDoesNotOverrideTransitionOrdering(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+
+	records := []TransitionRecord{
+		{
+			SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted,
+			JobID: "job-snapshot-order", NewState: string(JobStateSubmitted), OccurredAt: now,
+		},
+		{
+			SequenceID: 2, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated,
+			JobID: "job-snapshot-order", TaskID: "task-1", NewState: string(TaskStatePending), OccurredAt: now.Add(time.Second),
+		},
+		{
+			SequenceID: 3, EntityType: TransitionEntityTask, Transition: TransitionTaskDispatched,
+			JobID: "job-snapshot-order", TaskID: "task-1", PreviousState: string(TaskStatePending), NewState: string(TaskStateDispatched), NodeID: "worker-1", Attempt: 1, OccurredAt: now.Add(2 * time.Second),
+		},
+		{
+			SequenceID: 4, EntityType: TransitionEntityTask, Transition: TransitionTaskRunning,
+			JobID: "job-snapshot-order", TaskID: "task-1", PreviousState: string(TaskStateDispatched), NewState: string(TaskStateRunning), NodeID: "worker-1", Attempt: 1, OccurredAt: now.Add(3 * time.Second),
+		},
+		{
+			SequenceID: 5, EntityType: TransitionEntityTask, Transition: TransitionTaskSucceeded,
+			JobID: "job-snapshot-order", TaskID: "task-1", PreviousState: string(TaskStateRunning), NewState: string(TaskStateSucceeded), NodeID: "worker-1", Attempt: 1, OccurredAt: now.Add(4 * time.Second),
+		},
+	}
+	for _, record := range records {
+		if err := store.AppendTransition(context.Background(), record); err != nil {
+			t.Fatalf("AppendTransition unexpected error: %v", err)
+		}
+	}
+
+	// Persist a materialized snapshot with terminal task state to emulate
+	// control-plane restarts where durable task view is ahead of transition replay.
+	if err := store.UpsertTask(context.Background(), DurableTaskRecord{
+		TaskID:       "task-1",
+		JobID:        "job-snapshot-order",
+		StageID:      "stage-1",
+		NodeID:       "worker-1",
+		AgentID:      "start",
+		AgentName:    "Start",
+		InputJSON:    `{"instruction":"snapshot-order"}`,
+		PartitionKey: "pk-1",
+		CurrentState: TaskStateSucceeded,
+		LastAttempt:  1,
+		UpdatedAt:    now.Add(4 * time.Second),
+	}); err != nil {
+		t.Fatalf("UpsertTask unexpected error: %v", err)
+	}
+
+	replayed, err := ReplayJobState(context.Background(), store, "job-snapshot-order")
+	if err != nil {
+		t.Fatalf("ReplayJobState unexpected error: %v", err)
+	}
+
+	task, ok := replayed.Tasks["task-1"]
+	if !ok {
+		t.Fatal("expected task-1 to be reconstructed")
+	}
+	if task.CurrentState != TaskStateSucceeded {
+		t.Fatalf("task current state = %q, want %q", task.CurrentState, TaskStateSucceeded)
+	}
+	if task.AgentID != "start" || task.AgentName != "Start" {
+		t.Fatalf("task payload fields not preserved: agent_id=%q agent_name=%q", task.AgentID, task.AgentName)
+	}
+}
+
 func TestReplayStateFromStoreReturnsOnlyUnfinishedJobs(t *testing.T) {
 	// ReplayStateFromStore uses the unfinished-job index (UpsertJob/ListUnfinishedJobs)
 	// to select which jobs to replay, then reconstructs each from transitions.

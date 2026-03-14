@@ -6,6 +6,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
+	"strings"
 	"sync"
 	"time"
 
@@ -65,17 +67,18 @@ type RegistryObserver interface {
 
 // RegistryConfig holds configuration for the distributed registry
 type RegistryConfig struct {
-	EtcdEndpoints      []string
-	EtcdDialTimeout    time.Duration
-	NodeID             string
-	NodeName           string
-	NodeAddress        string
-	NodePort           int
-	NodeCapabilities   []string
-	NodeMetadata       map[string]string
-	LeaseTTL           int64 // Lease TTL in seconds
-	WatchTimeout       time.Duration
-	HeartbeatInterval  time.Duration
+	EtcdEndpoints     []string
+	EtcdDialTimeout   time.Duration
+	KeyPrefix         string
+	NodeID            string
+	NodeName          string
+	NodeAddress       string
+	NodePort          int
+	NodeCapabilities  []string
+	NodeMetadata      map[string]string
+	LeaseTTL          int64 // Lease TTL in seconds
+	WatchTimeout      time.Duration
+	HeartbeatInterval time.Duration
 }
 
 // NewDistributedAgentRegistry creates a new distributed agent registry
@@ -92,6 +95,10 @@ func NewDistributedAgentRegistry(config RegistryConfig) (*DistributedAgentRegist
 	if config.WatchTimeout == 0 {
 		config.WatchTimeout = 30 * time.Second
 	}
+	if strings.TrimSpace(config.KeyPrefix) == "" {
+		config.KeyPrefix = "/dagens"
+	}
+	config.KeyPrefix = normalizeKeyPrefix(config.KeyPrefix)
 
 	// Create etcd client
 	client, err := clientv3.New(clientv3.Config{
@@ -146,6 +153,9 @@ func (r *DistributedAgentRegistry) Start(ctx context.Context) error {
 	if err := r.registerNode(ctx); err != nil {
 		return fmt.Errorf("failed to register node: %w", err)
 	}
+	if err := r.syncExistingNodes(ctx); err != nil {
+		return fmt.Errorf("failed to sync existing nodes: %w", err)
+	}
 
 	// Start session management loop (Supervisor)
 	r.wg.Add(1)
@@ -154,6 +164,32 @@ func (r *DistributedAgentRegistry) Start(ctx context.Context) error {
 	// Start watching for cluster changes
 	r.wg.Add(1)
 	go r.watchClusterChanges(ctx)
+
+	return nil
+}
+
+func (r *DistributedAgentRegistry) syncExistingNodes(ctx context.Context) error {
+	resp, err := r.client.Get(ctx, r.nodePrefix(), clientv3.WithPrefix())
+	if err != nil {
+		return err
+	}
+
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	for _, kv := range resp.Kvs {
+		nodeID := r.extractNodeIDFromKey(string(kv.Key))
+		if nodeID == "" {
+			continue
+		}
+
+		var nodeInfo NodeInfo
+		if err := json.Unmarshal(kv.Value, &nodeInfo); err != nil {
+			log.Printf("registry: failed to unmarshal existing node %q: %v; skipping", string(kv.Key), err)
+			continue
+		}
+		r.nodes[nodeID] = nodeInfo
+	}
 
 	return nil
 }
@@ -256,7 +292,7 @@ func (r *DistributedAgentRegistry) reconnectSession(ctx context.Context) {
 
 			// Register node with new lease
 			if err := r.registerNode(ctx); err != nil {
-				// If registration fails, we'll rely on the sessionManagerLoop 
+				// If registration fails, we'll rely on the sessionManagerLoop
 				// to eventually catch issues, or we could loop here.
 				// For now, having a valid session is the most important step.
 				// The node info will be put eventually if we add a retry here or if the app updates load.
@@ -271,27 +307,27 @@ func (r *DistributedAgentRegistry) reconnectSession(ctx context.Context) {
 func (r *DistributedAgentRegistry) registerNode(ctx context.Context) error {
 	r.mu.RLock()
 	leaseID := r.leaseID
+	nodeInfo := r.nodeInfo
 	r.mu.RUnlock()
 
 	if leaseID == 0 {
 		return fmt.Errorf("no active lease")
 	}
 
-	key := fmt.Sprintf("/dagens/nodes/%s", r.nodeID)
-	value, err := json.Marshal(r.nodeInfo)
+	key := r.nodeKey(r.nodeID)
+	value, err := json.Marshal(nodeInfo)
 	if err != nil {
 		return fmt.Errorf("failed to marshal node info: %w", err)
 	}
 
 	// Put the node info with the lease
-	_, err = r.client.Put(ctx, key, string(value), clientv3.WithLease(leaseID))
-	if err != nil {
+	if err := r.putWithLease(ctx, key, string(value), leaseID); err != nil {
 		return fmt.Errorf("failed to register node: %w", err)
 	}
 
 	// Add to local cache
 	r.mu.Lock()
-	r.nodes[r.nodeID] = r.nodeInfo
+	r.nodes[r.nodeID] = nodeInfo
 	r.mu.Unlock()
 
 	return nil
@@ -299,9 +335,7 @@ func (r *DistributedAgentRegistry) registerNode(ctx context.Context) error {
 
 // unregisterNode removes this node from the registry
 func (r *DistributedAgentRegistry) unregisterNode(ctx context.Context) error {
-	key := fmt.Sprintf("/dagens/nodes/%s", r.nodeID)
-	_, err := r.client.Delete(ctx, key)
-	return err
+	return r.deleteKey(ctx, r.nodeKey(r.nodeID))
 }
 
 // watchClusterChanges watches for changes in the cluster and updates local cache
@@ -309,7 +343,7 @@ func (r *DistributedAgentRegistry) watchClusterChanges(ctx context.Context) {
 	defer r.wg.Done()
 
 	// Watch for node changes
-	watchCh := r.client.Watch(ctx, "/dagens/nodes/", clientv3.WithPrefix())
+	watchCh := r.client.Watch(ctx, r.nodePrefix(), clientv3.WithPrefix())
 
 	for {
 		select {
@@ -317,6 +351,7 @@ func (r *DistributedAgentRegistry) watchClusterChanges(ctx context.Context) {
 			return
 		case watchResp := <-watchCh:
 			if watchResp.Err() != nil {
+				log.Printf("registry: watch error on %s: %v; reconnecting...", r.nodePrefix(), watchResp.Err())
 				time.Sleep(1 * time.Second)
 				continue
 			}
@@ -331,51 +366,54 @@ func (r *DistributedAgentRegistry) watchClusterChanges(ctx context.Context) {
 func (r *DistributedAgentRegistry) handleNodeEvent(ev *clientv3.Event) {
 	key := string(ev.Kv.Key)
 	nodeID := r.extractNodeIDFromKey(key)
-
-	r.mu.Lock()
-	defer r.mu.Unlock()
+	if nodeID == "" {
+		log.Printf("registry: ignoring unexpected node key %q", key)
+		return
+	}
 
 	switch ev.Type {
 	case clientv3.EventTypePut:
 		// Node added or updated
 		var nodeInfo NodeInfo
 		if err := json.Unmarshal(ev.Kv.Value, &nodeInfo); err != nil {
-			// Log error but continue
+			log.Printf("registry: failed to unmarshal node %q: %v; skipping", key, err)
 			return
 		}
-		
-		_, exists := r.nodes[nodeID]
-		r.nodes[nodeID] = nodeInfo
 
-		// Notify observers
-		for _, observer := range r.observers {
-			if exists {
-				// Node updated (we'll treat updates as additions for simplicity)
-				observer.NodeAdded(nodeInfo)
-			} else {
-				// Node added
-				observer.NodeAdded(nodeInfo)
-			}
+		r.mu.Lock()
+		r.nodes[nodeID] = nodeInfo
+		observers := append([]RegistryObserver(nil), r.observers...)
+		r.mu.Unlock()
+
+		for _, observer := range observers {
+			observer.NodeAdded(nodeInfo)
 		}
 	case clientv3.EventTypeDelete:
 		// Node removed
-		if _, exists := r.nodes[nodeID]; exists {
+		r.mu.Lock()
+		_, exists := r.nodes[nodeID]
+		if exists {
 			delete(r.nodes, nodeID)
-
-			// Notify observers
-			for _, observer := range r.observers {
-				observer.NodeRemoved(nodeID)
-			}
+		}
+		observers := append([]RegistryObserver(nil), r.observers...)
+		r.mu.Unlock()
+		if !exists {
+			return
+		}
+		for _, observer := range observers {
+			observer.NodeRemoved(nodeID)
 		}
 	}
 }
 
 // extractNodeIDFromKey extracts the node ID from an etcd key
 func (r *DistributedAgentRegistry) extractNodeIDFromKey(key string) string {
-	// Key format: /dagens/nodes/{node_id}
-	prefix := "/dagens/nodes/"
-	if len(key) > len(prefix) {
-		return key[len(prefix):]
+	prefix := r.nodePrefix()
+	if strings.HasPrefix(key, prefix) && len(key) > len(prefix) {
+		remainder := key[len(prefix):]
+		if !strings.Contains(remainder, "/") {
+			return remainder
+		}
 	}
 	return ""
 }
@@ -444,6 +482,7 @@ func (r *DistributedAgentRegistry) UpdateNodeLoad(load float64) error {
 	r.nodeInfo.LastSeen = time.Now()
 	r.nodes[r.nodeID] = r.nodeInfo
 	leaseID := r.leaseID
+	nodeInfo := r.nodeInfo
 	r.mu.Unlock()
 
 	if leaseID == 0 {
@@ -451,20 +490,21 @@ func (r *DistributedAgentRegistry) UpdateNodeLoad(load float64) error {
 	}
 
 	// Update in etcd
-	key := fmt.Sprintf("/dagens/nodes/%s", r.nodeID)
-	value, err := json.Marshal(r.nodeInfo)
+	key := r.nodeKey(r.nodeID)
+	value, err := json.Marshal(nodeInfo)
 	if err != nil {
 		return fmt.Errorf("failed to marshal node info: %w", err)
 	}
 
-	_, err = r.client.Put(context.Background(), key, string(value), clientv3.WithLease(leaseID))
-	return err
+	return r.putWithLease(context.Background(), key, string(value), leaseID)
 }
 
 // RegisterService registers a service on this node
 func (r *DistributedAgentRegistry) RegisterService(serviceName string, port int) error {
 	r.mu.RLock()
 	leaseID := r.leaseID
+	address := r.nodeInfo.Address
+	observers := append([]RegistryObserver(nil), r.observers...)
 	r.mu.RUnlock()
 
 	if leaseID == 0 {
@@ -474,20 +514,19 @@ func (r *DistributedAgentRegistry) RegisterService(serviceName string, port int)
 	serviceInfo := ServiceInfo{
 		NodeID:      r.nodeID,
 		ServiceName: serviceName,
-		Address:     r.nodeInfo.Address,
+		Address:     address,
 		Port:        port,
 		LastSeen:    time.Now(),
 		Healthy:     true,
 	}
 
-	key := fmt.Sprintf("/dagens/services/%s/%s", serviceName, r.nodeID)
+	key := r.serviceKey(serviceName, r.nodeID)
 	value, err := json.Marshal(serviceInfo)
 	if err != nil {
 		return fmt.Errorf("failed to marshal service info: %w", err)
 	}
 
-	_, err = r.client.Put(context.Background(), key, string(value), clientv3.WithLease(leaseID))
-	if err != nil {
+	if err := r.putWithLease(context.Background(), key, string(value), leaseID); err != nil {
 		return fmt.Errorf("failed to register service: %w", err)
 	}
 
@@ -497,7 +536,7 @@ func (r *DistributedAgentRegistry) RegisterService(serviceName string, port int)
 	r.mu.Unlock()
 
 	// Notify observers
-	for _, observer := range r.observers {
+	for _, observer := range observers {
 		observer.ServiceRegistered(serviceInfo)
 	}
 
@@ -506,19 +545,18 @@ func (r *DistributedAgentRegistry) RegisterService(serviceName string, port int)
 
 // UnregisterService removes a service registration
 func (r *DistributedAgentRegistry) UnregisterService(serviceName string) error {
-	key := fmt.Sprintf("/dagens/services/%s/%s", serviceName, r.nodeID)
-	_, err := r.client.Delete(context.Background(), key)
-	if err != nil {
+	if err := r.deleteKey(context.Background(), r.serviceKey(serviceName, r.nodeID)); err != nil {
 		return err
 	}
 
 	// Remove from local cache
 	r.mu.Lock()
 	delete(r.services, serviceName)
+	observers := append([]RegistryObserver(nil), r.observers...)
 	r.mu.Unlock()
 
 	// Notify observers
-	for _, observer := range r.observers {
+	for _, observer := range observers {
 		observer.ServiceUnregistered(serviceName)
 	}
 
@@ -559,7 +597,7 @@ func (r *DistributedAgentRegistry) AddObserver(observer RegistryObserver) {
 func (r *DistributedAgentRegistry) RemoveObserver(observer RegistryObserver) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	
+
 	for i, obs := range r.observers {
 		if obs == observer {
 			r.observers = append(r.observers[:i], r.observers[i+1:]...)
@@ -613,7 +651,7 @@ func (r *DistributedAgentRegistry) NewSemaphore(key string, size int) *coordinat
 // NewLeaderElector creates a new leader elector using the registry's client
 func (r *DistributedAgentRegistry) NewLeaderElector(key string, callbacks coordination.LeaderCallbacks) (*coordination.LeaderElector, error) {
 	// Leader elector uses its own session, but we pass client.
-	// Thread safety for r.client is not an issue as it's a pointer that doesn't change, 
+	// Thread safety for r.client is not an issue as it's a pointer that doesn't change,
 	// but strictly speaking we should probably be careful if we ever support client rotation.
 	// For now, client is static after New.
 	return coordination.NewLeaderElector(coordination.LeaderElectionConfig{
@@ -622,4 +660,38 @@ func (r *DistributedAgentRegistry) NewLeaderElector(key string, callbacks coordi
 		Identity:  r.nodeID,
 		Callbacks: callbacks,
 	})
+}
+
+func normalizeKeyPrefix(prefix string) string {
+	trimmed := strings.TrimSpace(prefix)
+	if trimmed == "" {
+		return "/dagens"
+	}
+	return "/" + strings.Trim(trimmed, "/")
+}
+
+func (r *DistributedAgentRegistry) nodePrefix() string {
+	return r.config.KeyPrefix + "/nodes/"
+}
+
+func (r *DistributedAgentRegistry) nodeKey(nodeID string) string {
+	return r.nodePrefix() + nodeID
+}
+
+func (r *DistributedAgentRegistry) serviceKey(serviceName, nodeID string) string {
+	return fmt.Sprintf("%s/services/%s/%s", r.config.KeyPrefix, serviceName, nodeID)
+}
+
+func (r *DistributedAgentRegistry) putWithLease(ctx context.Context, key, value string, leaseID clientv3.LeaseID) error {
+	opCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	_, err := r.client.Put(opCtx, key, value, clientv3.WithLease(leaseID))
+	return err
+}
+
+func (r *DistributedAgentRegistry) deleteKey(ctx context.Context, key string) error {
+	opCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	_, err := r.client.Delete(opCtx, key)
+	return err
 }

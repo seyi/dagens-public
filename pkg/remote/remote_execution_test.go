@@ -4,20 +4,36 @@ package remote
 import (
 	"context"
 	"encoding/json" // Added json import
+	"errors"
 	"fmt"
 	"net"
 	"testing"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/seyi/dagens/pkg/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	clientv3 "go.etcd.io/etcd/client/v3"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/seyi/dagens/pkg/agent"
+	"github.com/seyi/dagens/pkg/observability"
 	"github.com/seyi/dagens/pkg/registry"
 	"github.com/seyi/dagens/pkg/remote/proto"
 )
+
+type staticAuthorityValidator struct {
+	validate func(context.Context, DispatchAuthority) error
+}
+
+func (v staticAuthorityValidator) Validate(ctx context.Context, authority DispatchAuthority) error {
+	if v.validate != nil {
+		return v.validate(ctx, authority)
+	}
+	return nil
+}
 
 // MockAgent and MockRegistry are defined in testing_helpers.go
 
@@ -127,7 +143,7 @@ func TestGRPCRemoteExecutor_ExecuteOnNode(t *testing.T) {
 			Result: fmt.Sprintf("Remote execution: %s", input.Instruction),
 			Metadata: map[string]interface{}{
 				"executed_remotely": true,
-				"agent":            "remote-test-agent",
+				"agent":             "remote-test-agent",
 			},
 		}, nil
 	}))
@@ -198,6 +214,371 @@ func TestGRPCRemoteExecutor_ExecuteOnNode(t *testing.T) {
 	assert.Contains(t, output.Result.(string), "Remote execution: remote test instruction")
 	assert.Equal(t, true, output.Metadata["executed_remotely"])
 	assert.Equal(t, "remote-test-agent", output.Metadata["agent"])
+}
+
+func TestGRPCRemoteExecutor_ExecuteOnNode_StampsDispatchAuthority(t *testing.T) {
+	validator := staticAuthorityValidator{
+		validate: func(ctx context.Context, authority DispatchAuthority) error {
+			if authority.LeaderID != "cp-a" || authority.Epoch != "42" {
+				return fmt.Errorf("unexpected authority: %+v", authority)
+			}
+			return nil
+		},
+	}
+	mockAgentMgr := NewMockAgentManager()
+	mockAgentMgr.AddAgent(NewMockAgent("remote-test-agent", func(ctx context.Context, input *agent.AgentInput) (*agent.AgentOutput, error) {
+		return &agent.AgentOutput{Result: "ok"}, nil
+	}))
+
+	mockRegistry := NewMockRegistry()
+	mockRegistry.AddNode(registry.NodeInfo{
+		ID:      "remote-node",
+		Name:    "Remote Node",
+		Address: "localhost",
+		Port:    0,
+		Healthy: true,
+	})
+
+	service := NewRemoteExecutionService(mockRegistry, mockAgentMgr, "remote-node")
+	service.SetDispatchAuthorityValidator(validator)
+
+	server := grpc.NewServer()
+	proto.RegisterRemoteExecutionServiceServer(server, NewGRPCRemoteExecutionService(service))
+
+	lis, err := net.Listen("tcp", ":0")
+	require.NoError(t, err)
+	defer lis.Close()
+
+	go func() {
+		_ = server.Serve(lis)
+	}()
+
+	time.Sleep(100 * time.Millisecond)
+
+	testRegistry := NewMockRegistry()
+	testRegistry.AddNode(registry.NodeInfo{
+		ID:      "remote-node",
+		Name:    "Remote Node",
+		Address: "localhost",
+		Port:    int(lis.Addr().(*net.TCPAddr).Port),
+		Healthy: true,
+	})
+
+	executor := NewRemoteExecutor(testRegistry, 5*time.Second)
+	ctx := WithDispatchAuthority(context.Background(), DispatchAuthority{LeaderID: "cp-a", Epoch: "42"})
+
+	output, err := executor.ExecuteOnNode(ctx, "remote-node", "remote-test-agent", &agent.AgentInput{Instruction: "authority"})
+	require.NoError(t, err)
+	assert.Equal(t, "ok", output.Result)
+}
+
+func TestGRPCRemoteExecutor_ExecuteOnNode_RejectsMissingDispatchAuthority(t *testing.T) {
+	mockAgentMgr := NewMockAgentManager()
+	mockAgentMgr.AddAgent(NewMockAgent("remote-test-agent", func(ctx context.Context, input *agent.AgentInput) (*agent.AgentOutput, error) {
+		return &agent.AgentOutput{Result: "unexpected"}, nil
+	}))
+
+	mockRegistry := NewMockRegistry()
+	mockRegistry.AddNode(registry.NodeInfo{
+		ID:      "remote-node",
+		Name:    "Remote Node",
+		Address: "localhost",
+		Port:    0,
+		Healthy: true,
+	})
+
+	service := NewRemoteExecutionService(mockRegistry, mockAgentMgr, "remote-node")
+	service.SetDispatchAuthorityValidator(staticAuthorityValidator{
+		validate: func(ctx context.Context, authority DispatchAuthority) error {
+			if authority.LeaderID == "" || authority.Epoch == "" {
+				return fmt.Errorf("%w", ErrMissingDispatchAuthority)
+			}
+			return nil
+		},
+	})
+
+	server := grpc.NewServer()
+	proto.RegisterRemoteExecutionServiceServer(server, NewGRPCRemoteExecutionService(service))
+
+	lis, err := net.Listen("tcp", ":0")
+	require.NoError(t, err)
+	defer lis.Close()
+
+	go func() {
+		_ = server.Serve(lis)
+	}()
+
+	time.Sleep(100 * time.Millisecond)
+
+	testRegistry := NewMockRegistry()
+	testRegistry.AddNode(registry.NodeInfo{
+		ID:      "remote-node",
+		Name:    "Remote Node",
+		Address: "localhost",
+		Port:    int(lis.Addr().(*net.TCPAddr).Port),
+		Healthy: true,
+	})
+
+	executor := NewRemoteExecutor(testRegistry, 5*time.Second)
+	_, err = executor.ExecuteOnNode(context.Background(), "remote-node", "remote-test-agent", &agent.AgentInput{Instruction: "missing"})
+	require.Error(t, err)
+	if !errors.Is(err, ErrMissingDispatchAuthority) {
+		t.Fatalf("ExecuteOnNode error = %v, want %v", err, ErrMissingDispatchAuthority)
+	}
+}
+
+func TestRemoteExecutionService_RecordsWorkerDispatchRejectionMetric(t *testing.T) {
+	reg := prometheus.NewRegistry()
+	metrics := observability.NewMetricsWithRegistry("dagens_test", reg)
+	service := NewRemoteExecutionService(NewMockRegistry(), NewMockAgentManager(), "test-node")
+	service.SetMetrics(metrics)
+	service.SetDispatchAuthorityValidator(staticAuthorityValidator{
+		validate: func(ctx context.Context, authority DispatchAuthority) error {
+			return fmt.Errorf("%w", ErrStaleDispatchAuthority)
+		},
+	})
+
+	resp, err := service.Execute(context.Background(), &RemoteExecutionRequest{
+		AgentName: "agent",
+		Input:     &agent.AgentInput{Instruction: "metric"},
+		RequestID: "req-1",
+		Metadata:  map[string]interface{}{},
+	})
+	require.NoError(t, err)
+	assert.Contains(t, resp.Error, ErrStaleDispatchAuthority.Error())
+
+	families, err := reg.Gather()
+	require.NoError(t, err)
+	found := false
+	for _, fam := range families {
+		if fam.GetName() != "dagens_test_worker_dispatch_rejections_total" {
+			continue
+		}
+		for _, metric := range fam.GetMetric() {
+			labels := map[string]string{}
+			for _, lp := range metric.GetLabel() {
+				labels[lp.GetName()] = lp.GetValue()
+			}
+			if labels["reason"] == "stale_epoch" && metric.GetCounter().GetValue() == 1 {
+				found = true
+				break
+			}
+		}
+	}
+	if !found {
+		t.Fatal("expected worker dispatch rejection metric with reason=stale_epoch")
+	}
+}
+
+func TestRemoteExecutionService_RecordsMissingAuthorityDispatchRejectionMetric(t *testing.T) {
+	reg := prometheus.NewRegistry()
+	metrics := observability.NewMetricsWithRegistry("dagens_test", reg)
+	service := NewRemoteExecutionService(NewMockRegistry(), NewMockAgentManager(), "test-node")
+	service.SetMetrics(metrics)
+	service.SetDispatchAuthorityValidator(staticAuthorityValidator{
+		validate: func(ctx context.Context, authority DispatchAuthority) error {
+			return fmt.Errorf("%w", ErrMissingDispatchAuthority)
+		},
+	})
+
+	resp, err := service.Execute(context.Background(), &RemoteExecutionRequest{
+		AgentName: "agent",
+		Input:     &agent.AgentInput{Instruction: "metric"},
+		RequestID: "req-2",
+		Metadata:  map[string]interface{}{},
+	})
+	require.NoError(t, err)
+	assert.Contains(t, resp.Error, ErrMissingDispatchAuthority.Error())
+
+	families, err := reg.Gather()
+	require.NoError(t, err)
+	found := false
+	for _, fam := range families {
+		if fam.GetName() != "dagens_test_worker_dispatch_rejections_total" {
+			continue
+		}
+		for _, metric := range fam.GetMetric() {
+			labels := map[string]string{}
+			for _, lp := range metric.GetLabel() {
+				labels[lp.GetName()] = lp.GetValue()
+			}
+			if labels["reason"] == "missing_authority" && metric.GetCounter().GetValue() == 1 {
+				found = true
+				break
+			}
+		}
+	}
+	if !found {
+		t.Fatal("expected worker dispatch rejection metric with reason=missing_authority")
+	}
+}
+
+func TestEtcdDispatchAuthorityValidator_ValidatesCurrentLeaderEpoch(t *testing.T) {
+	_, endpoints := testutil.StartEmbeddedEtcd(t)
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   endpoints,
+		DialTimeout: 5 * time.Second,
+	})
+	require.NoError(t, err)
+	defer cli.Close()
+
+	const electionKey = "/test/remote/authority"
+	_, err = cli.Put(context.Background(), electionKey+"/leader", "cp-a")
+	require.NoError(t, err)
+	getResp, err := cli.Get(context.Background(), electionKey+"/", clientv3.WithPrefix())
+	require.NoError(t, err)
+	require.Len(t, getResp.Kvs, 1)
+
+	validator, err := NewEtcdDispatchAuthorityValidator(EtcdDispatchAuthorityValidatorConfig{
+		Endpoints:    endpoints,
+		ElectionKey:  electionKey,
+		DialTimeout:  5 * time.Second,
+		QueryTimeout: 250 * time.Millisecond,
+	})
+	require.NoError(t, err)
+	defer validator.Close()
+
+	current := DispatchAuthority{
+		LeaderID: "cp-a",
+		Epoch:    fmt.Sprintf("%d", getResp.Kvs[0].ModRevision),
+	}
+	require.NoError(t, validator.Validate(context.Background(), current))
+
+	stale := DispatchAuthority{
+		LeaderID: "cp-a",
+		Epoch:    "1",
+	}
+	err = validator.Validate(context.Background(), stale)
+	if !errors.Is(err, ErrStaleDispatchAuthority) {
+		t.Fatalf("Validate stale error = %v, want %v", err, ErrStaleDispatchAuthority)
+	}
+}
+
+func TestEtcdDispatchAuthorityValidator_RejectsStaleEpochAfterLeaderChange(t *testing.T) {
+	_, endpoints := testutil.StartEmbeddedEtcd(t)
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   endpoints,
+		DialTimeout: 5 * time.Second,
+	})
+	require.NoError(t, err)
+	defer cli.Close()
+
+	const electionKey = "/test/remote/failover"
+	_, err = cli.Put(context.Background(), electionKey+"/leader", "cp-a")
+	require.NoError(t, err)
+	firstResp, err := cli.Get(context.Background(), electionKey+"/", clientv3.WithPrefix())
+	require.NoError(t, err)
+	require.Len(t, firstResp.Kvs, 1)
+
+	validator, err := NewEtcdDispatchAuthorityValidator(EtcdDispatchAuthorityValidatorConfig{
+		Endpoints:    endpoints,
+		ElectionKey:  electionKey,
+		DialTimeout:  5 * time.Second,
+		QueryTimeout: 250 * time.Millisecond,
+	})
+	require.NoError(t, err)
+	defer validator.Close()
+
+	original := DispatchAuthority{
+		LeaderID: "cp-a",
+		Epoch:    fmt.Sprintf("%d", firstResp.Kvs[0].ModRevision),
+	}
+	require.NoError(t, validator.Validate(context.Background(), original))
+
+	_, err = cli.Put(context.Background(), electionKey+"/leader", "cp-b")
+	require.NoError(t, err)
+	secondResp, err := cli.Get(context.Background(), electionKey+"/", clientv3.WithPrefix())
+	require.NoError(t, err)
+	require.Len(t, secondResp.Kvs, 1)
+	require.Greater(t, secondResp.Kvs[0].ModRevision, firstResp.Kvs[0].ModRevision, "epoch should increment on leader change")
+
+	err = validator.Validate(context.Background(), original)
+	if !errors.Is(err, ErrStaleDispatchAuthority) {
+		t.Fatalf("Validate old authority error = %v, want %v", err, ErrStaleDispatchAuthority)
+	}
+
+	current := DispatchAuthority{
+		LeaderID: "cp-b",
+		Epoch:    fmt.Sprintf("%d", secondResp.Kvs[0].ModRevision),
+	}
+	require.NoError(t, validator.Validate(context.Background(), current))
+}
+
+func TestEtcdDispatchAuthorityValidator_ReturnsMissingAuthorityWhenNoLeaderKeyExists(t *testing.T) {
+	_, endpoints := testutil.StartEmbeddedEtcd(t)
+	validator, err := NewEtcdDispatchAuthorityValidator(EtcdDispatchAuthorityValidatorConfig{
+		Endpoints:    endpoints,
+		ElectionKey:  "/test/remote/missing-authority",
+		DialTimeout:  5 * time.Second,
+		QueryTimeout: 250 * time.Millisecond,
+	})
+	require.NoError(t, err)
+	defer validator.Close()
+
+	err = validator.Validate(context.Background(), DispatchAuthority{
+		LeaderID: "cp-a",
+		Epoch:    "42",
+	})
+	if !errors.Is(err, ErrMissingDispatchAuthority) {
+		t.Fatalf("Validate missing authority error = %v, want %v", err, ErrMissingDispatchAuthority)
+	}
+}
+
+func TestEtcdDispatchAuthorityValidator_AlwaysBoundsQueryWithQueryTimeout(t *testing.T) {
+	validator, err := NewEtcdDispatchAuthorityValidator(EtcdDispatchAuthorityValidatorConfig{
+		Endpoints:    []string{"http://127.0.0.1:1"},
+		ElectionKey:  "/test/remote/timeout",
+		DialTimeout:  50 * time.Millisecond,
+		QueryTimeout: 10 * time.Millisecond,
+	})
+	require.NoError(t, err)
+	defer validator.Close()
+
+	parentCtx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+	start := time.Now()
+	err = validator.Validate(parentCtx, DispatchAuthority{
+		LeaderID: "cp-a",
+		Epoch:    "42",
+	})
+	if err == nil {
+		t.Fatal("expected validate to fail against unreachable etcd endpoint")
+	}
+	if time.Since(start) > 50*time.Millisecond {
+		t.Fatalf("Validate exceeded expected timeout bound: %s", time.Since(start))
+	}
+}
+
+func TestAuthorityRejectionReason_ContextDeadlineExceeded(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond)
+	defer cancel()
+	<-ctx.Done()
+
+	reason := AuthorityRejectionReason(ctx.Err())
+	if reason != "network_timeout" {
+		t.Fatalf("AuthorityRejectionReason = %q, want %q", reason, "network_timeout")
+	}
+}
+
+func TestAuthorityRejectionReason_TransportErrors(t *testing.T) {
+	tests := []struct {
+		name string
+		err  error
+		want string
+	}{
+		{name: "connection refused", err: fmt.Errorf("connection refused"), want: "transport_error"},
+		{name: "connection reset", err: fmt.Errorf("connection reset by peer"), want: "transport_error"},
+		{name: "unavailable", err: fmt.Errorf("service unavailable"), want: "transport_error"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			reason := AuthorityRejectionReason(tt.err)
+			if reason != tt.want {
+				t.Fatalf("AuthorityRejectionReason(%v) = %q, want %q", tt.err, reason, tt.want)
+			}
+		})
+	}
 }
 
 // TestRemoteExecutor_ConnectionPooling tests connection reuse

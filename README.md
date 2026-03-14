@@ -6,6 +6,17 @@ Dagens is a distributed control plane with a dedicated execution-plane worker fa
 
 Designed as enterprise infrastructure with an OSS core, Dagens runs in fixed-topology mode or becomes cluster-aware via etcd-backed registry for dynamic scaling and health-based routing.
 
+## Security Notice
+
+The local Docker Compose and HA Compose environments are for development and drill validation only:
+
+- database credentials are hardcoded for localhost use
+- inter-service traffic is not TLS protected
+- authentication is disabled when `DEV_MODE=true`
+- HA helper ports are published on the host by default
+
+Do not expose these environments to untrusted networks.
+
 ## Why Dagens?
 
 Most agent frameworks are in-process orchestration layers. Dagens is a runtime substrate:
@@ -24,6 +35,7 @@ Control-plane saturation model (v0.2):
 
 Durability and recovery model (v0.2):
 - [State Machine](docs/STATE_MACHINE.md)
+- [Execution Model](docs/execution-model.md)
 - [Durability](docs/DURABILITY.md)
 - [Recovery Runbook](docs/RECOVERY_RUNBOOK.md)
 - [Control Plane HA Design](docs/CONTROL_PLANE_HA.md)

@@ -12,8 +12,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
+	"github.com/seyi/dagens/pkg/graph"
 	"github.com/seyi/dagens/pkg/hitl"
+	"github.com/seyi/dagens/pkg/scheduler"
 )
 
 const (
@@ -22,12 +25,23 @@ const (
 )
 
 type hitlCallbackRuntime struct {
-	path    string
-	handler http.Handler
-	close   func() error
+	path         string
+	handler      http.Handler
+	drillPath    string
+	drillHandler http.Handler
+	close        func() error
+	securityMgr  *hitl.SecurityManager
+	baseURL      string
+	checkpoints  hitl.CheckpointStore
 }
 
-func newHITLCallbackRuntimeFromEnv(ctx context.Context) (*hitlCallbackRuntime, error) {
+const (
+	hitlDrillGraphID      = "ha-hitl-drill"
+	hitlDrillGraphVersion = "v1"
+	defaultHITLDrillPath  = "/api/dev/hitl-failover-drill"
+)
+
+func newHITLCallbackRuntimeFromEnv(ctx context.Context, sched *scheduler.Scheduler) (*hitlCallbackRuntime, error) {
 	if !envBool("HITL_CALLBACK_ENABLED", false) {
 		return nil, nil
 	}
@@ -92,18 +106,75 @@ func newHITLCallbackRuntimeFromEnv(ctx context.Context) (*hitlCallbackRuntime, e
 
 	idStore := hitl.NewRedisIdempotencyStore(redisClient)
 	metrics := hitl.NewMetricsCollector().GetMetrics()
-	handler := hitl.NewCallbackHandler(queue, idStore, nil, []byte(secret), metrics)
+	checkpointDSN := strings.TrimSpace(envString("HITL_CHECKPOINT_POSTGRES_DSN", envString("SCHEDULER_TRANSITION_POSTGRES_DSN", envString("DATABASE_URL", ""))))
+	if checkpointDSN == "" {
+		_ = redisClient.Close()
+		return nil, fmt.Errorf("HITL callback runtime requires HITL_CHECKPOINT_POSTGRES_DSN, SCHEDULER_TRANSITION_POSTGRES_DSN, or DATABASE_URL")
+	}
+	pool, err := pgxpool.New(ctx, checkpointDSN)
+	if err != nil {
+		_ = redisClient.Close()
+		return nil, fmt.Errorf("failed to create HITL checkpoint pgx pool: %w", err)
+	}
+	checkpointStore, err := hitl.NewPostgresCheckpointStore(ctx, pool)
+	if err != nil {
+		pool.Close()
+		_ = redisClient.Close()
+		return nil, fmt.Errorf("failed to initialize HITL checkpoint store: %w", err)
+	}
+
+	registry := hitl.NewSimpleGraphRegistry()
+	if envBool("HITL_DRILL_ENABLED", false) {
+		registerHITLDrillGraph(registry, sched)
+	}
+
+	handler := hitl.NewCallbackHandler(queue, idStore, registry, []byte(secret), metrics)
 	path := strings.TrimSpace(envString("HITL_CALLBACK_PATH", defaultHITLCallbackPath))
 	if path == "" || path[0] != '/' {
+		pool.Close()
 		_ = redisClient.Close()
 		return nil, fmt.Errorf("HITL_CALLBACK_PATH must start with '/'")
 	}
 
-	return &hitlCallbackRuntime{
-		path:    path,
-		handler: newHITLCallbackHTTPHandler(handler),
-		close:   redisClient.Close,
-	}, nil
+	workerCount, err := envInt("HITL_RESUMPTION_WORKERS", 1)
+	if err != nil {
+		pool.Close()
+		_ = redisClient.Close()
+		return nil, err
+	}
+	if workerCount <= 0 {
+		workerCount = 1
+	}
+
+	securityMgr := hitl.NewSecurityManager([]byte(secret))
+	baseURL := strings.TrimSpace(envString("BASE_CALLBACK_URL", "http://localhost:8080"))
+
+	runtime := &hitlCallbackRuntime{
+		path:        path,
+		handler:     newHITLCallbackHTTPHandler(handler),
+		securityMgr: securityMgr,
+		baseURL:     baseURL,
+		checkpoints: checkpointStore,
+	}
+	if envBool("HITL_DRILL_ENABLED", false) {
+		runtime.drillPath = strings.TrimSpace(envString("HITL_DRILL_PATH", defaultHITLDrillPath))
+		if runtime.drillPath == "" || runtime.drillPath[0] != '/' {
+			pool.Close()
+			_ = redisClient.Close()
+			return nil, fmt.Errorf("HITL_DRILL_PATH must start with '/'")
+		}
+		runtime.drillHandler = newHITLFailoverDrillHandler(sched, checkpointStore, securityMgr, baseURL)
+	}
+
+	worker := hitl.NewResumptionWorker(queue, checkpointStore, idStore, registry, nil, metrics)
+	worker.Start(ctx, workerCount)
+	runtime.close = func() error {
+		worker.Stop()
+		pool.Close()
+		return redisClient.Close()
+	}
+
+	return runtime, nil
 }
 
 func newHITLCallbackHTTPHandler(callbackHandler *hitl.CallbackHandler) http.Handler {
@@ -177,7 +248,11 @@ func envInt(name string, fallback int) (int, error) {
 	if raw == "" {
 		return fallback, nil
 	}
-	return strconv.Atoi(raw)
+	val, err := strconv.Atoi(raw)
+	if err != nil {
+		return 0, fmt.Errorf("parsing env %s=%q: %w", name, raw, err)
+	}
+	return val, nil
 }
 
 func envDuration(name string, fallback time.Duration) (time.Duration, error) {
@@ -185,7 +260,11 @@ func envDuration(name string, fallback time.Duration) (time.Duration, error) {
 	if raw == "" {
 		return fallback, nil
 	}
-	return time.ParseDuration(raw)
+	val, err := time.ParseDuration(raw)
+	if err != nil {
+		return 0, fmt.Errorf("parsing env %s=%q: %w", name, raw, err)
+	}
+	return val, nil
 }
 
 func defaultConsumerID() string {
@@ -201,4 +280,51 @@ func redisTLSConfigFromEnv() *tls.Config {
 		return nil
 	}
 	return &tls.Config{MinVersion: tls.VersionTLS12}
+}
+
+func registerHITLDrillGraph(registry *hitl.SimpleGraphRegistry, sched *scheduler.Scheduler) {
+	if registry == nil || sched == nil {
+		return
+	}
+
+	g := graph.NewGraphWithConfig(graph.GraphConfig{
+		ID:   hitlDrillGraphID,
+		Name: "ha-hitl-drill",
+		Metadata: map[string]interface{}{
+			"graph_version": hitlDrillGraphVersion,
+		},
+	})
+	_ = g.AddNode(graph.NewFunctionNode("human", func(ctx context.Context, state graph.State) error { return nil }))
+	_ = g.AddNode(graph.NewFunctionNode("tail", func(ctx context.Context, state graph.State) error {
+		jobIDRaw, ok := state.Get("scheduler_job_id")
+		if !ok {
+			return fmt.Errorf("missing scheduler_job_id in drill state")
+		}
+		jobID, ok := jobIDRaw.(string)
+		if !ok || strings.TrimSpace(jobID) == "" {
+			return fmt.Errorf("invalid scheduler_job_id type %T", jobIDRaw)
+		}
+
+		selectedOption := ""
+		if raw, exists := state.Get(fmt.Sprintf(hitl.StateKeyHumanPendingFmt, "human")); exists {
+			payload, ok := raw.([]byte)
+			if !ok {
+				return fmt.Errorf("pending response payload type=%T, want []byte", raw)
+			}
+			var resp hitl.HumanResponse
+			if err := json.Unmarshal(payload, &resp); err != nil {
+				return fmt.Errorf("decode pending response: %w", err)
+			}
+			selectedOption = resp.SelectedOption
+		}
+
+		return sched.ResumeAwaitingHumanJob(ctx, jobID, map[string]interface{}{
+			"hitl_drill_resume_ready":       true,
+			"hitl_callback_selected_option": selectedOption,
+		})
+	}))
+	_ = g.AddEdge(graph.NewDirectEdge("human", "tail"))
+	_ = g.SetEntry("human")
+	_ = g.AddFinish("tail")
+	registry.RegisterExecutableGraph(g, hitlDrillGraphVersion)
 }

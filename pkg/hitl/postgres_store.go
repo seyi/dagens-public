@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"math/rand"
 	"time"
 
@@ -74,8 +75,9 @@ type PostgresCheckpointStore struct {
 }
 
 const (
-	checkpointTable    = "hitl_execution_checkpoints"
-	checkpointDLQTable = "hitl_checkpoint_dlq"
+	checkpointTable              = "hitl_execution_checkpoints"
+	checkpointDLQTable           = "hitl_checkpoint_dlq"
+	checkpointSchemaLockID int64 = 804240511337432100
 )
 
 // NewPostgresCheckpointStore creates a store backed by an existing pgx pool and
@@ -98,7 +100,24 @@ func NewPostgresCheckpointStoreFromURL(ctx context.Context, connString string) (
 	return NewPostgresCheckpointStore(ctx, pool)
 }
 
+// Close releases the underlying pgx pool owned by the store.
+func (s *PostgresCheckpointStore) Close() error {
+	if s != nil && s.pool != nil {
+		s.pool.Close()
+	}
+	return nil
+}
+
 func (s *PostgresCheckpointStore) ensureSchema(ctx context.Context) error {
+	if _, err := s.pool.Exec(ctx, "SELECT pg_advisory_lock($1)", checkpointSchemaLockID); err != nil {
+		return fmt.Errorf("acquire schema lock: %w", err)
+	}
+	defer func() {
+		if _, err := s.pool.Exec(context.Background(), "SELECT pg_advisory_unlock($1)", checkpointSchemaLockID); err != nil {
+			log.Printf("hitl: failed to release schema lock %d: %v", checkpointSchemaLockID, err)
+		}
+	}()
+
 	ddl := []string{
 		fmt.Sprintf(`
             CREATE TABLE IF NOT EXISTS %s (
@@ -415,6 +434,10 @@ func (s *PostgresCheckpointStore) ListOrphaned(olderThan time.Duration) ([]*Exec
 func (s *PostgresCheckpointStore) RecordFailure(requestID string, err error) (*ExecutionCheckpoint, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+	lastErr := ""
+	if err != nil {
+		lastErr = err.Error()
+	}
 
 	query := fmt.Sprintf(`
         UPDATE %s
@@ -424,7 +447,7 @@ func (s *PostgresCheckpointStore) RecordFailure(requestID string, err error) (*E
         WHERE request_id = $1
         RETURNING graph_id, graph_version, node_id, state_data, created_at, expires_at, trace_id, failure_count, last_error, last_attempt;`, checkpointTable)
 
-	row := s.pool.QueryRow(ctx, query, requestID, err.Error())
+	row := s.pool.QueryRow(ctx, query, requestID, lastErr)
 
 	var cp ExecutionCheckpoint
 	cp.RequestID = requestID
@@ -534,8 +557,10 @@ func (s *PostgresCheckpointStore) MoveToCheckpointDLQSerializable(requestID stri
 	})
 }
 
-// CreateOrUpdateSerializable creates a checkpoint if it doesn't exist, or returns an error
-// if it does. Uses SERIALIZABLE isolation to prevent race conditions in "check-then-act" patterns.
+// CreateOrUpdateSerializable is a legacy compatibility helper for create-if-absent
+// semantics under SERIALIZABLE isolation. It does not mutate an existing row; if a
+// checkpoint already exists, invariantCheck can validate it and the method returns
+// success without updating the stored checkpoint.
 func (s *PostgresCheckpointStore) CreateOrUpdateSerializable(cp *ExecutionCheckpoint, invariantCheck func(existing *ExecutionCheckpoint) error) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -610,6 +635,12 @@ func (s *PostgresCheckpointStore) CreateOrUpdateSerializable(cp *ExecutionCheckp
 
 		return nil
 	})
+}
+
+// CreateIfAbsentSerializable creates a checkpoint if it does not already exist and
+// validates any existing row with invariantCheck under SERIALIZABLE isolation.
+func (s *PostgresCheckpointStore) CreateIfAbsentSerializable(cp *ExecutionCheckpoint, invariantCheck func(existing *ExecutionCheckpoint) error) error {
+	return s.CreateOrUpdateSerializable(cp, invariantCheck)
 }
 
 func nullableTime(t time.Time) interface{} {

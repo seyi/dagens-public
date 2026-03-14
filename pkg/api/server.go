@@ -1,12 +1,17 @@
 package api
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/seyi/dagens/pkg/agent"
@@ -16,30 +21,74 @@ import (
 )
 
 const schedulerRetryAfterSeconds = "5"
+const schedulerLeaderRetryAfterSeconds = "1"
+const defaultForwardTimeout = 10 * time.Second
+const defaultMaxJobRequestBytes int64 = 2 << 20
+const authorityLookupTimeout = 2 * time.Second
+const authorityLookupAttempts = 3
+const authorityLookupRetryBase = 100 * time.Millisecond
 
 // Server provides an HTTP API for job submission and monitoring
 type Server struct {
-	scheduler            *scheduler.Scheduler
-	compiler             *graph.DAGCompiler
-	workerHeartbeatToken string
+	scheduler                   *scheduler.Scheduler
+	compiler                    *graph.DAGCompiler
+	workerHeartbeatToken        string
 	workerHeartbeatAuthRequired bool
+	leaderForwardURLs           map[string]string
+	controlPlaneID              string
+	httpClient                  *http.Client
 }
 
 // NewServer creates a new API server
 func NewServer(sched *scheduler.Scheduler) *Server {
 	return &Server{
-		scheduler: sched,
-		compiler:  graph.NewDAGCompiler(),
-		workerHeartbeatToken: os.Getenv("WORKER_HEARTBEAT_TOKEN"),
+		scheduler:                   sched,
+		compiler:                    graph.NewDAGCompiler(),
+		workerHeartbeatToken:        os.Getenv("WORKER_HEARTBEAT_TOKEN"),
 		workerHeartbeatAuthRequired: os.Getenv("DEV_MODE") != "true",
+		leaderForwardURLs:           parseLeaderForwardURLs(os.Getenv("SCHEDULER_LEADER_FORWARD_URLS")),
+		controlPlaneID:              strings.TrimSpace(os.Getenv("CONTROL_PLANE_ID")),
+		httpClient:                  &http.Client{Timeout: forwardTimeoutFromEnv()},
 	}
 }
 
 // SubmitJobHandler handles job submission requests
 func (s *Server) SubmitJobHandler(w http.ResponseWriter, r *http.Request) {
+	r.Body = http.MaxBytesReader(w, r.Body, maxJobRequestBytes())
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		status := http.StatusBadRequest
+		message := "Failed to read request body"
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			status = http.StatusRequestEntityTooLarge
+			message = "Request body too large"
+		}
+		http.Error(w, message, status)
+		return
+	}
+
 	var req JobSubmissionRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	if err := json.NewDecoder(bytes.NewReader(body)).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	authority, err := s.resolveDispatchAuthority(r.Context())
+	if err != nil {
+		w.Header().Set("Retry-After", schedulerLeaderRetryAfterSeconds)
+		http.Error(w, "Submission temporarily unavailable: leadership status unavailable", http.StatusServiceUnavailable)
+		return
+	}
+	if !authority.IsLeader {
+		if s.tryForwardToLeader(w, r, body, authority) {
+			return
+		}
+		w.Header().Set("Retry-After", schedulerLeaderRetryAfterSeconds)
+		if authority.LeaderID != "" {
+			w.Header().Set("X-Dagens-Leader-ID", authority.LeaderID)
+		}
+		http.Error(w, "Submission temporarily unavailable: scheduler follower mode", http.StatusServiceUnavailable)
 		return
 	}
 
@@ -65,13 +114,13 @@ func (s *Server) SubmitJobHandler(w http.ResponseWriter, r *http.Request) {
 			if nodeDef.Name != "" {
 				fnNode.SetName(nodeDef.Name)
 			}
-			
+
 			// Apply metadata
 			for k, v := range nodeDef.Metadata {
 				fnNode.SetMetadata(k, v)
 			}
 			node = fnNode
-			
+
 		case "parallel":
 			// Fallback for V1
 			node = graph.NewFunctionNode(nodeDef.ID, nil)
@@ -149,10 +198,145 @@ func (s *Server) SubmitJobHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
+func (s *Server) tryForwardToLeader(w http.ResponseWriter, r *http.Request, body []byte, authority scheduler.LeadershipAuthority) bool {
+	if authority.LeaderID == "" {
+		return false
+	}
+	targetBase := strings.TrimSpace(s.leaderForwardURLs[authority.LeaderID])
+	if targetBase == "" || r.Header.Get("X-Dagens-Forwarded-By") != "" {
+		return false
+	}
+
+	targetURL := strings.TrimRight(targetBase, "/") + r.URL.Path
+	if r.URL.RawQuery != "" {
+		targetURL += "?" + r.URL.RawQuery
+	}
+
+	req, err := http.NewRequestWithContext(r.Context(), r.Method, targetURL, bytes.NewReader(body))
+	if err != nil {
+		return false
+	}
+	req.Header = filteredForwardHeaders(r.Header)
+	req.Header.Set("X-Dagens-Forwarded-By", s.controlPlaneID)
+	req.Host = ""
+
+	resp, err := s.httpClient.Do(req)
+	if err != nil {
+		return false
+	}
+	defer resp.Body.Close()
+
+	copyHeaders(w.Header(), resp.Header)
+	w.WriteHeader(resp.StatusCode)
+	_, _ = io.Copy(w, resp.Body)
+	return true
+}
+
+func parseLeaderForwardURLs(raw string) map[string]string {
+	result := make(map[string]string)
+	for _, entry := range strings.Split(raw, ",") {
+		entry = strings.TrimSpace(entry)
+		if entry == "" {
+			continue
+		}
+		parts := strings.SplitN(entry, "=", 2)
+		if len(parts) != 2 {
+			continue
+		}
+		leaderID := strings.TrimSpace(parts[0])
+		baseURL := strings.TrimSpace(parts[1])
+		if leaderID == "" || baseURL == "" {
+			continue
+		}
+		result[leaderID] = baseURL
+	}
+	return result
+}
+
+func filteredForwardHeaders(src http.Header) http.Header {
+	dst := make(http.Header)
+	for key, values := range src {
+		if shouldDropForwardHeader(key) {
+			continue
+		}
+		for _, value := range values {
+			dst.Add(key, value)
+		}
+	}
+	return dst
+}
+
+func shouldDropForwardHeader(name string) bool {
+	switch http.CanonicalHeaderKey(name) {
+	case "Connection", "Proxy-Connection", "Keep-Alive", "Transfer-Encoding", "Te", "Trailer", "Upgrade",
+		"Host", "Content-Length", "Cookie", "Set-Cookie", "X-Dagens-Worker-Token":
+		return true
+	default:
+		return false
+	}
+}
+
+func copyHeaders(dst, src http.Header) {
+	for key, values := range src {
+		dst.Del(key)
+		for _, value := range values {
+			dst.Add(key, value)
+		}
+	}
+}
+
+func forwardTimeoutFromEnv() time.Duration {
+	raw := strings.TrimSpace(os.Getenv("API_FORWARD_TIMEOUT"))
+	if raw == "" {
+		return defaultForwardTimeout
+	}
+	timeout, err := time.ParseDuration(raw)
+	if err != nil || timeout <= 0 {
+		log.Printf("Warning: invalid API_FORWARD_TIMEOUT %q: %v; using default %s", raw, err, defaultForwardTimeout)
+		return defaultForwardTimeout
+	}
+	return timeout
+}
+
+func maxJobRequestBytes() int64 {
+	raw := strings.TrimSpace(os.Getenv("API_MAX_JOB_REQUEST_BYTES"))
+	if raw == "" {
+		return defaultMaxJobRequestBytes
+	}
+	value, err := strconv.ParseInt(raw, 10, 64)
+	if err != nil || value <= 0 {
+		log.Printf("Warning: invalid API_MAX_JOB_REQUEST_BYTES %q: %v; using default %d", raw, err, defaultMaxJobRequestBytes)
+		return defaultMaxJobRequestBytes
+	}
+	return value
+}
+
+func (s *Server) resolveDispatchAuthority(ctx context.Context) (scheduler.LeadershipAuthority, error) {
+	var authority scheduler.LeadershipAuthority
+	var lastErr error
+	for attempt := 0; attempt < authorityLookupAttempts; attempt++ {
+		authorityCtx, cancel := context.WithTimeout(ctx, authorityLookupTimeout)
+		authority, lastErr = s.scheduler.CurrentDispatchAuthority(authorityCtx)
+		cancel()
+		if lastErr == nil {
+			return authority, nil
+		}
+		if attempt == authorityLookupAttempts-1 {
+			break
+		}
+		select {
+		case <-ctx.Done():
+			return scheduler.LeadershipAuthority{}, ctx.Err()
+		case <-time.After(authorityLookupRetryBase * time.Duration(1<<attempt)):
+		}
+	}
+	return scheduler.LeadershipAuthority{}, lastErr
+}
+
 // ListJobsHandler returns all jobs
 func (s *Server) ListJobsHandler(w http.ResponseWriter, r *http.Request) {
 	jobs := s.scheduler.GetAllJobs()
-	
+
 	// Convert to simplified response if needed, or return full jobs
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(jobs)

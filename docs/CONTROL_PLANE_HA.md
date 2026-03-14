@@ -23,6 +23,10 @@ Current implementation progress in v0.2:
 - dispatch claims are fenced via state-guarded CAS before worker RPC
 - scoped authority helper supports validated scope annotation (`IsValidScope`)
 - integration coverage exists for etcd authority and scoped annotation paths
+- failover drill now includes durable integrity checks for non-terminal canary tasks
+- drill SQL checks are scoped to current run (`DRILL_ID` + start timestamp)
+- planned shutdown path performs best-effort explicit leader resignation before exit
+- scheduler supports optional critical webhook alerts for recovery/leadership startup failures
 
 Target state for v0.2+:
 
@@ -356,6 +360,11 @@ On controlled shutdown (for example rolling deploy):
 
 This reduces ambiguity versus crash-based takeover.
 
+Current v0.2 implementation note:
+
+- scheduler leader election stop path attempts explicit etcd resign
+- resign timeout is configurable/derived and still degrades safely to lease-expiry fallback if resign fails
+
 ### HITL Pause/Resume Under HA
 
 HITL safety requirements during failover:
@@ -400,6 +409,7 @@ HA state transitions must be visible.
 - leadership lost
 - leader change detected
 - dispatch blocked because instance is not leader
+- alert webhook delivery failures (when configured)
 
 ### Required Metrics
 
@@ -472,6 +482,8 @@ For the current implementation slice:
 3. **Pre-dispatch record**: persist dispatch transition (with attempt + leader token) before worker RPC.
 4. **Stale dispatch rejection**: state-guarded CAS + idempotency constraints.
 5. **Token format**: monotonic epoch with leader identity.
+6. **Planned handoff behavior**: best-effort explicit resign on scheduler stop before lease-expiry fallback.
+7. **Drill integrity scope**: run-scoped SQL checks (`DRILL_ID`, start timestamp) plus non-terminal durable task validation.
 
 ## Backpressure Under HA
 
@@ -492,6 +504,9 @@ Read this alongside:
 - `docs/DURABILITY.md`
 - `docs/FAILURE_SEMANTICS.md`
 - `docs/RECOVERY_RUNBOOK.md`
+
+Operational alerting and drill verification details are defined in
+`docs/RECOVERY_RUNBOOK.md`.
 
 Backpressure limits overload.
 Scheduling policy defines task placement.

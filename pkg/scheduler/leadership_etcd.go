@@ -15,11 +15,12 @@ import (
 
 // EtcdLeadershipProviderConfig configures etcd-backed leadership checks.
 type EtcdLeadershipProviderConfig struct {
-	Endpoints   []string
-	ElectionKey string
-	Identity    string
-	SessionTTL  int
-	DialTimeout time.Duration
+	Endpoints     []string
+	ElectionKey   string
+	Identity      string
+	SessionTTL    int
+	ResignTimeout time.Duration
+	DialTimeout   time.Duration
 }
 
 // EtcdLeadershipProvider campaigns for leadership and reports dispatch authority.
@@ -59,10 +60,11 @@ func NewEtcdLeadershipProvider(cfg EtcdLeadershipProviderConfig) (*EtcdLeadershi
 	}
 
 	elector, err := coordination.NewLeaderElector(coordination.LeaderElectionConfig{
-		Client:     client,
-		Key:        cfg.ElectionKey,
-		Identity:   cfg.Identity,
-		SessionTTL: cfg.SessionTTL,
+		Client:        client,
+		Key:           cfg.ElectionKey,
+		Identity:      cfg.Identity,
+		SessionTTL:    cfg.SessionTTL,
+		ResignTimeout: cfg.ResignTimeout,
 	})
 	if err != nil {
 		client.Close()
