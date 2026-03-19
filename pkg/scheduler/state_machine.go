@@ -192,6 +192,20 @@ type DurableTaskLookupStore interface {
 	ListTasksByJob(ctx context.Context, jobID string) ([]DurableTaskRecord, error)
 }
 
+// ReplayBatchLookupStore is an optional replay optimization surface for
+// loading transitions and durable task snapshots for multiple jobs in bulk.
+//
+// Implementations must return records grouped by job ID with the same ordering
+// guarantees as the single-job methods:
+//   - transitions ordered by sequence_id ascending
+//   - tasks ordered by task_id ascending
+//   - every requested job ID present in both returned maps, even when the
+//     corresponding slice is empty
+type ReplayBatchLookupStore interface {
+	ListTransitionsByJobs(ctx context.Context, jobIDs []string) (map[string][]TransitionRecord, error)
+	ListTasksByJobs(ctx context.Context, jobIDs []string) (map[string][]DurableTaskRecord, error)
+}
+
 var validJobTransitions = map[JobLifecycleState]map[JobLifecycleState]struct{}{
 	JobStateSubmitted: {
 		JobStateQueued: {},

@@ -497,6 +497,20 @@ func TestExecuteJob_UsesProvidedContextForSpan(t *testing.T) {
 	}
 }
 
+func TestNewSchedulerWithBenchmarkQueueCapacityAllowsOverride(t *testing.T) {
+	cfg := DefaultSchedulerConfig()
+	cfg.JobQueueSize = 20000
+
+	s := NewSchedulerWithBenchmarkQueueCapacity(nil, nil, cfg, SchedulerDependencies{}, 20000)
+
+	if got := cap(s.jobQueue); got != 20000 {
+		t.Fatalf("jobQueue capacity = %d, want 20000", got)
+	}
+	if got := s.config.JobQueueSize; got != 20000 {
+		t.Fatalf("config.JobQueueSize = %d, want 20000", got)
+	}
+}
+
 func TestReconcileDurableQueuedJobsOnce_LeaderRequeuesQueuedJob(t *testing.T) {
 	store := NewInMemoryTransitionStore()
 	seedDurableQueuedJobForReconcileTest(t, store, "job-durable-queued")

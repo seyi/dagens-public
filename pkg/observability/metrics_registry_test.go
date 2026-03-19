@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/seyi/dagens/pkg/retention"
 )
 
 func TestNewMetricsWithRegistrySupportsIsolatedRegistries(t *testing.T) {
@@ -133,5 +134,94 @@ func TestRecordSchedulerReconcileSucceededPublishesModeLabel(t *testing.T) {
 	}
 	if !foundGauge {
 		t.Fatal("expected scheduler last reconcile timestamp gauge to be updated")
+	}
+}
+
+func TestSetTransitionRetentionSnapshotPublishesVisibilityGauges(t *testing.T) {
+	reg := prometheus.NewRegistry()
+	metrics := NewMetricsWithRegistry("dagens_test", reg)
+
+	metrics.SetTransitionRetentionSnapshot(retention.VisibilitySnapshot{
+		UnfinishedJobs: 3,
+		TerminalBuckets: []retention.TerminalAgeBucket{
+			{Label: "lt_7d", Jobs: 7},
+			{Label: "gte_90d", Jobs: 2},
+		},
+		EligibleArchive: retention.EligibleArchiveStats{
+			HotRetentionDays: 14,
+			Jobs:             5,
+			TransitionRows:   40,
+			TaskRows:         12,
+			SequenceRows:     5,
+		},
+	})
+
+	families, err := reg.Gather()
+	if err != nil {
+		t.Fatalf("gather failed: %v", err)
+	}
+
+	foundUnfinished := false
+	foundBucket := false
+	foundEligibleJobs := false
+	foundEligibleRows := false
+	foundRefresh := false
+	for _, fam := range families {
+		switch fam.GetName() {
+		case "dagens_test_transition_retention_unfinished_jobs":
+			for _, metric := range fam.GetMetric() {
+				if metric.GetGauge().GetValue() == 3 {
+					foundUnfinished = true
+				}
+			}
+		case "dagens_test_transition_retention_terminal_jobs":
+			for _, metric := range fam.GetMetric() {
+				labels := map[string]string{}
+				for _, lp := range metric.GetLabel() {
+					labels[lp.GetName()] = lp.GetValue()
+				}
+				if labels["bucket"] == "lt_7d" && metric.GetGauge().GetValue() == 7 {
+					foundBucket = true
+				}
+			}
+		case "dagens_test_transition_retention_eligible_jobs":
+			for _, metric := range fam.GetMetric() {
+				if metric.GetGauge().GetValue() == 5 {
+					foundEligibleJobs = true
+				}
+			}
+		case "dagens_test_transition_retention_eligible_rows":
+			for _, metric := range fam.GetMetric() {
+				labels := map[string]string{}
+				for _, lp := range metric.GetLabel() {
+					labels[lp.GetName()] = lp.GetValue()
+				}
+				if labels["table"] == "scheduler_job_transitions" && metric.GetGauge().GetValue() == 40 {
+					foundEligibleRows = true
+				}
+			}
+		case "dagens_test_transition_retention_last_refresh_timestamp_seconds":
+			for _, metric := range fam.GetMetric() {
+				if metric.GetGauge().GetValue() > 0 {
+					foundRefresh = true
+				}
+			}
+		}
+	}
+
+	if !foundUnfinished {
+		t.Fatal("expected unfinished jobs gauge to be published")
+	}
+	if !foundBucket {
+		t.Fatal("expected terminal bucket gauge to be published")
+	}
+	if !foundEligibleJobs {
+		t.Fatal("expected eligible jobs gauge to be published")
+	}
+	if !foundEligibleRows {
+		t.Fatal("expected eligible rows gauge to be published")
+	}
+	if !foundRefresh {
+		t.Fatal("expected retention refresh timestamp gauge to be published")
 	}
 }

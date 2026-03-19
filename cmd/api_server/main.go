@@ -12,11 +12,13 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/seyi/dagens/pkg/api"
 	"github.com/seyi/dagens/pkg/auth"
 	"github.com/seyi/dagens/pkg/observability"
 	"github.com/seyi/dagens/pkg/registry"
 	"github.com/seyi/dagens/pkg/remote"
+	"github.com/seyi/dagens/pkg/retention"
 	"github.com/seyi/dagens/pkg/scheduler"
 	"github.com/seyi/dagens/pkg/secrets"
 	"github.com/seyi/dagens/pkg/telemetry"
@@ -302,6 +304,7 @@ func main() {
 	if transitionBackend == "" {
 		transitionBackend = "memory"
 	}
+	var closeTransitionRetentionMetrics func()
 
 	switch transitionBackend {
 	case "memory":
@@ -325,6 +328,49 @@ func main() {
 		}
 		closeTransitionStore = store.Close
 		log.Println("Using PostgreSQL scheduler transition store")
+
+		hotRetentionDays := 14
+		if raw := strings.TrimSpace(os.Getenv("SCHEDULER_TRANSITION_HOT_RETENTION_DAYS")); raw != "" {
+			parsed, err := strconv.Atoi(raw)
+			if err != nil {
+				log.Fatalf("Invalid SCHEDULER_TRANSITION_HOT_RETENTION_DAYS: %v", err)
+			}
+			if err := validateIntEnv("SCHEDULER_TRANSITION_HOT_RETENTION_DAYS", parsed, 1, 3650); err != nil {
+				log.Fatal(err)
+			}
+			hotRetentionDays = parsed
+		}
+
+		retentionMetricsInterval := 5 * time.Minute
+		if raw := strings.TrimSpace(os.Getenv("SCHEDULER_TRANSITION_RETENTION_METRICS_INTERVAL")); raw != "" {
+			parsed, err := time.ParseDuration(raw)
+			if err != nil {
+				log.Fatalf("Invalid SCHEDULER_TRANSITION_RETENTION_METRICS_INTERVAL: %v", err)
+			}
+			if err := validateDurationEnv("SCHEDULER_TRANSITION_RETENTION_METRICS_INTERVAL", parsed, 10*time.Second, 24*time.Hour); err != nil {
+				log.Fatal(err)
+			}
+			retentionMetricsInterval = parsed
+		}
+
+		retentionMetricsRefreshTimeout := 15 * time.Second
+		if raw := strings.TrimSpace(os.Getenv("SCHEDULER_TRANSITION_RETENTION_METRICS_REFRESH_TIMEOUT")); raw != "" {
+			parsed, err := time.ParseDuration(raw)
+			if err != nil {
+				log.Fatalf("Invalid SCHEDULER_TRANSITION_RETENTION_METRICS_REFRESH_TIMEOUT: %v", err)
+			}
+			if err := validateDurationEnv("SCHEDULER_TRANSITION_RETENTION_METRICS_REFRESH_TIMEOUT", parsed, time.Second, 10*time.Minute); err != nil {
+				log.Fatal(err)
+			}
+			retentionMetricsRefreshTimeout = parsed
+		}
+
+		closeTransitionRetentionMetrics, err = startTransitionRetentionMetricsPoller(dsn, hotRetentionDays, retentionMetricsInterval, retentionMetricsRefreshTimeout, observability.GetMetrics())
+		if err != nil {
+			log.Printf("Warning: failed to start transition retention metrics poller: %v", err)
+		} else {
+			log.Printf("Transition retention metrics enabled (hot_retention_days=%d interval=%s refresh_timeout=%s)", hotRetentionDays, retentionMetricsInterval, retentionMetricsRefreshTimeout)
+		}
 	default:
 		log.Fatalf("Unsupported SCHEDULER_TRANSITION_STORE value: %q", transitionBackend)
 	}
@@ -398,10 +444,94 @@ func main() {
 	// 3) transition store close
 	sched.Stop()
 	realExec.Close()
+	if closeTransitionRetentionMetrics != nil {
+		closeTransitionRetentionMetrics()
+	}
 	if closeTransitionStore != nil {
 		closeTransitionStore()
 	}
 	log.Println("Server exiting")
+}
+
+type retentionVisibilityQuery func(ctx context.Context) (retention.VisibilitySnapshot, error)
+
+func startTransitionRetentionMetricsPoller(dsn string, hotRetentionDays int, interval, refreshTimeout time.Duration, metrics *observability.Metrics) (func(), error) {
+	ctx, cancel := context.WithCancel(context.Background())
+	pool, err := pgxpool.New(ctx, dsn)
+	if err != nil {
+		cancel()
+		return nil, fmt.Errorf("create retention metrics pool: %w", err)
+	}
+
+	closePoller := runTransitionRetentionMetricsPoller(
+		ctx,
+		interval,
+		refreshTimeout,
+		metrics,
+		func(refreshCtx context.Context) (retention.VisibilitySnapshot, error) {
+			return retention.QueryVisibilitySnapshot(refreshCtx, pool, hotRetentionDays)
+		},
+		func(format string, args ...interface{}) {
+			log.Printf(format, args...)
+		},
+	)
+
+	return func() {
+		cancel()
+		closePoller()
+		pool.Close()
+	}, nil
+}
+
+func runTransitionRetentionMetricsPoller(
+	ctx context.Context,
+	interval time.Duration,
+	refreshTimeout time.Duration,
+	metrics *observability.Metrics,
+	query retentionVisibilityQuery,
+	logf func(format string, args ...interface{}),
+) func() {
+	if logf == nil {
+		logf = func(string, ...interface{}) {}
+	}
+	safeRefresh := func() {
+		defer func() {
+			if r := recover(); r != nil {
+				metrics.RecordTransitionRetentionRefreshFailure()
+				logf("transition retention metrics refresh panic: %v", r)
+			}
+		}()
+
+		refreshCtx, refreshCancel := context.WithTimeout(ctx, refreshTimeout)
+		defer refreshCancel()
+
+		snapshot, err := query(refreshCtx)
+		if err != nil {
+			metrics.RecordTransitionRetentionRefreshFailure()
+			logf("transition retention metrics refresh failed: %v", err)
+			return
+		}
+		metrics.SetTransitionRetentionSnapshot(snapshot)
+	}
+
+	safeRefresh()
+
+	ticker := time.NewTicker(interval)
+	done := make(chan struct{})
+	go func() {
+		defer ticker.Stop()
+		defer close(done)
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				safeRefresh()
+			}
+		}
+	}()
+
+	return func() { <-done }
 }
 
 func validateIntEnv(name string, value, min, max int) error {

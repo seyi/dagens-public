@@ -16,6 +16,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/seyi/dagens/pkg/retention"
 )
 
 // Metrics holds all Prometheus metrics for the framework
@@ -73,6 +74,12 @@ type Metrics struct {
 	SchedulerRecoveryDuration            prometheus.Histogram
 	SchedulerReconcileRuns               *prometheus.CounterVec
 	SchedulerLastReconcileTimestamp      prometheus.Gauge
+	TransitionRetentionUnfinishedJobs    prometheus.Gauge
+	TransitionRetentionTerminalJobs      *prometheus.GaugeVec
+	TransitionRetentionEligibleJobs      prometheus.Gauge
+	TransitionRetentionEligibleRows      *prometheus.GaugeVec
+	TransitionRetentionLastRefresh       prometheus.Gauge
+	TransitionRetentionRefreshFailures   prometheus.Counter
 	WorkerHeartbeatsReceived             prometheus.Counter
 	WorkerHeartbeatsSucceeded            prometheus.Counter
 	WorkerHeartbeatAuthFailed            prometheus.Counter
@@ -507,6 +514,56 @@ func NewMetricsWithRegistry(namespace string, reg prometheus.Registerer) *Metric
 		},
 	)
 
+	m.TransitionRetentionUnfinishedJobs = auto.NewGauge(
+		prometheus.GaugeOpts{
+			Namespace: namespace,
+			Name:      "transition_retention_unfinished_jobs",
+			Help:      "Current number of unfinished durable jobs retained in the primary replay store",
+		},
+	)
+
+	m.TransitionRetentionTerminalJobs = auto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: namespace,
+			Name:      "transition_retention_terminal_jobs",
+			Help:      "Current number of terminal durable jobs by age bucket",
+		},
+		[]string{"bucket"},
+	)
+
+	m.TransitionRetentionEligibleJobs = auto.NewGauge(
+		prometheus.GaugeOpts{
+			Namespace: namespace,
+			Name:      "transition_retention_eligible_jobs",
+			Help:      "Current number of terminal jobs eligible for archive under the configured hot-retention policy",
+		},
+	)
+
+	m.TransitionRetentionEligibleRows = auto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: namespace,
+			Name:      "transition_retention_eligible_rows",
+			Help:      "Current number of primary-store rows eligible for archive by table",
+		},
+		[]string{"table"},
+	)
+
+	m.TransitionRetentionLastRefresh = auto.NewGauge(
+		prometheus.GaugeOpts{
+			Namespace: namespace,
+			Name:      "transition_retention_last_refresh_timestamp_seconds",
+			Help:      "Unix timestamp of the last successful transition-retention metrics refresh",
+		},
+	)
+
+	m.TransitionRetentionRefreshFailures = auto.NewCounter(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "transition_retention_refresh_failures_total",
+			Help:      "Total number of failed transition-retention metrics refresh attempts",
+		},
+	)
+
 	m.WorkerHeartbeatsReceived = auto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
@@ -803,6 +860,25 @@ func (m *Metrics) RecordSchedulerRecoveryDuration(duration time.Duration) {
 func (m *Metrics) RecordSchedulerReconcileSucceeded(mode string) {
 	m.SchedulerReconcileRuns.WithLabelValues(mode).Inc()
 	m.SchedulerLastReconcileTimestamp.SetToCurrentTime()
+}
+
+// SetTransitionRetentionSnapshot publishes transition-retention visibility gauges.
+func (m *Metrics) SetTransitionRetentionSnapshot(snapshot retention.VisibilitySnapshot) {
+	m.TransitionRetentionUnfinishedJobs.Set(float64(snapshot.UnfinishedJobs))
+	for _, bucket := range snapshot.TerminalBuckets {
+		m.TransitionRetentionTerminalJobs.WithLabelValues(bucket.Label).Set(float64(bucket.Jobs))
+	}
+	m.TransitionRetentionEligibleJobs.Set(float64(snapshot.EligibleArchive.Jobs))
+	m.TransitionRetentionEligibleRows.WithLabelValues("scheduler_job_transitions").Set(float64(snapshot.EligibleArchive.TransitionRows))
+	m.TransitionRetentionEligibleRows.WithLabelValues("scheduler_durable_tasks").Set(float64(snapshot.EligibleArchive.TaskRows))
+	m.TransitionRetentionEligibleRows.WithLabelValues("scheduler_job_sequences").Set(float64(snapshot.EligibleArchive.SequenceRows))
+	m.TransitionRetentionEligibleRows.WithLabelValues("scheduler_durable_jobs").Set(float64(snapshot.EligibleArchive.Jobs))
+	m.TransitionRetentionLastRefresh.SetToCurrentTime()
+}
+
+// RecordTransitionRetentionRefreshFailure records a failed retention metrics refresh.
+func (m *Metrics) RecordTransitionRetentionRefreshFailure() {
+	m.TransitionRetentionRefreshFailures.Inc()
 }
 
 // RecordWorkerHeartbeatReceived records that a worker heartbeat request was received.

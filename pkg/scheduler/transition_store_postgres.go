@@ -74,6 +74,7 @@ func (s *PostgresTransitionStore) ensureSchema(ctx context.Context) error {
 				updated_at TIMESTAMPTZ NOT NULL
 			);`, durableJobsTable),
 		fmt.Sprintf(`ALTER TABLE %s ADD COLUMN IF NOT EXISTS last_sequence_id BIGINT NOT NULL DEFAULT 0;`, durableJobsTable),
+		fmt.Sprintf(`CREATE INDEX IF NOT EXISTS idx_%s_unfinished_created_at ON %s (created_at, job_id) WHERE current_state NOT IN ('SUCCEEDED','FAILED','CANCELED');`, durableJobsTable, durableJobsTable),
 		fmt.Sprintf(`
 			CREATE TABLE IF NOT EXISTS %s (
 				task_id TEXT PRIMARY KEY,
@@ -331,7 +332,7 @@ func (s *PostgresTransitionStore) ListUnfinishedJobs(ctx context.Context) ([]Dur
 		SELECT job_id, name, current_state, last_sequence_id, created_at, updated_at
 		FROM %s
 		WHERE current_state NOT IN ('SUCCEEDED','FAILED','CANCELED')
-		ORDER BY created_at ASC;`, durableJobsTable)
+		ORDER BY created_at ASC, job_id ASC;`, durableJobsTable)
 
 	rows, err := s.pool.Query(ctx, query)
 	if err != nil {
@@ -403,6 +404,56 @@ func (s *PostgresTransitionStore) ListTransitionsByJob(ctx context.Context, jobI
 	return out, nil
 }
 
+func (s *PostgresTransitionStore) ListTransitionsByJobs(ctx context.Context, jobIDs []string) (map[string][]TransitionRecord, error) {
+	result := make(map[string][]TransitionRecord, len(jobIDs))
+	if len(jobIDs) == 0 {
+		return result, nil
+	}
+
+	query := fmt.Sprintf(`
+		SELECT sequence_id, entity_type, transition, job_id, task_id, previous_state,
+		       new_state, node_id, attempt, error_summary, occurred_at
+		FROM %s
+		WHERE job_id = ANY($1)
+		ORDER BY job_id ASC, sequence_id ASC;`, jobTransitionsTable)
+
+	rows, err := s.pool.Query(ctx, query, jobIDs)
+	if err != nil {
+		return nil, fmt.Errorf("list transitions by jobs: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var record TransitionRecord
+		var seq int64
+		var entityType string
+		var transition string
+		if err := rows.Scan(
+			&seq,
+			&entityType,
+			&transition,
+			&record.JobID,
+			&record.TaskID,
+			&record.PreviousState,
+			&record.NewState,
+			&record.NodeID,
+			&record.Attempt,
+			&record.ErrorSummary,
+			&record.OccurredAt,
+		); err != nil {
+			return nil, fmt.Errorf("scan transition by jobs: %w", err)
+		}
+		record.SequenceID = uint64(seq)
+		record.EntityType = TransitionEntityType(entityType)
+		record.Transition = TransitionType(transition)
+		result[record.JobID] = append(result[record.JobID], record)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate transitions by jobs: %w", err)
+	}
+	return result, nil
+}
+
 func (s *PostgresTransitionStore) ListTasksByJob(ctx context.Context, jobID string) ([]DurableTaskRecord, error) {
 	query := fmt.Sprintf(`
 		SELECT task_id, job_id, stage_id, node_id, agent_id, agent_name, input_json, partition_key, current_state, last_attempt, updated_at
@@ -442,4 +493,49 @@ func (s *PostgresTransitionStore) ListTasksByJob(ctx context.Context, jobID stri
 		return nil, fmt.Errorf("iterate tasks by job: %w", err)
 	}
 	return out, nil
+}
+
+func (s *PostgresTransitionStore) ListTasksByJobs(ctx context.Context, jobIDs []string) (map[string][]DurableTaskRecord, error) {
+	result := make(map[string][]DurableTaskRecord, len(jobIDs))
+	if len(jobIDs) == 0 {
+		return result, nil
+	}
+
+	query := fmt.Sprintf(`
+		SELECT task_id, job_id, stage_id, node_id, agent_id, agent_name, input_json, partition_key, current_state, last_attempt, updated_at
+		FROM %s
+		WHERE job_id = ANY($1)
+		ORDER BY job_id ASC, task_id ASC;`, durableTasksTable)
+
+	rows, err := s.pool.Query(ctx, query, jobIDs)
+	if err != nil {
+		return nil, fmt.Errorf("list tasks by jobs: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var task DurableTaskRecord
+		var state string
+		if err := rows.Scan(
+			&task.TaskID,
+			&task.JobID,
+			&task.StageID,
+			&task.NodeID,
+			&task.AgentID,
+			&task.AgentName,
+			&task.InputJSON,
+			&task.PartitionKey,
+			&state,
+			&task.LastAttempt,
+			&task.UpdatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("scan task by jobs: %w", err)
+		}
+		task.CurrentState = TaskLifecycleState(state)
+		result[task.JobID] = append(result[task.JobID], task)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate tasks by jobs: %w", err)
+	}
+	return result, nil
 }

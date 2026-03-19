@@ -53,12 +53,44 @@ func ReplayStateFromStore(ctx context.Context, store TransitionStore) ([]Replaye
 		return nil, err
 	}
 
+	var (
+		batchedTransitions map[string][]TransitionRecord
+		batchedTasks       map[string][]DurableTaskRecord
+	)
+	if batchStore, ok := store.(ReplayBatchLookupStore); ok && len(jobs) > 0 {
+		jobIDs := make([]string, 0, len(jobs))
+		for _, job := range jobs {
+			jobIDs = append(jobIDs, job.JobID)
+		}
+		batchedTransitions, err = batchStore.ListTransitionsByJobs(ctx, jobIDs)
+		if err != nil {
+			return nil, err
+		}
+		batchedTasks, err = batchStore.ListTasksByJobs(ctx, jobIDs)
+		if err != nil {
+			return nil, err
+		}
+		for _, jobID := range jobIDs {
+			if _, ok := batchedTransitions[jobID]; !ok {
+				return nil, fmt.Errorf("batched replay transitions missing job %s", jobID)
+			}
+			if _, ok := batchedTasks[jobID]; !ok {
+				return nil, fmt.Errorf("batched replay tasks missing job %s", jobID)
+			}
+		}
+	}
+
 	result := make([]ReplayedJobState, 0, len(jobs))
 	for _, job := range jobs {
 		if err := ctx.Err(); err != nil {
 			return nil, err
 		}
-		replayed, err := ReplayJobState(ctx, store, job.JobID)
+		var replayed ReplayedJobState
+		if batchedTransitions != nil {
+			replayed, err = replayJobStateFromData(ctx, job.JobID, batchedTransitions[job.JobID], batchedTasks[job.JobID])
+		} else {
+			replayed, err = ReplayJobState(ctx, store, job.JobID)
+		}
 		if err != nil {
 			return nil, &ReplayJobError{JobID: job.JobID, Err: err}
 		}
@@ -107,6 +139,18 @@ func ReplayJobState(ctx context.Context, store TransitionStore, jobID string) (R
 		return ReplayedJobState{}, err
 	}
 
+	var durableTasks []DurableTaskRecord
+	if taskLookup, ok := store.(DurableTaskLookupStore); ok {
+		durableTasks, err = taskLookup.ListTasksByJob(ctx, jobID)
+		if err != nil {
+			return ReplayedJobState{}, fmt.Errorf("list durable tasks by job: %w", err)
+		}
+	}
+
+	return replayJobStateFromData(ctx, jobID, transitions, durableTasks)
+}
+
+func replayJobStateFromData(ctx context.Context, jobID string, transitions []TransitionRecord, durableTasks []DurableTaskRecord) (ReplayedJobState, error) {
 	state := ReplayedJobState{
 		Job: DurableJobRecord{
 			JobID: jobID,
@@ -114,25 +158,19 @@ func ReplayJobState(ctx context.Context, store TransitionStore, jobID string) (R
 		Tasks:       make(map[string]DurableTaskRecord),
 		Transitions: transitions,
 	}
-	if taskLookup, ok := store.(DurableTaskLookupStore); ok {
-		durableTasks, err := taskLookup.ListTasksByJob(ctx, jobID)
-		if err != nil {
-			return ReplayedJobState{}, fmt.Errorf("list durable tasks by job: %w", err)
-		}
-		for _, task := range durableTasks {
-			// Seed static execution payload fields from durable task snapshots,
-			// but keep lifecycle fields empty so transition history remains the
-			// sole source of ordering/state truth during replay.
-			state.Tasks[task.TaskID] = DurableTaskRecord{
-				TaskID:       task.TaskID,
-				JobID:        task.JobID,
-				StageID:      task.StageID,
-				NodeID:       task.NodeID,
-				AgentID:      task.AgentID,
-				AgentName:    task.AgentName,
-				InputJSON:    task.InputJSON,
-				PartitionKey: task.PartitionKey,
-			}
+	for _, task := range durableTasks {
+		// Seed static execution payload fields from durable task snapshots,
+		// but keep lifecycle fields empty so transition history remains the
+		// sole source of ordering/state truth during replay.
+		state.Tasks[task.TaskID] = DurableTaskRecord{
+			TaskID:       task.TaskID,
+			JobID:        task.JobID,
+			StageID:      task.StageID,
+			NodeID:       task.NodeID,
+			AgentID:      task.AgentID,
+			AgentName:    task.AgentName,
+			InputJSON:    task.InputJSON,
+			PartitionKey: task.PartitionKey,
 		}
 	}
 

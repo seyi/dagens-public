@@ -8,6 +8,80 @@ import (
 	"time"
 )
 
+type replayBatchCaptureStore struct {
+	*InMemoryTransitionStore
+	transitionsCalls int
+	tasksCalls       int
+	singleCalls      int
+}
+
+func (s *replayBatchCaptureStore) ListTransitionsByJobs(_ context.Context, jobIDs []string) (map[string][]TransitionRecord, error) {
+	s.transitionsCalls++
+	out := make(map[string][]TransitionRecord, len(jobIDs))
+	for _, jobID := range jobIDs {
+		records, err := s.InMemoryTransitionStore.ListTransitionsByJob(context.Background(), jobID)
+		if err != nil {
+			return nil, err
+		}
+		out[jobID] = records
+	}
+	return out, nil
+}
+
+func (s *replayBatchCaptureStore) ListTasksByJobs(_ context.Context, jobIDs []string) (map[string][]DurableTaskRecord, error) {
+	s.tasksCalls++
+	out := make(map[string][]DurableTaskRecord, len(jobIDs))
+	for _, jobID := range jobIDs {
+		tasks, err := s.InMemoryTransitionStore.ListTasksByJob(context.Background(), jobID)
+		if err != nil {
+			return nil, err
+		}
+		out[jobID] = tasks
+	}
+	return out, nil
+}
+
+func (s *replayBatchCaptureStore) ListTransitionsByJob(ctx context.Context, jobID string) ([]TransitionRecord, error) {
+	s.singleCalls++
+	return s.InMemoryTransitionStore.ListTransitionsByJob(ctx, jobID)
+}
+
+type replayBatchMissingKeyStore struct {
+	*InMemoryTransitionStore
+	omitTransitionsFor string
+	omitTasksFor       string
+}
+
+func (s *replayBatchMissingKeyStore) ListTransitionsByJobs(_ context.Context, jobIDs []string) (map[string][]TransitionRecord, error) {
+	out := make(map[string][]TransitionRecord, len(jobIDs))
+	for _, jobID := range jobIDs {
+		if jobID == s.omitTransitionsFor {
+			continue
+		}
+		records, err := s.InMemoryTransitionStore.ListTransitionsByJob(context.Background(), jobID)
+		if err != nil {
+			return nil, err
+		}
+		out[jobID] = records
+	}
+	return out, nil
+}
+
+func (s *replayBatchMissingKeyStore) ListTasksByJobs(_ context.Context, jobIDs []string) (map[string][]DurableTaskRecord, error) {
+	out := make(map[string][]DurableTaskRecord, len(jobIDs))
+	for _, jobID := range jobIDs {
+		if jobID == s.omitTasksFor {
+			continue
+		}
+		tasks, err := s.InMemoryTransitionStore.ListTasksByJob(context.Background(), jobID)
+		if err != nil {
+			return nil, err
+		}
+		out[jobID] = tasks
+	}
+	return out, nil
+}
+
 func TestReplayJobStateReconstructsCurrentState(t *testing.T) {
 	store := NewInMemoryTransitionStore()
 	now := time.Now().UTC()
@@ -178,6 +252,86 @@ func TestReplayStateFromStoreReturnsOnlyUnfinishedJobs(t *testing.T) {
 	if replayed[0].Job.JobID != "job-1" {
 		t.Fatalf("replayed job id = %q, want %q", replayed[0].Job.JobID, "job-1")
 	}
+}
+
+func TestReplayStateFromStoreUsesBatchLookupWhenAvailable(t *testing.T) {
+	store := &replayBatchCaptureStore{InMemoryTransitionStore: NewInMemoryTransitionStore()}
+	now := time.Now().UTC()
+
+	records := []TransitionRecord{
+		{SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-a", NewState: string(JobStateSubmitted), OccurredAt: now},
+		{SequenceID: 2, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: "job-a", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(time.Second)},
+		{SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-b", NewState: string(JobStateSubmitted), OccurredAt: now},
+		{SequenceID: 2, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: "job-b", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(time.Second)},
+	}
+	for _, record := range records {
+		if err := store.AppendTransition(context.Background(), record); err != nil {
+			t.Fatalf("AppendTransition unexpected error: %v", err)
+		}
+	}
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{JobID: "job-a", CurrentState: JobStateQueued, CreatedAt: now, UpdatedAt: now}); err != nil {
+		t.Fatalf("UpsertJob job-a unexpected error: %v", err)
+	}
+	if err := store.UpsertJob(context.Background(), DurableJobRecord{JobID: "job-b", CurrentState: JobStateQueued, CreatedAt: now, UpdatedAt: now}); err != nil {
+		t.Fatalf("UpsertJob job-b unexpected error: %v", err)
+	}
+
+	replayed, err := ReplayStateFromStore(context.Background(), store)
+	if err != nil {
+		t.Fatalf("ReplayStateFromStore unexpected error: %v", err)
+	}
+	if len(replayed) != 2 {
+		t.Fatalf("replayed job count = %d, want 2", len(replayed))
+	}
+	if store.transitionsCalls != 1 || store.tasksCalls != 1 {
+		t.Fatalf("batch lookup calls = transitions:%d tasks:%d, want 1 each", store.transitionsCalls, store.tasksCalls)
+	}
+	if store.singleCalls != 0 {
+		t.Fatalf("single-job transition lookups = %d, want 0", store.singleCalls)
+	}
+}
+
+func TestReplayStateFromStoreFailsWhenBatchLookupOmitsRequestedJob(t *testing.T) {
+	now := time.Now().UTC()
+	buildStore := func() *replayBatchMissingKeyStore {
+		store := &replayBatchMissingKeyStore{InMemoryTransitionStore: NewInMemoryTransitionStore()}
+		records := []TransitionRecord{
+			{SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-a", NewState: string(JobStateSubmitted), OccurredAt: now},
+			{SequenceID: 2, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: "job-a", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(time.Second)},
+			{SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-b", NewState: string(JobStateSubmitted), OccurredAt: now},
+			{SequenceID: 2, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: "job-b", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(time.Second)},
+		}
+		for _, record := range records {
+			if err := store.AppendTransition(context.Background(), record); err != nil {
+				t.Fatalf("AppendTransition unexpected error: %v", err)
+			}
+		}
+		if err := store.UpsertJob(context.Background(), DurableJobRecord{JobID: "job-a", CurrentState: JobStateQueued, CreatedAt: now, UpdatedAt: now}); err != nil {
+			t.Fatalf("UpsertJob job-a unexpected error: %v", err)
+		}
+		if err := store.UpsertJob(context.Background(), DurableJobRecord{JobID: "job-b", CurrentState: JobStateQueued, CreatedAt: now, UpdatedAt: now}); err != nil {
+			t.Fatalf("UpsertJob job-b unexpected error: %v", err)
+		}
+		return store
+	}
+
+	t.Run("missing transitions key", func(t *testing.T) {
+		store := buildStore()
+		store.omitTransitionsFor = "job-b"
+		_, err := ReplayStateFromStore(context.Background(), store)
+		if err == nil || !strings.Contains(err.Error(), "batched replay transitions missing job job-b") {
+			t.Fatalf("ReplayStateFromStore error = %v, want missing transitions key error", err)
+		}
+	})
+
+	t.Run("missing tasks key", func(t *testing.T) {
+		store := buildStore()
+		store.omitTasksFor = "job-b"
+		_, err := ReplayStateFromStore(context.Background(), store)
+		if err == nil || !strings.Contains(err.Error(), "batched replay tasks missing job job-b") {
+			t.Fatalf("ReplayStateFromStore error = %v, want missing tasks key error", err)
+		}
+	})
 }
 
 func TestReplayJobStateEmptyHistory(t *testing.T) {

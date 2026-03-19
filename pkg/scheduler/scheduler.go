@@ -117,7 +117,22 @@ func NewSchedulerWithConfig(reg registry.Registry, executor TaskExecutor, config
 // NewSchedulerWithConfigAndDeps creates a scheduler with explicit dependencies.
 func NewSchedulerWithConfigAndDeps(reg registry.Registry, executor TaskExecutor, config SchedulerConfig, deps SchedulerDependencies) *Scheduler {
 	config.Validate()
+	return newSchedulerWithValidatedConfig(reg, executor, config, deps)
+}
 
+// NewSchedulerWithBenchmarkQueueCapacity creates a scheduler using normal config
+// validation, then applies an explicit benchmark-only queue override. This keeps
+// production constructor semantics unchanged while allowing scale harnesses to
+// exercise larger admission buffers deliberately.
+func NewSchedulerWithBenchmarkQueueCapacity(reg registry.Registry, executor TaskExecutor, config SchedulerConfig, deps SchedulerDependencies, queueCapacity int) *Scheduler {
+	config.Validate()
+	if queueCapacity > 0 {
+		config.JobQueueSize = queueCapacity
+	}
+	return newSchedulerWithValidatedConfig(reg, executor, config, deps)
+}
+
+func newSchedulerWithValidatedConfig(reg registry.Registry, executor TaskExecutor, config SchedulerConfig, deps SchedulerDependencies) *Scheduler {
 	var affinityMap *AffinityMap
 	if config.EnableStickiness {
 		affinityMap = NewAffinityMap(config.AffinityTTL, config.AffinityCleanupInterval)
