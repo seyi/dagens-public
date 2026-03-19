@@ -118,16 +118,10 @@ That would reintroduce internal assessments and generated `docs/localhost:6060/`
 
 ## Step 4: Tighten `.gitignore` in the public repo
 
-Append these rules to the public repo's `.gitignore`:
+Append a hygiene block to the public repo's `.gitignore` that excludes:
 
 ```gitignore
-.claude/
-.cursor/
-.grok/
-.quint/
-.mcp.json
-.zen_context_export.md
-.zen_continuations.md
+# hidden local tooling/session artifacts
 .gocache/
 docs/localhost:6060/
 payload*.json
@@ -147,13 +141,6 @@ Run this check inside the new public repo:
 ```bash
 cd /data/repos/dagens-public
 
-test ! -e .claude
-test ! -e .cursor
-test ! -e .grok
-test ! -e .quint
-test ! -e .mcp.json
-test ! -e .zen_context_export.md
-test ! -e .zen_continuations.md
 test ! -e docs/localhost:6060
 test ! -e quint-code-modified
 test ! -e github.com
@@ -251,14 +238,7 @@ If you prefer a single broad directory copy and trust the exclude list, use:
 rsync -a \
   --exclude '.git/' \
   --exclude '.gocache/' \
-  --exclude '.claude/' \
-  --exclude '.cursor/' \
-  --exclude '.grok/' \
-  --exclude '.quint/' \
   --exclude 'vendor/' \
-  --exclude '.mcp.json' \
-  --exclude '.zen_context_export.md' \
-  --exclude '.zen_continuations.md' \
   --exclude 'docs/localhost:6060/' \
   --exclude 'quint-code-modified/' \
   --exclude 'github.com/' \

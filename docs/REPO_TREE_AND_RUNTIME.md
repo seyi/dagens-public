@@ -10,8 +10,6 @@ This document summarizes:
 
 Top-level directories in this repo:
 
-- `.claude` - local assistant/tooling config
-- `.cursor` - editor/tooling config
 - `.github` - CI/CD workflows and repo automation
 - `bin` - built binaries and CLI wrappers
 - `cmd` - executable entrypoints (`api_server`, `worker`, `agent-server`, demos/loadtest)
@@ -25,6 +23,7 @@ Top-level directories in this repo:
 - `tests` - end-to-end and load tests
 - `vendor` - vendored Go dependencies
 - `web` - dashboard/web UI assets
+- hidden local tooling/state directories may also exist in private working copies, but they are not part of the public runtime layout
 - `github.com`, `quint-code-modified`, `~` - imported/experimental or auxiliary trees in this workspace
 
 ## Execution Model: How It Runs Today

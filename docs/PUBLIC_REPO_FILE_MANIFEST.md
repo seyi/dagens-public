@@ -60,15 +60,11 @@ These top-level paths are appropriate for the public repo.
 
 These top-level paths or file classes should not be part of the public repo.
 
-### Local tooling / assistant state
+### Local tooling / session state
 
-- `.claude/`
-- `.cursor/`
-- `.grok/`
-- `.quint/`
-- `.mcp.json`
-- `.zen_context_export.md`
-- `.zen_continuations.md`
+- hidden local tooling directories
+- editor/copilot session state
+- machine-specific MCP/session export files
 
 ### VCS and local cache
 
@@ -234,16 +230,10 @@ Optional:
 
 If you publish from this repo instead of a new one, update `.gitignore` to prevent reintroducing local clutter.
 
-At minimum, add:
+At minimum, add rules that exclude:
 
 ```gitignore
-.claude/
-.cursor/
-.grok/
-.quint/
-.mcp.json
-.zen_context_export.md
-.zen_continuations.md
+# hidden local tooling/session artifacts
 .gocache/
 docs/localhost:6060/
 payload*.json
