@@ -22,6 +22,7 @@ LEADER_STOP_CMD="${LEADER_STOP_CMD:-}"
 DATABASE_URL="${DATABASE_URL:-${SCHEDULER_TRANSITION_POSTGRES_DSN:-}}"
 DRILL_ID="${DRILL_ID:-$(date -u +%Y%m%dT%H%M%SZ)-$$}"
 DRILL_START_EPOCH="$(date +%s)"
+REQUIRE_SUCCESS_TERMINAL="${REQUIRE_SUCCESS_TERMINAL:-false}"
 
 command -v curl >/dev/null 2>&1 || { echo "curl is required"; exit 1; }
 command -v jq >/dev/null 2>&1 || { echo "jq is required"; exit 1; }
@@ -85,6 +86,7 @@ echo "JOB_COUNT=${JOB_COUNT}"
 echo "DRILL_TIMEOUT_SECONDS=${DRILL_TIMEOUT_SECONDS}"
 echo "POLL_INTERVAL_SECONDS=${POLL_INTERVAL_SECONDS}"
 echo "DRILL_ID=${DRILL_ID}"
+echo "REQUIRE_SUCCESS_TERMINAL=${REQUIRE_SUCCESS_TERMINAL}"
 if [[ -n "${LEADER_STOP_CMD}" ]]; then
   echo "LEADER_STOP_CMD is set"
 else
@@ -162,13 +164,18 @@ done
 
 echo "Final canary job states:"
 failed_terminal=0
+failed_success=0
 timed_out_job_ids=()
+unsuccessful_job_ids=()
 for id in "${job_ids[@]}"; do
   st="${final_status[${id}]:-TIMEOUT}"
   echo "  ${id}: ${st}"
   if [[ "${st}" == "TIMEOUT" ]]; then
     failed_terminal=1
     timed_out_job_ids+=("${id}")
+  elif [[ "${REQUIRE_SUCCESS_TERMINAL}" == "true" && "${st}" != "COMPLETED" && "${st}" != "SUCCEEDED" ]]; then
+    failed_success=1
+    unsuccessful_job_ids+=("${id}:${st}")
   fi
 done
 
@@ -253,6 +260,11 @@ if [[ ${failed_terminal} -ne 0 ]]; then
     done
   fi
   echo "FAIL: one or more canary jobs did not reach a terminal state before timeout."
+  exit 1
+fi
+if [[ ${failed_success} -ne 0 ]]; then
+  echo "FAIL: one or more canary jobs reached a non-success terminal state."
+  printf '  %s\n' "${unsuccessful_job_ids[@]}"
   exit 1
 fi
 if [[ ${fencing_violation} -ne 0 ]]; then

@@ -168,6 +168,7 @@ JOB_COUNT="${JOB_COUNT}" \
 DRILL_TIMEOUT_SECONDS="${DRILL_TIMEOUT_SECONDS}" \
 DATABASE_URL="${DATABASE_URL}" \
 LEADER_STOP_CMD="${leader_stop_cmd}" \
+REQUIRE_SUCCESS_TERMINAL="true" \
 DRILL_ID="mixed-version-$(date -u +%Y%m%dT%H%M%SZ)" \
 bash scripts/failover_drill.sh | tee "${EVIDENCE_ROOT}/failover-drill.txt" || {
   FAILED=1
