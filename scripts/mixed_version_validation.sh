@@ -25,12 +25,16 @@ COMPOSE_BASE="${COMPOSE_BASE:-docker-compose.yml}"
 COMPOSE_HA="${COMPOSE_HA:-deploy/ha/docker-compose.ha.yml}"
 COMPOSE_MIXED="${COMPOSE_MIXED:-deploy/ha/docker-compose.mixed-version.yml}"
 API_URL="${API_URL:-http://localhost:18083}"
+API_A_URL="${API_A_URL:-http://localhost:${HA_API_A_PORT:-18081}}"
+API_B_URL="${API_B_URL:-http://localhost:${HA_API_B_PORT:-18082}}"
 DATABASE_URL="${DATABASE_URL:-postgres://postgres:postgres@localhost:55432/dagens?sslmode=disable}"
 JOB_COUNT="${JOB_COUNT:-3}"
 DRILL_TIMEOUT_SECONDS="${DRILL_TIMEOUT_SECONDS:-180}"
 STACK_READY_TIMEOUT_SECONDS="${STACK_READY_TIMEOUT_SECONDS:-180}"
 POLL_INTERVAL_SECONDS="${POLL_INTERVAL_SECONDS:-2}"
 WORKER_REGISTRY_WAIT_TIMEOUT_SECONDS="${WORKER_REGISTRY_WAIT_TIMEOUT_SECONDS:-60}"
+SCHEDULER_READINESS_WAIT_TIMEOUT_SECONDS="${SCHEDULER_READINESS_WAIT_TIMEOUT_SECONDS:-30}"
+EXPECTED_HEALTHY_WORKERS="${EXPECTED_HEALTHY_WORKERS:-2}"
 EVIDENCE_ROOT="${EVIDENCE_ROOT:-/tmp/dagens-mixed-version-validation-$(date -u +%Y%m%dT%H%M%SZ)}"
 FAILED=0
 
@@ -135,6 +139,29 @@ wait_for_worker_registry_entries() {
   return 1
 }
 
+wait_for_scheduler_readiness() {
+  local base_url="$1"
+  local deadline=$(( $(date +%s) + SCHEDULER_READINESS_WAIT_TIMEOUT_SECONDS ))
+
+  while [[ $(date +%s) -lt ${deadline} ]]; do
+    local resp=""
+    resp="$(curl -fsS "${base_url}/v1/internal/scheduler_readiness" 2>/dev/null || true)"
+    if [[ -n "${resp}" ]]; then
+      local recovering=""
+      local healthy_workers=""
+      recovering="$(printf '%s' "${resp}" | jq -r '.IsRecovering // .is_recovering // empty' 2>/dev/null || true)"
+      healthy_workers="$(printf '%s' "${resp}" | jq -r '.HealthyWorkerCount // .healthy_worker_count // empty' 2>/dev/null || true)"
+      if [[ "${recovering}" == "false" && "${healthy_workers}" =~ ^[0-9]+$ && "${healthy_workers}" -ge "${EXPECTED_HEALTHY_WORKERS}" ]]; then
+        return 0
+      fi
+    fi
+    sleep "${POLL_INTERVAL_SECONDS}"
+  done
+
+  echo "error: scheduler readiness did not converge for ${base_url} within ${SCHEDULER_READINESS_WAIT_TIMEOUT_SECONDS}s" >&2
+  return 1
+}
+
 cleanup() {
   if [[ ${FAILED} -ne 0 ]]; then
     capture_compose_diagnostics "${EVIDENCE_ROOT}/failure"
@@ -172,6 +199,8 @@ capture_compose_diagnostics "${EVIDENCE_ROOT}/initial"
 leader_stop_cmd=""
 etcd_cid="$("${compose_cmd[@]}" ps -q etcd)"
 wait_for_worker_registry_entries "${etcd_cid}" || { FAILED=1; exit 1; }
+wait_for_scheduler_readiness "${API_A_URL}" || { FAILED=1; exit 1; }
+wait_for_scheduler_readiness "${API_B_URL}" || { FAILED=1; exit 1; }
 api_a_cid="$("${compose_cmd[@]}" ps -q api-server)"
 api_b_cid="$("${compose_cmd[@]}" ps -q api-server-b)"
 leader_id="$(

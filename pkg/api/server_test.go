@@ -89,6 +89,29 @@ func TestSubmitJobHandlerReturnsRetryAfterWhenQueueIsFull(t *testing.T) {
 	}
 }
 
+func TestSchedulerReadinessHandlerReturnsHealthyWorkerCount(t *testing.T) {
+	sched := scheduler.NewSchedulerWithConfig(nil, nil, scheduler.SchedulerConfig{
+		JobQueueSize: 1,
+	})
+	server := NewServer(sched)
+
+	req := httptest.NewRequest(http.MethodGet, "/v1/internal/scheduler_readiness", nil)
+	rec := httptest.NewRecorder()
+	server.SchedulerReadinessHandler(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("response code = %d, want %d", rec.Code, http.StatusOK)
+	}
+
+	var readiness scheduler.SchedulerReadiness
+	if err := json.NewDecoder(rec.Body).Decode(&readiness); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if readiness.HealthyWorkerCount != 0 {
+		t.Fatalf("HealthyWorkerCount = %d, want 0", readiness.HealthyWorkerCount)
+	}
+}
+
 func TestSubmitJobHandlerRejectsFollowerScheduler(t *testing.T) {
 	sched := scheduler.NewSchedulerWithConfig(nil, nil, scheduler.SchedulerConfig{
 		JobQueueSize: 1,

@@ -184,7 +184,7 @@ func (s *Scheduler) resumeRecoveredQueuedJobsLocked(recoveredJobs []*Job) (int, 
 			})
 			continue
 		}
-		if missingTaskFields := recoveredQueuedMissingExecutionFieldCount(job, s.config.EnableStickiness); missingTaskFields > 0 {
+		if missingTaskFields := recoveredQueuedMissingExecutionFieldCount(job); missingTaskFields > 0 {
 			// Recovery intentionally rebuilds visibility-first task state only. We
 			// warn here to make it explicit when queued auto-resume proceeds with
 			// tasks that do not carry full execution payload fields.
@@ -313,7 +313,7 @@ func isSafeForQueuedResume(job *Job) bool {
 	return true
 }
 
-func recoveredQueuedMissingExecutionFieldCount(job *Job, stickinessRequired bool) int {
+func recoveredQueuedMissingExecutionFieldCount(job *Job) int {
 	if job == nil {
 		return 0
 	}
@@ -327,8 +327,11 @@ func recoveredQueuedMissingExecutionFieldCount(job *Job, stickinessRequired bool
 				continue
 			}
 			missingExecutionFields := task.AgentID == "" || task.AgentName == "" || task.Input == nil
-			missingStickinessField := stickinessRequired && task.PartitionKey == ""
-			if missingExecutionFields || missingStickinessField {
+			// PartitionKey is optional for ordinary jobs even when stickiness is
+			// enabled globally. Replay safety only requires enough execution
+			// payload to rerun the task; lack of a sticky key should degrade to
+			// non-sticky routing, not block auto-resume entirely.
+			if missingExecutionFields {
 				missing++
 			}
 		}

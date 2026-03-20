@@ -361,6 +361,17 @@ func (s *Server) GetJobHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(job)
 }
 
+// SchedulerReadinessHandler returns the scheduler's current local readiness view.
+func (s *Server) SchedulerReadinessHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(s.scheduler.Readiness())
+}
+
 // UpdateWorkerCapacityHandler accepts worker heartbeats with capacity snapshots.
 func (s *Server) UpdateWorkerCapacityHandler(w http.ResponseWriter, r *http.Request) {
 	metrics := observability.GetMetrics()
@@ -452,6 +463,7 @@ func (s *Server) Routes() http.Handler {
 		}
 	})
 
+	mux.HandleFunc("/v1/internal/scheduler_readiness", s.SchedulerReadinessHandler)
 	mux.HandleFunc("/v1/internal/worker_capacity", s.UpdateWorkerCapacityHandler)
 
 	// Wrap in CORS middleware

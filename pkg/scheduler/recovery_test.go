@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/seyi/dagens/pkg/agent"
 )
 
 func TestRecoverFromTransitionsRebuildsVisibilityState(t *testing.T) {
@@ -545,6 +547,28 @@ func TestIsSafeForQueuedResume_HandlesNilComponents(t *testing.T) {
 	}
 	if !isSafeForQueuedResume(jobWithNilTask) {
 		t.Fatal("job with nil task should be treated as safe when no unsafe task states are present")
+	}
+}
+
+func TestRecoveredQueuedMissingExecutionFieldCount_DoesNotRequirePartitionKey(t *testing.T) {
+	job := &Job{
+		LifecycleState: JobStateQueued,
+		Stages: []*Stage{
+			{
+				Tasks: []*Task{
+					{
+						AgentID:      "start",
+						AgentName:    "Start",
+						Input:        &agent.AgentInput{Instruction: "resume without sticky key"},
+						PartitionKey: "",
+					},
+				},
+			},
+		},
+	}
+
+	if got := recoveredQueuedMissingExecutionFieldCount(job); got != 0 {
+		t.Fatalf("recoveredQueuedMissingExecutionFieldCount() = %d, want 0", got)
 	}
 }
 
