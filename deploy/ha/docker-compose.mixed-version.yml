@@ -1,0 +1,16 @@
+services:
+  api-server:
+    image: "${MIXED_VERSION_API_IMAGE_A:?set MIXED_VERSION_API_IMAGE_A}"
+    build: null
+
+  api-server-b:
+    image: "${MIXED_VERSION_API_IMAGE_B:?set MIXED_VERSION_API_IMAGE_B}"
+    build: null
+
+  worker-1:
+    image: "${MIXED_VERSION_WORKER_IMAGE_A:?set MIXED_VERSION_WORKER_IMAGE_A}"
+    build: null
+
+  worker-2:
+    image: "${MIXED_VERSION_WORKER_IMAGE_B:?set MIXED_VERSION_WORKER_IMAGE_B}"
+    build: null

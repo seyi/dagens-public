@@ -13,6 +13,7 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/seyi/dagens/pkg/observability"
+	"github.com/seyi/dagens/pkg/registry"
 	"github.com/seyi/dagens/pkg/scheduler"
 )
 
@@ -58,6 +59,27 @@ func (p *retryLeadershipProvider) DispatchAuthority(context.Context) (scheduler.
 	return p.authority, nil
 }
 
+type staticRegistry struct {
+	healthy []registry.NodeInfo
+}
+
+func (r staticRegistry) GetHealthyNodes() []registry.NodeInfo { return r.healthy }
+func (r staticRegistry) GetNode(nodeID string) (registry.NodeInfo, bool) {
+	for _, n := range r.healthy {
+		if n.ID == nodeID {
+			return n, true
+		}
+	}
+	return registry.NodeInfo{}, false
+}
+func (r staticRegistry) GetNodes() []registry.NodeInfo                   { return r.healthy }
+func (r staticRegistry) GetNodeID() string                               { return "api-test" }
+func (r staticRegistry) GetNodesByCapability(string) []registry.NodeInfo { return nil }
+func (r staticRegistry) GetNodeCount() int                               { return len(r.healthy) }
+func (r staticRegistry) GetHealthyNodeCount() int                        { return len(r.healthy) }
+func (r staticRegistry) Start(context.Context) error                     { return nil }
+func (r staticRegistry) Stop() error                                     { return nil }
+
 func TestSubmitJobHandlerReturnsRetryAfterWhenQueueIsFull(t *testing.T) {
 	sched := scheduler.NewSchedulerWithConfig(nil, nil, scheduler.SchedulerConfig{
 		JobQueueSize: 1,
@@ -86,6 +108,72 @@ func TestSubmitJobHandlerReturnsRetryAfterWhenQueueIsFull(t *testing.T) {
 
 	if !strings.Contains(secondRec.Body.String(), "job queue is full") {
 		t.Fatalf("response body = %q, want queue saturation message", secondRec.Body.String())
+	}
+}
+
+func TestSchedulerReadinessHandlerWithNoWorkersReturnsZeroHealthyWorkerCount(t *testing.T) {
+	sched := scheduler.NewSchedulerWithConfig(nil, nil, scheduler.SchedulerConfig{
+		JobQueueSize: 1,
+	})
+	server := NewServer(sched)
+
+	req := httptest.NewRequest(http.MethodGet, "/v1/internal/scheduler_readiness", nil)
+	rec := httptest.NewRecorder()
+	server.SchedulerReadinessHandler(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("response code = %d, want %d", rec.Code, http.StatusOK)
+	}
+
+	var readiness scheduler.SchedulerReadiness
+	if err := json.NewDecoder(rec.Body).Decode(&readiness); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if readiness.HealthyWorkerCount != 0 {
+		t.Fatalf("HealthyWorkerCount = %d, want 0", readiness.HealthyWorkerCount)
+	}
+}
+
+func TestSchedulerReadinessHandlerWithRegisteredWorkersReturnsHealthyWorkerCount(t *testing.T) {
+	sched := scheduler.NewSchedulerWithConfig(staticRegistry{
+		healthy: []registry.NodeInfo{
+			{ID: "worker-1", Healthy: true},
+			{ID: "worker-2", Healthy: true},
+		},
+	}, nil, scheduler.SchedulerConfig{
+		JobQueueSize: 1,
+	})
+	server := NewServer(sched)
+
+	req := httptest.NewRequest(http.MethodGet, "/v1/internal/scheduler_readiness", nil)
+	rec := httptest.NewRecorder()
+	server.SchedulerReadinessHandler(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("response code = %d, want %d", rec.Code, http.StatusOK)
+	}
+
+	var readiness scheduler.SchedulerReadiness
+	if err := json.NewDecoder(rec.Body).Decode(&readiness); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if readiness.HealthyWorkerCount != 2 {
+		t.Fatalf("HealthyWorkerCount = %d, want 2", readiness.HealthyWorkerCount)
+	}
+}
+
+func TestSchedulerReadinessHandlerRejectsNonGetMethods(t *testing.T) {
+	sched := scheduler.NewSchedulerWithConfig(nil, nil, scheduler.SchedulerConfig{
+		JobQueueSize: 1,
+	})
+	server := NewServer(sched)
+
+	req := httptest.NewRequest(http.MethodPost, "/v1/internal/scheduler_readiness", nil)
+	rec := httptest.NewRecorder()
+	server.SchedulerReadinessHandler(rec, req)
+
+	if rec.Code != http.StatusMethodNotAllowed {
+		t.Fatalf("response code = %d, want %d", rec.Code, http.StatusMethodNotAllowed)
 	}
 }
 

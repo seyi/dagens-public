@@ -56,38 +56,40 @@ const (
 
 // Scheduler manages the execution of jobs and their tasks
 type Scheduler struct {
-	registry          registry.Registry // Interface for node discovery
-	executor          TaskExecutor
-	jobs              map[string]*Job
-	jobQueue          chan *Job
-	queuedJobs        map[string]struct{}
-	mu                sync.RWMutex
-	stopChan          chan struct{}
-	wg                sync.WaitGroup
-	config            SchedulerConfig
-	affinityMap       *AffinityMap // Sticky scheduling affinity tracking
-	nodeIndex         int          // Round-robin counter for node selection
-	nodeCapacity      map[string]*nodeCapacity
-	dispatchCooldowns map[string]time.Time
-	transitionStore   TransitionStore
-	transitionMu      sync.Mutex
-	jobSequences      map[string]uint64
-	leadership        LeadershipProvider
-	started           bool
-	recovering        bool
-	stopRequested     bool
-	recoveryCancel    context.CancelFunc
-	leadershipCancel  context.CancelFunc
-	leadershipStop    func()
-	executionCtx      context.Context
-	executionCancel   context.CancelFunc
-	replayQuarantine  map[string]time.Time
-	pendingEnqueue    int
-	lastReconcileTime time.Time
-	metrics           *observability.Metrics
-	tracer            telemetry.Tracer
-	logger            telemetry.Logger
-	stopOnce          sync.Once
+	registry               registry.Registry // Interface for node discovery
+	executor               TaskExecutor
+	jobs                   map[string]*Job
+	jobQueue               chan *Job
+	queuedJobs             map[string]struct{}
+	mu                     sync.RWMutex
+	stopChan               chan struct{}
+	wg                     sync.WaitGroup
+	config                 SchedulerConfig
+	affinityMap            *AffinityMap // Sticky scheduling affinity tracking
+	nodeIndex              int          // Round-robin counter for node selection
+	nodeCapacity           map[string]*nodeCapacity
+	dispatchCooldowns      map[string]time.Time
+	transitionStore        TransitionStore
+	transitionMu           sync.Mutex
+	jobSequences           map[string]uint64
+	leadership             LeadershipProvider
+	started                bool
+	recovering             bool
+	stopRequested          bool
+	recoveryCancel         context.CancelFunc
+	leadershipCancel       context.CancelFunc
+	leadershipStop         func()
+	executionCtx           context.Context
+	executionCancel        context.CancelFunc
+	replayQuarantine       map[string]time.Time
+	pendingEnqueue         int
+	lastReconcileTime      time.Time
+	lastLeadershipObserved bool
+	haveLeadershipObserved bool
+	metrics                *observability.Metrics
+	tracer                 telemetry.Tracer
+	logger                 telemetry.Logger
+	stopOnce               sync.Once
 }
 
 // RegistryInterface defines the subset of registry functionality needed by the scheduler
@@ -446,6 +448,9 @@ type SchedulerReadiness struct {
 	IsRecovering bool
 	// IsLeader is true when this instance currently holds dispatch authority.
 	IsLeader bool
+	// HealthyWorkerCount is the number of healthy workers currently visible to
+	// this scheduler instance through its registry view.
+	HealthyWorkerCount int
 	// LastReconcileTime is the last time the scheduler successfully synchronized
 	// with the durable transition store.
 	LastReconcileTime time.Time
@@ -458,9 +463,11 @@ func (s *Scheduler) Readiness() SchedulerReadiness {
 	recovering := s.recovering
 	lastReconcileTime := s.lastReconcileTime
 	provider := s.leadership
+	reg := s.registry
 	s.mu.RUnlock()
 
 	isLeader := false
+	healthyWorkerCount := 0
 	if started && !recovering && provider != nil {
 		// Use a short-timeout context for the internal readiness check to avoid
 		// blocking the caller on etcd/network issues.
@@ -470,10 +477,14 @@ func (s *Scheduler) Readiness() SchedulerReadiness {
 			isLeader = auth.IsLeader
 		}
 	}
+	if reg != nil {
+		healthyWorkerCount = reg.GetHealthyNodeCount()
+	}
 
 	return SchedulerReadiness{
 		IsRecovering:      recovering,
 		IsLeader:          isLeader,
+		HealthyWorkerCount: healthyWorkerCount,
 		LastReconcileTime: lastReconcileTime,
 	}
 }
@@ -800,7 +811,7 @@ func (s *Scheduler) reconcileDurableQueuedJobsOnce(ctx context.Context, mode Rec
 			s.mu.Unlock()
 			continue
 		}
-		if missingTaskFields := recoveredQueuedMissingExecutionFieldCount(job, s.config.EnableStickiness); missingTaskFields > 0 {
+		if missingTaskFields := recoveredQueuedMissingExecutionFieldCount(job); missingTaskFields > 0 {
 			s.mu.Unlock()
 			s.failDurableQueuedJobForReconcile(ctx, durableJob, fmt.Sprintf("reconcile skipped auto-resume: recovered queued job missing execution fields (%d)", missingTaskFields))
 			continue
@@ -865,7 +876,7 @@ func (s *Scheduler) tryEnqueueExistingQueuedJob(jobID string) bool {
 	if !isSafeForQueuedResume(job) {
 		return false
 	}
-	if recoveredQueuedMissingExecutionFieldCount(job, s.config.EnableStickiness) > 0 {
+	if recoveredQueuedMissingExecutionFieldCount(job) > 0 {
 		return false
 	}
 	if _, alreadyQueued := s.queuedJobs[job.ID]; alreadyQueued {
@@ -956,7 +967,20 @@ func (s *Scheduler) dispatchAuthority(ctx context.Context) (LeadershipAuthority,
 	if provider == nil {
 		provider = defaultLeadershipProvider()
 	}
-	return provider.DispatchAuthority(ctx)
+	authority, err := provider.DispatchAuthority(ctx)
+	if err == nil {
+		s.recordLeadershipObservation(authority.IsLeader)
+	}
+	return authority, err
+}
+
+func (s *Scheduler) recordLeadershipObservation(isLeader bool) {
+	s.mu.Lock()
+	transitioned := s.haveLeadershipObserved && s.lastLeadershipObserved != isLeader
+	s.lastLeadershipObserved = isLeader
+	s.haveLeadershipObserved = true
+	s.mu.Unlock()
+	s.metrics.RecordSchedulerLeadershipObservation(isLeader, transitioned)
 }
 
 func (s *Scheduler) startLeadershipProvider() error {

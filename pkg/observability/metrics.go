@@ -862,6 +862,15 @@ func (m *Metrics) RecordSchedulerReconcileSucceeded(mode string) {
 	m.SchedulerLastReconcileTimestamp.SetToCurrentTime()
 }
 
+// RecordSchedulerLeadershipObservation is a compatibility shim for scheduler
+// leadership state observation. The dedicated leadership metric surfaces remain
+// private for now, so the public build intentionally treats this as a no-op.
+func (m *Metrics) RecordSchedulerLeadershipObservation(isLeader bool, transitioned bool) {
+	_ = m
+	_ = isLeader
+	_ = transitioned
+}
+
 // SetTransitionRetentionSnapshot publishes transition-retention visibility gauges.
 func (m *Metrics) SetTransitionRetentionSnapshot(snapshot retention.VisibilitySnapshot) {
 	m.TransitionRetentionUnfinishedJobs.Set(float64(snapshot.UnfinishedJobs))
