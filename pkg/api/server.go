@@ -362,6 +362,11 @@ func (s *Server) GetJobHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // SchedulerReadinessHandler returns the scheduler's current local readiness view.
+//
+// Security model:
+// This endpoint is intended for internal control-plane use only (for example
+// HA validation harnesses and operator diagnostics). It assumes deployment-
+// level network isolation and should not be exposed as a public API surface.
 func (s *Server) SchedulerReadinessHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -369,7 +374,9 @@ func (s *Server) SchedulerReadinessHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(s.scheduler.Readiness())
+	if err := json.NewEncoder(w).Encode(s.scheduler.Readiness()); err != nil {
+		log.Printf("scheduler readiness encode error: %v", err)
+	}
 }
 
 // UpdateWorkerCapacityHandler accepts worker heartbeats with capacity snapshots.
