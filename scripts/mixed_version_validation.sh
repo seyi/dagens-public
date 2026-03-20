@@ -28,7 +28,10 @@ API_URL="${API_URL:-http://localhost:18083}"
 DATABASE_URL="${DATABASE_URL:-postgres://postgres:postgres@localhost:55432/dagens?sslmode=disable}"
 JOB_COUNT="${JOB_COUNT:-3}"
 DRILL_TIMEOUT_SECONDS="${DRILL_TIMEOUT_SECONDS:-180}"
+STACK_READY_TIMEOUT_SECONDS="${STACK_READY_TIMEOUT_SECONDS:-180}"
+POLL_INTERVAL_SECONDS="${POLL_INTERVAL_SECONDS:-2}"
 EVIDENCE_ROOT="${EVIDENCE_ROOT:-/tmp/dagens-mixed-version-validation-$(date -u +%Y%m%dT%H%M%SZ)}"
+FAILED=0
 
 require_env() {
   local name="$1"
@@ -56,7 +59,57 @@ compose_cmd=(
   -f "${COMPOSE_MIXED}"
 )
 
+capture_compose_diagnostics() {
+  local out_dir="$1"
+  mkdir -p "${out_dir}"
+  "${compose_cmd[@]}" ps > "${out_dir}/compose-ps.txt" 2>&1 || true
+  "${compose_cmd[@]}" logs --no-color > "${out_dir}/compose-logs.txt" 2>&1 || true
+
+  for service in etcd postgres redis api-server api-server-b api-lb worker-1 worker-2; do
+    cid="$("${compose_cmd[@]}" ps -q "${service}" 2>/dev/null || true)"
+    if [[ -n "${cid}" ]]; then
+      printf '%s %s %s\n' \
+        "${service}" \
+        "${cid}" \
+        "$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' "${cid}" 2>/dev/null || echo unknown)" \
+        >> "${out_dir}/container-status.txt"
+    fi
+  done
+}
+
+wait_for_service_state() {
+  local service="$1"
+  local wanted="$2"
+  local deadline=$(( $(date +%s) + STACK_READY_TIMEOUT_SECONDS ))
+
+  while [[ $(date +%s) -lt ${deadline} ]]; do
+    cid="$("${compose_cmd[@]}" ps -q "${service}" 2>/dev/null || true)"
+    if [[ -n "${cid}" ]]; then
+      state="$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' "${cid}" 2>/dev/null || true)"
+      case "${wanted}" in
+        healthy)
+          if [[ "${state}" == "healthy" ]]; then
+            return 0
+          fi
+          ;;
+        running)
+          if [[ "${state}" == "running" || "${state}" == "healthy" ]]; then
+            return 0
+          fi
+          ;;
+      esac
+    fi
+    sleep "${POLL_INTERVAL_SECONDS}"
+  done
+
+  echo "error: service ${service} did not reach ${wanted} within ${STACK_READY_TIMEOUT_SECONDS}s" >&2
+  return 1
+}
+
 cleanup() {
+  if [[ ${FAILED} -ne 0 ]]; then
+    capture_compose_diagnostics "${EVIDENCE_ROOT}/failure"
+  fi
   "${compose_cmd[@]}" down -v >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
@@ -77,18 +130,15 @@ printf '%s\n' \
 
 "${compose_cmd[@]}" up -d
 
-for service in etcd postgres redis api-server api-server-b api-lb worker-1 worker-2; do
-  cid="$("${compose_cmd[@]}" ps -q "${service}")"
-  if [[ -z "${cid}" ]]; then
-    echo "error: failed to resolve container for ${service}" >&2
-    exit 1
-  fi
-  printf '%s %s %s\n' \
-    "${service}" \
-    "${cid}" \
-    "$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' "${cid}")" \
-    >> "${EVIDENCE_ROOT}/container-status.txt"
+for service in etcd postgres redis api-server api-server-b api-lb; do
+  wait_for_service_state "${service}" healthy || { FAILED=1; exit 1; }
 done
+
+for service in worker-1 worker-2; do
+  wait_for_service_state "${service}" running || { FAILED=1; exit 1; }
+done
+
+capture_compose_diagnostics "${EVIDENCE_ROOT}/initial"
 
 leader_stop_cmd=""
 etcd_cid="$("${compose_cmd[@]}" ps -q etcd)"
@@ -104,6 +154,7 @@ case "${leader_id}" in
   api-a) leader_stop_cmd="docker kill ${api_a_cid}" ;;
   api-b) leader_stop_cmd="docker kill ${api_b_cid}" ;;
   *)
+    FAILED=1
     echo "error: could not resolve current leader from etcd" >&2
     exit 1
     ;;
@@ -118,7 +169,11 @@ DRILL_TIMEOUT_SECONDS="${DRILL_TIMEOUT_SECONDS}" \
 DATABASE_URL="${DATABASE_URL}" \
 LEADER_STOP_CMD="${leader_stop_cmd}" \
 DRILL_ID="mixed-version-$(date -u +%Y%m%dT%H%M%SZ)" \
-bash scripts/failover_drill.sh | tee "${EVIDENCE_ROOT}/failover-drill.txt"
+bash scripts/failover_drill.sh | tee "${EVIDENCE_ROOT}/failover-drill.txt" || {
+  FAILED=1
+  exit 1
+}
 
+capture_compose_diagnostics "${EVIDENCE_ROOT}/final"
 echo "PASS: mixed-version validation baseline completed"
 echo "evidence_root=${EVIDENCE_ROOT}"
