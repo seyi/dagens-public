@@ -231,6 +231,29 @@ func buildRecoveredRuntimeJob(r ReplayedJobState) *Job {
 	// sources before full re-execution assumptions are made.
 
 	stageByID := make(map[string]*Stage)
+	taskFirstSeenSequence := make(map[string]uint64)
+	stageFirstSeenSequence := make(map[string]uint64)
+	for _, record := range r.Transitions {
+		if record.EntityType != TransitionEntityTask || record.TaskID == "" {
+			continue
+		}
+		if _, ok := taskFirstSeenSequence[record.TaskID]; ok {
+			continue
+		}
+		taskFirstSeenSequence[record.TaskID] = record.SequenceID
+		taskRecord, ok := r.Tasks[record.TaskID]
+		if !ok {
+			continue
+		}
+		stageID := taskRecord.StageID
+		if stageID == "" {
+			stageID = "recovered"
+		}
+		if _, ok := stageFirstSeenSequence[stageID]; !ok {
+			stageFirstSeenSequence[stageID] = record.SequenceID
+		}
+	}
+
 	for _, taskRecord := range r.Tasks {
 		stageID := taskRecord.StageID
 		if stageID == "" {
@@ -266,9 +289,32 @@ func buildRecoveredRuntimeJob(r ReplayedJobState) *Job {
 	for id := range stageByID {
 		stageIDs = append(stageIDs, id)
 	}
-	sort.Strings(stageIDs)
+	sort.Slice(stageIDs, func(i, j int) bool {
+		leftSeq, leftSeen := stageFirstSeenSequence[stageIDs[i]]
+		rightSeq, rightSeen := stageFirstSeenSequence[stageIDs[j]]
+		switch {
+		case leftSeen && rightSeen && leftSeq != rightSeq:
+			return leftSeq < rightSeq
+		case leftSeen != rightSeen:
+			return leftSeen
+		default:
+			return stageIDs[i] < stageIDs[j]
+		}
+	})
 	for _, id := range stageIDs {
 		stage := stageByID[id]
+		sort.Slice(stage.Tasks, func(i, j int) bool {
+			leftSeq, leftSeen := taskFirstSeenSequence[stage.Tasks[i].ID]
+			rightSeq, rightSeen := taskFirstSeenSequence[stage.Tasks[j].ID]
+			switch {
+			case leftSeen && rightSeen && leftSeq != rightSeq:
+				return leftSeq < rightSeq
+			case leftSeen != rightSeen:
+				return leftSeen
+			default:
+				return stage.Tasks[i].ID < stage.Tasks[j].ID
+			}
+		})
 		stage.Status = deriveStageStatus(stage.Tasks)
 		job.Stages = append(job.Stages, stage)
 	}

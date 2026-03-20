@@ -572,6 +572,62 @@ func TestRecoveredQueuedMissingExecutionFieldCount_DoesNotRequirePartitionKey(t 
 	}
 }
 
+func TestBuildRecoveredRuntimeJobPreservesStageOrderFromTransitionHistory(t *testing.T) {
+	now := time.Now().UTC()
+	replayed := ReplayedJobState{
+		Job: DurableJobRecord{
+			JobID:        "job-stage-order",
+			Name:         "job-stage-order",
+			CurrentState: JobStateQueued,
+			CreatedAt:    now,
+			UpdatedAt:    now.Add(3 * time.Second),
+		},
+		Tasks: map[string]DurableTaskRecord{
+			"task-start": {
+				TaskID:       "task-start",
+				JobID:        "job-stage-order",
+				StageID:      "z-stage",
+				AgentID:      "start",
+				AgentName:    "Start",
+				InputJSON:    `{"Instruction":"start"}`,
+				CurrentState: TaskStatePending,
+			},
+			"task-end": {
+				TaskID:       "task-end",
+				JobID:        "job-stage-order",
+				StageID:      "a-stage",
+				AgentID:      "end",
+				AgentName:    "End",
+				InputJSON:    `{"Instruction":"end"}`,
+				CurrentState: TaskStatePending,
+			},
+		},
+		Transitions: []TransitionRecord{
+			{SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: "job-stage-order", NewState: string(JobStateSubmitted), OccurredAt: now},
+			{SequenceID: 2, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated, JobID: "job-stage-order", TaskID: "task-start", NewState: string(TaskStatePending), OccurredAt: now.Add(time.Second)},
+			{SequenceID: 3, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated, JobID: "job-stage-order", TaskID: "task-end", NewState: string(TaskStatePending), OccurredAt: now.Add(2 * time.Second)},
+			{SequenceID: 4, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: "job-stage-order", PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(3 * time.Second)},
+		},
+	}
+
+	job := buildRecoveredRuntimeJob(replayed)
+	if len(job.Stages) != 2 {
+		t.Fatalf("len(job.Stages) = %d, want 2", len(job.Stages))
+	}
+	if job.Stages[0].ID != "z-stage" {
+		t.Fatalf("job.Stages[0].ID = %q, want %q", job.Stages[0].ID, "z-stage")
+	}
+	if job.Stages[1].ID != "a-stage" {
+		t.Fatalf("job.Stages[1].ID = %q, want %q", job.Stages[1].ID, "a-stage")
+	}
+	if got := job.Stages[0].Tasks[0].AgentName; got != "Start" {
+		t.Fatalf("first recovered task agent = %q, want %q", got, "Start")
+	}
+	if got := job.Stages[1].Tasks[0].AgentName; got != "End" {
+		t.Fatalf("second recovered task agent = %q, want %q", got, "End")
+	}
+}
+
 func TestRecoverFromTransitionsSkipsExistingJobs(t *testing.T) {
 	store := NewInMemoryTransitionStore()
 	now := time.Now().UTC()
