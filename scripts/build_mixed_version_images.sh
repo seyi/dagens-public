@@ -36,12 +36,25 @@ command -v docker >/dev/null 2>&1 || { echo "docker is required" >&2; exit 1; }
 require_env REF_OLD
 require_env REF_NEW
 
+resolve_commit() {
+  local ref="$1"
+  git rev-parse --verify "${ref}^{commit}" 2>/dev/null
+}
+
 sanitize_ref() {
   printf '%s' "$1" | tr '/:@ ' '-' | tr -cd '[:alnum:]._-\n'
 }
 
 OLD_TAG_SUFFIX="$(sanitize_ref "${REF_OLD}")"
 NEW_TAG_SUFFIX="$(sanitize_ref "${REF_NEW}")"
+SHA_OLD="$(resolve_commit "${REF_OLD}")" || {
+  echo "error: REF_OLD does not resolve to a local commit: ${REF_OLD}" >&2
+  exit 1
+}
+SHA_NEW="$(resolve_commit "${REF_NEW}")" || {
+  echo "error: REF_NEW does not resolve to a local commit: ${REF_NEW}" >&2
+  exit 1
+}
 
 OLD_WORKTREE="${WORKTREE_ROOT}/old-${OLD_TAG_SUFFIX}"
 NEW_WORKTREE="${WORKTREE_ROOT}/new-${NEW_TAG_SUFFIX}"
@@ -75,6 +88,8 @@ MIXED_VERSION_WORKER_IMAGE_A=${WORKER_IMAGE_OLD}
 MIXED_VERSION_WORKER_IMAGE_B=${WORKER_IMAGE_NEW}
 REF_OLD=${REF_OLD}
 REF_NEW=${REF_NEW}
+SHA_OLD=${SHA_OLD}
+SHA_NEW=${SHA_NEW}
 EOF
 
 cat "${IMAGE_ENV_OUT}"
