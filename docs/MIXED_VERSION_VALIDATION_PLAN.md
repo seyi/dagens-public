@@ -177,6 +177,14 @@ Current artifact contract:
 - `MIXED_VERSION_WORKER_IMAGE_A`
 - `MIXED_VERSION_WORKER_IMAGE_B`
 
+Artifact-preparation helper now added:
+- `scripts/build_mixed_version_images.sh`
+- builds version-pinned API and worker images from:
+  - `REF_OLD`
+  - `REF_NEW`
+- writes the image environment contract consumed by:
+  - `scripts/mixed_version_validation.sh`
+
 This keeps the mixed-version validation path honest:
 - the harness is executable now
 - but it does not pretend version skew has been validated until real `N` and `N+1`
