@@ -30,6 +30,7 @@ JOB_COUNT="${JOB_COUNT:-3}"
 DRILL_TIMEOUT_SECONDS="${DRILL_TIMEOUT_SECONDS:-180}"
 STACK_READY_TIMEOUT_SECONDS="${STACK_READY_TIMEOUT_SECONDS:-180}"
 POLL_INTERVAL_SECONDS="${POLL_INTERVAL_SECONDS:-2}"
+WORKER_REGISTRY_WAIT_TIMEOUT_SECONDS="${WORKER_REGISTRY_WAIT_TIMEOUT_SECONDS:-60}"
 EVIDENCE_ROOT="${EVIDENCE_ROOT:-/tmp/dagens-mixed-version-validation-$(date -u +%Y%m%dT%H%M%SZ)}"
 FAILED=0
 
@@ -106,6 +107,34 @@ wait_for_service_state() {
   return 1
 }
 
+wait_for_worker_registry_entries() {
+  local etcd_cid="$1"
+  local deadline=$(( $(date +%s) + WORKER_REGISTRY_WAIT_TIMEOUT_SECONDS ))
+  local node=""
+
+  while [[ $(date +%s) -lt ${deadline} ]]; do
+    local all_ready=1
+    for node in worker-1 worker-2; do
+      local output
+      output="$(
+        docker run --rm --network "container:${etcd_cid}" quay.io/coreos/etcd:v3.5.15 \
+          etcdctl --endpoints=http://127.0.0.1:2379 get "/dagens/nodes/${node}" 2>/dev/null || true
+      )"
+      if [[ "${output}" != *"\"healthy\":true"* ]]; then
+        all_ready=0
+        break
+      fi
+    done
+    if [[ ${all_ready} -eq 1 ]]; then
+      return 0
+    fi
+    sleep "${POLL_INTERVAL_SECONDS}"
+  done
+
+  echo "error: worker registry entries did not become healthy within ${WORKER_REGISTRY_WAIT_TIMEOUT_SECONDS}s" >&2
+  return 1
+}
+
 cleanup() {
   if [[ ${FAILED} -ne 0 ]]; then
     capture_compose_diagnostics "${EVIDENCE_ROOT}/failure"
@@ -142,6 +171,7 @@ capture_compose_diagnostics "${EVIDENCE_ROOT}/initial"
 
 leader_stop_cmd=""
 etcd_cid="$("${compose_cmd[@]}" ps -q etcd)"
+wait_for_worker_registry_entries "${etcd_cid}" || { FAILED=1; exit 1; }
 api_a_cid="$("${compose_cmd[@]}" ps -q api-server)"
 api_b_cid="$("${compose_cmd[@]}" ps -q api-server-b)"
 leader_id="$(
