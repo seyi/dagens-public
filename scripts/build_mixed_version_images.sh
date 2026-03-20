@@ -42,7 +42,7 @@ resolve_commit() {
 }
 
 sanitize_ref() {
-  printf '%s' "$1" | tr '/:@ ' '-' | tr -cd '[:alnum:]._-\n'
+  printf '%s' "$1" | tr '/:@ ' '-' | tr -cd '[:alnum:]._-'
 }
 
 OLD_TAG_SUFFIX="$(sanitize_ref "${REF_OLD}")"
