@@ -137,11 +137,18 @@ func (s *PostgresTransitionStore) NextSequenceID(ctx context.Context, jobID stri
 
 	query := fmt.Sprintf(`
 		INSERT INTO %s (job_id, last_sequence_id, updated_at)
-		VALUES ($1, 1, NOW())
+		VALUES (
+			$1,
+			GREATEST(
+				COALESCE((SELECT last_sequence_id FROM %s WHERE job_id = $1), 0),
+				COALESCE((SELECT MAX(sequence_id) FROM %s WHERE job_id = $1), 0)
+			) + 1,
+			NOW()
+		)
 		ON CONFLICT (job_id) DO UPDATE SET
 			last_sequence_id = %s.last_sequence_id + 1,
 			updated_at = NOW()
-		RETURNING last_sequence_id;`, jobSequencesTable, jobSequencesTable)
+		RETURNING last_sequence_id;`, jobSequencesTable, durableJobsTable, jobTransitionsTable, jobSequencesTable)
 
 	var seq int64
 	if err := s.pool.QueryRow(ctx, query, jobID).Scan(&seq); err != nil {
@@ -409,6 +416,9 @@ func (s *PostgresTransitionStore) ListTransitionsByJobs(ctx context.Context, job
 	if len(jobIDs) == 0 {
 		return result, nil
 	}
+	for _, jobID := range jobIDs {
+		result[jobID] = []TransitionRecord{}
+	}
 
 	query := fmt.Sprintf(`
 		SELECT sequence_id, entity_type, transition, job_id, task_id, previous_state,
@@ -499,6 +509,9 @@ func (s *PostgresTransitionStore) ListTasksByJobs(ctx context.Context, jobIDs []
 	result := make(map[string][]DurableTaskRecord, len(jobIDs))
 	if len(jobIDs) == 0 {
 		return result, nil
+	}
+	for _, jobID := range jobIDs {
+		result[jobID] = []DurableTaskRecord{}
 	}
 
 	query := fmt.Sprintf(`
