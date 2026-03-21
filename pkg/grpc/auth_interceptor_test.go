@@ -31,6 +31,10 @@ type mockAuthenticator struct {
 	err    error
 }
 
+func (m *mockAuthenticator) Name() string {
+	return "mock"
+}
+
 func (m *mockAuthenticator) Authenticate(ctx context.Context, token string) (*auth.Claims, error) {
 	if m.err != nil {
 		return nil, m.err

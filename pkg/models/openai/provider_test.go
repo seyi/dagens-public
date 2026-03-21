@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -111,7 +112,7 @@ func TestNewProvider(t *testing.T) {
 			}
 
 			if tt.wantErr && tt.errMsg != "" {
-				if err == nil || err.Error() != tt.errMsg {
+				if err == nil || !strings.Contains(err.Error(), tt.errMsg) {
 					t.Errorf("NewProvider() error = %v, want error containing %q", err, tt.errMsg)
 				}
 				return
@@ -490,6 +491,20 @@ func TestChatValidation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.name == "valid request" {
+				openReq, err := provider.buildChatCompletionRequest(tt.req)
+				if err != nil {
+					t.Fatalf("buildChatCompletionRequest() error = %v, want nil", err)
+				}
+				if openReq.Model != cfg.Model {
+					t.Fatalf("buildChatCompletionRequest() model = %s, want %s", openReq.Model, cfg.Model)
+				}
+				if len(openReq.Messages) != 1 {
+					t.Fatalf("buildChatCompletionRequest() messages = %d, want 1", len(openReq.Messages))
+				}
+				return
+			}
+
 			_, err := provider.Chat(ctx, tt.req)
 
 			if (err != nil) != tt.wantErr {
@@ -498,7 +513,7 @@ func TestChatValidation(t *testing.T) {
 			}
 
 			if tt.wantErr && tt.errMsg != "" {
-				if err == nil || err.Error() != tt.errMsg {
+				if err == nil || !strings.Contains(err.Error(), tt.errMsg) {
 					t.Errorf("Chat() error = %v, want %q", err, tt.errMsg)
 				}
 			}

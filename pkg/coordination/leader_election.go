@@ -120,7 +120,14 @@ func (le *LeaderElector) IsLeader() bool {
 
 // GetLeaderIdentity returns the current leader's identity
 func (le *LeaderElector) GetLeaderIdentity() (string, error) {
-	resp, err := le.client.Get(context.Background(), le.key)
+	le.mu.RLock()
+	election := le.election
+	le.mu.RUnlock()
+	if election == nil {
+		election = concurrency.NewElection(le.session, le.key)
+	}
+
+	resp, err := election.Leader(context.Background())
 	if err != nil {
 		return "", fmt.Errorf("failed to get leader identity: %w", err)
 	}
@@ -192,24 +199,29 @@ func (le *LeaderElector) electionLoop(ctx context.Context) {
 
 // monitorLeadership monitors the leadership status
 func (le *LeaderElector) monitorLeadership(ctx context.Context, election *concurrency.Election) {
-	// Create a context for monitoring that's independent of the main context
+	// Use a detached monitor context so we can watch lease expiry and explicit
+	// leadership changes independently from the caller's cancellation.
 	monitorCtx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// Watch for leadership changes
 	watchChan := election.Observe(monitorCtx)
 
 	for {
 		select {
 		case <-ctx.Done():
-			// Main context cancelled, stop monitoring
 			return
-		case _, ok := <-watchChan:
+		case <-le.session.Done():
+			return
+		case resp, ok := <-watchChan:
 			if !ok {
-				// Channel closed, leadership likely lost
 				return
 			}
-			// Leadership status is still active
+			if len(resp.Kvs) == 0 {
+				return
+			}
+			if string(resp.Kvs[0].Value) != le.identity {
+				return
+			}
 		}
 	}
 }

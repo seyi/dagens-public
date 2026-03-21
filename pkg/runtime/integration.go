@@ -22,20 +22,28 @@ import (
 	"time"
 )
 
+type invocationContextKey struct{}
+
+var runtimeInvocationContextKey = invocationContextKey{}
+
 // IsRuntimeContext checks if context is an InvocationContext
 func IsRuntimeContext(ctx context.Context) bool {
-	_, ok := ctx.(*InvocationContext)
-	return ok
+	return GetInvocationContext(ctx) != nil
 }
 
 // GetInvocationContext extracts InvocationContext from context
 // Returns nil if context is not an InvocationContext
 func GetInvocationContext(ctx context.Context) *InvocationContext {
 	invCtx, ok := ctx.(*InvocationContext)
-	if !ok {
-		return nil
+	if ok {
+		return invCtx
 	}
+	invCtx, _ = ctx.Value(runtimeInvocationContextKey).(*InvocationContext)
 	return invCtx
+}
+
+func withInvocationContext(ctx context.Context, invCtx *InvocationContext) context.Context {
+	return context.WithValue(ctx, runtimeInvocationContextKey, invCtx)
 }
 
 // EmitEvent emits an event if context is runtime-aware

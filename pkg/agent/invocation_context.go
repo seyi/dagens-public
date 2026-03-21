@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 )
@@ -264,8 +265,22 @@ func (ic *InvocationContext) Serialize() (*SerializableInvocationContext, error)
 	ic.mu.RLock()
 	defer ic.mu.RUnlock()
 
-	// Serialize input
-	inputJSON, err := json.Marshal(ic.Input)
+	// Serialize input without internal AutoFlow context keys that can form cycles.
+	var inputCopy *AgentInput
+	if ic.Input != nil {
+		cloned := *ic.Input
+		if ic.Input.Context != nil {
+			cloned.Context = make(map[string]interface{}, len(ic.Input.Context))
+			for k, v := range ic.Input.Context {
+				if strings.HasPrefix(k, "__") {
+					continue
+				}
+				cloned.Context[k] = v
+			}
+		}
+		inputCopy = &cloned
+	}
+	inputJSON, err := json.Marshal(inputCopy)
 	if err != nil {
 		return nil, fmt.Errorf("failed to serialize input: %w", err)
 	}

@@ -99,8 +99,7 @@ func main() {
 
 	// 4. Distributed Mutex Example
 	// Coordinate access to a shared resource (e.g., logging to a file)
-	log.Println("
---- Distributed Mutex Example ---")
+	log.Println("\n--- Distributed Mutex Example ---")
 	sharedResourceMutex := orchReg.NewMutex("/dagens/resources/shared-log")
 	
 	var wg sync.WaitGroup
@@ -142,8 +141,7 @@ func main() {
 
 	// 5. Distributed Semaphore Example
 	// Limit concurrent "heavy" tasks across the cluster
-	log.Println("
---- Distributed Semaphore Example ---")
+	log.Println("\n--- Distributed Semaphore Example ---")
 	const maxConcurrency = 2
 	sem := orchReg.NewSemaphore("/dagens/quotas/heavy-compute", maxConcurrency)
 	
@@ -184,8 +182,7 @@ func main() {
 	log.Println("All tasks completed.")
 
 	// 6. Service Discovery
-	log.Println("
---- Service Discovery Example ---")
+	log.Println("\n--- Service Discovery Example ---")
 	nodes := orchReg.GetNodesByCapability("heavy-compute")
 	log.Printf("Found %d nodes with 'heavy-compute' capability:", len(nodes))
 	for _, n := range nodes {
@@ -193,8 +190,7 @@ func main() {
 	}
 
 	// Keep alive until signal
-	log.Println("
-Example complete. Press Ctrl+C to exit.")
+	log.Println("\nExample complete. Press Ctrl+C to exit.")
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 	<-sigCh

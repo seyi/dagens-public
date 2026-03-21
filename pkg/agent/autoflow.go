@@ -105,9 +105,16 @@ func NewAutoFlow(rootAgent Agent, config AutoFlowConfig) *AutoFlow {
 
 // Execute runs an agent with AutoFlow transfer interception
 func (af *AutoFlow) Execute(ctx context.Context, agent Agent, input *AgentInput) (*AgentOutput, error) {
+	rootAgent := af.rootAgent
+	if baseAgent, ok := unwrapBaseAgent(agent); ok {
+		rootAgent = baseAgent.GetRoot()
+	}
 	// Create invocation context
-	af.invocationCtx = NewInvocationContext(ctx, input, agent)
+	af.invocationCtx = NewInvocationContext(ctx, input, rootAgent)
 	af.invocationCtx.SetMaxTransfers(af.config.MaxTransfers)
+	af.invocationCtx.CurrentAgent = agent
+	af.invocationCtx.CurrentPartition = agent.Partition()
+	af.rootAgent = rootAgent
 
 	if af.config.NodeID != "" {
 		af.invocationCtx.SetNodeID(af.config.NodeID)
@@ -305,7 +312,7 @@ func (af *AutoFlow) findAgentInScope(targetName string) (Agent, error) {
 
 // findParent finds the parent agent
 func (af *AutoFlow) findParent(currentAgent Agent, targetName string) (Agent, error) {
-	baseAgent, ok := currentAgent.(*BaseAgent)
+	baseAgent, ok := unwrapBaseAgent(currentAgent)
 	if !ok {
 		return nil, fmt.Errorf("current agent does not support parent access")
 	}
@@ -324,7 +331,7 @@ func (af *AutoFlow) findParent(currentAgent Agent, targetName string) (Agent, er
 
 // findSibling finds a sibling agent (shares same parent)
 func (af *AutoFlow) findSibling(currentAgent Agent, targetName string) (Agent, error) {
-	baseAgent, ok := currentAgent.(*BaseAgent)
+	baseAgent, ok := unwrapBaseAgent(currentAgent)
 	if !ok {
 		return nil, fmt.Errorf("current agent does not support sibling access")
 	}
@@ -351,7 +358,7 @@ func (af *AutoFlow) findSibling(currentAgent Agent, targetName string) (Agent, e
 
 // findSubAgent finds a direct sub-agent
 func (af *AutoFlow) findSubAgent(currentAgent Agent, targetName string) (Agent, error) {
-	baseAgent, ok := currentAgent.(*BaseAgent)
+	baseAgent, ok := unwrapBaseAgent(currentAgent)
 	if !ok {
 		return nil, fmt.Errorf("current agent does not support sub-agent access")
 	}
@@ -385,7 +392,7 @@ func (af *AutoFlow) findDescendant(currentAgent Agent, targetName string) (Agent
 // findInHierarchy finds any agent in the entire hierarchy
 func (af *AutoFlow) findInHierarchy(targetName string) (Agent, error) {
 	// Search from root
-	rootBase, ok := af.rootAgent.(*BaseAgent)
+	rootBase, ok := unwrapBaseAgent(af.rootAgent)
 	if !ok {
 		return nil, fmt.Errorf("root agent does not support hierarchy search")
 	}

@@ -42,18 +42,18 @@ func BenchmarkDeepCopyViaJSON(b *testing.B) {
 	}
 }
 
-// BenchmarkStateOperationsWithComplexData benchmarks state operations
+// BenchmarkStateOperationsWithComplexData benchmarks state operations 
 // with complex data that triggers JSON-based deep copying
 func BenchmarkStateOperationsWithComplexData(b *testing.B) {
 	state := NewMemoryState()
-
+	
 	complexData := map[string]interface{}{
 		"user_profile": map[string]interface{}{
-			"id":   12345,
+			"id": 12345,
 			"name": "John Doe",
 			"settings": map[string]interface{}{
 				"preferences": map[string]interface{}{
-					"theme":         "dark",
+					"theme": "dark",
 					"notifications": true,
 				},
 				"permissions": []string{"read", "write", "admin"},
@@ -70,7 +70,7 @@ func BenchmarkStateOperationsWithComplexData(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		key := "complex_data_" + string(rune(i%100))
 		state.Set(key, complexData)
-
+		
 		// Get the value back (triggers deep copy)
 		_, ok := state.Get(key)
 		if !ok {
@@ -82,7 +82,7 @@ func BenchmarkStateOperationsWithComplexData(b *testing.B) {
 // BenchmarkStateCloneWithComplexData benchmarks cloning state with complex data
 func BenchmarkStateCloneWithComplexData(b *testing.B) {
 	state := NewMemoryState()
-
+	
 	complexData := map[string]interface{}{
 		"dataset": []map[string]interface{}{
 			{"id": 1, "values": []float64{1.1, 2.2, 3.3, 4.4, 5.5}},
@@ -90,12 +90,12 @@ func BenchmarkStateCloneWithComplexData(b *testing.B) {
 			{"id": 3, "values": []float64{11.1, 12.2, 13.3, 14.4, 15.5}},
 		},
 		"metadata": map[string]interface{}{
-			"source":          "api",
-			"version":         "1.0",
+			"source": "api",
+			"version": "1.0",
 			"transformations": []string{"normalize", "scale", "encode"},
 		},
 	}
-
+	
 	// Pre-populate the state with complex data
 	for i := 0; i < 10; i++ {
 		state.Set("data_"+string(rune(i)), complexData)

@@ -320,6 +320,24 @@ func (r *MockRegistry) GetNodesByCapability(capability string) []registry.NodeIn
 	return r.GetHealthyNodes()
 }
 
+func (r *MockRegistry) GetNodes() []registry.NodeInfo {
+	return r.GetHealthyNodes()
+}
+
+func (r *MockRegistry) GetNodeCount() int {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	return len(r.workers)
+}
+
+func (r *MockRegistry) GetHealthyNodeCount() int {
+	return len(r.GetHealthyNodes())
+}
+
+func (r *MockRegistry) Start(ctx context.Context) error { return nil }
+
+func (r *MockRegistry) Stop() error { return nil }
+
 func (r *MockRegistry) GetWorker(id string) *SimulatedWorker {
 	r.mu.RLock()
 	defer r.mu.RUnlock()

@@ -1,19 +1,24 @@
 package graph
 
 import (
-	"strings"
 	"testing"
 )
 
-func collectByPrefix(s *MemoryState, prefix string) map[string]interface{} {
-	out := map[string]interface{}{}
-	s.Iterate(func(key string, value any) bool {
-		if strings.HasPrefix(key, prefix) {
-			out[key] = value
+func iterateByPrefix(s *MemoryState, prefix string) map[string]interface{} {
+	result := make(map[string]interface{})
+	for _, key := range s.KeysWithPrefix(prefix) {
+		if value, ok := s.Get(key); ok {
+			result[key] = value
 		}
-		return true
-	})
-	return out
+	}
+	if prefix == "" {
+		for _, key := range s.Keys() {
+			if value, ok := s.Get(key); ok {
+				result[key] = value
+			}
+		}
+	}
+	return result
 }
 
 func TestIterate_Basic(t *testing.T) {
@@ -22,7 +27,7 @@ func TestIterate_Basic(t *testing.T) {
 	s.Set("foo/2", 2)
 	s.Set("bar/1", 3)
 
-	res := collectByPrefix(s, "foo/")
+	res := iterateByPrefix(s, "foo/")
 	if len(res) != 2 {
 		t.Fatalf("expected 2 results, got %d: %+v", len(res), res)
 	}
@@ -35,7 +40,7 @@ func TestIterate_EmptyPrefix(t *testing.T) {
 	s := NewMemoryState()
 	s.Set("a", 1)
 	s.Set("b", 2)
-	res := collectByPrefix(s, "")
+	res := iterateByPrefix(s, "")
 	if len(res) != 2 {
 		t.Fatalf("empty prefix should return all keys, got %d", len(res))
 	}
@@ -45,7 +50,7 @@ func TestIterate_Immutability(t *testing.T) {
 	s := NewMemoryState()
 	s.Set("foo", []int{1, 2, 3})
 
-	res := collectByPrefix(s, "foo")
+	res := iterateByPrefix(s, "foo")
 	slice := res["foo"].([]int)
 	slice[0] = 99
 
@@ -96,7 +101,7 @@ func TestDeletePrefix_CountAndVersion(t *testing.T) {
 	if deleted != 3 {
 		t.Fatalf("expected 3 deletions, got %d", deleted)
 	}
-	if exists := len(collectByPrefix(s, "foo/")); exists != 0 {
+	if exists := len(iterateByPrefix(s, "foo/")); exists != 0 {
 		t.Fatalf("expected no foo/* entries remaining")
 	}
 	if s.Version() != origVersion+1 { // DeletePrefix increments once when any deletion occurred

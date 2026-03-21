@@ -12,10 +12,10 @@ import (
 
 // MockAgent implements the agent.Agent interface for testing
 type MockAgent struct {
-	name           string
-	behavior       func(context.Context, *agent.AgentInput) (*agent.AgentOutput, error)
+	name        string
+	behavior    func(context.Context, *agent.AgentInput) (*agent.AgentOutput, error)
 	executionCount int
-	mu             sync.Mutex
+	mu          sync.Mutex
 }
 
 // NewMockAgent creates a new mock agent with specified behavior
@@ -26,9 +26,9 @@ func NewMockAgent(name string, behavior func(context.Context, *agent.AgentInput)
 	}
 }
 
-func (m *MockAgent) ID() string             { return m.name }
-func (m *MockAgent) Name() string           { return m.name }
-func (m *MockAgent) Description() string    { return fmt.Sprintf("Mock agent %s", m.name) }
+func (m *MockAgent) ID() string { return m.name }
+func (m *MockAgent) Name() string { return m.name }
+func (m *MockAgent) Description() string { return fmt.Sprintf("Mock agent %s", m.name) }
 func (m *MockAgent) Capabilities() []string { return []string{"test-capability"} }
 func (m *MockAgent) Execute(ctx context.Context, input *agent.AgentInput) (*agent.AgentOutput, error) {
 	m.mu.Lock()
@@ -45,7 +45,8 @@ func (m *MockAgent) Execute(ctx context.Context, input *agent.AgentInput) (*agen
 	}, nil
 }
 func (m *MockAgent) Dependencies() []agent.Agent { return nil }
-func (m *MockAgent) Partition() string           { return "" }
+func (m *MockAgent) Partition() string { return "" }
+
 
 // MockAgentManager implements the AgentManager interface for testing
 type MockAgentManager struct {
@@ -71,7 +72,7 @@ func (m *MockAgentManager) AddAgent(agent agent.Agent) {
 func (m *MockAgentManager) GetAgent(name string) (agent.Agent, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-
+	
 	a, exists := m.agents[name]
 	if !exists {
 		return nil, agent.ErrAgentNotFound
@@ -85,7 +86,7 @@ func (m *MockAgentManager) ExecuteAgent(ctx context.Context, agentName string, i
 	if err != nil {
 		return nil, err
 	}
-
+	
 	return agent.Execute(ctx, input)
 }
 
@@ -106,7 +107,7 @@ func NewMockRegistry() *MockRegistry {
 func (m *MockRegistry) GetNode(nodeID string) (registry.NodeInfo, bool) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-
+	
 	node, exists := m.nodes[nodeID]
 	return node, exists
 }
@@ -115,7 +116,7 @@ func (m *MockRegistry) GetNode(nodeID string) (registry.NodeInfo, bool) {
 func (m *MockRegistry) GetNodes() []registry.NodeInfo {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-
+	
 	nodes := make([]registry.NodeInfo, 0, len(m.nodes))
 	for _, node := range m.nodes {
 		nodes = append(nodes, node)
@@ -123,11 +124,17 @@ func (m *MockRegistry) GetNodes() []registry.NodeInfo {
 	return nodes
 }
 
+func (m *MockRegistry) GetNodeCount() int {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	return len(m.nodes)
+}
+
 // GetHealthyNodes returns only healthy nodes
 func (m *MockRegistry) GetHealthyNodes() []registry.NodeInfo {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-
+	
 	nodes := make([]registry.NodeInfo, 0)
 	for _, node := range m.nodes {
 		if node.Healthy {
@@ -137,11 +144,15 @@ func (m *MockRegistry) GetHealthyNodes() []registry.NodeInfo {
 	return nodes
 }
 
+func (m *MockRegistry) GetHealthyNodeCount() int {
+	return len(m.GetHealthyNodes())
+}
+
 // GetNodesByCapability returns nodes with a specific capability
 func (m *MockRegistry) GetNodesByCapability(capability string) []registry.NodeInfo {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-
+	
 	nodes := make([]registry.NodeInfo, 0)
 	for _, node := range m.nodes {
 		for _, cap := range node.Capabilities {
@@ -159,31 +170,9 @@ func (m *MockRegistry) GetNodeID() string {
 	return "mock-registry-node"
 }
 
-func (m *MockRegistry) GetNodeCount() int {
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-	return len(m.nodes)
-}
+func (m *MockRegistry) Start(ctx context.Context) error { return nil }
 
-func (m *MockRegistry) GetHealthyNodeCount() int {
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-	count := 0
-	for _, node := range m.nodes {
-		if node.Healthy {
-			count++
-		}
-	}
-	return count
-}
-
-func (m *MockRegistry) Start(ctx context.Context) error {
-	return nil
-}
-
-func (m *MockRegistry) Stop() error {
-	return nil
-}
+func (m *MockRegistry) Stop() error { return nil }
 
 // AddNode adds a node to the registry
 func (m *MockRegistry) AddNode(node registry.NodeInfo) {

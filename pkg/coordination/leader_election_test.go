@@ -250,9 +250,13 @@ func TestDistributedMutex_MutualExclusion(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// Try to acquire the same mutex twice concurrently
+	// Try to acquire the same mutex twice concurrently.
+	// A reusable mutex may allow both goroutines to acquire sequentially,
+	// but it must never allow more than one concurrent holder.
 	var wg sync.WaitGroup
 	acquiredCount := 0
+	currentHolders := 0
+	maxConcurrentHolders := 0
 	var countMu sync.Mutex
 
 	for i := 0; i < 2; i++ {
@@ -261,23 +265,31 @@ func TestDistributedMutex_MutualExclusion(t *testing.T) {
 			defer wg.Done()
 
 			err := mutex.Lock(ctx)
-			if err == nil {
-				countMu.Lock()
-				acquiredCount++
-				countMu.Unlock()
+				if err == nil {
+					countMu.Lock()
+					acquiredCount++
+					currentHolders++
+					if currentHolders > maxConcurrentHolders {
+						maxConcurrentHolders = currentHolders
+					}
+					countMu.Unlock()
 
-				// Hold the lock briefly
-				time.Sleep(100 * time.Millisecond)
+					// Hold the lock briefly
+					time.Sleep(100 * time.Millisecond)
 
-				mutex.Unlock(ctx)
-			}
-		}()
+					countMu.Lock()
+					currentHolders--
+					countMu.Unlock()
+
+					mutex.Unlock(ctx)
+				}
+			}()
 	}
 
 	wg.Wait()
 
-	// Only one goroutine should have acquired the mutex
-	assert.Equal(t, 1, acquiredCount, "Only one goroutine should acquire the mutex at a time")
+	assert.Equal(t, 2, acquiredCount, "Reusable mutex should allow sequential re-acquisition")
+	assert.Equal(t, 1, maxConcurrentHolders, "Only one goroutine should hold the mutex at a time")
 }
 
 func TestDistributedBarrier_Synchronization(t *testing.T) {
@@ -562,9 +574,10 @@ func TestLeaderElection_SessionExpiration(t *testing.T) {
 	time.Sleep(200 * time.Millisecond)
 	assert.True(t, elector.IsLeader())
 
-	// Wait for session to expire (should be around TTL seconds)
-	time.Sleep(3 * time.Second)
+	// Explicitly orphan the session to stop keepalive and allow lease expiry.
+	elector.session.Orphan()
 
-	// After session expiry, should no longer be leader
-	assert.False(t, elector.IsLeader(), "Should lose leadership after session expiry")
+	require.Eventually(t, func() bool {
+		return !elector.IsLeader()
+	}, 5*time.Second, 100*time.Millisecond, "Should lose leadership after session keepalive stops")
 }

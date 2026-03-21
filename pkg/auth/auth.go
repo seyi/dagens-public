@@ -43,3 +43,8 @@ func FromContext(ctx context.Context) (*Claims, bool) {
 	claims, ok := ctx.Value(claimsKey).(*Claims)
 	return claims, ok
 }
+
+// ClaimsFromContext preserves backward compatibility with older callers/tests.
+func ClaimsFromContext(ctx context.Context) (*Claims, bool) {
+	return FromContext(ctx)
+}

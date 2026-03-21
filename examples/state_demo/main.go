@@ -412,7 +412,7 @@ func truncateString(s string, max int) string {
 func RunStateManagementExamples() {
 	fmt.Println("========================================")
 	fmt.Println("State Management Examples")
-	fmt.Println("========================================\n")
+	fmt.Println("========================================")
 
 	State_Example1_BasicStateOperations()
 	State_Example2_StateWithTTL()

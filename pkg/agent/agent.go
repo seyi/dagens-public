@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors" // Added
 	"fmt"
+	"reflect"
 	"sync"
 	"time"
 
@@ -159,6 +160,29 @@ type ExecutorFunc func(ctx context.Context, agent Agent, input *AgentInput) (*Ag
 // Execute implements the AgentExecutor interface for ExecutorFunc.
 func (f ExecutorFunc) Execute(ctx context.Context, agent Agent, input *AgentInput) (*AgentOutput, error) {
 	return f(ctx, agent, input)
+}
+
+func unwrapBaseAgent(agent Agent) (*BaseAgent, bool) {
+	if agent == nil {
+		return nil, false
+	}
+	if base, ok := agent.(*BaseAgent); ok {
+		return base, true
+	}
+	value := reflect.ValueOf(agent)
+	if !value.IsValid() || value.Kind() != reflect.Ptr || value.IsNil() {
+		return nil, false
+	}
+	elem := value.Elem()
+	if !elem.IsValid() || elem.Kind() != reflect.Struct {
+		return nil, false
+	}
+	baseField := elem.FieldByName("BaseAgent")
+	if !baseField.IsValid() || baseField.Kind() != reflect.Ptr || baseField.IsNil() {
+		return nil, false
+	}
+	base, ok := baseField.Interface().(*BaseAgent)
+	return base, ok && base != nil
 }
 
 
@@ -360,7 +384,7 @@ func (a *BaseAgent) AddSubAgent(child Agent) error {
 	}
 
 	// Check if child is a BaseAgent (so we can set parent)
-	baseChild, ok := child.(*BaseAgent)
+	baseChild, ok := unwrapBaseAgent(child)
 	if !ok {
 		return fmt.Errorf("sub-agent must be *BaseAgent to support hierarchy")
 	}
@@ -393,7 +417,7 @@ func (a *BaseAgent) RemoveSubAgent(child Agent) error {
 		return fmt.Errorf("cannot remove nil sub-agent")
 	}
 
-	baseChild, ok := child.(*BaseAgent)
+	baseChild, ok := unwrapBaseAgent(child)
 	if !ok {
 		return fmt.Errorf("sub-agent must be *BaseAgent")
 	}
@@ -426,8 +450,16 @@ func (a *BaseAgent) RemoveSubAgent(child Agent) error {
 // FindAgent searches the agent hierarchy for a descendant agent with the given
 // name. It returns the agent if found, or an error if not found.
 func (a *BaseAgent) FindAgent(name string) (Agent, error) {
+	return a.findAgent(name, map[string]bool{})
+}
+
+func (a *BaseAgent) findAgent(name string, visited map[string]bool) (Agent, error) {
 	a.mu.RLock()
 	defer a.mu.RUnlock()
+	if visited[a.id] {
+		return nil, fmt.Errorf("agent %s not found in hierarchy", name)
+	}
+	visited[a.id] = true
 
 	// Check direct children
 	for _, child := range a.subAgents {
@@ -438,8 +470,8 @@ func (a *BaseAgent) FindAgent(name string) (Agent, error) {
 
 	// Recursively search descendants
 	for _, child := range a.subAgents {
-		if baseChild, ok := child.(*BaseAgent); ok {
-			if found, err := baseChild.FindAgent(name); err == nil {
+		if baseChild, ok := unwrapBaseAgent(child); ok {
+			if found, err := baseChild.findAgent(name, visited); err == nil {
 				return found, nil
 			}
 		}
@@ -451,8 +483,16 @@ func (a *BaseAgent) FindAgent(name string) (Agent, error) {
 // FindAgentByID searches the agent hierarchy for a descendant agent with the
 // given ID. It returns the agent if found, or an error if not found.
 func (a *BaseAgent) FindAgentByID(id string) (Agent, error) {
+	return a.findAgentByID(id, map[string]bool{})
+}
+
+func (a *BaseAgent) findAgentByID(id string, visited map[string]bool) (Agent, error) {
 	a.mu.RLock()
 	defer a.mu.RUnlock()
+	if visited[a.id] {
+		return nil, fmt.Errorf("agent with ID %s not found in hierarchy", id)
+	}
+	visited[a.id] = true
 
 	// Check direct children
 	for _, child := range a.subAgents {
@@ -463,8 +503,8 @@ func (a *BaseAgent) FindAgentByID(id string) (Agent, error) {
 
 	// Recursively search descendants
 	for _, child := range a.subAgents {
-		if baseChild, ok := child.(*BaseAgent); ok {
-			if found, err := baseChild.FindAgentByID(id); err == nil {
+		if baseChild, ok := unwrapBaseAgent(child); ok {
+			if found, err := baseChild.findAgentByID(id, visited); err == nil {
 				return found, nil
 			}
 		}
@@ -478,9 +518,14 @@ func (a *BaseAgent) GetRoot() Agent {
 	a.mu.RLock()
 	current := Agent(a)
 	a.mu.RUnlock()
+	visited := map[string]bool{}
 
 	for {
-		if baseAgent, ok := current.(*BaseAgent); ok {
+		if baseAgent, ok := unwrapBaseAgent(current); ok {
+			if visited[baseAgent.id] {
+				return current
+			}
+			visited[baseAgent.id] = true
 			parent := baseAgent.Parent()
 			if parent == nil {
 				return current
@@ -497,10 +542,15 @@ func (a *BaseAgent) GetRoot() Agent {
 func (a *BaseAgent) GetPath() []Agent {
 	path := []Agent{}
 	current := Agent(a)
+	visited := map[string]bool{}
 
 	for current != nil {
 		path = append([]Agent{current}, path...)
-		if baseAgent, ok := current.(*BaseAgent); ok {
+		if baseAgent, ok := unwrapBaseAgent(current); ok {
+			if visited[baseAgent.id] {
+				break
+			}
+			visited[baseAgent.id] = true
 			current = baseAgent.Parent()
 		} else {
 			break
@@ -515,9 +565,14 @@ func (a *BaseAgent) GetPath() []Agent {
 func (a *BaseAgent) GetDepth() int {
 	depth := 0
 	current := Agent(a)
+	visited := map[string]bool{}
 
 	for current != nil {
-		if baseAgent, ok := current.(*BaseAgent); ok {
+		if baseAgent, ok := unwrapBaseAgent(current); ok {
+			if visited[baseAgent.id] {
+				break
+			}
+			visited[baseAgent.id] = true
 			parent := baseAgent.Parent()
 			if parent == nil {
 				break

@@ -329,7 +329,7 @@ func Observability_Example9_ProductionConfig() {
 	fmt.Println("=== Example 9: Production Configuration ===")
 
 	fmt.Println("Production logging configuration:")
-	fmt.Println(`
+	fmt.Print(`
 // Environment variables:
 //   LOG_LEVEL=info           # Filter debug logs in production
 //   LOG_FORMAT=json          # JSON for log aggregators
@@ -365,7 +365,7 @@ config := observability.LoggerConfig{
 func RunObservabilityExamples() {
 	fmt.Println("========================================")
 	fmt.Println("Observability Examples")
-	fmt.Println("========================================\n")
+	fmt.Println("========================================")
 
 	Observability_Example1_StructuredLogging()
 	Observability_Example2_LogLevels()

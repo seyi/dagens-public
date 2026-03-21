@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"math/rand"
 	"reflect"
 	"sort"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
+	"math/rand"
 )
 
 // initialStateVersion is the starting version for new states.
@@ -93,7 +93,7 @@ type AdvancedState interface {
 
 	// Subtree returns a new State containing only keys with the given prefix,
 	// with the prefix stripped.
-	Subtree(prefix string) State
+	Subtree(prefix string) *State
 
 	// DeletePrefix removes all keys matching the prefix and returns count.
 	DeletePrefix(prefix string) int
@@ -117,13 +117,6 @@ type TypedStateWriter interface {
 	SetTyped(key string, value interface{})
 }
 
-// MarshalableState is the minimal state contract required by subsystems that
-// need to persist state snapshots (for example, HITL checkpoints).
-type MarshalableState interface {
-	State
-	Marshal() ([]byte, error)
-}
-
 // ============================================
 // Copy-on-Write Value Container (Task 1)
 // ============================================
@@ -133,9 +126,9 @@ type MarshalableState interface {
 // Mutable values are copied on read to ensure isolation.
 type cowValue struct {
 	value     interface{}
-	immutable bool   // true if value is a primitive that doesn't need copying
-	version   uint64 // version when this value was set (for future COW optimization)
-	frozen    bool   // true if this value has been shared and must be copied before mutation
+	immutable bool      // true if value is a primitive that doesn't need copying
+	version   uint64    // version when this value was set (for future COW optimization)
+	frozen    bool      // true if this value has been shared and must be copied before mutation
 }
 
 // isImmutableType returns true if the type is immutable (primitives).
@@ -181,6 +174,8 @@ func (c *cowValue) read() interface{} {
 	if c.immutable {
 		return c.value
 	}
+	// Mark as frozen since we're sharing it
+	c.frozen = true
 	// Return a copy to prevent external mutation
 	return deepCopyValue(c.value)
 }
@@ -196,15 +191,7 @@ func (c *cowValue) readDirect() interface{} {
 // ============================================
 
 // MemoryState is an in-memory implementation of State and AdvancedState.
-// Isolation model:
-// - copy-on-write at Set time for mutable values (value is copied into state)
-// - copy-on-read for mutable values from Get/Metadata/Iterate/Subtree
-// Callers may mutate returned mutable values without affecting stored state.
-//
-// Contract:
-//   - strong isolation for values covered by deepCopyValue handlers
-//   - for fallback JSON deep-copy path, values should be JSON-serializable
-//     or implement DeepCopyable for deterministic copy behavior
+// It uses Copy-on-Write semantics for efficient storage of immutable values.
 type MemoryState struct {
 	data     map[string]*cowValue
 	metadata map[string]*cowValue
@@ -220,23 +207,12 @@ type MemoryState struct {
 	stats stateStats
 }
 
-// Compile-time contract checks for key state interfaces.
-var _ MarshalableState = (*MemoryState)(nil)
-
 // stateStats tracks operational statistics.
 type stateStats struct {
 	gets      atomic.Uint64
 	sets      atomic.Uint64
 	copies    atomic.Uint64
 	cacheHits atomic.Uint64 // immutable values returned without copy
-}
-
-// StateStats is a stable snapshot of MemoryState operation counters.
-type StateStats struct {
-	Gets      uint64
-	Sets      uint64
-	Copies    uint64
-	CacheHits uint64
 }
 
 // NewState creates a new in-memory state.
@@ -251,16 +227,6 @@ func NewState() *MemoryState {
 // NewMemoryState creates a new in-memory state (alias for NewState).
 func NewMemoryState() *MemoryState {
 	return NewState()
-}
-
-// Stats returns a point-in-time snapshot of state operation counters.
-func (s *MemoryState) Stats() StateStats {
-	return StateStats{
-		Gets:      s.stats.gets.Load(),
-		Sets:      s.stats.sets.Load(),
-		Copies:    s.stats.copies.Load(),
-		CacheHits: s.stats.cacheHits.Load(),
-	}
 }
 
 // Get retrieves a value from the state.
@@ -322,14 +288,7 @@ func (s *MemoryState) GetTyped(key string, target interface{}) bool {
 }
 
 // Set stores a value in the state.
-//
-// Isolation guarantees:
-//   - JSON-compatible values are deep-copied on write/read and preserve isolation.
-//   - DeepCopyable values use custom DeepCopy() and preserve isolation if implemented correctly.
-//   - Non-serializable fallback values may be returned by reference on read; strict isolation is
-//     not guaranteed for those values.
-//
-// For strict isolation, prefer JSON-compatible values or implement DeepCopyable.
+// Immutable values are stored directly; mutable values are deep copied.
 func (s *MemoryState) Set(key string, value interface{}) {
 	s.stats.sets.Add(1)
 
@@ -557,7 +516,7 @@ func (s *MemoryState) GetMetadata(key string) (interface{}, bool) {
 	if !exists {
 		return nil, false
 	}
-
+	
 	if cow.immutable {
 		return cow.value, true
 	}
@@ -595,13 +554,7 @@ func (s *MemoryState) UnmarshalJSON(data []byte) error {
 	return s.Unmarshal(data)
 }
 
-// Iterate calls fn for each key-value pair.
-//
-// Consistency model:
-// - keys are snapshotted at iteration start
-// - values are read under RLock per key
-// - concurrent mutations may cause stale values or skipped newly-added keys
-// For strong snapshot semantics, use Clone() first.
+// Iterate calls the provided function for each key-value pair
 func (s *MemoryState) Iterate(fn func(key string, value any) bool) {
 	s.mu.RLock()
 	// Take a snapshot of keys
@@ -629,7 +582,7 @@ func (s *MemoryState) Iterate(fn func(key string, value any) bool) {
 		} else {
 			valueCopy = cow.read()
 		}
-
+		
 		if !fn(key, valueCopy) {
 			break
 		}
@@ -653,7 +606,7 @@ func (s *MemoryState) KeysWithPrefix(prefix string) []string {
 }
 
 // Subtree returns a new State containing only keys with the given prefix
-func (s *MemoryState) Subtree(prefix string) State {
+func (s *MemoryState) Subtree(prefix string) *MemoryState {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -662,14 +615,15 @@ func (s *MemoryState) Subtree(prefix string) State {
 	for k, cow := range s.data {
 		if strings.HasPrefix(k, prefix) {
 			newKey := strings.TrimPrefix(k, prefix)
-			// Remove leading separator if present
-			newKey = strings.TrimPrefix(newKey, ".")
-			newKey = strings.TrimPrefix(newKey, "/")
-			if newKey != "" {
-				// We can share immutable COWs, but must copy mutable ones for safety
-				// unless we implement a shared backing store logic
-				subtree.data[newKey] = newCOWValue(cow.read(), s.version)
+			// Preserve exact-match empty keys, and only trim separators when the
+			// caller provided a separator-terminated prefix.
+			if strings.HasSuffix(prefix, ".") || strings.HasSuffix(prefix, "/") {
+				newKey = strings.TrimPrefix(newKey, ".")
+				newKey = strings.TrimPrefix(newKey, "/")
 			}
+			// We can share immutable COWs, but must copy mutable ones for safety
+			// unless we implement a shared backing store logic
+			subtree.data[newKey] = newCOWValue(cow.read(), s.version)
 		}
 	}
 
@@ -718,20 +672,7 @@ func (s *MemoryState) Version() uint64 {
 	return s.version
 }
 
-// Watch registers an observer for state changes.
-//
-// Delivery model:
-// - buffered channel capacity is 100 events
-// - publishing is non-blocking; events are dropped if the buffer is full
-// - returned unsubscribe function is idempotent
-// - per-channel ordering is FIFO for delivered events
-// - cross-channel ordering/timing is not guaranteed between observers
-//
-// Watch is an observability helper (metrics/logging/debugging) and should not be
-// used as a correctness-critical transport. Critical workflow logic must read from
-// authoritative state/store directly.
-//
-// For best-effort delivery, ensure a dedicated consumer drains the channel promptly.
+// Watch registers an observer for state changes
 func (s *MemoryState) Watch(ctx context.Context) (<-chan StateEvent, func()) {
 	s.mu.Lock()
 	s.ensureObserverHubLocked()
@@ -754,28 +695,23 @@ func (s *MemoryState) Watch(ctx context.Context) (<-chan StateEvent, func()) {
 
 	// Create unsubscribe function
 	unsubscribe := func() {
-		observer.closeOnce.Do(func() {
-			s.Unwatch(observer.id)
-		})
+		s.Unwatch(observer.id)
 	}
 
 	// Handle context cancellation
-	if ctx != nil {
-		go func() {
-			<-ctx.Done()
-			unsubscribe()
-		}()
-	}
+	go func() {
+		<-ctx.Done()
+		unsubscribe()
+	}()
 
 	return eventCh, unsubscribe
 }
 
 // stateObserver represents a registered observer
 type stateObserver struct {
-	id        string
-	eventCh   chan StateEvent
-	ctx       context.Context
-	closeOnce sync.Once
+	id      string
+	eventCh chan StateEvent
+	ctx     context.Context
 }
 
 // generateObserverID creates a unique observer ID
@@ -909,6 +845,13 @@ func deepCopyValue(v any) any {
 	case []interface{}:
 		return deepCopySlice(val)
 
+	case []map[string]interface{}:
+		cp := make([]map[string]interface{}, len(val))
+		for i, item := range val {
+			cp[i] = deepCopyMap(item)
+		}
+		return cp
+
 	case []string:
 		cp := make([]string, len(val))
 		copy(cp, val)
@@ -944,13 +887,53 @@ func deepCopyValue(v any) any {
 		return cp
 
 	default:
+		rv := reflect.ValueOf(v)
+		switch rv.Kind() {
+		case reflect.Struct:
+			if isReflectivelyCopyableType(rv.Type()) {
+				cp := reflect.New(rv.Type()).Elem()
+				cp.Set(rv)
+				return cp.Interface()
+			}
+		case reflect.Ptr:
+			if rv.IsNil() {
+				return v
+			}
+			if rv.Elem().Kind() == reflect.Struct && isReflectivelyCopyableType(rv.Elem().Type()) {
+				cp := reflect.New(rv.Elem().Type())
+				cp.Elem().Set(rv.Elem())
+				return cp.Interface()
+			}
+		}
 		// For unknown types, try JSON round-trip as fallback
 		return jsonDeepCopy(val)
 	}
 }
 
+func isReflectivelyCopyableType(t reflect.Type) bool {
+	switch t.Kind() {
+	case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr,
+		reflect.Float32, reflect.Float64, reflect.Complex64, reflect.Complex128,
+		reflect.String:
+		return true
+	case reflect.Struct:
+		for i := 0; i < t.NumField(); i++ {
+			if !isReflectivelyCopyableType(t.Field(i).Type) {
+				return false
+			}
+		}
+		return true
+	case reflect.Array:
+		return isReflectivelyCopyableType(t.Elem())
+	case reflect.Ptr:
+		return isReflectivelyCopyableType(t.Elem())
+	default:
+		return false
+	}
+}
+
 // DeepCopyable interface for types that can deep copy themselves
-// and bypass JSON fallback behavior.
 type DeepCopyable interface {
 	DeepCopy() any
 }
@@ -968,22 +951,35 @@ func deepCopySlice(s []interface{}) []interface{} {
 	return result
 }
 
-// jsonDeepCopy uses JSON marshaling/unmarshaling for deep copy.
-// This is a best-effort fallback for complex types that do not implement DeepCopyable.
-// If serialization fails, it returns the original value to avoid panics in library code.
-// Callers should prefer JSON-compatible values or DeepCopyable implementations
-// when strict isolation is required.
+// jsonDeepCopy uses JSON marshaling/unmarshaling for deep copy
+// This is a fallback for complex types.
+// Panics if the value cannot be JSON-serialized to prevent isolation breaches.
 func jsonDeepCopy(v any) any {
 	data, err := json.Marshal(v)
 	if err != nil {
-		// Library code must not panic on deep copy fallback failure.
-		// Return the original value as a best-effort fallback.
-		return v
+		// Fail-fast: panic instead of returning the original pointer
+		// This enforces the JSON-serializability contract and prevents data corruption
+		panic(fmt.Sprintf(
+			"state: cannot deep copy non-JSON-serializable type %T. "+
+				"State values must be JSON-compatible (maps, slices, primitives, "+
+				"or structs with exported fields). "+
+				"Common issues: unexported struct fields, channels, functions, sync.Mutex. "+
+				"Fix: use only exported fields or implement json.Marshaler/json.Unmarshaler",
+			v,
+		))
 	}
 
 	var result interface{}
 	if err := json.Unmarshal(data, &result); err != nil {
-		return v
+		// Fail-fast: panic instead of returning the original pointer
+		panic(fmt.Sprintf(
+			"state: cannot deep copy non-JSON-serializable type %T. "+
+				"State values must be JSON-compatible (maps, slices, primitives, "+
+				"or structs with exported fields). "+
+				"Common issues: unexported struct fields, channels, functions, sync.Mutex. "+
+				"Fix: use only exported fields or implement json.Marshaler/json.Unmarshaler",
+			v,
+		))
 	}
 
 	return result
@@ -995,9 +991,9 @@ func jsonDeepCopy(v any) any {
 
 // StateHistory maintains a history of state snapshots
 type StateHistory struct {
-	mu        sync.RWMutex
-	snapshots []*StateSnapshot
-	maxSize   int
+	mu          sync.RWMutex
+	snapshots   []*StateSnapshot
+	maxSize     int
 }
 
 // NewStateHistory creates a new state history tracker
@@ -1021,7 +1017,7 @@ func (h *StateHistory) Record(snapshot *StateSnapshot) {
 		h.snapshots = h.snapshots[1:]
 	}
 
-	h.snapshots = append(h.snapshots, snapshot)
+	h.snapshots = append(h.snapshots, snapshot.Clone())
 }
 
 // Get retrieves a snapshot at a specific index
@@ -1032,7 +1028,7 @@ func (h *StateHistory) Get(index int) (*StateSnapshot, bool) {
 	if index < 0 || index >= len(h.snapshots) {
 		return nil, false
 	}
-	return h.snapshots[index], true
+	return h.snapshots[index].Clone(), true
 }
 
 // Latest returns the most recent state snapshot
@@ -1043,7 +1039,7 @@ func (h *StateHistory) Latest() (*StateSnapshot, bool) {
 	if len(h.snapshots) == 0 {
 		return nil, false
 	}
-	return h.snapshots[len(h.snapshots)-1], true
+	return h.snapshots[len(h.snapshots)-1].Clone(), true
 }
 
 // Clear removes all entries from the history
@@ -1110,29 +1106,43 @@ const (
 )
 
 type StateEvent struct {
-	Type StateEventType `json:"type"`
 
-	Key string `json:"key,omitempty"`
+	Type      StateEventType `json:"type"`
 
-	Value interface{} `json:"value,omitempty"`
+	Key       string         `json:"key,omitempty"`
 
-	Version uint64 `json:"version"`
+	Value     interface{}    `json:"value,omitempty"`
 
-	Timestamp time.Time `json:"timestamp"`
+	Version   uint64         `json:"version"`
+
+	Timestamp time.Time      `json:"timestamp"`
+
 }
+
+
 
 // StateObserver provides a channel for receiving events and a Stop method.
+
 type StateObserver struct {
+
 	Events <-chan StateEvent
 
-	stop func()
+	stop   func()
 
-	id string
+	id     string
+
 }
 
+
+
 // Stop unregisters the observer and closes its channel.
+
 func (o *StateObserver) Stop() {
+
 	if o != nil && o.stop != nil {
+
 		o.stop()
+
 	}
+
 }

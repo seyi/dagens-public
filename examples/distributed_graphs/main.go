@@ -409,6 +409,24 @@ type MockRegistry struct {
 	nodes []registry.NodeInfo
 }
 
+func (m *MockRegistry) GetNodes() []registry.NodeInfo { return m.nodes }
+
+func (m *MockRegistry) GetNodeCount() int { return len(m.nodes) }
+
+func (m *MockRegistry) GetHealthyNodeCount() int {
+	count := 0
+	for _, n := range m.nodes {
+		if n.Healthy {
+			count++
+		}
+	}
+	return count
+}
+
+func (m *MockRegistry) Start(ctx context.Context) error { return nil }
+
+func (m *MockRegistry) Stop() error { return nil }
+
 func (m *MockRegistry) GetHealthyNodes() []registry.NodeInfo { return m.nodes }
 func (m *MockRegistry) GetNode(id string) (registry.NodeInfo, bool) {
 	return registry.NodeInfo{ID: id, Healthy: true}, true

@@ -2,7 +2,9 @@ package agents
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/seyi/dagens/pkg/agent"
 	"github.com/seyi/dagens/pkg/events"
@@ -187,6 +189,10 @@ func (e *llmWithAutoFlowExecutor) executeWithAutoFlow(ctx context.Context, ag ag
 
 // executeLLMAndDetectTransfer calls LLM and detects if it wants to transfer
 func (e *llmWithAutoFlowExecutor) executeLLMAndDetectTransfer(ctx context.Context, input *agent.AgentInput) (*agent.AgentOutput, error) {
+	if input == nil {
+		input = &agent.AgentInput{}
+	}
+
 	// Build prompt with available tools
 	prompt := e.buildPrompt(input)
 
@@ -228,6 +234,10 @@ func (e *llmWithAutoFlowExecutor) executeLLMAndDetectTransfer(ctx context.Contex
 
 // executeWithoutTransfer executes without AutoFlow (backward compatible)
 func (e *llmWithAutoFlowExecutor) executeWithoutTransfer(ctx context.Context, input *agent.AgentInput) (*agent.AgentOutput, error) {
+	if input == nil {
+		input = &agent.AgentInput{}
+	}
+
 	// Simple execution without transfer support
 	prompt := e.buildPrompt(input)
 
@@ -250,6 +260,10 @@ func (e *llmWithAutoFlowExecutor) executeWithoutTransfer(ctx context.Context, in
 
 // buildPrompt constructs the LLM prompt
 func (e *llmWithAutoFlowExecutor) buildPrompt(input *agent.AgentInput) string {
+	if input == nil {
+		input = &agent.AgentInput{}
+	}
+
 	parts := []string{}
 
 	if e.llmAgent.instruction != "" {
@@ -265,7 +279,14 @@ func (e *llmWithAutoFlowExecutor) buildPrompt(input *agent.AgentInput) string {
 		parts = append(parts, fmt.Sprintf("Context: %v", prevResults))
 	}
 
-	return fmt.Sprintf("%s", parts[0]) + "\n\n" + parts[1]
+	switch len(parts) {
+	case 0:
+		return ""
+	case 1:
+		return parts[0]
+	default:
+		return strings.Join(parts, "\n\n")
+	}
 }
 
 // getToolDescriptions returns formatted tool descriptions
@@ -283,11 +304,7 @@ func (e *llmWithAutoFlowExecutor) getToolDescriptions() string {
 		descriptions = append(descriptions, fmt.Sprintf("- %s: %s", tool.Name, tool.Description))
 	}
 
-	result := ""
-	for _, desc := range descriptions {
-		result += desc + "\n"
-	}
-	return result
+	return strings.Join(descriptions, "\n")
 }
 
 // transferCall represents a parsed transfer request
@@ -298,65 +315,29 @@ type transferCall struct {
 
 // extractTransferCall parses transfer_to_agent calls from LLM output
 func (e *llmWithAutoFlowExecutor) extractTransferCall(output string) (*transferCall, bool) {
-	// Simple parser for transfer_to_agent calls
-	// Format: <tool_use name="transfer_to_agent">{"agent_name": "TargetAgent", "reason": "..."}</tool_use>
-
-	// Check for transfer_to_agent marker
-	if !containsSubstring(output, "transfer_to_agent") {
+	startMarker := `<tool_use name="transfer_to_agent">`
+	endMarker := `</tool_use>`
+	start := strings.Index(output, startMarker)
+	end := strings.Index(output, endMarker)
+	if start == -1 || end == -1 || end <= start {
 		return nil, false
 	}
-
-	// Extract agent_name
-	agentName := extractBetween(output, "agent_name", "\"")
-	if agentName == "" {
+	content := output[start+len(startMarker) : end]
+	var payload struct {
+		AgentName string `json:"agent_name"`
+		Reason    string `json:"reason"`
+	}
+	if err := json.Unmarshal([]byte(strings.TrimSpace(content)), &payload); err != nil {
 		return nil, false
 	}
-
-	// Extract reason (optional)
-	reason := extractBetween(output, "reason", "\"")
+	if payload.AgentName == "" {
+		return nil, false
+	}
 
 	return &transferCall{
-		TargetAgent: agentName,
-		Reason:      reason,
+		TargetAgent: payload.AgentName,
+		Reason:      payload.Reason,
 	}, true
-}
-
-// Helper functions
-func containsSubstring(s, substr string) bool {
-	return len(s) > 0 && len(substr) > 0 && indexOf(s, substr) >= 0
-}
-
-func indexOf(s, substr string) int {
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return i
-		}
-	}
-	return -1
-}
-
-func extractBetween(s, key, delimiter string) string {
-	// Find key
-	keyIndex := indexOf(s, key)
-	if keyIndex < 0 {
-		return ""
-	}
-
-	// Find first delimiter after key
-	searchStart := keyIndex + len(key)
-	firstDelim := indexOf(s[searchStart:], delimiter)
-	if firstDelim < 0 {
-		return ""
-	}
-
-	// Find second delimiter
-	valueStart := searchStart + firstDelim + len(delimiter)
-	secondDelim := indexOf(s[valueStart:], delimiter)
-	if secondDelim < 0 {
-		return ""
-	}
-
-	return s[valueStart : valueStart+secondDelim]
 }
 
 // GetAutoFlow returns the AutoFlow instance (for testing)

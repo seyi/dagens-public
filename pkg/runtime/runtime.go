@@ -155,7 +155,7 @@ type InvocationContext struct {
 
 // NewInvocationContext creates a new invocation context
 func NewInvocationContext(ctx context.Context, input *agent.AgentInput) *InvocationContext {
-	return &InvocationContext{
+	invCtx := &InvocationContext{
 		Context:      ctx,
 		SessionID:    generateID("session"),
 		InvocationID: generateID("invocation"),
@@ -166,6 +166,9 @@ func NewInvocationContext(ctx context.Context, input *agent.AgentInput) *Invocat
 		EventHistory: make([]Event, 0),
 		StartTime:    time.Now(),
 	}
+
+	invCtx.Context = withInvocationContext(ctx, invCtx)
+	return invCtx
 }
 
 // Get retrieves a value from context state with dirty read support.

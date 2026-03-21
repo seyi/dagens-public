@@ -16,13 +16,42 @@ package sandbox
 
 import (
 	"context"
+	"os/exec"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 )
 
+func requireGVisorTestEnvironment(t *testing.T) {
+	t.Helper()
+
+	if _, err := exec.LookPath("runsc"); err != nil {
+		t.Skipf("skipping gVisor test: runsc not available: %v", err)
+	}
+	if _, err := exec.LookPath("sudo"); err != nil {
+		t.Skipf("skipping gVisor test: sudo not available: %v", err)
+	}
+
+	cmd := exec.Command("sudo", "-n", "runsc", "--version")
+	output, err := cmd.CombinedOutput()
+	if err == nil {
+		return
+	}
+
+	text := strings.ToLower(string(output))
+	if strings.Contains(text, "no new privileges") ||
+		strings.Contains(text, "a password is required") ||
+		strings.Contains(text, "permission denied") {
+		t.Skipf("skipping gVisor test: sandbox host cannot run sudo runsc: %v (%s)", err, strings.TrimSpace(string(output)))
+	}
+
+	t.Fatalf("gVisor test environment check failed: %v (%s)", err, strings.TrimSpace(string(output)))
+}
+
 func TestGVisorExecutor_SimpleExecution(t *testing.T) {
+	requireGVisorTestEnvironment(t)
+
 	executor, err := NewGVisorExecutor("")
 	if err != nil {
 		t.Fatalf("failed to create executor: %v", err)
@@ -35,7 +64,7 @@ func main() {
     fmt.Println("Hello from gVisor!")
 }
 `
-	stdout, stderr, err := executor.Execute(context.Background(), code, nil)
+	stdout, stderr, err := executor.ExecuteGo(context.Background(), code, nil)
 	if err != nil {
 		t.Fatalf("execution failed: %v\nStderr: %s", err, stderr)
 	}
@@ -46,6 +75,8 @@ func main() {
 }
 
 func TestGVisorExecutor_ReadOnlyRootFS(t *testing.T) {
+	requireGVisorTestEnvironment(t)
+
 	executor, err := NewGVisorExecutor("")
 	if err != nil {
 		t.Fatalf("failed to create executor: %v", err)
@@ -60,7 +91,7 @@ func main() {
     }
 }
 `
-	_, stderr, err := executor.Execute(context.Background(), code, nil)
+	_, stderr, err := executor.ExecuteGo(context.Background(), code, nil)
 	if err == nil {
 		t.Fatal("execution succeeded but should have failed")
 	}
@@ -71,6 +102,8 @@ func main() {
 }
 
 func TestGVisorExecutor_NoNetwork(t *testing.T) {
+	requireGVisorTestEnvironment(t)
+
 	executor, err := NewGVisorExecutor("")
 	if err != nil {
 		t.Fatalf("failed to create executor: %v", err)
@@ -85,7 +118,7 @@ func main() {
     }
 }
 `
-	_, stderr, err := executor.Execute(context.Background(), code, nil)
+	_, stderr, err := executor.ExecuteGo(context.Background(), code, nil)
 	if err == nil {
 		t.Fatal("execution succeeded but should have failed")
 	}
@@ -96,6 +129,8 @@ func main() {
 }
 
 func TestGVisorExecutor_WithMount(t *testing.T) {
+	requireGVisorTestEnvironment(t)
+
 	executor, err := NewGVisorExecutor("")
 	if err != nil {
 		t.Fatalf("failed to create executor: %v", err)
@@ -138,7 +173,7 @@ func main() {
     fmt.Println(string(data))
 }
 `
-	stdout, stderr, err := executor.Execute(context.Background(), code, policy)
+	stdout, stderr, err := executor.ExecuteGo(context.Background(), code, policy)
 	if err != nil {
 		t.Fatalf("execution failed: %v\nStderr: %s", err, stderr)
 	}

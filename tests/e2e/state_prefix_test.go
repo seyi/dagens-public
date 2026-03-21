@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -15,7 +16,13 @@ func TestE2E_PrefixIteration_ScopedRetrieval(t *testing.T) {
 	state.Set("session/123/agent/summarizer/output", "Summary: ok")
 	state.Set("session/999/agent/echo/output", "Other")
 
-	res := state.Iterate("session/123/")
+	res := make(map[string]any)
+	state.Iterate(func(key string, value any) bool {
+		if strings.HasPrefix(key, "session/123/") {
+			res[key] = value
+		}
+		return true
+	})
 	if len(res) != 2 {
 		t.Fatalf("expected 2 keys for session/123, got %d: %+v", len(res), res)
 	}
@@ -34,7 +41,13 @@ func TestE2E_PrefixIteration_PerfSmoke(t *testing.T) {
 	start := time.Now()
 	loops := 500
 	for i := 0; i < loops; i++ {
-		_ = state.Iterate("batch/")
+		count := 0
+		state.Iterate(func(key string, value any) bool {
+			if strings.HasPrefix(key, "batch/") {
+				count++
+			}
+			return true
+		})
 	}
 	avg := time.Since(start) / time.Duration(loops)
 

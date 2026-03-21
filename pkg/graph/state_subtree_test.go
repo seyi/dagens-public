@@ -4,17 +4,14 @@ import (
 	"testing"
 )
 
-func subtreeAsMap(t *testing.T, s State) map[string]interface{} {
-	t.Helper()
-	out := map[string]interface{}{}
+func subtreeAsMap(s *MemoryState) map[string]interface{} {
+	result := make(map[string]interface{})
 	for _, key := range s.Keys() {
-		v, ok := s.Get(key)
-		if !ok {
-			continue
+		if value, ok := s.Get(key); ok {
+			result[key] = value
 		}
-		out[key] = v
 	}
-	return out
+	return result
 }
 
 func TestSubtree_Basic(t *testing.T) {
@@ -23,14 +20,15 @@ func TestSubtree_Basic(t *testing.T) {
 	s.Set("root/b", "v")
 	s.Set("other/x", 99)
 
-	sub := subtreeAsMap(t, s.Subtree("root/"))
-	if len(sub) != 2 {
-		t.Fatalf("expected 2 entries, got %d: %+v", len(sub), sub)
+	sub := s.Subtree("root/")
+	subMap := subtreeAsMap(sub)
+	if len(subMap) != 2 {
+		t.Fatalf("expected 2 entries, got %d: %+v", len(subMap), subMap)
 	}
-	if sub["a"] != 1 || sub["b"] != "v" {
-		t.Fatalf("unexpected subtree values: %+v", sub)
+	if subMap["a"] != 1 || subMap["b"] != "v" {
+		t.Fatalf("unexpected subtree values: %+v", subMap)
 	}
-	if _, ok := sub["root/a"]; ok {
+	if _, ok := subMap["root/a"]; ok {
 		t.Fatalf("prefix not stripped")
 	}
 }
@@ -38,18 +36,19 @@ func TestSubtree_Basic(t *testing.T) {
 func TestSubtree_NoMatch(t *testing.T) {
 	s := NewMemoryState()
 	s.Set("a", 1)
-	sub := subtreeAsMap(t, s.Subtree("none/"))
-	if len(sub) != 0 {
-		t.Fatalf("expected empty subtree, got %+v", sub)
+	sub := s.Subtree("none/")
+	if len(subtreeAsMap(sub)) != 0 {
+		t.Fatalf("expected empty subtree, got %+v", subtreeAsMap(sub))
 	}
 }
 
 func TestSubtree_Immutability(t *testing.T) {
 	s := NewMemoryState()
 	s.Set("root/list", []int{1, 2, 3})
-	sub := subtreeAsMap(t, s.Subtree("root/"))
+	sub := s.Subtree("root/")
+	subMap := subtreeAsMap(sub)
 
-	list := sub["list"].([]int)
+	list := subMap["list"].([]int)
 	list[0] = 99
 
 	orig, _ := s.Get("root/list")
@@ -67,9 +66,10 @@ func TestSubtree_AfterRestore(t *testing.T) {
 	restored := NewMemoryState()
 	restored.Restore(snap)
 
-	sub := subtreeAsMap(t, restored.Subtree("root/"))
-	if len(sub) != 2 || sub["a"] != "keep" || sub["b"] != "also" {
-		t.Fatalf("unexpected subtree after restore: %+v", sub)
+	sub := restored.Subtree("root/")
+	subMap := subtreeAsMap(sub)
+	if len(subMap) != 2 || subMap["a"] != "keep" || subMap["b"] != "also" {
+		t.Fatalf("unexpected subtree after restore: %+v", subMap)
 	}
 }
 
@@ -114,13 +114,14 @@ func TestSubtree_EdgeCasesAndNestedPrefixes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := subtreeAsMap(t, s.Subtree(tt.prefix))
-			if len(got) != len(tt.wantKeys) {
-				t.Errorf("Subtree(%q) returned %d keys, want %d", tt.prefix, len(got), len(tt.wantKeys))
+			got := s.Subtree(tt.prefix)
+			gotMap := subtreeAsMap(got)
+			if len(gotMap) != len(tt.wantKeys) {
+				t.Errorf("Subtree(%q) returned %d keys, want %d", tt.prefix, len(gotMap), len(tt.wantKeys))
 			}
 			for _, key := range tt.wantKeys {
-				if _, ok := got[key]; !ok {
-					t.Errorf("Subtree(%q) missing expected key: %q. Got: %v", tt.prefix, key, got)
+				if _, ok := gotMap[key]; !ok {
+					t.Errorf("Subtree(%q) missing expected key: %q. Got: %v", tt.prefix, key, gotMap)
 				}
 			}
 		})
@@ -135,9 +136,10 @@ func TestSubtree_DeeplyNested(t *testing.T) {
 	s.Set("services/api/config/port", 8080)
 
 	// Test deeply nested extraction
-	sub := subtreeAsMap(t, s.Subtree("services/auth/config/"))
-	if len(sub) != 3 {
-		t.Fatalf("expected 3 entries, got %d: %+v", len(sub), sub)
+	sub := s.Subtree("services/auth/config/")
+	subMap := subtreeAsMap(sub)
+	if len(subMap) != 3 {
+		t.Fatalf("expected 3 entries, got %d: %+v", len(subMap), subMap)
 	}
 
 	expected := map[string]interface{}{
@@ -147,7 +149,7 @@ func TestSubtree_DeeplyNested(t *testing.T) {
 	}
 
 	for k, want := range expected {
-		got, ok := sub[k]
+		got, ok := subMap[k]
 		if !ok {
 			t.Errorf("missing key %q in subtree", k)
 			continue
@@ -158,11 +160,12 @@ func TestSubtree_DeeplyNested(t *testing.T) {
 	}
 
 	// Test even deeper nesting
-	dbSub := subtreeAsMap(t, s.Subtree("services/auth/config/db/"))
-	if len(dbSub) != 2 {
-		t.Fatalf("expected 2 db entries, got %d: %+v", len(dbSub), dbSub)
+	dbSub := s.Subtree("services/auth/config/db/")
+	dbSubMap := subtreeAsMap(dbSub)
+	if len(dbSubMap) != 2 {
+		t.Fatalf("expected 2 db entries, got %d: %+v", len(dbSubMap), dbSubMap)
 	}
-	if dbSub["host"] != "localhost" || dbSub["port"] != 5432 {
-		t.Errorf("unexpected db subtree: %+v", dbSub)
+	if dbSubMap["host"] != "localhost" || dbSubMap["port"] != 5432 {
+		t.Errorf("unexpected db subtree: %+v", dbSubMap)
 	}
 }

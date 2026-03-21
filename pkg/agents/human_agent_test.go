@@ -661,6 +661,7 @@ func TestHumanAgentInWorkflow(t *testing.T) {
 	workflow := NewSequentialAgent(SequentialAgentConfig{
 		Name:      "ContentWorkflow",
 		SubAgents: []agent.Agent{generator, humanReview, publisher},
+		PassOutput: true,
 	})
 
 	// Simulate human approval
@@ -735,6 +736,7 @@ func TestDistributedMultiStageApproval(t *testing.T) {
 	approvalWorkflow := NewSequentialAgent(SequentialAgentConfig{
 		Name:      "BudgetApprovalWorkflow",
 		SubAgents: []agent.Agent{managerApproval, directorApproval, cfoApproval},
+		PassOutput: true,
 	})
 
 	// Track approval stages

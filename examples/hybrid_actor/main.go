@@ -61,7 +61,7 @@ func (s *SimpleCalculatorActor) calculate(instruction string) interface{} {
 }
 
 func main() {
-	fmt.Println("=== Hybrid A2A + Actor Model Demo ===\n")
+	fmt.Println("=== Hybrid A2A + Actor Model Demo ===")
 	
 	// 1. Create the actor system (internal communication)
 	fmt.Println("1. Creating actor system for internal agent communication...")

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/seyi/dagens/pkg/a2a"
@@ -213,7 +214,7 @@ func isRetryableError(err error) bool {
 }
 
 func contains(s, substr string) bool {
-	return len(s) >= len(substr) && s[:len(substr)] == substr
+	return strings.Contains(s, substr)
 }
 
 // GetAgentCard returns the cached or fetched agent card

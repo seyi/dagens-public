@@ -27,7 +27,7 @@ func main() {
 	})
 
 	fmt.Println("=== ParallelAgent Orchestrator Example ===")
-	fmt.Println("This demonstrates ADK-compatible parallel execution with interleaved events\n")
+	fmt.Println("This demonstrates ADK-compatible parallel execution with interleaved events")
 
 	// Execute the orchestrator
 	ctx := context.Background()
@@ -43,7 +43,7 @@ func main() {
 	}
 
 	fmt.Println("Executing parallel orchestrator...")
-	fmt.Println("Sub-agents will execute concurrently with interleaved events\n")
+	fmt.Println("Sub-agents will execute concurrently with interleaved events")
 
 	startTime := time.Now()
 	output, err := parallelOrchestrator.Execute(ctx, input)

@@ -55,7 +55,7 @@ func TestFileStateStore_AgentRoundTrip(t *testing.T) {
 
 	// Ensure version carried over.
 	if restored.Version() != uint64(snap.Version) {
-		t.Fatalf("version mismatch: got %d want %d", restored.Version(), snap.Version)
+		t.Fatalf("version mismatch: got %d want %d", restored.Version(), uint64(snap.Version))
 	}
 
 	// Ensure timestamp preserved (within sane bounds).

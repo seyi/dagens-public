@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== ProtoActor-Go Implementation Demo ===\n")
+	fmt.Println("=== ProtoActor-Go Implementation Demo ===")
 	
 	// 1. Create the ProtoActor-Go system
 	fmt.Println("1. Creating ProtoActor-Go system...")

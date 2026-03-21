@@ -16,14 +16,43 @@ package tools
 
 import (
 	"context"
+	"os/exec"
 	"strings"
 	"testing"
 )
+
+func requireGVisorToolEnvironment(t *testing.T) {
+	t.Helper()
+
+	if _, err := exec.LookPath("runsc"); err != nil {
+		t.Skipf("skipping gVisor tool test: runsc not available: %v", err)
+	}
+	if _, err := exec.LookPath("sudo"); err != nil {
+		t.Skipf("skipping gVisor tool test: sudo not available: %v", err)
+	}
+
+	cmd := exec.Command("sudo", "-n", "runsc", "--version")
+	output, err := cmd.CombinedOutput()
+	if err == nil {
+		return
+	}
+
+	text := strings.ToLower(string(output))
+	if strings.Contains(text, "no new privileges") ||
+		strings.Contains(text, "a password is required") ||
+		strings.Contains(text, "permission denied") {
+		t.Skipf("skipping gVisor tool test: host cannot run sudo runsc: %v (%s)", err, strings.TrimSpace(string(output)))
+	}
+
+	t.Fatalf("gVisor tool environment check failed: %v (%s)", err, strings.TrimSpace(string(output)))
+}
 
 func TestCodeExecutionTool_GVisor(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping gvisor test in short mode")
 	}
+
+	requireGVisorToolEnvironment(t)
 
 	config := DefaultCodeExecutionConfig()
 	config.SandboxType = "gvisor"
