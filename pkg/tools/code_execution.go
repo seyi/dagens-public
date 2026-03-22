@@ -264,13 +264,14 @@ func executeInDockerSandbox(ctx context.Context, code, language string, timeout 
 	// Create context with timeout
 	execCtx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
+	cmd = exec.CommandContext(execCtx, cmd.Path, cmd.Args[1:]...)
 
 	// Run command
 	output, err := cmd.CombinedOutput()
 
 	// Check if timeout occurred
 	if execCtx.Err() == context.DeadlineExceeded {
-		result.Stderr = fmt.Sprintf("Execution timed out after %v", timeout)
+		result.Stderr = fmt.Sprintf("Execution timeout after %v", timeout)
 		result.ExitCode = 124 // Standard timeout exit code
 		result.Error = "timeout"
 		return result, fmt.Errorf("execution timeout")
