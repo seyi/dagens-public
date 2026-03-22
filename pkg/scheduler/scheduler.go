@@ -789,6 +789,21 @@ func (s *Scheduler) reconcileDurableQueuedJobsOnce(ctx context.Context, mode Rec
 			continue
 		}
 
+		if job.LifecycleState == JobStateRunning {
+			if terminalState, ok := replayedTerminalJobState(replayed.Tasks); ok {
+				s.mu.Unlock()
+				switch terminalState {
+				case JobStateSucceeded:
+					s.updateJobStatus(job, JobCompleted)
+					s.recordJobTransition(ctx, nil, job, TransitionJobSucceeded, JobStateSucceeded, "reconcile synthesized terminal success after leader failover")
+				case JobStateFailed:
+					s.updateJobStatus(job, JobFailed)
+					s.recordJobTransition(ctx, nil, job, TransitionJobFailed, JobStateFailed, "reconcile synthesized terminal failure after leader failover")
+				}
+				continue
+			}
+		}
+
 		if job.LifecycleState == JobStateSubmitted {
 			s.recordJobTransition(ctx, nil, job, TransitionJobQueued, JobStateQueued, "")
 		}
@@ -852,6 +867,29 @@ func hasStaleInFlightReplayedTask(tasks map[string]DurableTaskRecord, now time.T
 		}
 	}
 	return false
+}
+
+func replayedTerminalJobState(tasks map[string]DurableTaskRecord) (JobLifecycleState, bool) {
+	if len(tasks) == 0 {
+		return "", false
+	}
+
+	hasFailed := false
+	for _, task := range tasks {
+		switch task.CurrentState {
+		case TaskStateSucceeded:
+			continue
+		case TaskStateFailed:
+			hasFailed = true
+		default:
+			return "", false
+		}
+	}
+
+	if hasFailed {
+		return JobStateFailed, true
+	}
+	return JobStateSucceeded, true
 }
 
 func (s *Scheduler) tryEnqueueExistingQueuedJob(jobID string) bool {

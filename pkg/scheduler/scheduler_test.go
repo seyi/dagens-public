@@ -990,6 +990,101 @@ func TestReconcileDurableQueuedJobsOnce_FailsStaleInFlightRunningJob(t *testing.
 	}
 }
 
+func TestReconcileDurableQueuedJobsOnce_CompletesRecoveredRunningJobWithSucceededTasks(t *testing.T) {
+	store := NewInMemoryTransitionStore()
+	now := time.Now().UTC()
+	jobID := "job-reconcile-complete-running"
+	firstTaskID := jobID + "-task-1"
+	secondTaskID := jobID + "-task-2"
+
+	requireNoErr := func(err error) {
+		t.Helper()
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+	}
+
+	requireNoErr(store.UpsertJob(context.Background(), DurableJobRecord{
+		JobID:          jobID,
+		Name:           jobID,
+		CurrentState:   JobStateRunning,
+		LastSequenceID: 11,
+		CreatedAt:      now,
+		UpdatedAt:      now.Add(11 * time.Second),
+	}))
+	requireNoErr(store.UpsertTask(context.Background(), DurableTaskRecord{
+		TaskID:       firstTaskID,
+		JobID:        jobID,
+		StageID:      "stage-1",
+		AgentID:      "start",
+		AgentName:    "start",
+		InputJSON:    `{"instruction":"start"}`,
+		CurrentState: TaskStateSucceeded,
+		LastAttempt:  1,
+		UpdatedAt:    now.Add(8 * time.Second),
+	}))
+	requireNoErr(store.UpsertTask(context.Background(), DurableTaskRecord{
+		TaskID:       secondTaskID,
+		JobID:        jobID,
+		StageID:      "stage-2",
+		AgentID:      "end",
+		AgentName:    "end",
+		InputJSON:    `{"instruction":"end"}`,
+		CurrentState: TaskStateSucceeded,
+		LastAttempt:  1,
+		UpdatedAt:    now.Add(11 * time.Second),
+	}))
+
+	records := []TransitionRecord{
+		{SequenceID: 1, EntityType: TransitionEntityJob, Transition: TransitionJobSubmitted, JobID: jobID, NewState: string(JobStateSubmitted), OccurredAt: now},
+		{SequenceID: 2, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated, JobID: jobID, TaskID: firstTaskID, NewState: string(TaskStatePending), OccurredAt: now.Add(time.Second)},
+		{SequenceID: 3, EntityType: TransitionEntityTask, Transition: TransitionTaskCreated, JobID: jobID, TaskID: secondTaskID, NewState: string(TaskStatePending), OccurredAt: now.Add(2 * time.Second)},
+		{SequenceID: 4, EntityType: TransitionEntityJob, Transition: TransitionJobQueued, JobID: jobID, PreviousState: string(JobStateSubmitted), NewState: string(JobStateQueued), OccurredAt: now.Add(3 * time.Second)},
+		{SequenceID: 5, EntityType: TransitionEntityTask, Transition: TransitionTaskDispatched, JobID: jobID, TaskID: firstTaskID, PreviousState: string(TaskStatePending), NewState: string(TaskStateDispatched), Attempt: 1, OccurredAt: now.Add(4 * time.Second)},
+		{SequenceID: 6, EntityType: TransitionEntityJob, Transition: TransitionJobRunning, JobID: jobID, PreviousState: string(JobStateQueued), NewState: string(JobStateRunning), OccurredAt: now.Add(5 * time.Second)},
+		{SequenceID: 7, EntityType: TransitionEntityTask, Transition: TransitionTaskRunning, JobID: jobID, TaskID: firstTaskID, PreviousState: string(TaskStateDispatched), NewState: string(TaskStateRunning), Attempt: 1, OccurredAt: now.Add(6 * time.Second)},
+		{SequenceID: 8, EntityType: TransitionEntityTask, Transition: TransitionTaskSucceeded, JobID: jobID, TaskID: firstTaskID, PreviousState: string(TaskStateRunning), NewState: string(TaskStateSucceeded), Attempt: 1, OccurredAt: now.Add(7 * time.Second)},
+		{SequenceID: 9, EntityType: TransitionEntityTask, Transition: TransitionTaskDispatched, JobID: jobID, TaskID: secondTaskID, PreviousState: string(TaskStatePending), NewState: string(TaskStateDispatched), Attempt: 1, OccurredAt: now.Add(8 * time.Second)},
+		{SequenceID: 10, EntityType: TransitionEntityTask, Transition: TransitionTaskRunning, JobID: jobID, TaskID: secondTaskID, PreviousState: string(TaskStateDispatched), NewState: string(TaskStateRunning), Attempt: 1, OccurredAt: now.Add(9 * time.Second)},
+		{SequenceID: 11, EntityType: TransitionEntityTask, Transition: TransitionTaskSucceeded, JobID: jobID, TaskID: secondTaskID, PreviousState: string(TaskStateRunning), NewState: string(TaskStateSucceeded), Attempt: 1, OccurredAt: now.Add(10 * time.Second)},
+	}
+	for _, record := range records {
+		requireNoErr(store.AppendTransition(context.Background(), record))
+	}
+
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{
+		JobQueueSize:                   4,
+		EnableLeaderDurableRequeueLoop: false,
+	})
+	if err := s.SetTransitionStore(store); err != nil {
+		t.Fatalf("SetTransitionStore unexpected error: %v", err)
+	}
+	lp := &toggleLeadershipProvider{}
+	lp.setLeader(true)
+	if err := s.SetLeadershipProvider(lp); err != nil {
+		t.Fatalf("SetLeadershipProvider unexpected error: %v", err)
+	}
+
+	if err := s.reconcileDurableQueuedJobsOnce(context.Background(), ReconcileModeLeader); err != nil {
+		t.Fatalf("reconcileDurableQueuedJobsOnce unexpected error: %v", err)
+	}
+	reconciled, err := s.GetJob(jobID)
+	if err != nil {
+		t.Fatalf("GetJob unexpected error: %v", err)
+	}
+	if reconciled.LifecycleState != JobStateSucceeded {
+		t.Fatalf("reconciled lifecycle = %q, want %q", reconciled.LifecycleState, JobStateSucceeded)
+	}
+
+	records, err = store.ListTransitionsByJob(context.Background(), jobID)
+	if err != nil {
+		t.Fatalf("ListTransitionsByJob unexpected error: %v", err)
+	}
+	if got := records[len(records)-1].Transition; got != TransitionJobSucceeded {
+		t.Fatalf("last transition = %q, want %q", got, TransitionJobSucceeded)
+	}
+}
+
 func TestRecordJobTransition_SkipsInvalidLifecycleTransition(t *testing.T) {
 	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
 	job := NewJob("job-invalid-transition", "invalid")
