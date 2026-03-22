@@ -18,6 +18,7 @@ import (
 	"github.com/seyi/dagens/pkg/registry"
 	"github.com/seyi/dagens/pkg/remote"
 	"github.com/seyi/dagens/pkg/telemetry"
+	"github.com/seyi/dagens/pkg/types"
 )
 
 // TaskExecutor defines the interface for executing tasks on nodes
@@ -335,6 +336,44 @@ func (s *Scheduler) GetJob(jobID string) (*Job, error) {
 	store := s.transitionStore
 	s.mu.RUnlock()
 	if exists {
+		return cloneJob(job), nil
+	}
+	if store == nil {
+		return nil, fmt.Errorf("job %s not found", jobID)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	replayed, err := ReplayJobState(ctx, store, jobID)
+	if err != nil {
+		return nil, fmt.Errorf("job %s not found", jobID)
+	}
+	if replayed.Job.CurrentState == "" && len(replayed.Tasks) == 0 && len(replayed.Transitions) == 0 {
+		return nil, fmt.Errorf("job %s not found", jobID)
+	}
+	hydrated := buildRecoveredRuntimeJob(replayed)
+	if hydrated == nil {
+		return nil, fmt.Errorf("job %s not found", jobID)
+	}
+
+	s.mu.Lock()
+	if existing, ok := s.jobs[jobID]; ok {
+		s.mu.Unlock()
+		return cloneJob(existing), nil
+	}
+	s.jobs[jobID] = hydrated
+	s.seedJobSequenceLocked(jobID, replayed.Job.LastSequenceID, replayed.Transitions)
+	s.mu.Unlock()
+
+	return cloneJob(hydrated), nil
+}
+
+func (s *Scheduler) getJobPointer(jobID string) (*Job, error) {
+	s.mu.RLock()
+	job, exists := s.jobs[jobID]
+	store := s.transitionStore
+	s.mu.RUnlock()
+	if exists {
 		return job, nil
 	}
 	if store == nil {
@@ -371,7 +410,7 @@ func (s *Scheduler) GetJob(jobID string) (*Job, error) {
 // pause boundary. The supplied context fields are merged into each task input
 // before the job is re-executed so resumed work can observe callback outcome.
 func (s *Scheduler) ResumeAwaitingHumanJob(ctx context.Context, jobID string, resumeContext map[string]interface{}) error {
-	job, err := s.GetJob(jobID)
+	job, err := s.getJobPointer(jobID)
 	if err != nil {
 		return err
 	}
@@ -379,15 +418,15 @@ func (s *Scheduler) ResumeAwaitingHumanJob(ctx context.Context, jobID string, re
 		return fmt.Errorf("job %s not found", jobID)
 	}
 
-	s.mu.RLock()
+	job.mu.Lock()
 	state := job.LifecycleState
-	s.mu.RUnlock()
+	job.mu.Unlock()
 	if state != JobStateAwaitingHuman && !IsTerminalJobState(state) {
 		if refreshed := s.refreshJobFromDurableState(ctx, jobID); refreshed != nil {
 			job = refreshed
-			s.mu.RLock()
+			job.mu.Lock()
 			state = job.LifecycleState
-			s.mu.RUnlock()
+			job.mu.Unlock()
 		}
 	}
 
@@ -433,6 +472,110 @@ func (s *Scheduler) ResumeAwaitingHumanJob(ctx context.Context, jobID string, re
 
 	s.executeJob(ctx, job)
 	return nil
+}
+
+func cloneJob(job *Job) *Job {
+	if job == nil {
+		return nil
+	}
+	job.mu.Lock()
+	defer job.mu.Unlock()
+
+	cloned := &Job{
+		ID:             job.ID,
+		Name:           job.Name,
+		Stages:         make([]*Stage, 0, len(job.Stages)),
+		Edges:          append([]Edge(nil), job.Edges...),
+		Status:         job.Status,
+		LifecycleState: job.LifecycleState,
+		CreatedAt:      job.CreatedAt,
+		UpdatedAt:      job.UpdatedAt,
+		Metadata:       cloneMap(job.Metadata),
+	}
+
+	for _, stage := range job.Stages {
+		if stage == nil {
+			cloned.Stages = append(cloned.Stages, nil)
+			continue
+		}
+		stageCopy := &Stage{
+			ID:           stage.ID,
+			JobID:        stage.JobID,
+			Tasks:        make([]*Task, 0, len(stage.Tasks)),
+			Dependencies: append([]string(nil), stage.Dependencies...),
+			Status:       stage.Status,
+		}
+		for _, task := range stage.Tasks {
+			if task == nil {
+				stageCopy.Tasks = append(stageCopy.Tasks, nil)
+				continue
+			}
+			taskCopy := &Task{
+				ID:             task.ID,
+				StageID:        task.StageID,
+				JobID:          task.JobID,
+				AgentID:        task.AgentID,
+				AgentName:      task.AgentName,
+				Input:          cloneAgentInput(task.Input),
+				Output:         cloneAgentOutput(task.Output),
+				PartitionKey:   task.PartitionKey,
+				Status:         task.Status,
+				LifecycleState: task.LifecycleState,
+				Attempts:       task.Attempts,
+			}
+			stageCopy.Tasks = append(stageCopy.Tasks, taskCopy)
+		}
+		cloned.Stages = append(cloned.Stages, stageCopy)
+	}
+
+	return cloned
+}
+
+func cloneAgentInput(input *agent.AgentInput) *agent.AgentInput {
+	if input == nil {
+		return nil
+	}
+	tools := append([]types.ToolDefinition(nil), input.Tools...)
+	return &agent.AgentInput{
+		TaskID:      input.TaskID,
+		Instruction: input.Instruction,
+		Context:     cloneMap(input.Context),
+		Tools:       tools,
+		Model:       input.Model,
+		MaxRetries:  input.MaxRetries,
+		Timeout:     input.Timeout,
+	}
+}
+
+func cloneAgentOutput(output *agent.AgentOutput) *agent.AgentOutput {
+	if output == nil {
+		return nil
+	}
+	logs := append([]agent.ExecutionStep(nil), output.ExecutionLog...)
+	var metricsCopy *agent.ExecutionMetrics
+	if output.Metrics != nil {
+		metrics := *output.Metrics
+		metricsCopy = &metrics
+	}
+	return &agent.AgentOutput{
+		TaskID:       output.TaskID,
+		Result:       output.Result,
+		Metadata:     cloneMap(output.Metadata),
+		Error:        output.Error,
+		ExecutionLog: logs,
+		Metrics:      metricsCopy,
+	}
+}
+
+func cloneMap(src map[string]interface{}) map[string]interface{} {
+	if len(src) == 0 {
+		return nil
+	}
+	dst := make(map[string]interface{}, len(src))
+	for k, v := range src {
+		dst[k] = v
+	}
+	return dst
 }
 
 // GetAllJobs returns all jobs
@@ -655,7 +798,9 @@ func (s *Scheduler) isExecutableDequeuedJob(job *Job) bool {
 	if latest, ok := s.jobs[job.ID]; ok && latest != nil {
 		current = latest
 	}
+	current.mu.Lock()
 	state := current.LifecycleState
+	current.mu.Unlock()
 	s.mu.RUnlock()
 	switch state {
 	case JobStateSubmitted, JobStateQueued:
@@ -1553,7 +1698,10 @@ func (s *Scheduler) recordJobRunningOnFirstDispatch(ctx context.Context, span te
 	if job == nil {
 		return
 	}
-	switch job.LifecycleState {
+	job.mu.Lock()
+	state := job.LifecycleState
+	job.mu.Unlock()
+	switch state {
 	case JobStateSubmitted:
 		s.recordJobTransition(ctx, span, job, TransitionJobQueued, JobStateQueued, "")
 		s.recordJobTransition(ctx, span, job, TransitionJobRunning, JobStateRunning, "")
@@ -1629,9 +1777,11 @@ func (s *Scheduler) executeTask(ctx context.Context, task *Task, node registry.N
 
 // updateJobStatus updates the status of a job safely
 func (s *Scheduler) updateJobStatus(job *Job, status JobStatus) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
+	if job == nil {
+		return
+	}
+	job.mu.Lock()
+	defer job.mu.Unlock()
 	job.Status = status
 	job.UpdatedAt = time.Now()
 }
@@ -1659,6 +1809,8 @@ func (s *Scheduler) recordJobTransition(ctx context.Context, span telemetry.Span
 	if s.transitionStore == nil || job == nil {
 		return
 	}
+	job.mu.Lock()
+	defer job.mu.Unlock()
 	previousState := job.LifecycleState
 	errorSummary = normalizeTransitionErrorSummary(errorSummary)
 	if previousState != "" && !CanTransitionJobState(previousState, newState) {
@@ -1806,9 +1958,11 @@ func (s *Scheduler) recordTaskTransition(ctx context.Context, span telemetry.Spa
 
 func (s *Scheduler) durableJobSnapshot(jobID string, lastSequenceID uint64, updatedAt time.Time) (DurableJobRecord, bool) {
 	s.mu.RLock()
-	defer s.mu.RUnlock()
-
-	if job, ok := s.jobs[jobID]; ok && job != nil {
+	job, ok := s.jobs[jobID]
+	s.mu.RUnlock()
+	if ok && job != nil {
+		job.mu.Lock()
+		defer job.mu.Unlock()
 		return DurableJobRecord{
 			JobID:          job.ID,
 			Name:           job.Name,

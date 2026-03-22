@@ -1,6 +1,7 @@
 package scheduler
 
 import (
+	"sync"
 	"time"
 
 	"github.com/seyi/dagens/pkg/agent"
@@ -21,6 +22,7 @@ const (
 
 // Job represents a distributed execution job derived from a Graph
 type Job struct {
+	mu             sync.Mutex
 	ID             string
 	Name           string
 	Stages         []*Stage
