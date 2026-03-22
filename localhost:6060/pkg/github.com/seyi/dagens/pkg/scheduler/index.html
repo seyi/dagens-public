@@ -1049,7 +1049,7 @@ materialized durable task view by job.
 		
 			
 			
-			<h2 id="Edge">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/types.go?s=877:949#L26">Edge</a>
+			<h2 id="Edge">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/types.go?s=912:984#L28">Edge</a>
 				<a class="permalink" href="index.html#Edge">&#xb6;</a>
 				
 				
@@ -1329,7 +1329,7 @@ for short, in-memory transition write callbacks only.
 		
 			
 			
-			<h2 id="Job">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/types.go?s=510:820#L13">Job</a>
+			<h2 id="Job">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/types.go?s=518:855#L14">Job</a>
 				<a class="permalink" href="index.html#Job">&#xb6;</a>
 				
 				
@@ -1346,6 +1346,7 @@ for short, in-memory transition write callbacks only.
 <span id="Job.CreatedAt"></span>    CreatedAt      <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a>
 <span id="Job.UpdatedAt"></span>    UpdatedAt      <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a>
 <span id="Job.Metadata"></span>    Metadata       map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}
+    <span class="comment">// contains filtered or unexported fields</span>
 }
 </pre>
 
@@ -1359,7 +1360,7 @@ for short, in-memory transition write callbacks only.
 
 			
 				
-				<h3 id="NewJob">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/types.go?s=1791:1824#L57">NewJob</a>
+				<h3 id="NewJob">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/types.go?s=1826:1859#L59">NewJob</a>
 					<a class="permalink" href="index.html#NewJob">&#xb6;</a>
 					
 					
@@ -1373,7 +1374,7 @@ for short, in-memory transition write callbacks only.
 
 			
 				
-				<h3 id="Job.AddStage">func (*Job) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/types.go?s=2141:2177#L71">AddStage</a>
+				<h3 id="Job.AddStage">func (*Job) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/types.go?s=2176:2212#L73">AddStage</a>
 					<a class="permalink" href="index.html#Job.AddStage">&#xb6;</a>
 					
 					
@@ -1436,7 +1437,7 @@ durability model can evolve without forcing an immediate execution-path refactor
 		
 			
 			
-			<h2 id="JobStatus">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/types.go?s=119:140#L1">JobStatus</a>
+			<h2 id="JobStatus">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/types.go?s=127:148#L1">JobStatus</a>
 				<a class="permalink" href="index.html#JobStatus">&#xb6;</a>
 				
 				
@@ -1781,7 +1782,7 @@ Sequence IDs are monotonic per job across process restarts.
 		
 			
 			
-			<h2 id="ReconcileMode">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=1497:1519#L38">ReconcileMode</a>
+			<h2 id="ReconcileMode">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=1533:1555#L39">ReconcileMode</a>
 				<a class="permalink" href="index.html#ReconcileMode">&#xb6;</a>
 				
 				
@@ -1812,7 +1813,7 @@ Sequence IDs are monotonic per job across process restarts.
 		
 			
 			
-			<h2 id="RegistryInterface">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=3108:3233#L84">RegistryInterface</a>
+			<h2 id="RegistryInterface">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=3144:3269#L85">RegistryInterface</a>
 				<a class="permalink" href="index.html#RegistryInterface">&#xb6;</a>
 				
 				
@@ -1987,7 +1988,7 @@ error.
 		
 			
 			
-			<h2 id="Scheduler">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=1802:3016#L48">Scheduler</a>
+			<h2 id="Scheduler">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=1838:3052#L49">Scheduler</a>
 				<a class="permalink" href="index.html#Scheduler">&#xb6;</a>
 				
 				
@@ -2009,7 +2010,7 @@ error.
 
 			
 				
-				<h3 id="NewScheduler">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=3302:3376#L90">NewScheduler</a>
+				<h3 id="NewScheduler">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=3338:3412#L91">NewScheduler</a>
 					<a class="permalink" href="index.html#NewScheduler">&#xb6;</a>
 					
 					
@@ -2021,7 +2022,7 @@ error.
 				
 			
 				
-				<h3 id="NewSchedulerWithBenchmarkQueueCapacity">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=4611:4782#L117">NewSchedulerWithBenchmarkQueueCapacity</a>
+				<h3 id="NewSchedulerWithBenchmarkQueueCapacity">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=4647:4818#L118">NewSchedulerWithBenchmarkQueueCapacity</a>
 					<a class="permalink" href="index.html#NewSchedulerWithBenchmarkQueueCapacity">&#xb6;</a>
 					
 					
@@ -2036,7 +2037,7 @@ exercise larger admission buffers deliberately.
 				
 			
 				
-				<h3 id="NewSchedulerWithConfig">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=3798:3906#L103">NewSchedulerWithConfig</a>
+				<h3 id="NewSchedulerWithConfig">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=3834:3942#L104">NewSchedulerWithConfig</a>
 					<a class="permalink" href="index.html#NewSchedulerWithConfig">&#xb6;</a>
 					
 					
@@ -2048,7 +2049,7 @@ exercise larger admission buffers deliberately.
 				
 			
 				
-				<h3 id="NewSchedulerWithConfigAndDeps">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=4079:4222#L108">NewSchedulerWithConfigAndDeps</a>
+				<h3 id="NewSchedulerWithConfigAndDeps">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=4115:4258#L109">NewSchedulerWithConfigAndDeps</a>
 					<a class="permalink" href="index.html#NewSchedulerWithConfigAndDeps">&#xb6;</a>
 					
 					
@@ -2062,7 +2063,7 @@ exercise larger admission buffers deliberately.
 
 			
 				
-				<h3 id="Scheduler.CurrentDispatchAuthority">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=9103:9197#L272">CurrentDispatchAuthority</a>
+				<h3 id="Scheduler.CurrentDispatchAuthority">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=9139:9233#L273">CurrentDispatchAuthority</a>
 					<a class="permalink" href="index.html#Scheduler.CurrentDispatchAuthority">&#xb6;</a>
 					
 					
@@ -2076,7 +2077,7 @@ allowed to accept and dispatch work under the active leadership provider.
 				
 			
 				
-				<h3 id="Scheduler.GetAffinityStats">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=64376:64437#L2168">GetAffinityStats</a>
+				<h3 id="Scheduler.GetAffinityStats">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=68290:68351#L2322">GetAffinityStats</a>
 					<a class="permalink" href="index.html#Scheduler.GetAffinityStats">&#xb6;</a>
 					
 					
@@ -2089,7 +2090,7 @@ allowed to accept and dispatch work under the active leadership provider.
 				
 			
 				
-				<h3 id="Scheduler.GetAllJobs">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=13458:13497#L429">GetAllJobs</a>
+				<h3 id="Scheduler.GetAllJobs">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=17181:17220#L572">GetAllJobs</a>
 					<a class="permalink" href="index.html#Scheduler.GetAllJobs">&#xb6;</a>
 					
 					
@@ -2102,7 +2103,7 @@ allowed to accept and dispatch work under the active leadership provider.
 				
 			
 				
-				<h3 id="Scheduler.GetJob">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=10563:10617#L322">GetJob</a>
+				<h3 id="Scheduler.GetJob">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=10599:10653#L323">GetJob</a>
 					<a class="permalink" href="index.html#Scheduler.GetJob">&#xb6;</a>
 					
 					
@@ -2115,7 +2116,7 @@ allowed to accept and dispatch work under the active leadership provider.
 				
 			
 				
-				<h3 id="Scheduler.Readiness">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=14168:14218#L452">Readiness</a>
+				<h3 id="Scheduler.Readiness">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=17891:17941#L595">Readiness</a>
 					<a class="permalink" href="index.html#Scheduler.Readiness">&#xb6;</a>
 					
 					
@@ -2143,7 +2144,7 @@ and task views but does not enqueue or redispatch work.
 				
 			
 				
-				<h3 id="Scheduler.ResumeAwaitingHumanJob">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=11790:11911#L363">ResumeAwaitingHumanJob</a>
+				<h3 id="Scheduler.ResumeAwaitingHumanJob">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=12856:12977#L402">ResumeAwaitingHumanJob</a>
 					<a class="permalink" href="index.html#Scheduler.ResumeAwaitingHumanJob">&#xb6;</a>
 					
 					
@@ -2158,7 +2159,7 @@ before the job is re-executed so resumed work can observe callback outcome.
 				
 			
 				
-				<h3 id="Scheduler.SetLeadershipProvider">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=15569:15645#L497">SetLeadershipProvider</a>
+				<h3 id="Scheduler.SetLeadershipProvider">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=19292:19368#L640">SetLeadershipProvider</a>
 					<a class="permalink" href="index.html#Scheduler.SetLeadershipProvider">&#xb6;</a>
 					
 					
@@ -2172,7 +2173,7 @@ Intended for startup wiring and tests. It must be called before Start().
 				
 			
 				
-				<h3 id="Scheduler.SetTransitionStore">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=15191:15258#L485">SetTransitionStore</a>
+				<h3 id="Scheduler.SetTransitionStore">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=18914:18981#L628">SetTransitionStore</a>
 					<a class="permalink" href="index.html#Scheduler.SetTransitionStore">&#xb6;</a>
 					
 					
@@ -2186,7 +2187,7 @@ Intended for startup wiring and tests. It must be called before Start().
 				
 			
 				
-				<h3 id="Scheduler.Start">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=6370:6397#L168">Start</a>
+				<h3 id="Scheduler.Start">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=6406:6433#L169">Start</a>
 					<a class="permalink" href="index.html#Scheduler.Start">&#xb6;</a>
 					
 					
@@ -2199,7 +2200,7 @@ Intended for startup wiring and tests. It must be called before Start().
 				
 			
 				
-				<h3 id="Scheduler.Stop">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=8126:8152#L229">Stop</a>
+				<h3 id="Scheduler.Stop">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=8162:8188#L230">Stop</a>
 					<a class="permalink" href="index.html#Scheduler.Stop">&#xb6;</a>
 					
 					
@@ -2212,7 +2213,7 @@ Intended for startup wiring and tests. It must be called before Start().
 				
 			
 				
-				<h3 id="Scheduler.SubmitJob">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=8836:8881#L266">SubmitJob</a>
+				<h3 id="Scheduler.SubmitJob">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=8872:8917#L267">SubmitJob</a>
 					<a class="permalink" href="index.html#Scheduler.SubmitJob">&#xb6;</a>
 					
 					
@@ -2225,7 +2226,7 @@ Intended for startup wiring and tests. It must be called before Start().
 				
 			
 				
-				<h3 id="Scheduler.SubmitJobWithContext">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=9350:9427#L278">SubmitJobWithContext</a>
+				<h3 id="Scheduler.SubmitJobWithContext">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=9386:9463#L279">SubmitJobWithContext</a>
 					<a class="permalink" href="index.html#Scheduler.SubmitJobWithContext">&#xb6;</a>
 					
 					
@@ -2239,7 +2240,7 @@ lifecycle transition persistence.
 				
 			
 				
-				<h3 id="Scheduler.TransitionStore">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=14967:15020#L479">TransitionStore</a>
+				<h3 id="Scheduler.TransitionStore">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=18690:18743#L622">TransitionStore</a>
 					<a class="permalink" href="index.html#Scheduler.TransitionStore">&#xb6;</a>
 					
 					
@@ -2252,7 +2253,7 @@ lifecycle transition persistence.
 				
 			
 				
-				<h3 id="Scheduler.UpdateNodeCapacity">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=16014:16097#L512">UpdateNodeCapacity</a>
+				<h3 id="Scheduler.UpdateNodeCapacity">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=19737:19820#L655">UpdateNodeCapacity</a>
 					<a class="permalink" href="index.html#Scheduler.UpdateNodeCapacity">&#xb6;</a>
 					
 					
@@ -2266,7 +2267,7 @@ This uses server receipt time and is kept for compatibility.
 				
 			
 				
-				<h3 id="Scheduler.UpdateNodeCapacityAt">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=16318:16425#L518">UpdateNodeCapacityAt</a>
+				<h3 id="Scheduler.UpdateNodeCapacityAt">func (*Scheduler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=20041:20148#L661">UpdateNodeCapacityAt</a>
 					<a class="permalink" href="index.html#Scheduler.UpdateNodeCapacityAt">&#xb6;</a>
 					
 					
@@ -2510,7 +2511,7 @@ scheduler := NewSchedulerWithConfig(reg, exec, cfg)
 		
 			
 			
-			<h2 id="SchedulerDependencies">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=3592:3713#L96">SchedulerDependencies</a>
+			<h2 id="SchedulerDependencies">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=3628:3749#L97">SchedulerDependencies</a>
 				<a class="permalink" href="index.html#SchedulerDependencies">&#xb6;</a>
 				
 				
@@ -2539,7 +2540,7 @@ Any nil dependency falls back to package-level defaults.
 		
 			
 			
-			<h2 id="SchedulerReadiness">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=13735:14084#L441">SchedulerReadiness</a>
+			<h2 id="SchedulerReadiness">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=17458:17807#L584">SchedulerReadiness</a>
 				<a class="permalink" href="index.html#SchedulerReadiness">&#xb6;</a>
 				
 				
@@ -2626,7 +2627,7 @@ back to in-memory per-job counters.
 		
 			
 			
-			<h2 id="Stage">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/types.go?s=1105:1276#L33">Stage</a>
+			<h2 id="Stage">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/types.go?s=1140:1311#L35">Stage</a>
 				<a class="permalink" href="index.html#Stage">&#xb6;</a>
 				
 				
@@ -2657,7 +2658,7 @@ In Spark terms, this is a set of tasks with no shuffle dependencies between them
 		
 			
 			
-			<h2 id="Task">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/types.go?s=1346:1755#L42">Task</a>
+			<h2 id="Task">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/types.go?s=1381:1790#L44">Task</a>
 				<a class="permalink" href="index.html#Task">&#xb6;</a>
 				
 				
@@ -2725,7 +2726,7 @@ ownership transitions against stale or duplicate dispatch attempts.
 		
 			
 			
-			<h2 id="TaskExecutor">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=430:583#L14">TaskExecutor</a>
+			<h2 id="TaskExecutor">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/scheduler/scheduler.go?s=466:619#L15">TaskExecutor</a>
 				<a class="permalink" href="index.html#TaskExecutor">&#xb6;</a>
 				
 				
