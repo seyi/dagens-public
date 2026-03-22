@@ -223,7 +223,7 @@ DRILL_TIMEOUT_SECONDS="${DRILL_TIMEOUT_SECONDS}" \
 POLL_INTERVAL_SECONDS="${POLL_INTERVAL_SECONDS}" \
 DRILL_ID="${DRILL_ID}-failover" \
 LEADER_STOP_CMD="docker kill $(compose ps -q "${initial_leader_service}")" \
-./scripts/failover_drill.sh | tee "${EVIDENCE_ROOT}/phase-1-failover.log"
+./scripts/failover_drill.sh | tee "${EVIDENCE_ROOT}/phase-1-failover.log" >/dev/null
 
 leader_after_failover="$(resolve_leader)"
 echo "leader_after_failover=${leader_after_failover}" | tee -a "${EVIDENCE_ROOT}/summary.txt"
@@ -255,7 +255,7 @@ JOB_COUNT="${POST_FAILBACK_JOB_COUNT:-3}" \
 DRILL_TIMEOUT_SECONDS="${DRILL_TIMEOUT_SECONDS}" \
 POLL_INTERVAL_SECONDS="${POLL_INTERVAL_SECONDS}" \
 DRILL_ID="${DRILL_ID}-post-failback" \
-./scripts/failover_drill.sh | tee "${EVIDENCE_ROOT}/phase-4-post-failback.log"
+./scripts/failover_drill.sh | tee "${EVIDENCE_ROOT}/phase-4-post-failback.log" >/dev/null
 
 final_leader_id="$(resolve_leader)"
 echo "final_leader_id=${final_leader_id}" | tee -a "${EVIDENCE_ROOT}/summary.txt"

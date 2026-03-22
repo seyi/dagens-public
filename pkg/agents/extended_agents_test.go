@@ -3,6 +3,7 @@ package agents
 import (
 	"context"
 	"fmt"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -14,7 +15,7 @@ func TestRemoteAgent(t *testing.T) {
 	t.Run("Builder API", func(t *testing.T) {
 		remoteAgent, err := NewRemote("test-agent", "http://localhost:8080").
 			WithName("my-remote").
-			WithTimeout(10 * time.Second).
+			WithTimeout(10*time.Second).
 			WithRetryCount(2).
 			WithCaching(true, 5*time.Minute).
 			Build()
@@ -38,8 +39,8 @@ func TestRemoteAgent(t *testing.T) {
 
 	t.Run("Error Retryability", func(t *testing.T) {
 		tests := []struct {
-			err        error
-			retryable  bool
+			err       error
+			retryable bool
 		}{
 			{fmt.Errorf("connection refused"), true},
 			{fmt.Errorf("timeout"), true},
@@ -191,19 +192,17 @@ func TestMapReduceAgent(t *testing.T) {
 	})
 
 	t.Run("With Error Collection", func(t *testing.T) {
-		failCount := 0
+		var failCount atomic.Int32
 
 		// Mapper that fails on first 2 calls
 		mapper := agent.NewAgent(agent.AgentConfig{
 			Name: "flaky-mapper",
 			Executor: agent.ExecutorFunc(func(ctx context.Context, _ agent.Agent, input *agent.AgentInput) (*agent.AgentOutput, error) {
-				failCount++
-				if failCount <= 2 {
+				if failCount.Add(1) <= 2 {
 					return nil, fmt.Errorf("mapper failed")
 				}
 				return &agent.AgentOutput{
-					Result:    "success",
-					
+					Result: "success",
 				}, nil
 			}),
 		})
@@ -212,8 +211,7 @@ func TestMapReduceAgent(t *testing.T) {
 			Name: "reducer",
 			Executor: agent.ExecutorFunc(func(ctx context.Context, _ agent.Agent, input *agent.AgentInput) (*agent.AgentOutput, error) {
 				return &agent.AgentOutput{
-					Result:    "reduced",
-					
+					Result: "reduced",
 				}, nil
 			}),
 		})
@@ -489,8 +487,7 @@ func TestFanOutAgent(t *testing.T) {
 				Executor: agent.ExecutorFunc(func(ctx context.Context, _ agent.Agent, input *agent.AgentInput) (*agent.AgentOutput, error) {
 					task := input.Context["task"].(string)
 					return &agent.AgentOutput{
-						Result:    fmt.Sprintf("worker1:%s", task),
-						
+						Result: fmt.Sprintf("worker1:%s", task),
 					}, nil
 				}),
 			}),
@@ -499,8 +496,7 @@ func TestFanOutAgent(t *testing.T) {
 				Executor: agent.ExecutorFunc(func(ctx context.Context, _ agent.Agent, input *agent.AgentInput) (*agent.AgentOutput, error) {
 					task := input.Context["task"].(string)
 					return &agent.AgentOutput{
-						Result:    fmt.Sprintf("worker2:%s", task),
-						
+						Result: fmt.Sprintf("worker2:%s", task),
 					}, nil
 				}),
 			}),
@@ -509,8 +505,7 @@ func TestFanOutAgent(t *testing.T) {
 				Executor: agent.ExecutorFunc(func(ctx context.Context, _ agent.Agent, input *agent.AgentInput) (*agent.AgentOutput, error) {
 					task := input.Context["task"].(string)
 					return &agent.AgentOutput{
-						Result:    fmt.Sprintf("worker3:%s", task),
-						
+						Result: fmt.Sprintf("worker3:%s", task),
 					}, nil
 				}),
 			}),

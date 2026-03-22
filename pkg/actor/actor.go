@@ -51,7 +51,7 @@ type Process struct {
 // NewProcess creates a new actor process
 func NewProcess(actor Actor, address Address, system *System) *Process {
 	ctx, cancel := context.WithCancel(context.Background())
-	
+
 	return &Process{
 		actor:   actor,
 		mailbox: make(chan Message, 100), // Buffered mailbox
@@ -79,7 +79,6 @@ func (p *Process) Stop() {
 	p.mu.Unlock()
 
 	p.cancel()
-	close(p.mailbox)
 	p.wg.Wait()
 }
 
@@ -93,21 +92,21 @@ func (p *Process) IsStopped() bool {
 // run is the main execution loop for the actor
 func (p *Process) run() {
 	defer p.wg.Done()
-	
+
 	for {
 		select {
 		case msg, ok := <-p.mailbox:
 			if !ok {
 				return // Channel closed
 			}
-			
+
 			// Create context for this message
 			ctx := Context{
 				System:  p.system,
 				Message: msg,
 				Self:    p.address,
 			}
-			
+
 			// Handle panic recovery for fault tolerance
 			func() {
 				defer func() {
@@ -125,7 +124,7 @@ func (p *Process) run() {
 
 				p.actor.Receive(ctx)
 			}()
-			
+
 		case <-p.ctx.Done():
 			return
 		}

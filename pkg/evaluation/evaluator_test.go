@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 	"time"
 
@@ -15,6 +16,7 @@ import (
 // Mock implementations for testing
 
 type MockAgentCoordinator struct {
+	mu          sync.Mutex
 	jobs        map[string]*MockJobStatus
 	submitDelay time.Duration
 }
@@ -41,16 +43,20 @@ func (m *MockAgentCoordinator) SubmitJob(ctx context.Context, agentID string, in
 		},
 	}
 
+	m.mu.Lock()
 	m.jobs[jobID] = &MockJobStatus{
 		complete: true,
 		output:   output,
 	}
+	m.mu.Unlock()
 
 	return jobID, nil
 }
 
 func (m *MockAgentCoordinator) GetJobStatus(jobID string) (JobStatus, error) {
+	m.mu.Lock()
 	job, exists := m.jobs[jobID]
+	m.mu.Unlock()
 	if !exists {
 		return nil, fmt.Errorf("job not found: %s", jobID)
 	}

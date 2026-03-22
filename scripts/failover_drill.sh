@@ -22,6 +22,7 @@ LEADER_STOP_CMD="${LEADER_STOP_CMD:-}"
 DATABASE_URL="${DATABASE_URL:-${SCHEDULER_TRANSITION_POSTGRES_DSN:-}}"
 DRILL_ID="${DRILL_ID:-$(date -u +%Y%m%dT%H%M%SZ)-$$}"
 DRILL_START_EPOCH="$(date +%s)"
+REQUIRE_SUCCESS_TERMINAL="${REQUIRE_SUCCESS_TERMINAL:-false}"
 
 command -v curl >/dev/null 2>&1 || { echo "curl is required"; exit 1; }
 command -v jq >/dev/null 2>&1 || { echo "jq is required"; exit 1; }
@@ -79,12 +80,53 @@ sql_in_list_from_job_ids() {
   echo "${out}"
 }
 
+emit_job_diagnostics() {
+  local job_id="$1"
+  local label="$2"
+  local expected_state="${3:-terminal}"
+  local actual_state="${4:-${final_status[${job_id}]:-unknown}}"
+
+  echo "--- ${label} job_id=${job_id} expected_state=${expected_state} actual_state=${actual_state} api_payload ---"
+  if [[ -n "${final_payload[${job_id}]:-}" ]]; then
+    printf '%s\n' "${final_payload[${job_id}]}"
+  else
+    curl -sS "${API_URL}/v1/jobs/${job_id}" || true
+    printf '\n'
+  fi
+
+  if [[ -n "${DATABASE_URL}" ]] && has_sql_client; then
+    echo "--- ${label} job_id=${job_id} durable_job ---"
+    run_sql_check "
+      SELECT job_id, current_state, last_sequence_id, created_at, updated_at
+      FROM scheduler_durable_jobs
+      WHERE job_id = '${job_id}';
+    " || true
+
+    echo "--- ${label} job_id=${job_id} durable_tasks ---"
+    run_sql_check "
+      SELECT task_id, current_state, last_attempt, node_id, updated_at
+      FROM scheduler_durable_tasks
+      WHERE job_id = '${job_id}'
+      ORDER BY task_id;
+    " || true
+
+    echo "--- ${label} job_id=${job_id} transitions ---"
+    run_sql_check "
+      SELECT sequence_id, entity_type, transition, previous_state, new_state, task_id, node_id, attempt, occurred_at
+      FROM scheduler_job_transitions
+      WHERE job_id = '${job_id}'
+      ORDER BY sequence_id;
+    " || true
+  fi
+}
+
 echo "== Dagens HA Failover Drill =="
 echo "API_URL=${API_URL}"
 echo "JOB_COUNT=${JOB_COUNT}"
 echo "DRILL_TIMEOUT_SECONDS=${DRILL_TIMEOUT_SECONDS}"
 echo "POLL_INTERVAL_SECONDS=${POLL_INTERVAL_SECONDS}"
 echo "DRILL_ID=${DRILL_ID}"
+echo "REQUIRE_SUCCESS_TERMINAL=${REQUIRE_SUCCESS_TERMINAL}"
 if [[ -n "${LEADER_STOP_CMD}" ]]; then
   echo "LEADER_STOP_CMD is set"
 else
@@ -136,6 +178,7 @@ fi
 
 deadline=$(( $(date +%s) + DRILL_TIMEOUT_SECONDS ))
 declare -A final_status
+declare -A final_payload
 while [[ $(date +%s) -lt ${deadline} ]]; do
   complete=0
   for id in "${job_ids[@]}"; do
@@ -148,6 +191,7 @@ while [[ $(date +%s) -lt ${deadline} ]]; do
     case "${status}" in
       COMPLETED|SUCCEEDED|FAILED|CANCELED)
         final_status["${id}"]="${status}"
+        final_payload["${id}"]="${status_resp}"
         ((complete+=1))
         ;;
       *)
@@ -162,13 +206,18 @@ done
 
 echo "Final canary job states:"
 failed_terminal=0
+failed_success=0
 timed_out_job_ids=()
+unsuccessful_job_ids=()
 for id in "${job_ids[@]}"; do
   st="${final_status[${id}]:-TIMEOUT}"
   echo "  ${id}: ${st}"
   if [[ "${st}" == "TIMEOUT" ]]; then
     failed_terminal=1
     timed_out_job_ids+=("${id}")
+  elif [[ "${REQUIRE_SUCCESS_TERMINAL}" == "true" && "${st}" != "COMPLETED" && "${st}" != "SUCCEEDED" ]]; then
+    failed_success=1
+    unsuccessful_job_ids+=("${id}:${st}")
   fi
 done
 
@@ -225,41 +274,35 @@ else
 fi
 
 if [[ ${failed_terminal} -ne 0 ]]; then
-  if [[ -n "${DATABASE_URL}" ]] && [[ ${#timed_out_job_ids[@]} -gt 0 ]]; then
-    echo "Collecting durable diagnostics for timed-out jobs..."
-    for timed_out_job_id in "${timed_out_job_ids[@]}"; do
-      echo "--- timed_out_job_id=${timed_out_job_id} durable_job ---"
-      run_sql_check "
-        SELECT job_id, current_state, last_sequence_id, created_at, updated_at
-        FROM scheduler_durable_jobs
-        WHERE job_id = '${timed_out_job_id}';
-      " || true
-
-      echo "--- timed_out_job_id=${timed_out_job_id} durable_tasks ---"
-      run_sql_check "
-        SELECT task_id, current_state, last_attempt, node_id, updated_at
-        FROM scheduler_durable_tasks
-        WHERE job_id = '${timed_out_job_id}'
-        ORDER BY task_id;
-      " || true
-
-      echo "--- timed_out_job_id=${timed_out_job_id} transitions ---"
-      run_sql_check "
-        SELECT sequence_id, entity_type, transition, previous_state, new_state, task_id, node_id, attempt, occurred_at
-        FROM scheduler_job_transitions
-        WHERE job_id = '${timed_out_job_id}'
-        ORDER BY sequence_id;
-      " || true
-    done
-  fi
+  echo "Collecting diagnostics for timed-out jobs..."
+  for timed_out_job_id in "${timed_out_job_ids[@]}"; do
+    emit_job_diagnostics "${timed_out_job_id}" "timed_out" "terminal" "TIMEOUT"
+  done
   echo "FAIL: one or more canary jobs did not reach a terminal state before timeout."
   exit 1
 fi
+if [[ ${failed_success} -ne 0 ]]; then
+  echo "Collecting diagnostics for non-success terminal jobs..."
+  for unsuccessful_job in "${unsuccessful_job_ids[@]}"; do
+    emit_job_diagnostics "${unsuccessful_job%%:*}" "unsuccessful" "COMPLETED|SUCCEEDED" "${unsuccessful_job##*:}"
+  done
+  echo "FAIL: one or more canary jobs reached a non-success terminal state."
+  printf '  %s\n' "${unsuccessful_job_ids[@]}"
+  exit 1
+fi
 if [[ ${fencing_violation} -ne 0 ]]; then
+  echo "Collecting diagnostics for fencing violation jobs..."
+  for id in "${job_ids[@]}"; do
+    emit_job_diagnostics "${id}" "fencing_violation"
+  done
   echo "FAIL: duplicate dispatch claims found. Investigate fencing behavior."
   exit 1
 fi
 if [[ ${integrity_violation} -ne 0 ]]; then
+  echo "Collecting diagnostics for integrity violation jobs..."
+  for id in "${job_ids[@]}"; do
+    emit_job_diagnostics "${id}" "integrity_violation"
+  done
   echo "FAIL: incomplete durable task state found for one or more canary jobs."
   exit 1
 fi

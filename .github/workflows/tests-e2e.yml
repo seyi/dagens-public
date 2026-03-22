@@ -63,6 +63,8 @@ jobs:
 
       - name: Run tests with race detector
         run: go test ./... -race -short -timeout 3m
+        env:
+          GOFLAGS: -buildvcs=false
 
   scheduler-integration-tests:
     runs-on: ubuntu-latest
