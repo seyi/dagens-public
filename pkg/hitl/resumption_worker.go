@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/seyi/dagens/pkg/remote"
 	"github.com/seyi/dagens/pkg/telemetry"
 )
 
@@ -360,6 +361,9 @@ func isRetryable(err error) bool {
 	// This is a simplified example - implement based on your specific error types
 	if err == nil {
 		return false
+	}
+	if errors.Is(err, remote.ErrStaleDispatchAuthority) || errors.Is(err, remote.ErrMissingDispatchAuthority) {
+		return true
 	}
 
 	errorMsg := err.Error()

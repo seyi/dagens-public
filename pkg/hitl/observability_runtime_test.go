@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/seyi/dagens/pkg/graph"
+	"github.com/seyi/dagens/pkg/remote"
 	"github.com/seyi/dagens/pkg/telemetry"
 )
 
@@ -490,6 +491,15 @@ func TestResumptionWorkerObservability_RetryableFailure(t *testing.T) {
 	}
 	if busy.val != 0 {
 		t.Fatalf("resumption_worker_busy gauge = %v, want 0 after completion", busy.val)
+	}
+}
+
+func TestIsRetryable_StaleDispatchAuthority(t *testing.T) {
+	if !isRetryable(remote.ErrStaleDispatchAuthority) {
+		t.Fatal("expected stale dispatch authority to be retryable")
+	}
+	if !isRetryable(remote.ErrMissingDispatchAuthority) {
+		t.Fatal("expected missing dispatch authority to be retryable")
 	}
 }
 

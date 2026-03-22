@@ -397,6 +397,13 @@ func (s *Scheduler) ResumeAwaitingHumanJob(ctx context.Context, jobID string, re
 	if state != JobStateAwaitingHuman {
 		return fmt.Errorf("job %s is not awaiting human input (state=%s)", jobID, state)
 	}
+	authority, err := s.dispatchAuthority(ctx)
+	if err != nil {
+		return fmt.Errorf("resolve dispatch authority before resuming job %s: %w", jobID, err)
+	}
+	if !authority.IsLeader {
+		return fmt.Errorf("%w: leader_id=%s epoch=%s", remote.ErrStaleDispatchAuthority, authority.LeaderID, authority.Epoch)
+	}
 
 	if len(resumeContext) > 0 {
 		for _, stage := range job.Stages {

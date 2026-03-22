@@ -336,6 +336,47 @@ func TestExecuteJob_RecordsResumedTransitionFromAwaitingHuman(t *testing.T) {
 	}
 }
 
+func TestResumeAwaitingHumanJob_FollowerReturnsStaleDispatchAuthority(t *testing.T) {
+	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
+	job := NewJob("job-resume-follower", "resume-follower")
+	job.LifecycleState = JobStateAwaitingHuman
+	job.Status = JobAwaitingHuman
+	job.AddStage(&Stage{
+		ID:    "stage-1",
+		JobID: job.ID,
+		Tasks: []*Task{{
+			ID:        "task-1",
+			StageID:   "stage-1",
+			JobID:     job.ID,
+			AgentID:   "human",
+			AgentName: "human",
+			Input: &agent.AgentInput{
+				Context: map[string]interface{}{},
+			},
+			Status:         JobPending,
+			LifecycleState: TaskStatePending,
+		}},
+	})
+	s.jobs[job.ID] = job
+
+	lp := &toggleLeadershipProvider{}
+	lp.setLeader(false)
+	if err := s.SetLeadershipProvider(lp); err != nil {
+		t.Fatalf("SetLeadershipProvider unexpected error: %v", err)
+	}
+
+	err := s.ResumeAwaitingHumanJob(context.Background(), job.ID, map[string]interface{}{"approved": true})
+	if !errors.Is(err, remote.ErrStaleDispatchAuthority) {
+		t.Fatalf("ResumeAwaitingHumanJob error = %v, want %v", err, remote.ErrStaleDispatchAuthority)
+	}
+	if job.LifecycleState != JobStateAwaitingHuman {
+		t.Fatalf("job lifecycle = %q, want %q", job.LifecycleState, JobStateAwaitingHuman)
+	}
+	if got := job.Stages[0].Tasks[0].Input.Context["approved"]; got != nil {
+		t.Fatalf("resume context should not be applied on follower path, got %#v", got)
+	}
+}
+
 func TestExecuteJob_FromSubmittedRecordsQueuedBeforeRunning(t *testing.T) {
 	s := NewSchedulerWithConfig(nil, nil, SchedulerConfig{JobQueueSize: 1})
 	job := NewJob("job-submitted", "submitted")
