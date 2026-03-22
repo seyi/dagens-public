@@ -24,7 +24,13 @@ jobs:
         run: |
           godoc -http=:6060 &
           sleep 2
+          set +e
           wget -e robots=off -r -np -N -E -p -k http://localhost:6060/pkg/github.com/seyi/dagens/
+          wget_status=$?
+          set -e
+          if [ "${wget_status}" -ne 0 ] && [ "${wget_status}" -ne 8 ]; then
+            exit "${wget_status}"
+          fi
           kill $!
           mv localhost:6060 docs
           touch docs/.nojekyll
