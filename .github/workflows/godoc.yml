@@ -24,7 +24,7 @@ jobs:
         run: |
           godoc -http=:6060 &
           sleep 2
-          wget -r -np -N -E -p -k http://localhost:6060/pkg/github.com/seyi/dagens/
+          wget -e robots=off -r -np -N -E -p -k http://localhost:6060/pkg/github.com/seyi/dagens/
           kill $!
           mv localhost:6060 docs
           touch docs/.nojekyll
