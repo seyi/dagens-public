@@ -1,0 +1,2477 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>observability - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://localhost:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://localhost:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://localhost:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package observability
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/observability"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package observability provides structured JSON logging for production systems.
+<p>Package observability provides monitoring and metrics for Dagens.
+This includes Prometheus metrics export, structured logging, and tracing integration.
+<p>Label cardinality guidance:
+- `agent_name`, `agent_type`, and `scheduler` should be stable low-cardinality identifiers.
+- Avoid dynamic values such as request IDs, payload hashes, or timestamps in labels.
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+				
+				<dd><a href="index.html#Debug">func Debug(message string, fields ...LogField)</a></dd>
+			
+				
+				<dd><a href="index.html#Error">func Error(message string, fields ...LogField)</a></dd>
+			
+				
+				<dd><a href="index.html#Fatal">func Fatal(message string, fields ...LogField)</a></dd>
+			
+				
+				<dd><a href="index.html#Handler">func Handler() http.Handler</a></dd>
+			
+				
+				<dd><a href="index.html#HealthHandler">func HealthHandler() http.Handler</a></dd>
+			
+				
+				<dd><a href="index.html#Info">func Info(message string, fields ...LogField)</a></dd>
+			
+				
+				<dd><a href="index.html#RegisterHealthCheck">func RegisterHealthCheck(name string, checker HealthChecker)</a></dd>
+			
+				
+				<dd><a href="index.html#SetGlobalLogger">func SetGlobalLogger(logger *Logger)</a></dd>
+			
+				
+				<dd><a href="index.html#UnregisterHealthCheck">func UnregisterHealthCheck(name string)</a></dd>
+			
+				
+				<dd><a href="index.html#Warn">func Warn(message string, fields ...LogField)</a></dd>
+			
+			
+				
+				<dd><a href="index.html#AgentLogger">type AgentLogger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewAgentLogger">func NewAgentLogger(base *Logger, agentName, agentID string) *AgentLogger</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgentLogger.CircuitBreakerTripped">func (al *AgentLogger) CircuitBreakerTripped(state string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgentLogger.ExecutionCompleted">func (al *AgentLogger) ExecutionCompleted(taskID string, duration time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgentLogger.ExecutionFailed">func (al *AgentLogger) ExecutionFailed(taskID string, err error, duration time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgentLogger.ExecutionStarted">func (al *AgentLogger) ExecutionStarted(taskID string, instruction string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgentLogger.LLMCalled">func (al *AgentLogger) LLMCalled(provider string, model string, tokens int, duration time.Duration, err error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgentLogger.RetryAttempt">func (al *AgentLogger) RetryAttempt(attempt int, err error, nextDelay time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgentLogger.ToolCalled">func (al *AgentLogger) ToolCalled(toolName string, duration time.Duration, err error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#ComponentHealth">type ComponentHealth</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ContextKey">type ContextKey</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ExecutionTimer">type ExecutionTimer</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewExecutionTimer">func NewExecutionTimer(metrics *Metrics, agentName, agentType string) *ExecutionTimer</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ExecutionTimer.Finish">func (t *ExecutionTimer) Finish(status string) time.Duration</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ExecutionTimer.FinishWithError">func (t *ExecutionTimer) FinishWithError(errorType string) time.Duration</a></dd>
+				
+			
+				
+				<dd><a href="index.html#HealthChecker">type HealthChecker</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DatabaseHealthChecker">func DatabaseHealthChecker(pingFn func(ctx context.Context) error) HealthChecker</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DiskSpaceHealthChecker">func DiskSpaceHealthChecker(path string, minFreeBytes uint64) HealthChecker</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LLMProviderHealthChecker">func LLMProviderHealthChecker(name string, checkFn func(ctx context.Context) error) HealthChecker</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryHealthChecker">func MemoryHealthChecker(maxUsagePercent float64) HealthChecker</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisHealthChecker">func RedisHealthChecker(pingFn func(ctx context.Context) error) HealthChecker</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#HealthRegistry">type HealthRegistry</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#GetHealthRegistry">func GetHealthRegistry() *HealthRegistry</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewHealthRegistry">func NewHealthRegistry(version string, checkTimeout time.Duration) *HealthRegistry</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HealthRegistry.Check">func (h *HealthRegistry) Check(ctx context.Context) HealthResponse</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HealthRegistry.Handler">func (h *HealthRegistry) Handler() http.Handler</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HealthRegistry.LivenessCheck">func (h *HealthRegistry) LivenessCheck() HealthResponse</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HealthRegistry.ReadinessCheck">func (h *HealthRegistry) ReadinessCheck(ctx context.Context) HealthResponse</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HealthRegistry.Register">func (h *HealthRegistry) Register(name string, checker HealthChecker)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HealthRegistry.Unregister">func (h *HealthRegistry) Unregister(name string)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#HealthResponse">type HealthResponse</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#HealthStatus">type HealthStatus</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LogEntry">type LogEntry</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LogField">type LogField</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Field">func Field(key string, value interface{}) LogField</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LogLevel">type LogLevel</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ParseLogLevel">func ParseLogLevel(s string) LogLevel</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LogLevel.String">func (l LogLevel) String() string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#Logger">type Logger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#GetLogger">func GetLogger() *Logger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewLogger">func NewLogger(config LoggerConfig) *Logger</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Logger.Debug">func (l *Logger) Debug(message string, fields ...LogField)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Logger.DebugCtx">func (l *Logger) DebugCtx(ctx context.Context, message string, fields ...LogField)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Logger.Error">func (l *Logger) Error(message string, fields ...LogField)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Logger.ErrorCtx">func (l *Logger) ErrorCtx(ctx context.Context, message string, fields ...LogField)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Logger.Fatal">func (l *Logger) Fatal(message string, fields ...LogField)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Logger.Info">func (l *Logger) Info(message string, fields ...LogField)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Logger.InfoCtx">func (l *Logger) InfoCtx(ctx context.Context, message string, fields ...LogField)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Logger.Warn">func (l *Logger) Warn(message string, fields ...LogField)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Logger.WarnCtx">func (l *Logger) WarnCtx(ctx context.Context, message string, fields ...LogField)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Logger.WithContext">func (l *Logger) WithContext(ctx context.Context) *Logger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Logger.WithFields">func (l *Logger) WithFields(fields ...LogField) *Logger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Logger.WithService">func (l *Logger) WithService(service string) *Logger</a></dd>
+				
+			
+				
+				<dd><a href="index.html#LoggerConfig">type LoggerConfig</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DefaultLoggerConfig">func DefaultLoggerConfig() LoggerConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Metrics">type Metrics</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#GetMetrics">func GetMetrics() *Metrics</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMetrics">func NewMetrics(namespace string) *Metrics</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMetricsWithRegistry">func NewMetricsWithRegistry(namespace string, reg prometheus.Registerer) *Metrics</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordAgentError">func (m *Metrics) RecordAgentError(agentName, errorType string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordAgentErrorTyped">func (m *Metrics) RecordAgentErrorTyped(agentName, agentType, errorType string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordAgentExecution">func (m *Metrics) RecordAgentExecution(agentName, agentType, status string, duration time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordAgentRetry">func (m *Metrics) RecordAgentRetry(agentName string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordBarrierGenerationCreated">func (m *Metrics) RecordBarrierGenerationCreated(barrierKey string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordBarrierTrip">func (m *Metrics) RecordBarrierTrip(barrierKey, status string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordBarrierTripLatency">func (m *Metrics) RecordBarrierTripLatency(barrierKey string, duration time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordBarrierWait">func (m *Metrics) RecordBarrierWait(barrierKey, status string, duration time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordCheckpointLoaded">func (m *Metrics) RecordCheckpointLoaded(agentID string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordCheckpointSaved">func (m *Metrics) RecordCheckpointSaved(agentID string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordCircuitBreakerFailure">func (m *Metrics) RecordCircuitBreakerFailure(name string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordCircuitBreakerState">func (m *Metrics) RecordCircuitBreakerState(name string, state int)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordDAGStage">func (m *Metrics) RecordDAGStage(stageID, status string, duration time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordLLMRequest">func (m *Metrics) RecordLLMRequest(provider, model, status string, duration time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordLLMTokens">func (m *Metrics) RecordLLMTokens(provider, model string, inputTokens, outputTokens int)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordRateLimiterAllowed">func (m *Metrics) RecordRateLimiterAllowed(name string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordRateLimiterRejected">func (m *Metrics) RecordRateLimiterRejected(name string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerAffinityHit">func (m *Metrics) RecordSchedulerAffinityHit()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerAffinityMiss">func (m *Metrics) RecordSchedulerAffinityMiss()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerAffinityStale">func (m *Metrics) RecordSchedulerAffinityStale()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerAllWorkersFull">func (m *Metrics) RecordSchedulerAllWorkersFull()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerCapacityDeferral">func (m *Metrics) RecordSchedulerCapacityDeferral()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerCapacityDeferralPoll">func (m *Metrics) RecordSchedulerCapacityDeferralPoll()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerDegradedMode">func (m *Metrics) RecordSchedulerDegradedMode()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerDispatchCooldownActivation">func (m *Metrics) RecordSchedulerDispatchCooldownActivation()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerDispatchRejection">func (m *Metrics) RecordSchedulerDispatchRejection(reason string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerReconcileSucceeded">func (m *Metrics) RecordSchedulerReconcileSucceeded(mode string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerRecoveredJobs">func (m *Metrics) RecordSchedulerRecoveredJobs(count int)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerRecoveryDuration">func (m *Metrics) RecordSchedulerRecoveryDuration(duration time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerRecoveryResumeSkippedQueuedJobs">func (m *Metrics) RecordSchedulerRecoveryResumeSkippedQueuedJobs(count int)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerRecoveryResumeSkippedUnsafeQueuedJobs">func (m *Metrics) RecordSchedulerRecoveryResumeSkippedUnsafeQueuedJobs(count int)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerRecoveryResumedQueuedJobs">func (m *Metrics) RecordSchedulerRecoveryResumedQueuedJobs(count int)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordSchedulerRecoveryRun">func (m *Metrics) RecordSchedulerRecoveryRun(status string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordStateOperation">func (m *Metrics) RecordStateOperation(operation, backend string, duration time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordTaskDispatchRetry">func (m *Metrics) RecordTaskDispatchRetry()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordTaskExecution">func (m *Metrics) RecordTaskExecution(locality string, duration time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordTaskFailedMaxDispatchAttempts">func (m *Metrics) RecordTaskFailedMaxDispatchAttempts()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordTransitionRetentionRefreshFailure">func (m *Metrics) RecordTransitionRetentionRefreshFailure()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordWorkerDispatchRejection">func (m *Metrics) RecordWorkerDispatchRejection(reason string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordWorkerHeartbeatAuthFailed">func (m *Metrics) RecordWorkerHeartbeatAuthFailed()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordWorkerHeartbeatInvalidPayload">func (m *Metrics) RecordWorkerHeartbeatInvalidPayload()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordWorkerHeartbeatProcessing">func (m *Metrics) RecordWorkerHeartbeatProcessing(duration time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordWorkerHeartbeatReceived">func (m *Metrics) RecordWorkerHeartbeatReceived()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.RecordWorkerHeartbeatSucceeded">func (m *Metrics) RecordWorkerHeartbeatSucceeded()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.SetActiveRequests">func (m *Metrics) SetActiveRequests(agentName string, count int)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.SetActiveSessions">func (m *Metrics) SetActiveSessions(agentID string, count int)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.SetTaskQueueDepths">func (m *Metrics) SetTaskQueueDepths(scheduler string, current, configMax int)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.SetTaskQueueLength">func (m *Metrics) SetTaskQueueLength(scheduler string, length int)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Metrics.SetTransitionRetentionSnapshot">func (m *Metrics) SetTransitionRetentionSnapshot(snapshot retention.VisibilitySnapshot)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#RequestLogger">type RequestLogger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewRequestLogger">func NewRequestLogger(base *Logger) *RequestLogger</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RequestLogger.LogGRPCRequest">func (rl *RequestLogger) LogGRPCRequest(method string, code int32, duration time.Duration, err error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RequestLogger.LogHTTPRequest">func (rl *RequestLogger) LogHTTPRequest(method, path string, statusCode int, duration time.Duration, err error)</a></dd>
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go">health.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go">logging.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go">metrics.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+			
+			
+			<h2 id="Debug">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=11133:11179#L435">Debug</a>
+				<a class="permalink" href="index.html#Debug">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func Debug(message <a href="http://localhost:6060/pkg/builtin/#string">string</a>, fields ...<a href="index.html#LogField">LogField</a>)</pre>
+			<p>Debug logs at debug level using global logger
+
+			
+			
+
+		
+			
+			
+			<h2 id="Error">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=11545:11591#L450">Error</a>
+				<a class="permalink" href="index.html#Error">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func Error(message <a href="http://localhost:6060/pkg/builtin/#string">string</a>, fields ...<a href="index.html#LogField">LogField</a>)</pre>
+			<p>Error logs at error level using global logger
+
+			
+			
+
+		
+			
+			
+			<h2 id="Fatal">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=11695:11741#L455">Fatal</a>
+				<a class="permalink" href="index.html#Fatal">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func Fatal(message <a href="http://localhost:6060/pkg/builtin/#string">string</a>, fields ...<a href="index.html#LogField">LogField</a>)</pre>
+			<p>Fatal logs at fatal level and exits using global logger
+
+			
+			
+
+		
+			
+			
+			<h2 id="Handler">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=32352:32379#L955">Handler</a>
+				<a class="permalink" href="index.html#Handler">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func Handler() <a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#Handler">Handler</a></pre>
+			<p>Handler returns an HTTP handler for Prometheus metrics
+
+			
+			
+
+		
+			
+			
+			<h2 id="HealthHandler">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=8261:8294#L304">HealthHandler</a>
+				<a class="permalink" href="index.html#HealthHandler">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func HealthHandler() <a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#Handler">Handler</a></pre>
+			<p>HealthHandler returns the global health HTTP handler
+
+			
+			
+
+		
+			
+			
+			<h2 id="Info">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=11271:11316#L440">Info</a>
+				<a class="permalink" href="index.html#Info">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func Info(message <a href="http://localhost:6060/pkg/builtin/#string">string</a>, fields ...<a href="index.html#LogField">LogField</a>)</pre>
+			<p>Info logs at info level using global logger
+
+			
+			
+
+		
+			
+			
+			<h2 id="RegisterHealthCheck">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=7938:7998#L294">RegisterHealthCheck</a>
+				<a class="permalink" href="index.html#RegisterHealthCheck">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func RegisterHealthCheck(name <a href="http://localhost:6060/pkg/builtin/#string">string</a>, checker <a href="index.html#HealthChecker">HealthChecker</a>)</pre>
+			<p>RegisterHealthCheck registers a health check with the global registry
+
+			
+			
+
+		
+			
+			
+			<h2 id="SetGlobalLogger">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=10973:11009#L428">SetGlobalLogger</a>
+				<a class="permalink" href="index.html#SetGlobalLogger">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func SetGlobalLogger(logger *<a href="index.html#Logger">Logger</a>)</pre>
+			<p>SetGlobalLogger sets the global logger instance
+
+			
+			
+
+		
+			
+			
+			<h2 id="UnregisterHealthCheck">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=8122:8161#L299">UnregisterHealthCheck</a>
+				<a class="permalink" href="index.html#UnregisterHealthCheck">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func UnregisterHealthCheck(name <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+			<p>UnregisterHealthCheck removes a health check from the global registry
+
+			
+			
+
+		
+			
+			
+			<h2 id="Warn">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=11407:11452#L445">Warn</a>
+				<a class="permalink" href="index.html#Warn">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func Warn(message <a href="http://localhost:6060/pkg/builtin/#string">string</a>, fields ...<a href="index.html#LogField">LogField</a>)</pre>
+			<p>Warn logs at warn level using global logger
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="AgentLogger">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=7468:7540#L295">AgentLogger</a>
+				<a class="permalink" href="index.html#AgentLogger">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentLogger is a logger specialized for agent operations
+
+			<pre>type AgentLogger struct {
+    *<a href="index.html#Logger">Logger</a>
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewAgentLogger">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=7598:7671#L302">NewAgentLogger</a>
+					<a class="permalink" href="index.html#NewAgentLogger">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewAgentLogger(base *<a href="index.html#Logger">Logger</a>, agentName, agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) *<a href="index.html#AgentLogger">AgentLogger</a></pre>
+				<p>NewAgentLogger creates a logger for a specific agent
+
+				
+				
+			
+
+			
+				
+				<h3 id="AgentLogger.CircuitBreakerTripped">func (*AgentLogger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=9940:9998#L380">CircuitBreakerTripped</a>
+					<a class="permalink" href="index.html#AgentLogger.CircuitBreakerTripped">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (al *<a href="index.html#AgentLogger">AgentLogger</a>) CircuitBreakerTripped(state <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>CircuitBreakerTripped logs circuit breaker state change
+
+				
+				
+				
+			
+				
+				<h3 id="AgentLogger.ExecutionCompleted">func (*AgentLogger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=8153:8233#L319">ExecutionCompleted</a>
+					<a class="permalink" href="index.html#AgentLogger.ExecutionCompleted">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (al *<a href="index.html#AgentLogger">AgentLogger</a>) ExecutionCompleted(taskID <a href="http://localhost:6060/pkg/builtin/#string">string</a>, duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>)</pre>
+				<p>ExecutionCompleted logs successful agent execution
+
+				
+				
+				
+			
+				
+				<h3 id="AgentLogger.ExecutionFailed">func (*AgentLogger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=8404:8492#L327">ExecutionFailed</a>
+					<a class="permalink" href="index.html#AgentLogger.ExecutionFailed">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (al *<a href="index.html#AgentLogger">AgentLogger</a>) ExecutionFailed(taskID <a href="http://localhost:6060/pkg/builtin/#string">string</a>, err <a href="http://localhost:6060/pkg/builtin/#error">error</a>, duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>)</pre>
+				<p>ExecutionFailed logs failed agent execution
+
+				
+				
+				
+			
+				
+				<h3 id="AgentLogger.ExecutionStarted">func (*AgentLogger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=7892:7966#L311">ExecutionStarted</a>
+					<a class="permalink" href="index.html#AgentLogger.ExecutionStarted">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (al *<a href="index.html#AgentLogger">AgentLogger</a>) ExecutionStarted(taskID <a href="http://localhost:6060/pkg/builtin/#string">string</a>, instruction <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>ExecutionStarted logs the start of agent execution
+
+				
+				
+				
+			
+				
+				<h3 id="AgentLogger.LLMCalled">func (*AgentLogger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=9111:9221#L352">LLMCalled</a>
+					<a class="permalink" href="index.html#AgentLogger.LLMCalled">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (al *<a href="index.html#AgentLogger">AgentLogger</a>) LLMCalled(provider <a href="http://localhost:6060/pkg/builtin/#string">string</a>, model <a href="http://localhost:6060/pkg/builtin/#string">string</a>, tokens <a href="http://localhost:6060/pkg/builtin/#int">int</a>, duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>, err <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>LLMCalled logs an LLM API call
+
+				
+				
+				
+			
+				
+				<h3 id="AgentLogger.RetryAttempt">func (*AgentLogger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=9644:9728#L371">RetryAttempt</a>
+					<a class="permalink" href="index.html#AgentLogger.RetryAttempt">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (al *<a href="index.html#AgentLogger">AgentLogger</a>) RetryAttempt(attempt <a href="http://localhost:6060/pkg/builtin/#int">int</a>, err <a href="http://localhost:6060/pkg/builtin/#error">error</a>, nextDelay <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>)</pre>
+				<p>RetryAttempt logs a retry attempt
+
+				
+				
+				
+			
+				
+				<h3 id="AgentLogger.ToolCalled">func (*AgentLogger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=8682:8767#L336">ToolCalled</a>
+					<a class="permalink" href="index.html#AgentLogger.ToolCalled">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (al *<a href="index.html#AgentLogger">AgentLogger</a>) ToolCalled(toolName <a href="http://localhost:6060/pkg/builtin/#string">string</a>, duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>, err <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ToolCalled logs a tool invocation
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="ComponentHealth">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=391:731#L11">ComponentHealth</a>
+				<a class="permalink" href="index.html#ComponentHealth">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ComponentHealth represents the health of a single component
+
+			<pre>type ComponentHealth struct {
+<span id="ComponentHealth.Name"></span>    Name      <a href="http://localhost:6060/pkg/builtin/#string">string</a>            `json:&#34;name&#34;`
+<span id="ComponentHealth.Status"></span>    Status    <a href="index.html#HealthStatus">HealthStatus</a>      `json:&#34;status&#34;`
+<span id="ComponentHealth.Message"></span>    Message   <a href="http://localhost:6060/pkg/builtin/#string">string</a>            `json:&#34;message,omitempty&#34;`
+<span id="ComponentHealth.Latency"></span>    Latency   <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>     `json:&#34;latency_ms,omitempty&#34;`
+<span id="ComponentHealth.Metadata"></span>    Metadata  map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]<a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;metadata,omitempty&#34;`
+<span id="ComponentHealth.CheckedAt"></span>    CheckedAt <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a>         `json:&#34;checked_at&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ContextKey">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=5805:5827#L238">ContextKey</a>
+				<a class="permalink" href="index.html#ContextKey">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ContextKey is the type for context keys
+
+			<pre>type ContextKey <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span class="comment">// TraceIDKey is the context key for trace IDs</span>
+    <span id="TraceIDKey">TraceIDKey</span> <a href="index.html#ContextKey">ContextKey</a> = &#34;trace_id&#34;
+    <span class="comment">// SpanIDKey is the context key for span IDs</span>
+    <span id="SpanIDKey">SpanIDKey</span> <a href="index.html#ContextKey">ContextKey</a> = &#34;span_id&#34;
+    <span class="comment">// RequestIDKey is the context key for request IDs</span>
+    <span id="RequestIDKey">RequestIDKey</span> <a href="index.html#ContextKey">ContextKey</a> = &#34;request_id&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ExecutionTimer">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=32459:32566#L960">ExecutionTimer</a>
+				<a class="permalink" href="index.html#ExecutionTimer">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ExecutionTimer helps measure execution time
+
+			<pre>type ExecutionTimer struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewExecutionTimer">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=32618:32703#L968">NewExecutionTimer</a>
+					<a class="permalink" href="index.html#NewExecutionTimer">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewExecutionTimer(metrics *<a href="index.html#Metrics">Metrics</a>, agentName, agentType <a href="http://localhost:6060/pkg/builtin/#string">string</a>) *<a href="index.html#ExecutionTimer">ExecutionTimer</a></pre>
+				<p>NewExecutionTimer starts a new execution timer
+
+				
+				
+			
+
+			
+				
+				<h3 id="ExecutionTimer.Finish">func (*ExecutionTimer) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=32947:33007#L979">Finish</a>
+					<a class="permalink" href="index.html#ExecutionTimer.Finish">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (t *<a href="index.html#ExecutionTimer">ExecutionTimer</a>) Finish(status <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a></pre>
+				<p>Finish completes the timer and records the metric
+
+				
+				
+				
+			
+				
+				<h3 id="ExecutionTimer.FinishWithError">func (*ExecutionTimer) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=33258:33330#L987">FinishWithError</a>
+					<a class="permalink" href="index.html#ExecutionTimer.FinishWithError">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (t *<a href="index.html#ExecutionTimer">ExecutionTimer</a>) FinishWithError(errorType <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a></pre>
+				<p>FinishWithError completes the timer with an error
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="HealthChecker">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=1156:1216#L30">HealthChecker</a>
+				<a class="permalink" href="index.html#HealthChecker">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HealthChecker is a function that checks component health
+
+			<pre>type HealthChecker func(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="index.html#ComponentHealth">ComponentHealth</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="DatabaseHealthChecker">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=6041:6121#L227">DatabaseHealthChecker</a>
+					<a class="permalink" href="index.html#DatabaseHealthChecker">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func DatabaseHealthChecker(pingFn func(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a>) <a href="index.html#HealthChecker">HealthChecker</a></pre>
+				<p>DatabaseHealthChecker creates a health checker for databases
+
+				
+				
+			
+				
+				<h3 id="DiskSpaceHealthChecker">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=6923:6998#L259">DiskSpaceHealthChecker</a>
+					<a class="permalink" href="index.html#DiskSpaceHealthChecker">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func DiskSpaceHealthChecker(path <a href="http://localhost:6060/pkg/builtin/#string">string</a>, minFreeBytes <a href="http://localhost:6060/pkg/builtin/#uint64">uint64</a>) <a href="index.html#HealthChecker">HealthChecker</a></pre>
+				<p>DiskSpaceHealthChecker creates a health checker for disk space
+
+				
+				
+			
+				
+				<h3 id="LLMProviderHealthChecker">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=6247:6344#L232">LLMProviderHealthChecker</a>
+					<a class="permalink" href="index.html#LLMProviderHealthChecker">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func LLMProviderHealthChecker(name <a href="http://localhost:6060/pkg/builtin/#string">string</a>, checkFn func(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a>) <a href="index.html#HealthChecker">HealthChecker</a></pre>
+				<p>LLMProviderHealthChecker creates a health checker for LLM providers
+
+				
+				
+			
+				
+				<h3 id="MemoryHealthChecker">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=7305:7368#L272">MemoryHealthChecker</a>
+					<a class="permalink" href="index.html#MemoryHealthChecker">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func MemoryHealthChecker(maxUsagePercent <a href="http://localhost:6060/pkg/builtin/#float64">float64</a>) <a href="index.html#HealthChecker">HealthChecker</a></pre>
+				<p>MemoryHealthChecker creates a health checker for memory usage
+
+				
+				
+			
+				
+				<h3 id="RedisHealthChecker">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=5403:5480#L198">RedisHealthChecker</a>
+					<a class="permalink" href="index.html#RedisHealthChecker">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func RedisHealthChecker(pingFn func(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a>) <a href="index.html#HealthChecker">HealthChecker</a></pre>
+				<p>RedisHealthChecker creates a health checker for Redis
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="HealthRegistry">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=1277:1431#L33">HealthRegistry</a>
+				<a class="permalink" href="index.html#HealthRegistry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HealthRegistry manages health checks for all components
+
+			<pre>type HealthRegistry struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="GetHealthRegistry">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=7694:7734#L286">GetHealthRegistry</a>
+					<a class="permalink" href="index.html#GetHealthRegistry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func GetHealthRegistry() *<a href="index.html#HealthRegistry">HealthRegistry</a></pre>
+				<p>GetHealthRegistry returns the global health registry
+
+				
+				
+			
+				
+				<h3 id="NewHealthRegistry">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=1484:1566#L42">NewHealthRegistry</a>
+					<a class="permalink" href="index.html#NewHealthRegistry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewHealthRegistry(version <a href="http://localhost:6060/pkg/builtin/#string">string</a>, checkTimeout <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>) *<a href="index.html#HealthRegistry">HealthRegistry</a></pre>
+				<p>NewHealthRegistry creates a new health registry
+
+				
+				
+			
+
+			
+				
+				<h3 id="HealthRegistry.Check">func (*HealthRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=2106:2172#L66">Check</a>
+					<a class="permalink" href="index.html#HealthRegistry.Check">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (h *<a href="index.html#HealthRegistry">HealthRegistry</a>) Check(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="index.html#HealthResponse">HealthResponse</a></pre>
+				<p>Check runs all health checks and returns the overall status
+
+				
+				
+				
+			
+				
+				<h3 id="HealthRegistry.Handler">func (*HealthRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=4033:4080#L145">Handler</a>
+					<a class="permalink" href="index.html#HealthRegistry.Handler">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (h *<a href="index.html#HealthRegistry">HealthRegistry</a>) Handler() <a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#Handler">Handler</a></pre>
+				<p>Handler returns HTTP handlers for health endpoints
+
+				
+				
+				
+			
+				
+				<h3 id="HealthRegistry.LivenessCheck">func (*HealthRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=3595:3650#L130">LivenessCheck</a>
+					<a class="permalink" href="index.html#HealthRegistry.LivenessCheck">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (h *<a href="index.html#HealthRegistry">HealthRegistry</a>) LivenessCheck() <a href="index.html#HealthResponse">HealthResponse</a></pre>
+				<p>LivenessCheck returns a simple liveness check (is the service running?)
+
+				
+				
+				
+			
+				
+				<h3 id="HealthRegistry.ReadinessCheck">func (*HealthRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=3877:3952#L140">ReadinessCheck</a>
+					<a class="permalink" href="index.html#HealthRegistry.ReadinessCheck">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (h *<a href="index.html#HealthRegistry">HealthRegistry</a>) ReadinessCheck(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="index.html#HealthResponse">HealthResponse</a></pre>
+				<p>ReadinessCheck returns whether the service is ready to accept traffic
+
+				
+				
+				
+			
+				
+				<h3 id="HealthRegistry.Register">func (*HealthRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=1753:1822#L52">Register</a>
+					<a class="permalink" href="index.html#HealthRegistry.Register">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (h *<a href="index.html#HealthRegistry">HealthRegistry</a>) Register(name <a href="http://localhost:6060/pkg/builtin/#string">string</a>, checker <a href="index.html#HealthChecker">HealthChecker</a>)</pre>
+				<p>Register adds a health checker
+
+				
+				
+				
+			
+				
+				<h3 id="HealthRegistry.Unregister">func (*HealthRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=1929:1977#L59">Unregister</a>
+					<a class="permalink" href="index.html#HealthRegistry.Unregister">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (h *<a href="index.html#HealthRegistry">HealthRegistry</a>) Unregister(name <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>Unregister removes a health checker
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="HealthResponse">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=788:1094#L21">HealthResponse</a>
+				<a class="permalink" href="index.html#HealthResponse">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HealthResponse is the response for health endpoints
+
+			<pre>type HealthResponse struct {
+<span id="HealthResponse.Status"></span>    Status     <a href="index.html#HealthStatus">HealthStatus</a>      `json:&#34;status&#34;`
+<span id="HealthResponse.Version"></span>    Version    <a href="http://localhost:6060/pkg/builtin/#string">string</a>            `json:&#34;version,omitempty&#34;`
+<span id="HealthResponse.Uptime"></span>    Uptime     <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>     `json:&#34;uptime_seconds,omitempty&#34;`
+<span id="HealthResponse.Components"></span>    Components []<a href="index.html#ComponentHealth">ComponentHealth</a> `json:&#34;components,omitempty&#34;`
+<span id="HealthResponse.Timestamp"></span>    Timestamp  <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a>         `json:&#34;timestamp&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="HealthStatus">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/health.go?s=144:168#L2">HealthStatus</a>
+				<a class="permalink" href="index.html#HealthStatus">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HealthStatus represents the overall health status
+
+			<pre>type HealthStatus <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="HealthStatusHealthy">HealthStatusHealthy</span>   <a href="index.html#HealthStatus">HealthStatus</a> = &#34;healthy&#34;
+    <span id="HealthStatusDegraded">HealthStatusDegraded</span>  <a href="index.html#HealthStatus">HealthStatus</a> = &#34;degraded&#34;
+    <span id="HealthStatusUnhealthy">HealthStatusUnhealthy</span> <a href="index.html#HealthStatus">HealthStatus</a> = &#34;unhealthy&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LogEntry">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=1162:1704#L50">LogEntry</a>
+				<a class="permalink" href="index.html#LogEntry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LogEntry represents a single structured log entry
+
+			<pre>type LogEntry struct {
+<span id="LogEntry.Timestamp"></span>    Timestamp <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;timestamp&#34;`
+<span id="LogEntry.Level"></span>    Level     <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;level&#34;`
+<span id="LogEntry.Message"></span>    Message   <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;message&#34;`
+<span id="LogEntry.Service"></span>    Service   <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;service,omitempty&#34;`
+<span id="LogEntry.Version"></span>    Version   <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;version,omitempty&#34;`
+<span id="LogEntry.TraceID"></span>    TraceID   <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;trace_id,omitempty&#34;`
+<span id="LogEntry.SpanID"></span>    SpanID    <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;span_id,omitempty&#34;`
+<span id="LogEntry.Caller"></span>    Caller    <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;caller,omitempty&#34;`
+<span id="LogEntry.Fields"></span>    Fields    map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;fields,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LogField">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=920:977#L39">LogField</a>
+				<a class="permalink" href="index.html#LogField">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LogField represents a key-value pair in structured logging
+
+			<pre>type LogField struct {
+<span id="LogField.Key"></span>    Key   <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="LogField.Value"></span>    Value interface{}
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="Field">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=1012:1062#L45">Field</a>
+					<a class="permalink" href="index.html#Field">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func Field(key <a href="http://localhost:6060/pkg/builtin/#string">string</a>, value interface{}) <a href="index.html#LogField">LogField</a></pre>
+				<p>Field creates a new log field
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="LogLevel">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=244:261#L6">LogLevel</a>
+				<a class="permalink" href="index.html#LogLevel">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LogLevel represents the severity of a log message
+
+			<pre>type LogLevel <a href="http://localhost:6060/pkg/builtin/#int">int</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="LogLevelDebug">LogLevelDebug</span> <a href="index.html#LogLevel">LogLevel</a> = <a href="http://localhost:6060/pkg/builtin/#iota">iota</a>
+    <span id="LogLevelInfo">LogLevelInfo</span>
+    <span id="LogLevelWarn">LogLevelWarn</span>
+    <span id="LogLevelError">LogLevelError</span>
+    <span id="LogLevelFatal">LogLevelFatal</span>
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="ParseLogLevel">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=517:554#L21">ParseLogLevel</a>
+					<a class="permalink" href="index.html#ParseLogLevel">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func ParseLogLevel(s <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="index.html#LogLevel">LogLevel</a></pre>
+				<p>ParseLogLevel parses a string into a LogLevel
+
+				
+				
+			
+
+			
+				
+				<h3 id="LogLevel.String">func (LogLevel) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=363:396#L16">String</a>
+					<a class="permalink" href="index.html#LogLevel.String">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l <a href="index.html#LogLevel">LogLevel</a>) String() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Logger">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=2641:2755#L99">Logger</a>
+				<a class="permalink" href="index.html#Logger">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Logger is a structured JSON logger
+
+			<pre>type Logger struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="GetLogger">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=10358:10382#L401">GetLogger</a>
+					<a class="permalink" href="index.html#GetLogger">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func GetLogger() *<a href="index.html#Logger">Logger</a></pre>
+				<p>GetLogger returns the global logger instance
+
+				
+				
+			
+				
+				<h3 id="NewLogger">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=2802:2845#L107">NewLogger</a>
+					<a class="permalink" href="index.html#NewLogger">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewLogger(config <a href="index.html#LoggerConfig">LoggerConfig</a>) *<a href="index.html#Logger">Logger</a></pre>
+				<p>NewLogger creates a new structured logger
+
+				
+				
+			
+
+			
+				
+				<h3 id="Logger.Debug">func (*Logger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=4423:4481#L185">Debug</a>
+					<a class="permalink" href="index.html#Logger.Debug">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#Logger">Logger</a>) Debug(message <a href="http://localhost:6060/pkg/builtin/#string">string</a>, fields ...<a href="index.html#LogField">LogField</a>)</pre>
+				<p>Debug logs at debug level
+
+				
+				
+				
+			
+				
+				<h3 id="Logger.DebugCtx">func (*Logger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=6707:6789#L273">DebugCtx</a>
+					<a class="permalink" href="index.html#Logger.DebugCtx">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#Logger">Logger</a>) DebugCtx(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, message <a href="http://localhost:6060/pkg/builtin/#string">string</a>, fields ...<a href="index.html#LogField">LogField</a>)</pre>
+				<p>DebugCtx logs at debug level with context
+
+				
+				
+				
+			
+				
+				<h3 id="Logger.Error">func (*Logger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=4820:4878#L200">Error</a>
+					<a class="permalink" href="index.html#Logger.Error">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#Logger">Logger</a>) Error(message <a href="http://localhost:6060/pkg/builtin/#string">string</a>, fields ...<a href="index.html#LogField">LogField</a>)</pre>
+				<p>Error logs at error level
+
+				
+				
+				
+			
+				
+				<h3 id="Logger.ErrorCtx">func (*Logger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=7236:7318#L288">ErrorCtx</a>
+					<a class="permalink" href="index.html#Logger.ErrorCtx">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#Logger">Logger</a>) ErrorCtx(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, message <a href="http://localhost:6060/pkg/builtin/#string">string</a>, fields ...<a href="index.html#LogField">LogField</a>)</pre>
+				<p>ErrorCtx logs at error level with context
+
+				
+				
+				
+			
+				
+				<h3 id="Logger.Fatal">func (*Logger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=4965:5023#L205">Fatal</a>
+					<a class="permalink" href="index.html#Logger.Fatal">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#Logger">Logger</a>) Fatal(message <a href="http://localhost:6060/pkg/builtin/#string">string</a>, fields ...<a href="index.html#LogField">LogField</a>)</pre>
+				<p>Fatal logs at fatal level and exits
+
+				
+				
+				
+			
+				
+				<h3 id="Logger.Info">func (*Logger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=4556:4613#L190">Info</a>
+					<a class="permalink" href="index.html#Logger.Info">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#Logger">Logger</a>) Info(message <a href="http://localhost:6060/pkg/builtin/#string">string</a>, fields ...<a href="index.html#LogField">LogField</a>)</pre>
+				<p>Info logs at info level
+
+				
+				
+				
+			
+				
+				<h3 id="Logger.InfoCtx">func (*Logger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=6884:6965#L278">InfoCtx</a>
+					<a class="permalink" href="index.html#Logger.InfoCtx">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#Logger">Logger</a>) InfoCtx(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, message <a href="http://localhost:6060/pkg/builtin/#string">string</a>, fields ...<a href="index.html#LogField">LogField</a>)</pre>
+				<p>InfoCtx logs at info level with context
+
+				
+				
+				
+			
+				
+				<h3 id="Logger.Warn">func (*Logger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=4687:4744#L195">Warn</a>
+					<a class="permalink" href="index.html#Logger.Warn">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#Logger">Logger</a>) Warn(message <a href="http://localhost:6060/pkg/builtin/#string">string</a>, fields ...<a href="index.html#LogField">LogField</a>)</pre>
+				<p>Warn logs at warn level
+
+				
+				
+				
+			
+				
+				<h3 id="Logger.WarnCtx">func (*Logger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=7059:7140#L283">WarnCtx</a>
+					<a class="permalink" href="index.html#Logger.WarnCtx">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#Logger">Logger</a>) WarnCtx(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, message <a href="http://localhost:6060/pkg/builtin/#string">string</a>, fields ...<a href="index.html#LogField">LogField</a>)</pre>
+				<p>WarnCtx logs at warn level with context
+
+				
+				
+				
+			
+				
+				<h3 id="Logger.WithContext">func (*Logger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=6160:6217#L250">WithContext</a>
+					<a class="permalink" href="index.html#Logger.WithContext">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#Logger">Logger</a>) WithContext(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) *<a href="index.html#Logger">Logger</a></pre>
+				<p>WithContext extracts trace context and adds it to log fields
+
+				
+				
+				
+			
+				
+				<h3 id="Logger.WithFields">func (*Logger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=5151:5206#L211">WithFields</a>
+					<a class="permalink" href="index.html#Logger.WithFields">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#Logger">Logger</a>) WithFields(fields ...<a href="index.html#LogField">LogField</a>) *<a href="index.html#Logger">Logger</a></pre>
+				<p>WithFields creates a child logger with additional default fields
+
+				
+				
+				
+			
+				
+				<h3 id="Logger.WithService">func (*Logger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=5597:5649#L229">WithService</a>
+					<a class="permalink" href="index.html#Logger.WithService">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#Logger">Logger</a>) WithService(service <a href="http://localhost:6060/pkg/builtin/#string">string</a>) *<a href="index.html#Logger">Logger</a></pre>
+				<p>WithService creates a child logger with a different service name
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="LoggerConfig">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=1755:2220#L63">LoggerConfig</a>
+				<a class="permalink" href="index.html#LoggerConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LoggerConfig configures the structured logger
+
+			<pre>type LoggerConfig struct {
+<span id="LoggerConfig.Output"></span>    <span class="comment">// Output destination (defaults to stdout)</span>
+    Output <a href="http://localhost:6060/pkg/io/">io</a>.<a href="http://localhost:6060/pkg/io/#Writer">Writer</a>
+
+    <span class="comment">// Minimum log level (defaults to Info)</span>
+<span id="LoggerConfig.Level"></span>    Level <a href="index.html#LogLevel">LogLevel</a>
+
+<span id="LoggerConfig.Service"></span>    <span class="comment">// Service name for all log entries</span>
+    Service <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="LoggerConfig.Version"></span>    <span class="comment">// Version for all log entries</span>
+    Version <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Include caller information (file:line)</span>
+<span id="LoggerConfig.IncludeCaller"></span>    IncludeCaller <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+
+    <span class="comment">// Pretty print JSON (for development)</span>
+<span id="LoggerConfig.PrettyPrint"></span>    PrettyPrint <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+
+    <span class="comment">// Additional fields to include in all log entries</span>
+<span id="LoggerConfig.DefaultFields"></span>    DefaultFields map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="DefaultLoggerConfig">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=2291:2330#L87">DefaultLoggerConfig</a>
+					<a class="permalink" href="index.html#DefaultLoggerConfig">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func DefaultLoggerConfig() <a href="index.html#LoggerConfig">LoggerConfig</a></pre>
+				<p>DefaultLoggerConfig returns production-ready logger configuration
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="Metrics">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=722:4160#L13">Metrics</a>
+				<a class="permalink" href="index.html#Metrics">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Metrics holds all Prometheus metrics for the framework
+
+			<pre>type Metrics struct {
+    <span class="comment">// Agent execution metrics</span>
+<span id="Metrics.AgentExecutions"></span>    AgentExecutions      *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+<span id="Metrics.AgentExecutionTime"></span>    AgentExecutionTime   *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#HistogramVec">HistogramVec</a>
+<span id="Metrics.AgentExecutionErrors"></span>    AgentExecutionErrors *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+<span id="Metrics.AgentActiveRequests"></span>    AgentActiveRequests  *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#GaugeVec">GaugeVec</a>
+<span id="Metrics.AgentRetries"></span>    AgentRetries         *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+
+    <span class="comment">// LLM provider metrics</span>
+<span id="Metrics.LLMRequests"></span>    LLMRequests        *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+<span id="Metrics.LLMRequestDuration"></span>    LLMRequestDuration *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#HistogramVec">HistogramVec</a>
+<span id="Metrics.LLMTokensUsed"></span>    LLMTokensUsed      *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+<span id="Metrics.LLMRateLimitHits"></span>    LLMRateLimitHits   *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+
+    <span class="comment">// Circuit breaker metrics</span>
+<span id="Metrics.CircuitBreakerState"></span>    CircuitBreakerState    *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#GaugeVec">GaugeVec</a>
+<span id="Metrics.CircuitBreakerFailures"></span>    CircuitBreakerFailures *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+
+    <span class="comment">// Rate limiter metrics</span>
+<span id="Metrics.RateLimiterAllowed"></span>    RateLimiterAllowed  *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+<span id="Metrics.RateLimiterRejected"></span>    RateLimiterRejected *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+
+    <span class="comment">// State management metrics</span>
+<span id="Metrics.CheckpointsSaved"></span>    CheckpointsSaved   *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+<span id="Metrics.CheckpointsLoaded"></span>    CheckpointsLoaded  *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+<span id="Metrics.SessionsActive"></span>    SessionsActive     *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#GaugeVec">GaugeVec</a>
+<span id="Metrics.StateOperationTime"></span>    StateOperationTime *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#HistogramVec">HistogramVec</a>
+
+    <span class="comment">// Scheduler metrics</span>
+<span id="Metrics.DAGStagesTotal"></span>    DAGStagesTotal                       *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+<span id="Metrics.DAGStagesDuration"></span>    DAGStagesDuration                    *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#HistogramVec">HistogramVec</a>
+<span id="Metrics.TaskQueueLength"></span>    TaskQueueLength                      *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#GaugeVec">GaugeVec</a>
+<span id="Metrics.TaskQueueConfigMax"></span>    TaskQueueConfigMax                   *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#GaugeVec">GaugeVec</a>
+<span id="Metrics.TaskQueueObservedMax"></span>    TaskQueueObservedMax                 *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#GaugeVec">GaugeVec</a>
+<span id="Metrics.TaskExecutionTime"></span>    TaskExecutionTime                    *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#HistogramVec">HistogramVec</a>
+<span id="Metrics.TaskDispatchRetries"></span>    TaskDispatchRetries                  <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.TasksFailedMaxDispatchAttempts"></span>    TasksFailedMaxDispatchAttempts       <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.SchedulerAllWorkersFull"></span>    SchedulerAllWorkersFull              <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.SchedulerCapacityDeferrals"></span>    SchedulerCapacityDeferrals           <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.SchedulerCapacityDeferralPolls"></span>    SchedulerCapacityDeferralPolls       <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.SchedulerDegradedMode"></span>    SchedulerDegradedMode                <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.SchedulerAffinityHits"></span>    SchedulerAffinityHits                <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.SchedulerAffinityMisses"></span>    SchedulerAffinityMisses              <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.SchedulerAffinityStale"></span>    SchedulerAffinityStale               <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.SchedulerDispatchCooldownActivations"></span>    SchedulerDispatchCooldownActivations <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.SchedulerDispatchRejections"></span>    SchedulerDispatchRejections          *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+<span id="Metrics.SchedulerRecoveryRuns"></span>    SchedulerRecoveryRuns                *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+<span id="Metrics.SchedulerRecoveredJobs"></span>    SchedulerRecoveredJobs               <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.SchedulerRecoveryResumedQueuedJobs"></span>    SchedulerRecoveryResumedQueuedJobs   <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.SchedulerRecoveryResumeSkippedQueued"></span>    SchedulerRecoveryResumeSkippedQueued <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.SchedulerRecoveryResumeSkippedUnsafe"></span>    SchedulerRecoveryResumeSkippedUnsafe <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.SchedulerRecoveryDuration"></span>    SchedulerRecoveryDuration            <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Histogram">Histogram</a>
+<span id="Metrics.SchedulerReconcileRuns"></span>    SchedulerReconcileRuns               *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+<span id="Metrics.SchedulerLastReconcileTimestamp"></span>    SchedulerLastReconcileTimestamp      <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Gauge">Gauge</a>
+<span id="Metrics.TransitionRetentionUnfinishedJobs"></span>    TransitionRetentionUnfinishedJobs    <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Gauge">Gauge</a>
+<span id="Metrics.TransitionRetentionTerminalJobs"></span>    TransitionRetentionTerminalJobs      *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#GaugeVec">GaugeVec</a>
+<span id="Metrics.TransitionRetentionEligibleJobs"></span>    TransitionRetentionEligibleJobs      <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Gauge">Gauge</a>
+<span id="Metrics.TransitionRetentionEligibleRows"></span>    TransitionRetentionEligibleRows      *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#GaugeVec">GaugeVec</a>
+<span id="Metrics.TransitionRetentionLastRefresh"></span>    TransitionRetentionLastRefresh       <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Gauge">Gauge</a>
+<span id="Metrics.TransitionRetentionRefreshFailures"></span>    TransitionRetentionRefreshFailures   <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.WorkerHeartbeatsReceived"></span>    WorkerHeartbeatsReceived             <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.WorkerHeartbeatsSucceeded"></span>    WorkerHeartbeatsSucceeded            <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.WorkerHeartbeatAuthFailed"></span>    WorkerHeartbeatAuthFailed            <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.WorkerHeartbeatInvalidPayload"></span>    WorkerHeartbeatInvalidPayload        <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Counter">Counter</a>
+<span id="Metrics.WorkerHeartbeatProcessingTime"></span>    WorkerHeartbeatProcessingTime        <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Histogram">Histogram</a>
+<span id="Metrics.WorkerDispatchRejections"></span>    WorkerDispatchRejections             *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+
+    <span class="comment">// Coordination metrics</span>
+<span id="Metrics.BarrierWaitSeconds"></span>    BarrierWaitSeconds *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#HistogramVec">HistogramVec</a>
+<span id="Metrics.GenerationCreated"></span>    GenerationCreated  *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+<span id="Metrics.TripLatency"></span>    TripLatency        *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#HistogramVec">HistogramVec</a>
+<span id="Metrics.BarrierTripTotal"></span>    BarrierTripTotal   *<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#CounterVec">CounterVec</a>
+
+    <span class="comment">// System metrics</span>
+<span id="Metrics.GoroutinesActive"></span>    GoroutinesActive <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Gauge">Gauge</a>
+<span id="Metrics.MemoryUsageBytes"></span>    MemoryUsageBytes <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Gauge">Gauge</a>
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="GetMetrics">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=4495:4521#L110">GetMetrics</a>
+					<a class="permalink" href="index.html#GetMetrics">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func GetMetrics() *<a href="index.html#Metrics">Metrics</a></pre>
+				<p>GetMetrics returns the global metrics instance
+
+				
+				
+			
+				
+				<h3 id="NewMetrics">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=4697:4739#L118">NewMetrics</a>
+					<a class="permalink" href="index.html#NewMetrics">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMetrics(namespace <a href="http://localhost:6060/pkg/builtin/#string">string</a>) *<a href="index.html#Metrics">Metrics</a></pre>
+				<p>NewMetrics creates a new Metrics instance with the given namespace
+
+				
+				
+			
+				
+				<h3 id="NewMetricsWithRegistry">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=4963:5044#L124">NewMetricsWithRegistry</a>
+					<a class="permalink" href="index.html#NewMetricsWithRegistry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMetricsWithRegistry(namespace <a href="http://localhost:6060/pkg/builtin/#string">string</a>, reg <a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/">prometheus</a>.<a href="http://localhost:6060/pkg/github.com/prometheus/client_golang/prometheus/#Registerer">Registerer</a>) *<a href="index.html#Metrics">Metrics</a></pre>
+				<p>NewMetricsWithRegistry creates a new Metrics instance using the provided
+Prometheus registerer. This enables test-safe isolated registries.
+
+				
+				
+			
+
+			
+				
+				<h3 id="Metrics.RecordAgentError">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=21167:21230#L674">RecordAgentError</a>
+					<a class="permalink" href="index.html#Metrics.RecordAgentError">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordAgentError(agentName, errorType <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordAgentError records an agent execution error (simple version)
+Deprecated: prefer RecordAgentErrorTyped so dashboards preserve true agent_type.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordAgentErrorTyped">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=21362:21441#L679">RecordAgentErrorTyped</a>
+					<a class="permalink" href="index.html#Metrics.RecordAgentErrorTyped">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordAgentErrorTyped(agentName, agentType, errorType <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordAgentErrorTyped records an agent execution error with type
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordAgentExecution">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=20749:20848#L667">RecordAgentExecution</a>
+					<a class="permalink" href="index.html#Metrics.RecordAgentExecution">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordAgentExecution(agentName, agentType, status <a href="http://localhost:6060/pkg/builtin/#string">string</a>, duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>)</pre>
+				<p>RecordAgentExecution records an agent execution
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordAgentRetry">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=21577:21629#L684">RecordAgentRetry</a>
+					<a class="permalink" href="index.html#Metrics.RecordAgentRetry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordAgentRetry(agentName <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordAgentRetry records an agent retry attempt
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordBarrierGenerationCreated">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=30575:30642#L910">RecordBarrierGenerationCreated</a>
+					<a class="permalink" href="index.html#Metrics.RecordBarrierGenerationCreated">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordBarrierGenerationCreated(barrierKey <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordBarrierGenerationCreated records creation of a new barrier generation.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordBarrierTrip">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=30990:31052#L920">RecordBarrierTrip</a>
+					<a class="permalink" href="index.html#Metrics.RecordBarrierTrip">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordBarrierTrip(barrierKey, status <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordBarrierTrip records barrier trip transaction outcome.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordBarrierTripLatency">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=30765:30850#L915">RecordBarrierTripLatency</a>
+					<a class="permalink" href="index.html#Metrics.RecordBarrierTripLatency">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordBarrierTripLatency(barrierKey <a href="http://localhost:6060/pkg/builtin/#string">string</a>, duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>)</pre>
+				<p>RecordBarrierTripLatency records trip transaction latency.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordBarrierWait">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=30317:30403#L905">RecordBarrierWait</a>
+					<a class="permalink" href="index.html#Metrics.RecordBarrierWait">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordBarrierWait(barrierKey, status <a href="http://localhost:6060/pkg/builtin/#string">string</a>, duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>)</pre>
+				<p>RecordBarrierWait records time spent waiting at a barrier.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordCheckpointLoaded">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=23207:23263#L726">RecordCheckpointLoaded</a>
+					<a class="permalink" href="index.html#Metrics.RecordCheckpointLoaded">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordCheckpointLoaded(agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordCheckpointLoaded records a checkpoint load
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordCheckpointSaved">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=23043:23098#L721">RecordCheckpointSaved</a>
+					<a class="permalink" href="index.html#Metrics.RecordCheckpointSaved">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordCheckpointSaved(agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordCheckpointSaved records a checkpoint save
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordCircuitBreakerFailure">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=22539:22597#L706">RecordCircuitBreakerFailure</a>
+					<a class="permalink" href="index.html#Metrics.RecordCircuitBreakerFailure">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordCircuitBreakerFailure(name <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordCircuitBreakerFailure records a circuit breaker failure
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordCircuitBreakerState">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=22336:22403#L701">RecordCircuitBreakerState</a>
+					<a class="permalink" href="index.html#Metrics.RecordCircuitBreakerState">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordCircuitBreakerState(name <a href="http://localhost:6060/pkg/builtin/#string">string</a>, state <a href="http://localhost:6060/pkg/builtin/#int">int</a>)</pre>
+				<p>RecordCircuitBreakerState records circuit breaker state
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordDAGStage">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=23600:23680#L736">RecordDAGStage</a>
+					<a class="permalink" href="index.html#Metrics.RecordDAGStage">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordDAGStage(stageID, status <a href="http://localhost:6060/pkg/builtin/#string">string</a>, duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>)</pre>
+				<p>RecordDAGStage records a DAG stage execution
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordLLMRequest">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=21731:21821#L689">RecordLLMRequest</a>
+					<a class="permalink" href="index.html#Metrics.RecordLLMRequest">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordLLMRequest(provider, model, status <a href="http://localhost:6060/pkg/builtin/#string">string</a>, duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>)</pre>
+				<p>RecordLLMRequest records an LLM API request
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordLLMTokens">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=22011:22099#L695">RecordLLMTokens</a>
+					<a class="permalink" href="index.html#Metrics.RecordLLMTokens">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordLLMTokens(provider, model <a href="http://localhost:6060/pkg/builtin/#string">string</a>, inputTokens, outputTokens <a href="http://localhost:6060/pkg/builtin/#int">int</a>)</pre>
+				<p>RecordLLMTokens records token usage
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordRateLimiterAllowed">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=22712:22767#L711">RecordRateLimiterAllowed</a>
+					<a class="permalink" href="index.html#Metrics.RecordRateLimiterAllowed">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordRateLimiterAllowed(name <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordRateLimiterAllowed records an allowed request
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordRateLimiterRejected">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=22879:22935#L716">RecordRateLimiterRejected</a>
+					<a class="permalink" href="index.html#Metrics.RecordRateLimiterRejected">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordRateLimiterRejected(name <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordRateLimiterRejected records a rejected request
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerAffinityHit">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=25201:25247#L780">RecordSchedulerAffinityHit</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerAffinityHit">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerAffinityHit()</pre>
+				<p>RecordSchedulerAffinityHit records a sticky scheduling affinity hit.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerAffinityMiss">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=25358:25405#L785">RecordSchedulerAffinityMiss</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerAffinityMiss">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerAffinityMiss()</pre>
+				<p>RecordSchedulerAffinityMiss records a sticky scheduling affinity miss.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerAffinityStale">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=25517:25565#L790">RecordSchedulerAffinityStale</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerAffinityStale">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerAffinityStale()</pre>
+				<p>RecordSchedulerAffinityStale records a stale sticky affinity reroute.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerAllWorkersFull">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=24478:24527#L758">RecordSchedulerAllWorkersFull</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerAllWorkersFull">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerAllWorkersFull()</pre>
+				<p>RecordSchedulerAllWorkersFull records a scheduling refusal due to no worker capacity.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerCapacityDeferral">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=24660:24711#L764">RecordSchedulerCapacityDeferral</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerCapacityDeferral">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerCapacityDeferral()</pre>
+				<p>RecordSchedulerCapacityDeferral records entering stage-level deferred
+capacity waiting.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerCapacityDeferralPoll">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=24868:24923#L770">RecordSchedulerCapacityDeferralPoll</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerCapacityDeferralPoll">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerCapacityDeferralPoll()</pre>
+				<p>RecordSchedulerCapacityDeferralPoll records one polling iteration while
+waiting for deferred stage capacity.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerDegradedMode">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=25045:25092#L775">RecordSchedulerDegradedMode</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerDegradedMode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerDegradedMode()</pre>
+				<p>RecordSchedulerDegradedMode records a stale-capacity fallback selection.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerDispatchCooldownActivation">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=25684:25745#L795">RecordSchedulerDispatchCooldownActivation</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerDispatchCooldownActivation">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerDispatchCooldownActivation()</pre>
+				<p>RecordSchedulerDispatchCooldownActivation records a worker entering cooldown.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerDispatchRejection">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=25873:25938#L800">RecordSchedulerDispatchRejection</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerDispatchRejection">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerDispatchRejection(reason <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordSchedulerDispatchRejection records a dispatch rejection by reason.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerReconcileSucceeded">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=27675:27739#L850">RecordSchedulerReconcileSucceeded</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerReconcileSucceeded">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerReconcileSucceeded(mode <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordSchedulerReconcileSucceeded records a successful durable state reconciliation.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerRecoveredJobs">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=26307:26364#L810">RecordSchedulerRecoveredJobs</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerRecoveredJobs">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerRecoveredJobs(count <a href="http://localhost:6060/pkg/builtin/#int">int</a>)</pre>
+				<p>RecordSchedulerRecoveredJobs records how many jobs were reconstructed by startup recovery.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerRecoveryDuration">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=27451:27524#L845">RecordSchedulerRecoveryDuration</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerRecoveryDuration">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerRecoveryDuration(duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>)</pre>
+				<p>RecordSchedulerRecoveryDuration records scheduler startup recovery duration.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerRecoveryResumeSkippedQueuedJobs">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=26873:26948#L828">RecordSchedulerRecoveryResumeSkippedQueuedJobs</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerRecoveryResumeSkippedQueuedJobs">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerRecoveryResumeSkippedQueuedJobs(count <a href="http://localhost:6060/pkg/builtin/#int">int</a>)</pre>
+				<p>RecordSchedulerRecoveryResumeSkippedQueuedJobs records how many recovered
+QUEUED jobs were skipped due to startup queue saturation.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerRecoveryResumeSkippedUnsafeQueuedJobs">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=27195:27276#L837">RecordSchedulerRecoveryResumeSkippedUnsafeQueuedJobs</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerRecoveryResumeSkippedUnsafeQueuedJobs">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerRecoveryResumeSkippedUnsafeQueuedJobs(count <a href="http://localhost:6060/pkg/builtin/#int">int</a>)</pre>
+				<p>RecordSchedulerRecoveryResumeSkippedUnsafeQueuedJobs records how many
+recovered QUEUED jobs were skipped due to unsafe (non-pending) task states.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerRecoveryResumedQueuedJobs">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=26573:26642#L819">RecordSchedulerRecoveryResumedQueuedJobs</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerRecoveryResumedQueuedJobs">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerRecoveryResumedQueuedJobs(count <a href="http://localhost:6060/pkg/builtin/#int">int</a>)</pre>
+				<p>RecordSchedulerRecoveryResumedQueuedJobs records how many recovered QUEUED
+jobs were re-enqueued during startup recovery.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordSchedulerRecoveryRun">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=26093:26152#L805">RecordSchedulerRecoveryRun</a>
+					<a class="permalink" href="index.html#Metrics.RecordSchedulerRecoveryRun">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordSchedulerRecoveryRun(status <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordSchedulerRecoveryRun records one scheduler startup recovery attempt by status.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordStateOperation">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=23371:23460#L731">RecordStateOperation</a>
+					<a class="permalink" href="index.html#Metrics.RecordStateOperation">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordStateOperation(operation, backend <a href="http://localhost:6060/pkg/builtin/#string">string</a>, duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>)</pre>
+				<p>RecordStateOperation records a state operation
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordTaskDispatchRetry">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=24090:24133#L747">RecordTaskDispatchRetry</a>
+					<a class="permalink" href="index.html#Metrics.RecordTaskDispatchRetry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordTaskDispatchRetry()</pre>
+				<p>RecordTaskDispatchRetry records a capacity-conflict redispatch attempt.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordTaskExecution">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=23856:23934#L742">RecordTaskExecution</a>
+					<a class="permalink" href="index.html#Metrics.RecordTaskExecution">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordTaskExecution(locality <a href="http://localhost:6060/pkg/builtin/#string">string</a>, duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>)</pre>
+				<p>RecordTaskExecution records a task execution
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordTaskFailedMaxDispatchAttempts">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=24288:24343#L753">RecordTaskFailedMaxDispatchAttempts</a>
+					<a class="permalink" href="index.html#Metrics.RecordTaskFailedMaxDispatchAttempts">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordTaskFailedMaxDispatchAttempts()</pre>
+				<p>RecordTaskFailedMaxDispatchAttempts records a task failing after exhausting
+the configured dispatch retry budget.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordTransitionRetentionRefreshFailure">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=28981:29040#L870">RecordTransitionRetentionRefreshFailure</a>
+					<a class="permalink" href="index.html#Metrics.RecordTransitionRetentionRefreshFailure">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordTransitionRetentionRefreshFailure()</pre>
+				<p>RecordTransitionRetentionRefreshFailure records a failed retention metrics refresh.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordWorkerDispatchRejection">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=30129:30191#L900">RecordWorkerDispatchRejection</a>
+					<a class="permalink" href="index.html#Metrics.RecordWorkerDispatchRejection">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordWorkerDispatchRejection(reason <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordWorkerDispatchRejection records a worker-side dispatch rejection by reason.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordWorkerHeartbeatAuthFailed">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=29520:29571#L885">RecordWorkerHeartbeatAuthFailed</a>
+					<a class="permalink" href="index.html#Metrics.RecordWorkerHeartbeatAuthFailed">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordWorkerHeartbeatAuthFailed()</pre>
+				<p>RecordWorkerHeartbeatAuthFailed records a worker heartbeat auth failure.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordWorkerHeartbeatInvalidPayload">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=29706:29761#L890">RecordWorkerHeartbeatInvalidPayload</a>
+					<a class="permalink" href="index.html#Metrics.RecordWorkerHeartbeatInvalidPayload">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordWorkerHeartbeatInvalidPayload()</pre>
+				<p>RecordWorkerHeartbeatInvalidPayload records a worker heartbeat payload validation failure.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordWorkerHeartbeatProcessing">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=29904:29977#L895">RecordWorkerHeartbeatProcessing</a>
+					<a class="permalink" href="index.html#Metrics.RecordWorkerHeartbeatProcessing">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordWorkerHeartbeatProcessing(duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>)</pre>
+				<p>RecordWorkerHeartbeatProcessing records the duration of processing a worker heartbeat request.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordWorkerHeartbeatReceived">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=29177:29226#L875">RecordWorkerHeartbeatReceived</a>
+					<a class="permalink" href="index.html#Metrics.RecordWorkerHeartbeatReceived">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordWorkerHeartbeatReceived()</pre>
+				<p>RecordWorkerHeartbeatReceived records that a worker heartbeat request was received.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.RecordWorkerHeartbeatSucceeded">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=29353:29403#L880">RecordWorkerHeartbeatSucceeded</a>
+					<a class="permalink" href="index.html#Metrics.RecordWorkerHeartbeatSucceeded">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) RecordWorkerHeartbeatSucceeded()</pre>
+				<p>RecordWorkerHeartbeatSucceeded records successful processing of a worker heartbeat.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.SetActiveRequests">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=31967:32031#L945">SetActiveRequests</a>
+					<a class="permalink" href="index.html#Metrics.SetActiveRequests">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) SetActiveRequests(agentName <a href="http://localhost:6060/pkg/builtin/#string">string</a>, count <a href="http://localhost:6060/pkg/builtin/#int">int</a>)</pre>
+				<p>SetActiveRequests sets the number of active requests for an agent
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.SetActiveSessions">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=32163:32225#L950">SetActiveSessions</a>
+					<a class="permalink" href="index.html#Metrics.SetActiveSessions">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) SetActiveSessions(agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>, count <a href="http://localhost:6060/pkg/builtin/#int">int</a>)</pre>
+				<p>SetActiveSessions sets the number of active sessions
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.SetTaskQueueDepths">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=31431:31509#L931">SetTaskQueueDepths</a>
+					<a class="permalink" href="index.html#Metrics.SetTaskQueueDepths">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) SetTaskQueueDepths(scheduler <a href="http://localhost:6060/pkg/builtin/#string">string</a>, current, configMax <a href="http://localhost:6060/pkg/builtin/#int">int</a>)</pre>
+				<p>SetTaskQueueDepths sets queue depth gauges and tracks the process-lifetime
+observed high-water mark for a scheduler.
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.SetTaskQueueLength">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=31169:31235#L925">SetTaskQueueLength</a>
+					<a class="permalink" href="index.html#Metrics.SetTaskQueueLength">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) SetTaskQueueLength(scheduler <a href="http://localhost:6060/pkg/builtin/#string">string</a>, length <a href="http://localhost:6060/pkg/builtin/#int">int</a>)</pre>
+				<p>SetTaskQueueLength sets the task queue length
+
+				
+				
+				
+			
+				
+				<h3 id="Metrics.SetTransitionRetentionSnapshot">func (*Metrics) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/metrics.go?s=27937:28024#L856">SetTransitionRetentionSnapshot</a>
+					<a class="permalink" href="index.html#Metrics.SetTransitionRetentionSnapshot">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#Metrics">Metrics</a>) SetTransitionRetentionSnapshot(snapshot <a href="../retention/index.html">retention</a>.<a href="../retention/index.html#VisibilitySnapshot">VisibilitySnapshot</a>)</pre>
+				<p>SetTransitionRetentionSnapshot publishes transition-retention visibility gauges.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="RequestLogger">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=11846:11884#L460">RequestLogger</a>
+				<a class="permalink" href="index.html#RequestLogger">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LogRequest is middleware-style logging for HTTP requests
+
+			<pre>type RequestLogger struct {
+    *<a href="index.html#Logger">Logger</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewRequestLogger">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=11931:11981#L465">NewRequestLogger</a>
+					<a class="permalink" href="index.html#NewRequestLogger">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewRequestLogger(base *<a href="index.html#Logger">Logger</a>) *<a href="index.html#RequestLogger">RequestLogger</a></pre>
+				<p>NewRequestLogger creates a request logger
+
+				
+				
+			
+
+			
+				
+				<h3 id="RequestLogger.LogGRPCRequest">func (*RequestLogger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=12636:12737#L492">LogGRPCRequest</a>
+					<a class="permalink" href="index.html#RequestLogger.LogGRPCRequest">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (rl *<a href="index.html#RequestLogger">RequestLogger</a>) LogGRPCRequest(method <a href="http://localhost:6060/pkg/builtin/#string">string</a>, code <a href="http://localhost:6060/pkg/builtin/#int32">int32</a>, duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>, err <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>LogGRPCRequest logs a gRPC request
+
+				
+				
+				
+			
+				
+				<h3 id="RequestLogger.LogHTTPRequest">func (*RequestLogger) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/observability/logging.go?s=12063:12174#L470">LogHTTPRequest</a>
+					<a class="permalink" href="index.html#RequestLogger.LogHTTPRequest">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (rl *<a href="index.html#RequestLogger">RequestLogger</a>) LogHTTPRequest(method, path <a href="http://localhost:6060/pkg/builtin/#string">string</a>, statusCode <a href="http://localhost:6060/pkg/builtin/#int">int</a>, duration <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>, err <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>LogHTTPRequest logs an HTTP request
+
+				
+				
+				
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://localhost:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

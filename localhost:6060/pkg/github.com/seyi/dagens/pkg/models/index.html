@@ -1,0 +1,1913 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>models - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://localhost:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://localhost:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://localhost:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package models
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/models"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+				<dd><a href="index.html#pkg-subdirectories">Subdirectories</a></dd>
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package models provides base implementation for common provider functionality
+<h3 id="hdr-Package_models_provides_a_fallback_provider_that_tries_multiple_providers">Package models provides a fallback provider that tries multiple providers</h3>
+<p>Package models provides a unified interface for multiple LLM providers.
+This interface supports modern Chat Completion APIs with messages, tools,
+and multi-modal content.
+<p>Package models provides legacy model abstraction
+DEPRECATED: These types are maintained for backward compatibility with existing tests.
+New code should use the interfaces defined in interface.go
+<h3 id="hdr-Package_models_provides_model_abstraction_for_multi_model_support">Package models provides model abstraction for multi-model support</h3>
+<p>This package has been refactored to support modern Chat Completion APIs.
+The new interface supports:
+- Message-based conversations (not just prompts)
+- Tool calling with structured definitions
+- Multi-modal content (text + images)
+- Streaming responses
+- Multiple provider backends (OpenAI, Anthropic, Google, Ollama, etc.)
+<p>For the new interface, see interface.go
+For legacy compatibility, see legacy.go
+<p>Package models provides a registry for managing multiple LLM providers
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+				<dd><a href="index.html#pkg-constants">Constants</a></dd>
+			
+			
+			
+				
+				<dd><a href="index.html#RegisterProvider">func RegisterProvider(providerType string, factory ProviderFactory)</a></dd>
+			
+			
+				
+				<dd><a href="index.html#BaseProvider">type BaseProvider</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewBaseProvider">func NewBaseProvider(id, providerType, modelName string) *BaseProvider</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseProvider.Close">func (b *BaseProvider) Close() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseProvider.GetStatus">func (b *BaseProvider) GetStatus() ProviderStatus</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseProvider.ID">func (b *BaseProvider) ID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseProvider.MarkAvailable">func (b *BaseProvider) MarkAvailable()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseProvider.MarkUnavailable">func (b *BaseProvider) MarkUnavailable(err error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseProvider.Name">func (b *BaseProvider) Name() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseProvider.RecordRequest">func (b *BaseProvider) RecordRequest(latency time.Duration, err error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseProvider.Type">func (b *BaseProvider) Type() string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#FallbackProvider">type FallbackProvider</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewFallbackProvider">func NewFallbackProvider(id string, providers ...ModelProvider) *FallbackProvider</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FallbackProvider.Chat">func (f *FallbackProvider) Chat(ctx context.Context, req *ModelRequest) (*ModelResponse, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FallbackProvider.Close">func (f *FallbackProvider) Close() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FallbackProvider.ContextWindow">func (f *FallbackProvider) ContextWindow() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FallbackProvider.HealthCheck">func (f *FallbackProvider) HealthCheck(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FallbackProvider.MaxOutputTokens">func (f *FallbackProvider) MaxOutputTokens() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FallbackProvider.Stream">func (f *FallbackProvider) Stream(ctx context.Context, req *ModelRequest, handler StreamHandler) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FallbackProvider.SupportsJSONMode">func (f *FallbackProvider) SupportsJSONMode() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FallbackProvider.SupportsStreaming">func (f *FallbackProvider) SupportsStreaming() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FallbackProvider.SupportsTools">func (f *FallbackProvider) SupportsTools() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FallbackProvider.SupportsVision">func (f *FallbackProvider) SupportsVision() bool</a></dd>
+				
+			
+				
+				<dd><a href="index.html#FunctionCall">type FunctionCall</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#FunctionDefinition">type FunctionDefinition</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LegacyModelProvider">type LegacyModelProvider</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LegacyModelRequest">type LegacyModelRequest</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LegacyModelResponse">type LegacyModelResponse</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Message">type Message</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AssistantMessage">func AssistantMessage(content string) Message</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SystemMessage">func SystemMessage(content string) Message</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ToolMessage">func ToolMessage(toolCallID, content string) Message</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#UserMessage">func UserMessage(content string) Message</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MessagePart">type MessagePart</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MessageRole">type MessageRole</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MockModelProvider">type MockModelProvider</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMockModelProvider">func NewMockModelProvider(name, provider string) *MockModelProvider</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockModelProvider.Execute">func (m *MockModelProvider) Execute(ctx context.Context, request *LegacyModelRequest) (*LegacyModelResponse, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockModelProvider.MaxTokens">func (m *MockModelProvider) MaxTokens() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockModelProvider.Name">func (m *MockModelProvider) Name() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockModelProvider.Provider">func (m *MockModelProvider) Provider() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockModelProvider.SupportsStreaming">func (m *MockModelProvider) SupportsStreaming() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockModelProvider.SupportsTools">func (m *MockModelProvider) SupportsTools() bool</a></dd>
+				
+			
+				
+				<dd><a href="index.html#ModelProvider">type ModelProvider</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#CreateProvider">func CreateProvider(config map[string]interface{}) (ModelProvider, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#GetProvider">func GetProvider(id string) (ModelProvider, error)</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ModelRequest">type ModelRequest</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ModelResponse">type ModelResponse</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Msg">type Msg</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Provider">type Provider</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ProviderFactory">type ProviderFactory</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ProviderRegistry">type ProviderRegistry</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewProviderRegistry">func NewProviderRegistry() *ProviderRegistry</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ProviderRegistry.Close">func (r *ProviderRegistry) Close() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ProviderRegistry.Create">func (r *ProviderRegistry) Create(config map[string]interface{}) (ModelProvider, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ProviderRegistry.CreateAndRegister">func (r *ProviderRegistry) CreateAndRegister(id string, config map[string]interface{}) (ModelProvider, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ProviderRegistry.Get">func (r *ProviderRegistry) Get(id string) (ModelProvider, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ProviderRegistry.List">func (r *ProviderRegistry) List() []string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ProviderRegistry.ListTypes">func (r *ProviderRegistry) ListTypes() []string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ProviderRegistry.Register">func (r *ProviderRegistry) Register(providerType string, factory ProviderFactory)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ProviderRegistry.Remove">func (r *ProviderRegistry) Remove(id string) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#ProviderStatus">type ProviderStatus</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Request">type Request</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Response">type Response</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ResponseFormat">type ResponseFormat</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Role">type Role</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#StreamCallback">type StreamCallback</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#StreamChunk">type StreamChunk</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#StreamHandler">type StreamHandler</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#TokenUsage">type TokenUsage</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ToolCall">type ToolCall</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ToolDefinition">type ToolDefinition</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Usage">type Usage</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go">base_provider.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/fallback_provider.go">fallback_provider.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go">interface.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/legacy.go">legacy.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/model.go">model.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go">registry.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+			<h2 id="pkg-constants">Constants</h2>
+			
+				<p>Common message roles
+
+				<pre>const (
+    <span id="System">System</span>    = <a href="index.html#RoleSystem">RoleSystem</a>
+    <span id="User">User</span>      = <a href="index.html#RoleUser">RoleUser</a>
+    <span id="Assistant">Assistant</span> = <a href="index.html#RoleAssistant">RoleAssistant</a>
+    <span id="Tool">Tool</span>      = <a href="index.html#RoleTool">RoleTool</a>
+)</pre>
+			
+		
+		
+		
+			
+			
+			<h2 id="RegisterProvider">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go?s=3578:3645#L142">RegisterProvider</a>
+				<a class="permalink" href="index.html#RegisterProvider">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func RegisterProvider(providerType <a href="http://localhost:6060/pkg/builtin/#string">string</a>, factory <a href="index.html#ProviderFactory">ProviderFactory</a>)</pre>
+			<p>RegisterProvider registers a provider factory globally
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="BaseProvider">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go?s=189:413#L1">BaseProvider</a>
+				<a class="permalink" href="index.html#BaseProvider">&#xb6;</a>
+				
+				
+			</h2>
+			<p>BaseProvider provides common functionality for all providers
+
+			<pre>type BaseProvider struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewBaseProvider">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go?s=462:532#L13">NewBaseProvider</a>
+					<a class="permalink" href="index.html#NewBaseProvider">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewBaseProvider(id, providerType, modelName <a href="http://localhost:6060/pkg/builtin/#string">string</a>) *<a href="index.html#BaseProvider">BaseProvider</a></pre>
+				<p>NewBaseProvider creates a new base provider
+
+				
+				
+			
+
+			
+				
+				<h3 id="BaseProvider.Close">func (*BaseProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go?s=2386:2422#L96">Close</a>
+					<a class="permalink" href="index.html#BaseProvider.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#BaseProvider">BaseProvider</a>) Close() <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Close performs cleanup (default implementation does nothing)
+
+				
+				
+				
+			
+				
+				<h3 id="BaseProvider.GetStatus">func (*BaseProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go?s=1053:1102#L41">GetStatus</a>
+					<a class="permalink" href="index.html#BaseProvider.GetStatus">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#BaseProvider">BaseProvider</a>) GetStatus() <a href="index.html#ProviderStatus">ProviderStatus</a></pre>
+				<p>GetStatus returns the current provider status
+
+				
+				
+				
+			
+				
+				<h3 id="BaseProvider.ID">func (*BaseProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go?s=759:793#L26">ID</a>
+					<a class="permalink" href="index.html#BaseProvider.ID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#BaseProvider">BaseProvider</a>) ID() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				<p>ID returns the unique instance ID
+
+				
+				
+				
+			
+				
+				<h3 id="BaseProvider.MarkAvailable">func (*BaseProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go?s=1911:1949#L78">MarkAvailable</a>
+					<a class="permalink" href="index.html#BaseProvider.MarkAvailable">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#BaseProvider">BaseProvider</a>) MarkAvailable()</pre>
+				<p>MarkAvailable marks the provider as available
+
+				
+				
+				
+			
+				
+				<h3 id="BaseProvider.MarkUnavailable">func (*BaseProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go?s=2132:2181#L87">MarkUnavailable</a>
+					<a class="permalink" href="index.html#BaseProvider.MarkUnavailable">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#BaseProvider">BaseProvider</a>) MarkUnavailable(err <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>MarkUnavailable marks the provider as unavailable
+
+				
+				
+				
+			
+				
+				<h3 id="BaseProvider.Name">func (*BaseProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go?s=942:978#L36">Name</a>
+					<a class="permalink" href="index.html#BaseProvider.Name">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#BaseProvider">BaseProvider</a>) Name() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				<p>Name returns the model name
+
+				
+				
+				
+			
+				
+				<h3 id="BaseProvider.RecordRequest">func (*BaseProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go?s=1238:1308#L49">RecordRequest</a>
+					<a class="permalink" href="index.html#BaseProvider.RecordRequest">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#BaseProvider">BaseProvider</a>) RecordRequest(latency <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>, err <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>RecordRequest records metrics for a request
+
+				
+				
+				
+			
+				
+				<h3 id="BaseProvider.Type">func (*BaseProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go?s=846:882#L31">Type</a>
+					<a class="permalink" href="index.html#BaseProvider.Type">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#BaseProvider">BaseProvider</a>) Type() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				<p>Type returns the provider type
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="FallbackProvider">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/fallback_provider.go?s=203:277#L1">FallbackProvider</a>
+				<a class="permalink" href="index.html#FallbackProvider">&#xb6;</a>
+				
+				
+			</h2>
+			<p>FallbackProvider tries multiple providers in order until one succeeds
+
+			<pre>type FallbackProvider struct {
+    *<a href="index.html#BaseProvider">BaseProvider</a>
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewFallbackProvider">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/fallback_provider.go?s=334:415#L7">NewFallbackProvider</a>
+					<a class="permalink" href="index.html#NewFallbackProvider">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewFallbackProvider(id <a href="http://localhost:6060/pkg/builtin/#string">string</a>, providers ...<a href="index.html#ModelProvider">ModelProvider</a>) *<a href="index.html#FallbackProvider">FallbackProvider</a></pre>
+				<p>NewFallbackProvider creates a new fallback provider
+
+				
+				
+			
+
+			
+				
+				<h3 id="FallbackProvider.Chat">func (*FallbackProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/fallback_provider.go?s=749:844#L21">Chat</a>
+					<a class="permalink" href="index.html#FallbackProvider.Chat">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f *<a href="index.html#FallbackProvider">FallbackProvider</a>) Chat(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, req *<a href="index.html#ModelRequest">ModelRequest</a>) (*<a href="index.html#ModelResponse">ModelResponse</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Chat tries each provider in order until one succeeds
+
+				
+				
+				
+			
+				
+				<h3 id="FallbackProvider.Close">func (*FallbackProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/fallback_provider.go?s=3675:3715#L143">Close</a>
+					<a class="permalink" href="index.html#FallbackProvider.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f *<a href="index.html#FallbackProvider">FallbackProvider</a>) Close() <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Close closes all providers
+
+				
+				
+				
+			
+				
+				<h3 id="FallbackProvider.ContextWindow">func (*FallbackProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/fallback_provider.go?s=2773:2819#L101">ContextWindow</a>
+					<a class="permalink" href="index.html#FallbackProvider.ContextWindow">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f *<a href="index.html#FallbackProvider">FallbackProvider</a>) ContextWindow() <a href="http://localhost:6060/pkg/builtin/#int">int</a></pre>
+				<p>ContextWindow returns the maximum context window across all providers
+
+				
+				
+				
+			
+				
+				<h3 id="FallbackProvider.HealthCheck">func (*FallbackProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/fallback_provider.go?s=3255:3320#L123">HealthCheck</a>
+					<a class="permalink" href="index.html#FallbackProvider.HealthCheck">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f *<a href="index.html#FallbackProvider">FallbackProvider</a>) HealthCheck(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>HealthCheck checks health of all providers
+
+				
+				
+				
+			
+				
+				<h3 id="FallbackProvider.MaxOutputTokens">func (*FallbackProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/fallback_provider.go?s=3026:3074#L112">MaxOutputTokens</a>
+					<a class="permalink" href="index.html#FallbackProvider.MaxOutputTokens">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f *<a href="index.html#FallbackProvider">FallbackProvider</a>) MaxOutputTokens() <a href="http://localhost:6060/pkg/builtin/#int">int</a></pre>
+				<p>MaxOutputTokens returns the maximum output tokens across all providers
+
+				
+				
+				
+			
+				
+				<h3 id="FallbackProvider.Stream">func (*FallbackProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/fallback_provider.go?s=1302:1404#L41">Stream</a>
+					<a class="permalink" href="index.html#FallbackProvider.Stream">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f *<a href="index.html#FallbackProvider">FallbackProvider</a>) Stream(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, req *<a href="index.html#ModelRequest">ModelRequest</a>, handler <a href="index.html#StreamHandler">StreamHandler</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Stream tries each provider until one succeeds
+
+				
+				
+				
+			
+				
+				<h3 id="FallbackProvider.SupportsJSONMode">func (*FallbackProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/fallback_provider.go?s=2547:2597#L91">SupportsJSONMode</a>
+					<a class="permalink" href="index.html#FallbackProvider.SupportsJSONMode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f *<a href="index.html#FallbackProvider">FallbackProvider</a>) SupportsJSONMode() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>SupportsJSONMode returns true if any provider supports JSON mode
+
+				
+				
+				
+			
+				
+				<h3 id="FallbackProvider.SupportsStreaming">func (*FallbackProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/fallback_provider.go?s=2324:2375#L81">SupportsStreaming</a>
+					<a class="permalink" href="index.html#FallbackProvider.SupportsStreaming">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f *<a href="index.html#FallbackProvider">FallbackProvider</a>) SupportsStreaming() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>SupportsStreaming returns true if any provider supports streaming
+
+				
+				
+				
+			
+				
+				<h3 id="FallbackProvider.SupportsTools">func (*FallbackProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/fallback_provider.go?s=1896:1943#L61">SupportsTools</a>
+					<a class="permalink" href="index.html#FallbackProvider.SupportsTools">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f *<a href="index.html#FallbackProvider">FallbackProvider</a>) SupportsTools() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>SupportsTools returns true if any provider supports tools
+
+				
+				
+				
+			
+				
+				<h3 id="FallbackProvider.SupportsVision">func (*FallbackProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/fallback_provider.go?s=2106:2154#L71">SupportsVision</a>
+					<a class="permalink" href="index.html#FallbackProvider.SupportsVision">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f *<a href="index.html#FallbackProvider">FallbackProvider</a>) SupportsVision() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>SupportsVision returns true if any provider supports vision
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="FunctionCall">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=1010:1089#L28">FunctionCall</a>
+				<a class="permalink" href="index.html#FunctionCall">&#xb6;</a>
+				
+				
+			</h2>
+			<p>FunctionCall represents a function call with name and arguments
+
+			<pre>type FunctionCall struct {
+<span id="FunctionCall.Name"></span>    Name      <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="FunctionCall.Arguments"></span>    Arguments <a href="http://localhost:6060/pkg/builtin/#string">string</a> <span class="comment">// JSON string</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="FunctionDefinition">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=4140:4265#L143">FunctionDefinition</a>
+				<a class="permalink" href="index.html#FunctionDefinition">&#xb6;</a>
+				
+				
+			</h2>
+			<p>FunctionDefinition describes a function&apos;s schema
+
+			<pre>type FunctionDefinition struct {
+<span id="FunctionDefinition.Name"></span>    Name        <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="FunctionDefinition.Description"></span>    Description <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="FunctionDefinition.Parameters"></span>    Parameters  map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} <span class="comment">// JSON Schema</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LegacyModelProvider">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/legacy.go?s=377:603#L3">LegacyModelProvider</a>
+				<a class="permalink" href="index.html#LegacyModelProvider">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DEPRECATED: Use the new ModelProvider interface from interface.go
+LegacyModelProvider is kept for backward compatibility
+
+			<pre>type LegacyModelProvider interface {
+    Execute(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, request *<a href="index.html#LegacyModelRequest">LegacyModelRequest</a>) (*<a href="index.html#LegacyModelResponse">LegacyModelResponse</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+    Name() <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+    Provider() <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+    MaxTokens() <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+    SupportsTools() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+    SupportsStreaming() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LegacyModelRequest">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/legacy.go?s=655:839#L13">LegacyModelRequest</a>
+				<a class="permalink" href="index.html#LegacyModelRequest">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DEPRECATED: Use ModelRequest from interface.go
+
+			<pre>type LegacyModelRequest struct {
+<span id="LegacyModelRequest.Prompt"></span>    Prompt       <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="LegacyModelRequest.Tools"></span>    Tools        []<a href="index.html#ToolDefinition">ToolDefinition</a>
+<span id="LegacyModelRequest.Temperature"></span>    Temperature  <a href="http://localhost:6060/pkg/builtin/#float64">float64</a>
+<span id="LegacyModelRequest.MaxTokens"></span>    MaxTokens    <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+<span id="LegacyModelRequest.SystemPrompt"></span>    SystemPrompt <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="LegacyModelRequest.Context"></span>    Context      map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LegacyModelResponse">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/legacy.go?s=892:1049#L23">LegacyModelResponse</a>
+				<a class="permalink" href="index.html#LegacyModelResponse">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DEPRECATED: Use ModelResponse from interface.go
+
+			<pre>type LegacyModelResponse struct {
+<span id="LegacyModelResponse.Content"></span>    Content      <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="LegacyModelResponse.ToolCalls"></span>    ToolCalls    []<a href="index.html#ToolCall">ToolCall</a>
+<span id="LegacyModelResponse.TokensUsed"></span>    TokensUsed   <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+<span id="LegacyModelResponse.FinishReason"></span>    FinishReason <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="LegacyModelResponse.Metadata"></span>    Metadata     map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Message">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=1145:1447#L34">Message</a>
+				<a class="permalink" href="index.html#Message">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Message represents a single turn in a conversation
+
+			<pre>type Message struct {
+<span id="Message.Role"></span>    Role       <a href="index.html#MessageRole">MessageRole</a>
+<span id="Message.Content"></span>    Content    <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="Message.Name"></span>    Name       <a href="http://localhost:6060/pkg/builtin/#string">string</a>        <span class="comment">// Optional: speaker/tool name</span>
+<span id="Message.ToolCalls"></span>    ToolCalls  []<a href="index.html#ToolCall">ToolCall</a>    <span class="comment">// When assistant calls tools</span>
+<span id="Message.ToolCallID"></span>    ToolCallID <a href="http://localhost:6060/pkg/builtin/#string">string</a>        <span class="comment">// When tool responds to a call</span>
+<span id="Message.Parts"></span>    Parts      []<a href="index.html#MessagePart">MessagePart</a> <span class="comment">// Multi-modal content (text + images)</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="AssistantMessage">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go?s=2805:2850#L117">AssistantMessage</a>
+					<a class="permalink" href="index.html#AssistantMessage">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func AssistantMessage(content <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="index.html#Message">Message</a></pre>
+				<p>Helper function to create an assistant message
+
+				
+				
+			
+				
+				<h3 id="SystemMessage">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go?s=2493:2535#L101">SystemMessage</a>
+					<a class="permalink" href="index.html#SystemMessage">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func SystemMessage(content <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="index.html#Message">Message</a></pre>
+				<p>Helper function to create a simple system message
+
+				
+				
+			
+				
+				<h3 id="ToolMessage">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go?s=2966:3018#L125">ToolMessage</a>
+					<a class="permalink" href="index.html#ToolMessage">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func ToolMessage(toolCallID, content <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="index.html#Message">Message</a></pre>
+				<p>Helper function to create a tool message
+
+				
+				
+			
+				
+				<h3 id="UserMessage">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/base_provider.go?s=2648:2688#L109">UserMessage</a>
+					<a class="permalink" href="index.html#UserMessage">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func UserMessage(content <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="index.html#Message">Message</a></pre>
+				<p>Helper function to create a user message
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="MessagePart">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=552:780#L12">MessagePart</a>
+				<a class="permalink" href="index.html#MessagePart">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MessagePart represents a part of a multi-modal message (text, image, etc.)
+
+			<pre>type MessagePart struct {
+<span id="MessagePart.Type"></span>    Type      <a href="http://localhost:6060/pkg/builtin/#string">string</a> <span class="comment">// &#34;text&#34;, &#34;image_url&#34;, &#34;image_base64&#34;</span>
+<span id="MessagePart.Text"></span>    Text      <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="MessagePart.ImageURL"></span>    ImageURL  <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="MessagePart.ImageData"></span>    ImageData []<a href="http://localhost:6060/pkg/builtin/#byte">byte</a>
+<span id="MessagePart.MIMEType"></span>    MIMEType  <a href="http://localhost:6060/pkg/builtin/#string">string</a> <span class="comment">// MIME type for images (e.g., &#34;image/png&#34;, &#34;image/jpeg&#34;, &#34;image/webp&#34;)</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="MessageRole">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=287:310#L2">MessageRole</a>
+				<a class="permalink" href="index.html#MessageRole">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MessageRole represents the role of a message participant
+
+			<pre>type MessageRole <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="RoleSystem">RoleSystem</span>    <a href="index.html#MessageRole">MessageRole</a> = &#34;system&#34;
+    <span id="RoleUser">RoleUser</span>      <a href="index.html#MessageRole">MessageRole</a> = &#34;user&#34;
+    <span id="RoleAssistant">RoleAssistant</span> <a href="index.html#MessageRole">MessageRole</a> = &#34;assistant&#34;
+    <span id="RoleTool">RoleTool</span>      <a href="index.html#MessageRole">MessageRole</a> = &#34;tool&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="MockModelProvider">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/legacy.go?s=1167:1283#L33">MockModelProvider</a>
+				<a class="permalink" href="index.html#MockModelProvider">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MockModelProvider for testing (legacy)
+DEPRECATED: Use real providers or create mocks using the new interface
+
+			<pre>type MockModelProvider struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMockModelProvider">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/legacy.go?s=1285:1352#L40">NewMockModelProvider</a>
+					<a class="permalink" href="index.html#NewMockModelProvider">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMockModelProvider(name, provider <a href="http://localhost:6060/pkg/builtin/#string">string</a>) *<a href="index.html#MockModelProvider">MockModelProvider</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="MockModelProvider.Execute">func (*MockModelProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/legacy.go?s=1858:1973#L55">Execute</a>
+					<a class="permalink" href="index.html#MockModelProvider.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockModelProvider">MockModelProvider</a>) Execute(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, request *<a href="index.html#LegacyModelRequest">LegacyModelRequest</a>) (*<a href="index.html#LegacyModelResponse">LegacyModelResponse</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockModelProvider.MaxTokens">func (*MockModelProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/legacy.go?s=1631:1674#L51">MaxTokens</a>
+					<a class="permalink" href="index.html#MockModelProvider.MaxTokens">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockModelProvider">MockModelProvider</a>) MaxTokens() <a href="http://localhost:6060/pkg/builtin/#int">int</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockModelProvider.Name">func (*MockModelProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/legacy.go?s=1485:1526#L49">Name</a>
+					<a class="permalink" href="index.html#MockModelProvider.Name">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockModelProvider">MockModelProvider</a>) Name() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockModelProvider.Provider">func (*MockModelProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/legacy.go?s=1556:1601#L50">Provider</a>
+					<a class="permalink" href="index.html#MockModelProvider.Provider">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockModelProvider">MockModelProvider</a>) Provider() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockModelProvider.SupportsStreaming">func (*MockModelProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/legacy.go?s=1787:1839#L53">SupportsStreaming</a>
+					<a class="permalink" href="index.html#MockModelProvider.SupportsStreaming">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockModelProvider">MockModelProvider</a>) SupportsStreaming() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockModelProvider.SupportsTools">func (*MockModelProvider) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/legacy.go?s=1707:1755#L52">SupportsTools</a>
+					<a class="permalink" href="index.html#MockModelProvider.SupportsTools">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockModelProvider">MockModelProvider</a>) SupportsTools() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="ModelProvider">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=3216:3916#L110">ModelProvider</a>
+				<a class="permalink" href="index.html#ModelProvider">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ModelProvider is the unified interface for all LLM providers
+
+			<pre>type ModelProvider interface {
+    <span class="comment">// Identification</span>
+    ID() <a href="http://localhost:6060/pkg/builtin/#string">string</a>   <span class="comment">// Unique instance ID (e.g., &#34;openai-gpt4-production&#34;)</span>
+    Type() <a href="http://localhost:6060/pkg/builtin/#string">string</a> <span class="comment">// Provider type (e.g., &#34;openai&#34;, &#34;anthropic&#34;, &#34;google&#34;)</span>
+    Name() <a href="http://localhost:6060/pkg/builtin/#string">string</a> <span class="comment">// Model name (e.g., &#34;gpt-4-turbo&#34;, &#34;claude-3-opus&#34;)</span>
+
+    <span class="comment">// Execution</span>
+    Chat(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, req *<a href="index.html#ModelRequest">ModelRequest</a>) (*<a href="index.html#ModelResponse">ModelResponse</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+    Stream(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, req *<a href="index.html#ModelRequest">ModelRequest</a>, handler <a href="index.html#StreamHandler">StreamHandler</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// Capabilities</span>
+    SupportsTools() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+    SupportsVision() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+    SupportsStreaming() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+    SupportsJSONMode() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+    ContextWindow() <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+    MaxOutputTokens() <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+
+    <span class="comment">// Health &amp; Status</span>
+    HealthCheck(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+    GetStatus() <a href="index.html#ProviderStatus">ProviderStatus</a>
+
+    <span class="comment">// Lifecycle</span>
+    Close() <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="CreateProvider">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go?s=3770:3843#L147">CreateProvider</a>
+					<a class="permalink" href="index.html#CreateProvider">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func CreateProvider(config map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}) (<a href="index.html#ModelProvider">ModelProvider</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>CreateProvider creates a provider from config using global registry
+
+				
+				
+			
+				
+				<h3 id="GetProvider">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go?s=3944:3994#L152">GetProvider</a>
+					<a class="permalink" href="index.html#GetProvider">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func GetProvider(id <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (<a href="index.html#ModelProvider">ModelProvider</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetProvider retrieves a provider from global registry
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="ModelRequest">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=1632:2114#L49">ModelRequest</a>
+				<a class="permalink" href="index.html#ModelRequest">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ModelRequest represents a request to any LLM provider
+
+			<pre>type ModelRequest struct {
+<span id="ModelRequest.Messages"></span>    <span class="comment">// Messages in the conversation</span>
+    Messages []<a href="index.html#Message">Message</a>
+
+<span id="ModelRequest.Tools"></span>    <span class="comment">// Tools available to the model</span>
+    Tools []<a href="index.html#ToolDefinition">ToolDefinition</a>
+
+    <span class="comment">// Generation Parameters</span>
+<span id="ModelRequest.Temperature"></span>    Temperature     <a href="http://localhost:6060/pkg/builtin/#float64">float64</a>
+<span id="ModelRequest.TopP"></span>    TopP            <a href="http://localhost:6060/pkg/builtin/#float64">float64</a>
+<span id="ModelRequest.MaxOutputTokens"></span>    MaxOutputTokens <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+<span id="ModelRequest.StopSequences"></span>    StopSequences   []<a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="ModelRequest.ResponseFormat"></span>    ResponseFormat  <a href="index.html#ResponseFormat">ResponseFormat</a>
+
+<span id="ModelRequest.Metadata"></span>    <span class="comment">// Metadata for tracking and logging</span>
+    Metadata map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]<a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Provider-specific extensions (e.g., Claude &#34;thinking&#34;, specialized params)</span>
+<span id="ModelRequest.ExtensionParams"></span>    ExtensionParams map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ModelResponse">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=2355:2671#L79">ModelResponse</a>
+				<a class="permalink" href="index.html#ModelResponse">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ModelResponse represents a response from any LLM provider
+
+			<pre>type ModelResponse struct {
+<span id="ModelResponse.Message"></span>    Message      <a href="index.html#Message">Message</a>
+<span id="ModelResponse.FinishReason"></span>    FinishReason <a href="http://localhost:6060/pkg/builtin/#string">string</a> <span class="comment">// &#34;stop&#34;, &#34;length&#34;, &#34;tool_calls&#34;, &#34;content_filter&#34;</span>
+<span id="ModelResponse.Usage"></span>    Usage        <a href="index.html#TokenUsage">TokenUsage</a>
+<span id="ModelResponse.ProviderID"></span>    ProviderID   <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="ModelResponse.ModelName"></span>    ModelName    <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="ModelResponse.RequestID"></span>    RequestID    <a href="http://localhost:6060/pkg/builtin/#string">string</a> <span class="comment">// Provider&#39;s request ID for debugging</span>
+<span id="ModelResponse.Latency"></span>    Latency      <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>
+<span id="ModelResponse.Metadata"></span>    Metadata     map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Msg">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/model.go?s=715:739#L11">Msg</a>
+				<a class="permalink" href="index.html#Msg">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Re-export commonly used types for convenience
+
+			<pre>type Msg = <a href="index.html#Message">Message</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Provider">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/model.go?s=620:650#L8">Provider</a>
+				<a class="permalink" href="index.html#Provider">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Modern interface (from interface.go)
+
+			<pre>type Provider = <a href="index.html#ModelProvider">ModelProvider</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ProviderFactory">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go?s=199:278#L1">ProviderFactory</a>
+				<a class="permalink" href="index.html#ProviderFactory">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ProviderFactory is a function that creates a new provider instance from config
+
+			<pre>type ProviderFactory func(config map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}) (<a href="index.html#ModelProvider">ModelProvider</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ProviderRegistry">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go?s=332:462#L3">ProviderRegistry</a>
+				<a class="permalink" href="index.html#ProviderRegistry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ProviderRegistry manages available LLM providers
+
+			<pre>type ProviderRegistry struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewProviderRegistry">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go?s=519:563#L10">NewProviderRegistry</a>
+					<a class="permalink" href="index.html#NewProviderRegistry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewProviderRegistry() *<a href="index.html#ProviderRegistry">ProviderRegistry</a></pre>
+				<p>NewProviderRegistry creates a new provider registry
+
+				
+				
+			
+
+			
+				
+				<h3 id="ProviderRegistry.Close">func (*ProviderRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go?s=3084:3124#L120">Close</a>
+					<a class="permalink" href="index.html#ProviderRegistry.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ProviderRegistry">ProviderRegistry</a>) Close() <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Close closes all registered providers
+
+				
+				
+				
+			
+				
+				<h3 id="ProviderRegistry.Create">func (*ProviderRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go?s=1111:1198#L32">Create</a>
+					<a class="permalink" href="index.html#ProviderRegistry.Create">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ProviderRegistry">ProviderRegistry</a>) Create(config map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}) (<a href="index.html#ModelProvider">ModelProvider</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Create creates a new provider instance from configuration
+Config format:
+<pre>{
+  &quot;type&quot;: &quot;openai&quot;,
+  &quot;model&quot;: &quot;gpt-4-turbo&quot;,
+  &quot;api_key_env&quot;: &quot;OPENAI_API_KEY&quot;,
+  &quot;parameters&quot;: {...}
+}
+</pre>
+
+				
+				
+				
+			
+				
+				<h3 id="ProviderRegistry.CreateAndRegister">func (*ProviderRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go?s=1585:1694#L50">CreateAndRegister</a>
+					<a class="permalink" href="index.html#ProviderRegistry.CreateAndRegister">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ProviderRegistry">ProviderRegistry</a>) CreateAndRegister(id <a href="http://localhost:6060/pkg/builtin/#string">string</a>, config map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}) (<a href="index.html#ModelProvider">ModelProvider</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>CreateAndRegister creates a provider and registers it by ID
+
+				
+				
+				
+			
+				
+				<h3 id="ProviderRegistry.Get">func (*ProviderRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go?s=1898:1962#L64">Get</a>
+					<a class="permalink" href="index.html#ProviderRegistry.Get">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ProviderRegistry">ProviderRegistry</a>) Get(id <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (<a href="index.html#ModelProvider">ModelProvider</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Get retrieves a registered provider by ID
+
+				
+				
+				
+			
+				
+				<h3 id="ProviderRegistry.List">func (*ProviderRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go?s=2181:2223#L77">List</a>
+					<a class="permalink" href="index.html#ProviderRegistry.List">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ProviderRegistry">ProviderRegistry</a>) List() []<a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				<p>List returns all registered provider IDs
+
+				
+				
+				
+			
+				
+				<h3 id="ProviderRegistry.ListTypes">func (*ProviderRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go?s=2431:2478#L89">ListTypes</a>
+					<a class="permalink" href="index.html#ProviderRegistry.ListTypes">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ProviderRegistry">ProviderRegistry</a>) ListTypes() []<a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				<p>ListTypes returns all registered provider types
+
+				
+				
+				
+			
+				
+				<h3 id="ProviderRegistry.Register">func (*ProviderRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go?s=749:830#L18">Register</a>
+					<a class="permalink" href="index.html#ProviderRegistry.Register">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ProviderRegistry">ProviderRegistry</a>) Register(providerType <a href="http://localhost:6060/pkg/builtin/#string">string</a>, factory <a href="index.html#ProviderFactory">ProviderFactory</a>)</pre>
+				<p>Register registers a provider factory for a given type
+
+				
+				
+				
+			
+				
+				<h3 id="ProviderRegistry.Remove">func (*ProviderRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/registry.go?s=2684:2734#L101">Remove</a>
+					<a class="permalink" href="index.html#ProviderRegistry.Remove">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ProviderRegistry">ProviderRegistry</a>) Remove(id <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Remove removes a provider by ID
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="ProviderStatus">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=3005:3150#L101">ProviderStatus</a>
+				<a class="permalink" href="index.html#ProviderStatus">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ProviderStatus represents the health status of a provider
+
+			<pre>type ProviderStatus struct {
+<span id="ProviderStatus.Available"></span>    Available      <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+<span id="ProviderStatus.LastChecked"></span>    LastChecked    <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a>
+<span id="ProviderStatus.ErrorCount"></span>    ErrorCount     <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+<span id="ProviderStatus.LastError"></span>    LastError      <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+<span id="ProviderStatus.AverageLatency"></span>    AverageLatency <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Request">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/model.go?s=652:681#L9">Request</a>
+				<a class="permalink" href="index.html#Request">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Re-export commonly used types for convenience
+
+			<pre>type Request = <a href="index.html#ModelRequest">ModelRequest</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Response">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/model.go?s=683:713#L10">Response</a>
+				<a class="permalink" href="index.html#Response">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Re-export commonly used types for convenience
+
+			<pre>type Response = <a href="index.html#ModelResponse">ModelResponse</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ResponseFormat">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=1503:1573#L44">ResponseFormat</a>
+				<a class="permalink" href="index.html#ResponseFormat">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ResponseFormat specifies the desired output format
+
+			<pre>type ResponseFormat struct {
+<span id="ResponseFormat.Type"></span>    Type <a href="http://localhost:6060/pkg/builtin/#string">string</a> <span class="comment">// &#34;text&#34; or &#34;json_object&#34;</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Role">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/model.go?s=741:769#L12">Role</a>
+				<a class="permalink" href="index.html#Role">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Re-export commonly used types for convenience
+
+			<pre>type Role = <a href="index.html#MessageRole">MessageRole</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="StreamCallback">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/model.go?s=800:830#L14">StreamCallback</a>
+				<a class="permalink" href="index.html#StreamCallback">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Re-export commonly used types for convenience
+
+			<pre>type StreamCallback = <a href="index.html#StreamHandler">StreamHandler</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="StreamChunk">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=2729:2825#L91">StreamChunk</a>
+				<a class="permalink" href="index.html#StreamChunk">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StreamChunk represents a chunk of streaming response
+
+			<pre>type StreamChunk struct {
+<span id="StreamChunk.Delta"></span>    Delta        <a href="index.html#Message">Message</a>
+<span id="StreamChunk.FinishReason"></span>    FinishReason <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="StreamChunk.Usage"></span>    Usage        *<a href="index.html#TokenUsage">TokenUsage</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="StreamHandler">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=2893:2942#L98">StreamHandler</a>
+				<a class="permalink" href="index.html#StreamHandler">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StreamHandler is called for each chunk in a streaming response
+
+			<pre>type StreamHandler func(chunk *<a href="index.html#StreamChunk">StreamChunk</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="TokenUsage">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=2174:2292#L71">TokenUsage</a>
+				<a class="permalink" href="index.html#TokenUsage">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TokenUsage tracks token consumption and estimated cost
+
+			<pre>type TokenUsage struct {
+<span id="TokenUsage.PromptTokens"></span>    PromptTokens     <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+<span id="TokenUsage.CompletionTokens"></span>    CompletionTokens <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+<span id="TokenUsage.TotalTokens"></span>    TotalTokens      <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+<span id="TokenUsage.EstimatedCostUSD"></span>    EstimatedCostUSD <a href="http://localhost:6060/pkg/builtin/#float64">float64</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ToolCall">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=843:941#L21">ToolCall</a>
+				<a class="permalink" href="index.html#ToolCall">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ToolCall represents an assistant&apos;s request to call a tool
+
+			<pre>type ToolCall struct {
+<span id="ToolCall.ID"></span>    ID       <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="ToolCall.Type"></span>    Type     <a href="http://localhost:6060/pkg/builtin/#string">string</a> <span class="comment">// &#34;function&#34;</span>
+<span id="ToolCall.Function"></span>    Function <a href="index.html#FunctionCall">FunctionCall</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ToolDefinition">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/interface.go?s=3983:4086#L137">ToolDefinition</a>
+				<a class="permalink" href="index.html#ToolDefinition">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ToolDefinition defines a tool/function available to the model
+
+			<pre>type ToolDefinition struct {
+<span id="ToolDefinition.Type"></span>    Type     <a href="http://localhost:6060/pkg/builtin/#string">string</a> <span class="comment">// &#34;function&#34;</span>
+<span id="ToolDefinition.Function"></span>    Function <a href="index.html#FunctionDefinition">FunctionDefinition</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Usage">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/models/model.go?s=771:798#L13">Usage</a>
+				<a class="permalink" href="index.html#Usage">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Re-export commonly used types for convenience
+
+			<pre>type Usage = <a href="index.html#TokenUsage">TokenUsage</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+	
+	
+		<h2 id="pkg-subdirectories">Subdirectories</h2>
+	
+	<div class="pkg-dir">
+		<table>
+			<tr>
+				<th class="pkg-name">Name</th>
+				<th class="pkg-synopsis">Synopsis</th>
+			</tr>
+
+			
+			<tr>
+				<td colspan="2"><a href="../index.html">..</a></td>
+			</tr>
+			
+
+			
+				<tr>
+				
+					<td class="pkg-name" style="padding-left: 0px;">
+						<a href="openai/index.html">openai</a>
+					</td>
+				
+					<td class="pkg-synopsis">
+						
+					</td>
+				</tr>
+			
+		</table>
+	</div>
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://localhost:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

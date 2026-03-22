@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>remote - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://localhost:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://localhost:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://localhost:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package remote
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/remote"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+				<dd><a href="index.html#pkg-subdirectories">Subdirectories</a></dd>
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package remote provides gRPC server and client implementations for remote agent execution
+<h3 id="hdr-Package_remote_provides_remote_agent_execution_capabilities_for_distributed_coordination">Package remote provides remote agent execution capabilities for distributed coordination</h3>
+<p>Package remote provides helper functions for testing remote execution
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+				<dd><a href="index.html#pkg-variables">Variables</a></dd>
+			
+			
+				
+				<dd><a href="index.html#AuthorityRejectionReason">func AuthorityRejectionReason(err error) string</a></dd>
+			
+				
+				<dd><a href="index.html#WithDispatchAuthority">func WithDispatchAuthority(ctx context.Context, authority DispatchAuthority) context.Context</a></dd>
+			
+			
+				
+				<dd><a href="index.html#AgentManager">type AgentManager</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ConnectionPool">type ConnectionPool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewConnectionPool">func NewConnectionPool() *ConnectionPool</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ConnectionPool.Close">func (cp *ConnectionPool) Close()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ConnectionPool.GetConnection">func (cp *ConnectionPool) GetConnection(nodeAddr string) (*grpc.ClientConn, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#DispatchAuthority">type DispatchAuthority</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#DispatchAuthorityValidator">type DispatchAuthorityValidator</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#EtcdDispatchAuthorityValidator">type EtcdDispatchAuthorityValidator</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewEtcdDispatchAuthorityValidator">func NewEtcdDispatchAuthorityValidator(cfg EtcdDispatchAuthorityValidatorConfig) (*EtcdDispatchAuthorityValidator, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#EtcdDispatchAuthorityValidator.Close">func (v *EtcdDispatchAuthorityValidator) Close() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#EtcdDispatchAuthorityValidator.Validate">func (v *EtcdDispatchAuthorityValidator) Validate(ctx context.Context, authority DispatchAuthority) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#EtcdDispatchAuthorityValidatorConfig">type EtcdDispatchAuthorityValidatorConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#GRPCRemoteExecutionService">type GRPCRemoteExecutionService</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewGRPCRemoteExecutionService">func NewGRPCRemoteExecutionService(service *RemoteExecutionService) *GRPCRemoteExecutionService</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#GRPCRemoteExecutionService.Execute">func (s *GRPCRemoteExecutionService) Execute(ctx context.Context, req *proto.ExecuteRequest) (*proto.ExecuteResponse, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#GRPCRemoteExecutionService.HealthCheck">func (s *GRPCRemoteExecutionService) HealthCheck(ctx context.Context, req *proto.HealthCheckRequest) (*proto.HealthCheckResponse, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#GRPCRemoteExecutor">type GRPCRemoteExecutor</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewGRPCRemoteExecutor">func NewGRPCRemoteExecutor(registry *RemoteExecutor) *GRPCRemoteExecutor</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#GRPCRemoteExecutor.ExecuteOnNode">func (re *GRPCRemoteExecutor) ExecuteOnNode(ctx context.Context, nodeID string, agentName string, input *agent.AgentInput) (*agent.AgentOutput, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MockAgent">type MockAgent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMockAgent">func NewMockAgent(name string, behavior func(context.Context, *agent.AgentInput) (*agent.AgentOutput, error)) *MockAgent</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.Capabilities">func (m *MockAgent) Capabilities() []string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.Dependencies">func (m *MockAgent) Dependencies() []agent.Agent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.Description">func (m *MockAgent) Description() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.Execute">func (m *MockAgent) Execute(ctx context.Context, input *agent.AgentInput) (*agent.AgentOutput, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.ID">func (m *MockAgent) ID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.Name">func (m *MockAgent) Name() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.Partition">func (m *MockAgent) Partition() string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MockAgentManager">type MockAgentManager</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMockAgentManager">func NewMockAgentManager() *MockAgentManager</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgentManager.AddAgent">func (m *MockAgentManager) AddAgent(agent agent.Agent)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgentManager.ExecuteAgent">func (m *MockAgentManager) ExecuteAgent(ctx context.Context, agentName string, input *agent.AgentInput) (*agent.AgentOutput, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgentManager.GetAgent">func (m *MockAgentManager) GetAgent(name string) (agent.Agent, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MockRegistry">type MockRegistry</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMockRegistry">func NewMockRegistry() *MockRegistry</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockRegistry.AddNode">func (m *MockRegistry) AddNode(node registry.NodeInfo)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockRegistry.GetHealthyNodeCount">func (m *MockRegistry) GetHealthyNodeCount() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockRegistry.GetHealthyNodes">func (m *MockRegistry) GetHealthyNodes() []registry.NodeInfo</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockRegistry.GetNode">func (m *MockRegistry) GetNode(nodeID string) (registry.NodeInfo, bool)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockRegistry.GetNodeCount">func (m *MockRegistry) GetNodeCount() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockRegistry.GetNodeID">func (m *MockRegistry) GetNodeID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockRegistry.GetNodes">func (m *MockRegistry) GetNodes() []registry.NodeInfo</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockRegistry.GetNodesByCapability">func (m *MockRegistry) GetNodesByCapability(capability string) []registry.NodeInfo</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockRegistry.RemoveNode">func (m *MockRegistry) RemoveNode(nodeID string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockRegistry.Start">func (m *MockRegistry) Start(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockRegistry.Stop">func (m *MockRegistry) Stop() error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#RemoteExecutionRequest">type RemoteExecutionRequest</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#RemoteExecutionResponse">type RemoteExecutionResponse</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#RemoteExecutionService">type RemoteExecutionService</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewRemoteExecutionService">func NewRemoteExecutionService(registry registry.Registry, agentManager AgentManager, localNodeID string) *RemoteExecutionService</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteExecutionService.CurrentInFlight">func (s *RemoteExecutionService) CurrentInFlight() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteExecutionService.Execute">func (s *RemoteExecutionService) Execute(ctx context.Context, request *RemoteExecutionRequest) (*RemoteExecutionResponse, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteExecutionService.SetDispatchAuthorityValidator">func (s *RemoteExecutionService) SetDispatchAuthorityValidator(validator DispatchAuthorityValidator)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteExecutionService.SetMetrics">func (s *RemoteExecutionService) SetMetrics(metrics *observability.Metrics)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#RemoteExecutor">type RemoteExecutor</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewRemoteExecutor">func NewRemoteExecutor(registry registry.Registry, timeout time.Duration) *RemoteExecutor</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteExecutor.Close">func (re *RemoteExecutor) Close() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteExecutor.ExecuteOnNode">func (re *RemoteExecutor) ExecuteOnNode(ctx context.Context, nodeID string, agentName string, input *agent.AgentInput) (*agent.AgentOutput, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteExecutor.ExecuteRemote">func (re *RemoteExecutor) ExecuteRemote(ctx context.Context, request *RemoteExecutionRequest, conn *grpc.ClientConn) (*agent.AgentOutput, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteExecutor.GetHealthyNodes">func (re *RemoteExecutor) GetHealthyNodes() []registry.NodeInfo</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteExecutor.GetNodeAddress">func (re *RemoteExecutor) GetNodeAddress(nodeID string) (string, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteExecutor.GetNodesByCapability">func (re *RemoteExecutor) GetNodesByCapability(capability string) []registry.NodeInfo</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteExecutor.IsNodeHealthy">func (re *RemoteExecutor) IsNodeHealthy(nodeID string) bool</a></dd>
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/dispatch_authority.go">dispatch_authority.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/grpc_remote_execution.go">grpc_remote_execution.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go">remote_execution.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go">testing_helpers.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+			<h2 id="pkg-variables">Variables</h2>
+			
+				
+				<pre>var (
+    <span id="ErrMissingDispatchAuthority">ErrMissingDispatchAuthority</span> = <a href="http://localhost:6060/pkg/errors/">errors</a>.<a href="http://localhost:6060/pkg/errors/#New">New</a>(&#34;missing dispatch authority&#34;)
+    <span id="ErrStaleDispatchAuthority">ErrStaleDispatchAuthority</span>   = <a href="http://localhost:6060/pkg/errors/">errors</a>.<a href="http://localhost:6060/pkg/errors/#New">New</a>(&#34;stale dispatch authority&#34;)
+)</pre>
+			
+		
+		
+			
+			
+			<h2 id="AuthorityRejectionReason">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/dispatch_authority.go?s=3098:3145#L97">AuthorityRejectionReason</a>
+				<a class="permalink" href="index.html#AuthorityRejectionReason">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func AuthorityRejectionReason(err <a href="http://localhost:6060/pkg/builtin/#error">error</a>) <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+			<p>AuthorityRejectionReason exposes the canonical reason mapping for dispatch
+authority validation failures so scheduler and worker metrics stay aligned.
+
+			
+			
+
+		
+			
+			
+			<h2 id="WithDispatchAuthority">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/dispatch_authority.go?s=818:910#L26">WithDispatchAuthority</a>
+				<a class="permalink" href="index.html#WithDispatchAuthority">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func WithDispatchAuthority(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, authority <a href="index.html#DispatchAuthority">DispatchAuthority</a>) <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a></pre>
+			<p>WithDispatchAuthority attaches scheduler authority to a dispatch context.
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="AgentManager">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=876:1057#L23">AgentManager</a>
+				<a class="permalink" href="index.html#AgentManager">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentManager provides access to local agents for execution
+
+			<pre>type AgentManager interface {
+    GetAgent(name <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+    ExecuteAgent(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, agentName <a href="http://localhost:6060/pkg/builtin/#string">string</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ConnectionPool">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=4440:4537#L140">ConnectionPool</a>
+				<a class="permalink" href="index.html#ConnectionPool">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ConnectionPool manages gRPC connections to remote nodes
+
+			<pre>type ConnectionPool struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewConnectionPool">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=4590:4630#L146">NewConnectionPool</a>
+					<a class="permalink" href="index.html#NewConnectionPool">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewConnectionPool() *<a href="index.html#ConnectionPool">ConnectionPool</a></pre>
+				<p>NewConnectionPool creates a new connection pool
+
+				
+				
+			
+
+			
+				
+				<h3 id="ConnectionPool.Close">func (*ConnectionPool) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=5555:5588#L186">Close</a>
+					<a class="permalink" href="index.html#ConnectionPool.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (cp *<a href="index.html#ConnectionPool">ConnectionPool</a>) Close()</pre>
+				<p>Close closes all connections in the pool
+
+				
+				
+				
+			
+				
+				<h3 id="ConnectionPool.GetConnection">func (*ConnectionPool) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=4777:4859#L153">GetConnection</a>
+					<a class="permalink" href="index.html#ConnectionPool.GetConnection">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (cp *<a href="index.html#ConnectionPool">ConnectionPool</a>) GetConnection(nodeAddr <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="http://localhost:6060/pkg/google.golang.org/grpc/">grpc</a>.<a href="http://localhost:6060/pkg/google.golang.org/grpc/#ClientConn">ClientConn</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetConnection gets or creates a connection to a remote node
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="DispatchAuthority">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/dispatch_authority.go?s=655:739#L19">DispatchAuthority</a>
+				<a class="permalink" href="index.html#DispatchAuthority">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DispatchAuthority describes the scheduler authority stamped onto a remote
+dispatch request so workers can reject stale leader traffic.
+
+			<pre>type DispatchAuthority struct {
+<span id="DispatchAuthority.LeaderID"></span>    LeaderID <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="DispatchAuthority.Epoch"></span>    Epoch    <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="DispatchAuthority.Scope"></span>    Scope    <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="DispatchAuthorityValidator">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/dispatch_authority.go?s=3333:3444#L103">DispatchAuthorityValidator</a>
+				<a class="permalink" href="index.html#DispatchAuthorityValidator">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DispatchAuthorityValidator validates remote execution requests against the
+current control-plane authority before local execution begins.
+
+			<pre>type DispatchAuthorityValidator interface {
+    Validate(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, authority <a href="index.html#DispatchAuthority">DispatchAuthority</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="EtcdDispatchAuthorityValidator">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/dispatch_authority.go?s=3561:3687#L109">EtcdDispatchAuthorityValidator</a>
+				<a class="permalink" href="index.html#EtcdDispatchAuthorityValidator">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EtcdDispatchAuthorityValidator validates scheduler authority using the
+control-plane leadership key in etcd.
+
+			<pre>type EtcdDispatchAuthorityValidator struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewEtcdDispatchAuthorityValidator">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/dispatch_authority.go?s=3928:4049#L123">NewEtcdDispatchAuthorityValidator</a>
+					<a class="permalink" href="index.html#NewEtcdDispatchAuthorityValidator">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewEtcdDispatchAuthorityValidator(cfg <a href="index.html#EtcdDispatchAuthorityValidatorConfig">EtcdDispatchAuthorityValidatorConfig</a>) (*<a href="index.html#EtcdDispatchAuthorityValidator">EtcdDispatchAuthorityValidator</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="EtcdDispatchAuthorityValidator.Close">func (*EtcdDispatchAuthorityValidator) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/dispatch_authority.go?s=4752:4806#L152">Close</a>
+					<a class="permalink" href="index.html#EtcdDispatchAuthorityValidator.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (v *<a href="index.html#EtcdDispatchAuthorityValidator">EtcdDispatchAuthorityValidator</a>) Close() <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="EtcdDispatchAuthorityValidator.Validate">func (*EtcdDispatchAuthorityValidator) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/dispatch_authority.go?s=4887:4992#L159">Validate</a>
+					<a class="permalink" href="index.html#EtcdDispatchAuthorityValidator.Validate">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (v *<a href="index.html#EtcdDispatchAuthorityValidator">EtcdDispatchAuthorityValidator</a>) Validate(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, authority <a href="index.html#DispatchAuthority">DispatchAuthority</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="EtcdDispatchAuthorityValidatorConfig">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/dispatch_authority.go?s=3774:3926#L116">EtcdDispatchAuthorityValidatorConfig</a>
+				<a class="permalink" href="index.html#EtcdDispatchAuthorityValidatorConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EtcdDispatchAuthorityValidatorConfig configures worker-side authority validation.
+
+			<pre>type EtcdDispatchAuthorityValidatorConfig struct {
+<span id="EtcdDispatchAuthorityValidatorConfig.Endpoints"></span>    Endpoints    []<a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="EtcdDispatchAuthorityValidatorConfig.ElectionKey"></span>    ElectionKey  <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="EtcdDispatchAuthorityValidatorConfig.DialTimeout"></span>    DialTimeout  <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>
+<span id="EtcdDispatchAuthorityValidatorConfig.QueryTimeout"></span>    QueryTimeout <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="GRPCRemoteExecutionService">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/grpc_remote_execution.go?s=510:627#L11">GRPCRemoteExecutionService</a>
+				<a class="permalink" href="index.html#GRPCRemoteExecutionService">&#xb6;</a>
+				
+				
+			</h2>
+			<p>GRPCRemoteExecutionService implements the gRPC service for remote execution
+
+			<pre>type GRPCRemoteExecutionService struct {
+    <a href="proto/index.html">proto</a>.<a href="proto/index.html#UnsafeRemoteExecutionServiceServer">UnsafeRemoteExecutionServiceServer</a>
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewGRPCRemoteExecutionService">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/grpc_remote_execution.go?s=706:801#L17">NewGRPCRemoteExecutionService</a>
+					<a class="permalink" href="index.html#NewGRPCRemoteExecutionService">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewGRPCRemoteExecutionService(service *<a href="index.html#RemoteExecutionService">RemoteExecutionService</a>) *<a href="index.html#GRPCRemoteExecutionService">GRPCRemoteExecutionService</a></pre>
+				<p>NewGRPCRemoteExecutionService creates a new gRPC remote execution service
+
+				
+				
+			
+
+			
+				
+				<h3 id="GRPCRemoteExecutionService.Execute">func (*GRPCRemoteExecutionService) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/grpc_remote_execution.go?s=921:1045#L24">Execute</a>
+					<a class="permalink" href="index.html#GRPCRemoteExecutionService.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#GRPCRemoteExecutionService">GRPCRemoteExecutionService</a>) Execute(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, req *<a href="proto/index.html">proto</a>.<a href="proto/index.html#ExecuteRequest">ExecuteRequest</a>) (*<a href="proto/index.html">proto</a>.<a href="proto/index.html#ExecuteResponse">ExecuteResponse</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Execute handles remote execution requests via gRPC
+
+				
+				
+				
+			
+				
+				<h3 id="GRPCRemoteExecutionService.HealthCheck">func (*GRPCRemoteExecutionService) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/grpc_remote_execution.go?s=2738:2874#L87">HealthCheck</a>
+					<a class="permalink" href="index.html#GRPCRemoteExecutionService.HealthCheck">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#GRPCRemoteExecutionService">GRPCRemoteExecutionService</a>) HealthCheck(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, req *<a href="proto/index.html">proto</a>.<a href="proto/index.html#HealthCheckRequest">HealthCheckRequest</a>) (*<a href="proto/index.html">proto</a>.<a href="proto/index.html#HealthCheckResponse">HealthCheckResponse</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>HealthCheck implements the health check endpoint
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="GRPCRemoteExecutor">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/grpc_remote_execution.go?s=3080:3140#L96">GRPCRemoteExecutor</a>
+				<a class="permalink" href="index.html#GRPCRemoteExecutor">&#xb6;</a>
+				
+				
+			</h2>
+			<p>GRPCRemoteExecutor implements the client side of remote execution
+
+			<pre>type GRPCRemoteExecutor struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewGRPCRemoteExecutor">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/grpc_remote_execution.go?s=3208:3280#L101">NewGRPCRemoteExecutor</a>
+					<a class="permalink" href="index.html#NewGRPCRemoteExecutor">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewGRPCRemoteExecutor(registry *<a href="index.html#RemoteExecutor">RemoteExecutor</a>) *<a href="index.html#GRPCRemoteExecutor">GRPCRemoteExecutor</a></pre>
+				<p>NewGRPCRemoteExecutor creates a new gRPC-based remote executor
+
+				
+				
+			
+
+			
+				
+				<h3 id="GRPCRemoteExecutor.ExecuteOnNode">func (*GRPCRemoteExecutor) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/grpc_remote_execution.go?s=3403:3553#L108">ExecuteOnNode</a>
+					<a class="permalink" href="index.html#GRPCRemoteExecutor.ExecuteOnNode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (re *<a href="index.html#GRPCRemoteExecutor">GRPCRemoteExecutor</a>) ExecuteOnNode(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, nodeID <a href="http://localhost:6060/pkg/builtin/#string">string</a>, agentName <a href="http://localhost:6060/pkg/builtin/#string">string</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ExecuteOnNode executes an agent on a remote node using gRPC
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MockAgent">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=265:436#L4">MockAgent</a>
+				<a class="permalink" href="index.html#MockAgent">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MockAgent implements the agent.Agent interface for testing
+
+			<pre>type MockAgent struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMockAgent">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=503:623#L12">NewMockAgent</a>
+					<a class="permalink" href="index.html#NewMockAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMockAgent(name <a href="http://localhost:6060/pkg/builtin/#string">string</a>, behavior func(<a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)) *<a href="index.html#MockAgent">MockAgent</a></pre>
+				<p>NewMockAgent creates a new mock agent with specified behavior
+
+				
+				
+			
+
+			
+				
+				<h3 id="MockAgent.Capabilities">func (*MockAgent) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=883:926#L22">Capabilities</a>
+					<a class="permalink" href="index.html#MockAgent.Capabilities">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) Capabilities() []<a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockAgent.Dependencies">func (*MockAgent) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=1319:1367#L37">Dependencies</a>
+					<a class="permalink" href="index.html#MockAgent.Dependencies">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) Dependencies() []<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockAgent.Description">func (*MockAgent) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=794:834#L21">Description</a>
+					<a class="permalink" href="index.html#MockAgent.Description">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) Description() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockAgent.Execute">func (*MockAgent) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=966:1067#L23">Execute</a>
+					<a class="permalink" href="index.html#MockAgent.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) Execute(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockAgent.ID">func (*MockAgent) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=692:723#L19">ID</a>
+					<a class="permalink" href="index.html#MockAgent.ID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) ID() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockAgent.Name">func (*MockAgent) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=742:775#L20">Name</a>
+					<a class="permalink" href="index.html#MockAgent.Name">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) Name() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockAgent.Partition">func (*MockAgent) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=1383:1421#L38">Partition</a>
+					<a class="permalink" href="index.html#MockAgent.Partition">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) Partition() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MockAgentManager">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=1508:1592#L42">MockAgentManager</a>
+				<a class="permalink" href="index.html#MockAgentManager">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MockAgentManager implements the AgentManager interface for testing
+
+			<pre>type MockAgentManager struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMockAgentManager">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=1650:1694#L48">NewMockAgentManager</a>
+					<a class="permalink" href="index.html#NewMockAgentManager">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMockAgentManager() *<a href="index.html#MockAgentManager">MockAgentManager</a></pre>
+				<p>NewMockAgentManager creates a new mock agent manager
+
+				
+				
+			
+
+			
+				
+				<h3 id="MockAgentManager.AddAgent">func (*MockAgentManager) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=1816:1870#L55">AddAgent</a>
+					<a class="permalink" href="index.html#MockAgentManager.AddAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgentManager">MockAgentManager</a>) AddAgent(agent <a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a>)</pre>
+				<p>AddAgent adds an agent to the mock manager
+
+				
+				
+				
+			
+				
+				<h3 id="MockAgentManager.ExecuteAgent">func (*MockAgentManager) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=2232:2363#L74">ExecuteAgent</a>
+					<a class="permalink" href="index.html#MockAgentManager.ExecuteAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgentManager">MockAgentManager</a>) ExecuteAgent(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, agentName <a href="http://localhost:6060/pkg/builtin/#string">string</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ExecuteAgent executes an agent by name
+
+				
+				
+				
+			
+				
+				<h3 id="MockAgentManager.GetAgent">func (*MockAgentManager) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=1979:2048#L62">GetAgent</a>
+					<a class="permalink" href="index.html#MockAgentManager.GetAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgentManager">MockAgentManager</a>) GetAgent(name <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetAgent returns an agent by name
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MockRegistry">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=2542:2626#L84">MockRegistry</a>
+				<a class="permalink" href="index.html#MockRegistry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MockRegistry implements the registry interface for testing
+
+			<pre>type MockRegistry struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMockRegistry">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=2675:2711#L90">NewMockRegistry</a>
+					<a class="permalink" href="index.html#NewMockRegistry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMockRegistry() *<a href="index.html#MockRegistry">MockRegistry</a></pre>
+				<p>NewMockRegistry creates a new mock registry
+
+				
+				
+			
+
+			
+				
+				<h3 id="MockRegistry.AddNode">func (*MockRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=4408:4462#L168">AddNode</a>
+					<a class="permalink" href="index.html#MockRegistry.AddNode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockRegistry">MockRegistry</a>) AddNode(node <a href="../registry/index.html">registry</a>.<a href="../registry/index.html#NodeInfo">NodeInfo</a>)</pre>
+				<p>AddNode adds a node to the registry
+
+				
+				
+				
+			
+				
+				<h3 id="MockRegistry.GetHealthyNodeCount">func (*MockRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=3645:3693#L137">GetHealthyNodeCount</a>
+					<a class="permalink" href="index.html#MockRegistry.GetHealthyNodeCount">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockRegistry">MockRegistry</a>) GetHealthyNodeCount() <a href="http://localhost:6060/pkg/builtin/#int">int</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockRegistry.GetHealthyNodes">func (*MockRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=3398:3458#L124">GetHealthyNodes</a>
+					<a class="permalink" href="index.html#MockRegistry.GetHealthyNodes">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockRegistry">MockRegistry</a>) GetHealthyNodes() []<a href="../registry/index.html">registry</a>.<a href="../registry/index.html#NodeInfo">NodeInfo</a></pre>
+				<p>GetHealthyNodes returns only healthy nodes
+
+				
+				
+				
+			
+				
+				<h3 id="MockRegistry.GetNode">func (*MockRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=2820:2891#L97">GetNode</a>
+					<a class="permalink" href="index.html#MockRegistry.GetNode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockRegistry">MockRegistry</a>) GetNode(nodeID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (<a href="../registry/index.html">registry</a>.<a href="../registry/index.html#NodeInfo">NodeInfo</a>, <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>)</pre>
+				<p>GetNode returns a node by ID
+
+				
+				
+				
+			
+				
+				<h3 id="MockRegistry.GetNodeCount">func (*MockRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=3248:3289#L117">GetNodeCount</a>
+					<a class="permalink" href="index.html#MockRegistry.GetNodeCount">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockRegistry">MockRegistry</a>) GetNodeCount() <a href="http://localhost:6060/pkg/builtin/#int">int</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockRegistry.GetNodeID">func (*MockRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=4169:4210#L159">GetNodeID</a>
+					<a class="permalink" href="index.html#MockRegistry.GetNodeID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockRegistry">MockRegistry</a>) GetNodeID() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				<p>GetNodeID returns the local node ID
+
+				
+				
+				
+			
+				
+				<h3 id="MockRegistry.GetNodes">func (*MockRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=3019:3072#L106">GetNodes</a>
+					<a class="permalink" href="index.html#MockRegistry.GetNodes">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockRegistry">MockRegistry</a>) GetNodes() []<a href="../registry/index.html">registry</a>.<a href="../registry/index.html#NodeInfo">NodeInfo</a></pre>
+				<p>GetNodes returns all nodes
+
+				
+				
+				
+			
+				
+				<h3 id="MockRegistry.GetNodesByCapability">func (*MockRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=3797:3879#L142">GetNodesByCapability</a>
+					<a class="permalink" href="index.html#MockRegistry.GetNodesByCapability">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockRegistry">MockRegistry</a>) GetNodesByCapability(capability <a href="http://localhost:6060/pkg/builtin/#string">string</a>) []<a href="../registry/index.html">registry</a>.<a href="../registry/index.html#NodeInfo">NodeInfo</a></pre>
+				<p>GetNodesByCapability returns nodes with a specific capability
+
+				
+				
+				
+			
+				
+				<h3 id="MockRegistry.RemoveNode">func (*MockRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=4574:4622#L175">RemoveNode</a>
+					<a class="permalink" href="index.html#MockRegistry.RemoveNode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockRegistry">MockRegistry</a>) RemoveNode(nodeID <a href="http://localhost:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RemoveNode removes a node from the registry
+
+				
+				
+				
+			
+				
+				<h3 id="MockRegistry.Start">func (*MockRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=4245:4300#L163">Start</a>
+					<a class="permalink" href="index.html#MockRegistry.Start">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockRegistry">MockRegistry</a>) Start(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockRegistry.Stop">func (*MockRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/testing_helpers.go?s=4317:4352#L165">Stop</a>
+					<a class="permalink" href="index.html#MockRegistry.Stop">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockRegistry">MockRegistry</a>) Stop() <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="RemoteExecutionRequest">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=1135:1433#L29">RemoteExecutionRequest</a>
+				<a class="permalink" href="index.html#RemoteExecutionRequest">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RemoteExecutionRequest represents a request to execute an agent remotely
+
+			<pre>type RemoteExecutionRequest struct {
+<span id="RemoteExecutionRequest.AgentName"></span>    AgentName <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;agent_name&#34;`
+<span id="RemoteExecutionRequest.Input"></span>    Input     *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>      `json:&#34;input&#34;`
+<span id="RemoteExecutionRequest.NodeID"></span>    NodeID    <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;node_id&#34;`
+<span id="RemoteExecutionRequest.RequestID"></span>    RequestID <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;request_id&#34;`
+<span id="RemoteExecutionRequest.Metadata"></span>    Metadata  map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;metadata&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="RemoteExecutionResponse">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=1508:1793#L38">RemoteExecutionResponse</a>
+				<a class="permalink" href="index.html#RemoteExecutionResponse">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RemoteExecutionResponse represents the response from remote execution
+
+			<pre>type RemoteExecutionResponse struct {
+<span id="RemoteExecutionResponse.Output"></span>    Output    *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a> `json:&#34;output&#34;`
+<span id="RemoteExecutionResponse.Error"></span>    Error     <a href="http://localhost:6060/pkg/builtin/#string">string</a>             `json:&#34;error,omitempty&#34;`
+<span id="RemoteExecutionResponse.NodeID"></span>    NodeID    <a href="http://localhost:6060/pkg/builtin/#string">string</a>             `json:&#34;node_id&#34;`
+<span id="RemoteExecutionResponse.RequestID"></span>    RequestID <a href="http://localhost:6060/pkg/builtin/#string">string</a>             `json:&#34;request_id&#34;`
+<span id="RemoteExecutionResponse.Duration"></span>    Duration  <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>      `json:&#34;duration&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="RemoteExecutionService">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=553:812#L13">RemoteExecutionService</a>
+				<a class="permalink" href="index.html#RemoteExecutionService">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RemoteExecutionService handles remote agent execution requests
+
+			<pre>type RemoteExecutionService struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewRemoteExecutionService">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=1863:1992#L47">NewRemoteExecutionService</a>
+					<a class="permalink" href="index.html#NewRemoteExecutionService">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewRemoteExecutionService(registry <a href="../registry/index.html">registry</a>.<a href="../registry/index.html#Registry">Registry</a>, agentManager <a href="index.html#AgentManager">AgentManager</a>, localNodeID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) *<a href="index.html#RemoteExecutionService">RemoteExecutionService</a></pre>
+				<p>NewRemoteExecutionService creates a new remote execution service
+
+				
+				
+			
+
+			
+				
+				<h3 id="RemoteExecutionService.CurrentInFlight">func (*RemoteExecutionService) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=4111:4165#L128">CurrentInFlight</a>
+					<a class="permalink" href="index.html#RemoteExecutionService.CurrentInFlight">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#RemoteExecutionService">RemoteExecutionService</a>) CurrentInFlight() <a href="http://localhost:6060/pkg/builtin/#int">int</a></pre>
+				<p>CurrentInFlight returns the current number of locally executing remote tasks.
+
+				
+				
+				
+			
+				
+				<h3 id="RemoteExecutionService.Execute">func (*RemoteExecutionService) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=2502:2630#L67">Execute</a>
+					<a class="permalink" href="index.html#RemoteExecutionService.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#RemoteExecutionService">RemoteExecutionService</a>) Execute(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, request *<a href="index.html#RemoteExecutionRequest">RemoteExecutionRequest</a>) (*<a href="index.html#RemoteExecutionResponse">RemoteExecutionResponse</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Execute executes an agent on this node as requested by a remote node
+
+				
+				
+				
+			
+				
+				<h3 id="RemoteExecutionService.SetDispatchAuthorityValidator">func (*RemoteExecutionService) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=2163:2263#L56">SetDispatchAuthorityValidator</a>
+					<a class="permalink" href="index.html#RemoteExecutionService.SetDispatchAuthorityValidator">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#RemoteExecutionService">RemoteExecutionService</a>) SetDispatchAuthorityValidator(validator <a href="index.html#DispatchAuthorityValidator">DispatchAuthorityValidator</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RemoteExecutionService.SetMetrics">func (*RemoteExecutionService) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=2303:2378#L60">SetMetrics</a>
+					<a class="permalink" href="index.html#RemoteExecutionService.SetMetrics">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#RemoteExecutionService">RemoteExecutionService</a>) SetMetrics(metrics *<a href="../observability/index.html">observability</a>.<a href="../observability/index.html#Metrics">Metrics</a>)</pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="RemoteExecutor">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=4271:4379#L133">RemoteExecutor</a>
+				<a class="permalink" href="index.html#RemoteExecutor">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RemoteExecutor handles sending execution requests to remote nodes
+
+			<pre>type RemoteExecutor struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewRemoteExecutor">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=5773:5862#L197">NewRemoteExecutor</a>
+					<a class="permalink" href="index.html#NewRemoteExecutor">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewRemoteExecutor(registry <a href="../registry/index.html">registry</a>.<a href="../registry/index.html#Registry">Registry</a>, timeout <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>) *<a href="index.html#RemoteExecutor">RemoteExecutor</a></pre>
+				<p>NewRemoteExecutor creates a new remote executor
+
+				
+				
+			
+
+			
+				
+				<h3 id="RemoteExecutor.Close">func (*RemoteExecutor) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=8941:8980#L300">Close</a>
+					<a class="permalink" href="index.html#RemoteExecutor.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (re *<a href="index.html#RemoteExecutor">RemoteExecutor</a>) Close() <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Close closes the remote executor and its connection pool
+
+				
+				
+				
+			
+				
+				<h3 id="RemoteExecutor.ExecuteOnNode">func (*RemoteExecutor) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=6076:6222#L210">ExecuteOnNode</a>
+					<a class="permalink" href="index.html#RemoteExecutor.ExecuteOnNode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (re *<a href="index.html#RemoteExecutor">RemoteExecutor</a>) ExecuteOnNode(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, nodeID <a href="http://localhost:6060/pkg/builtin/#string">string</a>, agentName <a href="http://localhost:6060/pkg/builtin/#string">string</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ExecuteOnNode executes an agent on a remote node
+
+				
+				
+				
+			
+				
+				<h3 id="RemoteExecutor.ExecuteRemote">func (*RemoteExecutor) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=7514:7658#L255">ExecuteRemote</a>
+					<a class="permalink" href="index.html#RemoteExecutor.ExecuteRemote">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (re *<a href="index.html#RemoteExecutor">RemoteExecutor</a>) ExecuteRemote(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, request *<a href="index.html#RemoteExecutionRequest">RemoteExecutionRequest</a>, conn *<a href="http://localhost:6060/pkg/google.golang.org/grpc/">grpc</a>.<a href="http://localhost:6060/pkg/google.golang.org/grpc/#ClientConn">ClientConn</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ExecuteRemote executes an agent on a remote node using gRPC
+
+				
+				
+				
+			
+				
+				<h3 id="RemoteExecutor.GetHealthyNodes">func (*RemoteExecutor) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=9632:9695#L325">GetHealthyNodes</a>
+					<a class="permalink" href="index.html#RemoteExecutor.GetHealthyNodes">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (re *<a href="index.html#RemoteExecutor">RemoteExecutor</a>) GetHealthyNodes() []<a href="../registry/index.html">registry</a>.<a href="../registry/index.html#NodeInfo">NodeInfo</a></pre>
+				<p>GetHealthyNodes returns all healthy nodes from the registry
+
+				
+				
+				
+			
+				
+				<h3 id="RemoteExecutor.GetNodeAddress">func (*RemoteExecutor) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=9083:9154#L306">GetNodeAddress</a>
+					<a class="permalink" href="index.html#RemoteExecutor.GetNodeAddress">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (re *<a href="index.html#RemoteExecutor">RemoteExecutor</a>) GetNodeAddress(nodeID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (<a href="http://localhost:6060/pkg/builtin/#string">string</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetNodeAddress gets the address for a node from the registry
+
+				
+				
+				
+			
+				
+				<h3 id="RemoteExecutor.GetNodesByCapability">func (*RemoteExecutor) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=9809:9894#L330">GetNodesByCapability</a>
+					<a class="permalink" href="index.html#RemoteExecutor.GetNodesByCapability">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (re *<a href="index.html#RemoteExecutor">RemoteExecutor</a>) GetNodesByCapability(capability <a href="http://localhost:6060/pkg/builtin/#string">string</a>) []<a href="../registry/index.html">registry</a>.<a href="../registry/index.html#NodeInfo">NodeInfo</a></pre>
+				<p>GetNodesByCapability returns nodes that have a specific capability
+
+				
+				
+				
+			
+				
+				<h3 id="RemoteExecutor.IsNodeHealthy">func (*RemoteExecutor) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/remote/remote_execution.go?s=9406:9465#L316">IsNodeHealthy</a>
+					<a class="permalink" href="index.html#RemoteExecutor.IsNodeHealthy">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (re *<a href="index.html#RemoteExecutor">RemoteExecutor</a>) IsNodeHealthy(nodeID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="http://localhost:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>IsNodeHealthy checks if a node is healthy according to the registry
+
+				
+				
+				
+			
+		
+	
+
+	
+
+
+
+
+
+	
+	
+		<h2 id="pkg-subdirectories">Subdirectories</h2>
+	
+	<div class="pkg-dir">
+		<table>
+			<tr>
+				<th class="pkg-name">Name</th>
+				<th class="pkg-synopsis">Synopsis</th>
+			</tr>
+
+			
+			<tr>
+				<td colspan="2"><a href="../index.html">..</a></td>
+			</tr>
+			
+
+			
+				<tr>
+				
+					<td class="pkg-name" style="padding-left: 0px;">
+						<a href="proto/index.html">proto</a>
+					</td>
+				
+					<td class="pkg-synopsis">
+						
+					</td>
+				</tr>
+			
+		</table>
+	</div>
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://localhost:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

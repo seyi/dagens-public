@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>mcp - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://localhost:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://localhost:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://localhost:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package mcp
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/tools/mcp"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package mcp provides Model Context Protocol (MCP) support for third-party tools.
+<p>MCP is a standardized protocol that enables AI applications to integrate external
+tools and data sources. This implementation supports:
+- JSON-RPC 2.0 protocol
+- Stdio transport (subprocess communication)
+- HTTP transport (remote server communication)
+- Dynamic tool discovery
+- Distributed execution via Spark partitions
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+				<dd><a href="index.html#pkg-constants">Constants</a></dd>
+			
+			
+			
+				
+				<dd><a href="index.html#ExtractTextFromResult">func ExtractTextFromResult(result *MCPToolResult) string</a></dd>
+			
+			
+				
+				<dd><a href="index.html#ConnectionParams">type ConnectionParams</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#DistributedMCPConfig">type DistributedMCPConfig</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DefaultDistributedMCPConfig">func DefaultDistributedMCPConfig() *DistributedMCPConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#DistributedMCPToolset">type DistributedMCPToolset</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewDistributedMCPToolset">func NewDistributedMCPToolset(params ConnectionParams, config *DistributedMCPConfig) *DistributedMCPToolset</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedMCPToolset.Close">func (d *DistributedMCPToolset) Close() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedMCPToolset.GetAggregatedMetrics">func (d *DistributedMCPToolset) GetAggregatedMetrics() []ToolCallMetrics</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedMCPToolset.GetOrCreateToolset">func (d *DistributedMCPToolset) GetOrCreateToolset(ctx context.Context, partitionID string) (*MCPToolset, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#HTTPConnectionParams">type HTTPConnectionParams</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HTTPConnectionParams.Type">func (p HTTPConnectionParams) Type() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HTTPConnectionParams.Validate">func (p HTTPConnectionParams) Validate() error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#JSONRPCError">type JSONRPCError</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#JSONRPCError.Error">func (e *JSONRPCError) Error() string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#JSONRPCRequest">type JSONRPCRequest</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#JSONRPCResponse">type JSONRPCResponse</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MCPClient">type MCPClient</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewClient">func NewClient(transport Transport) MCPClient</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewClientFromParams">func NewClientFromParams(ctx context.Context, params ConnectionParams) (MCPClient, error)</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MCPContent">type MCPContent</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MCPServerInfo">type MCPServerInfo</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MCPToolInfo">type MCPToolInfo</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MCPToolResult">type MCPToolResult</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ParseToolResult">func ParseToolResult(result map[string]interface{}) (*MCPToolResult, error)</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MCPToolset">type MCPToolset</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMCPToolset">func NewMCPToolset(params ConnectionParams) (*MCPToolset, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MCPToolset.Connect">func (m *MCPToolset) Connect(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MCPToolset.Disconnect">func (m *MCPToolset) Disconnect() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MCPToolset.GetMetrics">func (m *MCPToolset) GetMetrics() []ToolCallMetrics</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MCPToolset.GetTools">func (m *MCPToolset) GetTools() []*types.ToolDefinition</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MCPToolset.IsConnected">func (m *MCPToolset) IsConnected() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MCPToolset.RegisterTools">func (m *MCPToolset) RegisterTools(registry *tools.ToolRegistry) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MCPToolset.WithDistributedConfig">func (m *MCPToolset) WithDistributedConfig(cfg *DistributedMCPConfig) *MCPToolset</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MCPToolset.WithPartitionID">func (m *MCPToolset) WithPartitionID(partitionID string) *MCPToolset</a></dd>
+				
+			
+				
+				<dd><a href="index.html#StdioConnectionParams">type StdioConnectionParams</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#StdioConnectionParams.Type">func (p StdioConnectionParams) Type() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#StdioConnectionParams.Validate">func (p StdioConnectionParams) Validate() error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#ToolCallMetrics">type ToolCallMetrics</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Transport">type Transport</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewHTTPTransport">func NewHTTPTransport(params HTTPConnectionParams) (Transport, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewStdioTransport">func NewStdioTransport(params StdioConnectionParams) (Transport, error)</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/client.go">client.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/http_transport.go">http_transport.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/stdio_transport.go">stdio_transport.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go">toolset.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go">types.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+			<h2 id="pkg-constants">Constants</h2>
+			
+				
+				<pre>const (
+    <span class="comment">// JSONRPCVersion is the supported JSON-RPC protocol version</span>
+    <span id="JSONRPCVersion">JSONRPCVersion</span> = &#34;2.0&#34;
+
+    <span class="comment">// MCP protocol methods</span>
+    <span id="MethodListTools">MethodListTools</span> = &#34;tools/list&#34;
+    <span id="MethodCallTool">MethodCallTool</span>  = &#34;tools/call&#34;
+    <span id="MethodPing">MethodPing</span>      = &#34;ping&#34;
+)</pre>
+			
+				<p>Standard JSON-RPC error codes
+
+				<pre>const (
+    <span id="ErrorCodeParseError">ErrorCodeParseError</span>     = -32700
+    <span id="ErrorCodeInvalidRequest">ErrorCodeInvalidRequest</span> = -32600
+    <span id="ErrorCodeMethodNotFound">ErrorCodeMethodNotFound</span> = -32601
+    <span id="ErrorCodeInvalidParams">ErrorCodeInvalidParams</span>  = -32602
+    <span id="ErrorCodeInternalError">ErrorCodeInternalError</span>  = -32603
+)</pre>
+			
+		
+		
+		
+			
+			
+			<h2 id="ExtractTextFromResult">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=7693:7749#L223">ExtractTextFromResult</a>
+				<a class="permalink" href="index.html#ExtractTextFromResult">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func ExtractTextFromResult(result *<a href="index.html#MCPToolResult">MCPToolResult</a>) <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+			<p>ExtractTextFromResult extracts text content from MCP tool result
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="ConnectionParams">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=4726:4901#L135">ConnectionParams</a>
+				<a class="permalink" href="index.html#ConnectionParams">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ConnectionParams defines connection parameters for MCP servers
+
+			<pre>type ConnectionParams interface {
+    <span class="comment">// Type returns the connection type (&#34;stdio&#34; or &#34;http&#34;)</span>
+    Type() <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Validate validates the connection parameters</span>
+    Validate() <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="DistributedMCPConfig">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=8048:8581#L239">DistributedMCPConfig</a>
+				<a class="permalink" href="index.html#DistributedMCPConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DistributedMCPConfig configures distributed MCP tool execution
+
+			<pre>type DistributedMCPConfig struct {
+<span id="DistributedMCPConfig.PartitionStrategy"></span>    <span class="comment">// PartitionStrategy determines how tool calls are distributed</span>
+    <span class="comment">// Options: &#34;round-robin&#34;, &#34;least-loaded&#34;, &#34;sticky-session&#34;, &#34;broadcast&#34;</span>
+    PartitionStrategy <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DistributedMCPConfig.MaxConcurrentCalls"></span>    <span class="comment">// MaxConcurrentCalls limits concurrent tool calls per partition</span>
+    MaxConcurrentCalls <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+
+<span id="DistributedMCPConfig.EnableCaching"></span>    <span class="comment">// EnableCaching enables result caching for idempotent tool calls</span>
+    EnableCaching <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+
+<span id="DistributedMCPConfig.CacheTTLSeconds"></span>    <span class="comment">// CacheTTLSeconds is the cache time-to-live in seconds</span>
+    CacheTTLSeconds <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+
+<span id="DistributedMCPConfig.EnableMetrics"></span>    <span class="comment">// EnableMetrics enables detailed metrics collection</span>
+    EnableMetrics <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="DefaultDistributedMCPConfig">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=8660:8716#L258">DefaultDistributedMCPConfig</a>
+					<a class="permalink" href="index.html#DefaultDistributedMCPConfig">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func DefaultDistributedMCPConfig() *<a href="index.html#DistributedMCPConfig">DistributedMCPConfig</a></pre>
+				<p>DefaultDistributedMCPConfig returns default distributed MCP configuration
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="DistributedMCPToolset">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=7029:7208#L265">DistributedMCPToolset</a>
+				<a class="permalink" href="index.html#DistributedMCPToolset">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DistributedMCPToolset manages multiple MCP toolsets across partitions
+
+			<pre>type DistributedMCPToolset struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewDistributedMCPToolset">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=7280:7387#L273">NewDistributedMCPToolset</a>
+					<a class="permalink" href="index.html#NewDistributedMCPToolset">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewDistributedMCPToolset(params <a href="index.html#ConnectionParams">ConnectionParams</a>, config *<a href="index.html#DistributedMCPConfig">DistributedMCPConfig</a>) *<a href="index.html#DistributedMCPToolset">DistributedMCPToolset</a></pre>
+				<p>NewDistributedMCPToolset creates a distributed MCP toolset manager
+
+				
+				
+			
+
+			
+				
+				<h3 id="DistributedMCPToolset.Close">func (*DistributedMCPToolset) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=8903:8948#L332">Close</a>
+					<a class="permalink" href="index.html#DistributedMCPToolset.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (d *<a href="index.html#DistributedMCPToolset">DistributedMCPToolset</a>) Close() <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Close closes all toolsets across all partitions
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedMCPToolset.GetAggregatedMetrics">func (*DistributedMCPToolset) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=8575:8647#L319">GetAggregatedMetrics</a>
+					<a class="permalink" href="index.html#DistributedMCPToolset.GetAggregatedMetrics">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (d *<a href="index.html#DistributedMCPToolset">DistributedMCPToolset</a>) GetAggregatedMetrics() []<a href="index.html#ToolCallMetrics">ToolCallMetrics</a></pre>
+				<p>GetAggregatedMetrics returns metrics from all partitions
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedMCPToolset.GetOrCreateToolset">func (*DistributedMCPToolset) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=7639:7751#L286">GetOrCreateToolset</a>
+					<a class="permalink" href="index.html#DistributedMCPToolset.GetOrCreateToolset">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (d *<a href="index.html#DistributedMCPToolset">DistributedMCPToolset</a>) GetOrCreateToolset(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, partitionID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#MCPToolset">MCPToolset</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetOrCreateToolset returns a toolset for the given partition
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="HTTPConnectionParams">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=5714:6194#L168">HTTPConnectionParams</a>
+				<a class="permalink" href="index.html#HTTPConnectionParams">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HTTPConnectionParams configures HTTP transport to remote server
+
+			<pre>type HTTPConnectionParams struct {
+<span id="HTTPConnectionParams.URL"></span>    URL         <a href="http://localhost:6060/pkg/builtin/#string">string</a>            <span class="comment">// Server URL (e.g., &#34;http://localhost:3000/mcp&#34;)</span>
+<span id="HTTPConnectionParams.Headers"></span>    Headers     map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]<a href="http://localhost:6060/pkg/builtin/#string">string</a> <span class="comment">// HTTP headers (e.g., {&#34;Authorization&#34;: &#34;Bearer ...&#34;})</span>
+<span id="HTTPConnectionParams.Timeout"></span>    Timeout     <a href="http://localhost:6060/pkg/builtin/#int">int</a>               <span class="comment">// Timeout in seconds (default: 300)</span>
+<span id="HTTPConnectionParams.SessionID"></span>    SessionID   <a href="http://localhost:6060/pkg/builtin/#string">string</a>            <span class="comment">// Optional session ID for stateful connections</span>
+<span id="HTTPConnectionParams.EnableCORS"></span>    EnableCORS  <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>              <span class="comment">// Enable CORS support</span>
+<span id="HTTPConnectionParams.TLSInsecure"></span>    TLSInsecure <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>              <span class="comment">// Skip TLS verification (use with caution)</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="HTTPConnectionParams.Type">func (HTTPConnectionParams) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=6232:6275#L178">Type</a>
+					<a class="permalink" href="index.html#HTTPConnectionParams.Type">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p <a href="index.html#HTTPConnectionParams">HTTPConnectionParams</a>) Type() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				<p>Type returns the connection type
+
+				
+				
+				
+			
+				
+				<h3 id="HTTPConnectionParams.Validate">func (HTTPConnectionParams) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=6333:6379#L183">Validate</a>
+					<a class="permalink" href="index.html#HTTPConnectionParams.Validate">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p <a href="index.html#HTTPConnectionParams">HTTPConnectionParams</a>) Validate() <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Validate validates the parameters
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="JSONRPCError">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=1929:2075#L49">JSONRPCError</a>
+				<a class="permalink" href="index.html#JSONRPCError">&#xb6;</a>
+				
+				
+			</h2>
+			<p>JSONRPCError represents a JSON-RPC 2.0 error
+
+			<pre>type JSONRPCError struct {
+<span id="JSONRPCError.Code"></span>    Code    <a href="http://localhost:6060/pkg/builtin/#int">int</a>         `json:&#34;code&#34;`
+<span id="JSONRPCError.Message"></span>    Message <a href="http://localhost:6060/pkg/builtin/#string">string</a>      `json:&#34;message&#34;`
+<span id="JSONRPCError.Data"></span>    Data    interface{} `json:&#34;data,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="JSONRPCError.Error">func (*JSONRPCError) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=2117:2154#L56">Error</a>
+					<a class="permalink" href="index.html#JSONRPCError.Error">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (e *<a href="index.html#JSONRPCError">JSONRPCError</a>) Error() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				<p>Error implements the error interface
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="JSONRPCRequest">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=1355:1584#L33">JSONRPCRequest</a>
+				<a class="permalink" href="index.html#JSONRPCRequest">&#xb6;</a>
+				
+				
+			</h2>
+			<p>JSONRPCRequest represents a JSON-RPC 2.0 request
+
+			<pre>type JSONRPCRequest struct {
+<span id="JSONRPCRequest.JSONRPC"></span>    JSONRPC <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;jsonrpc&#34;`
+<span id="JSONRPCRequest.ID"></span>    ID      <a href="http://localhost:6060/pkg/builtin/#int">int</a>                    `json:&#34;id&#34;`
+<span id="JSONRPCRequest.Method"></span>    Method  <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;method&#34;`
+<span id="JSONRPCRequest.Params"></span>    Params  map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;params,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="JSONRPCResponse">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=1640:1879#L41">JSONRPCResponse</a>
+				<a class="permalink" href="index.html#JSONRPCResponse">&#xb6;</a>
+				
+				
+			</h2>
+			<p>JSONRPCResponse represents a JSON-RPC 2.0 response
+
+			<pre>type JSONRPCResponse struct {
+<span id="JSONRPCResponse.JSONRPC"></span>    JSONRPC <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;jsonrpc&#34;`
+<span id="JSONRPCResponse.ID"></span>    ID      <a href="http://localhost:6060/pkg/builtin/#int">int</a>                    `json:&#34;id&#34;`
+<span id="JSONRPCResponse.Result"></span>    Result  map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;result,omitempty&#34;`
+<span id="JSONRPCResponse.Error"></span>    Error   *<a href="index.html#JSONRPCError">JSONRPCError</a>          `json:&#34;error,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="MCPClient">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=4022:4658#L114">MCPClient</a>
+				<a class="permalink" href="index.html#MCPClient">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MCPClient defines the interface for MCP protocol clients
+
+			<pre>type MCPClient interface {
+    <span class="comment">// Connect establishes connection to the MCP server</span>
+    Connect(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// ListTools retrieves all available tools from the server</span>
+    ListTools(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) ([]<a href="index.html#MCPToolInfo">MCPToolInfo</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// CallTool invokes a tool with the given arguments</span>
+    CallTool(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, name <a href="http://localhost:6060/pkg/builtin/#string">string</a>, args map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}) (*<a href="index.html#MCPToolResult">MCPToolResult</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// GetServerInfo returns information about the MCP server</span>
+    GetServerInfo(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) (*<a href="index.html#MCPServerInfo">MCPServerInfo</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// Close closes the client connection</span>
+    Close() <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// IsConnected returns true if the client is connected</span>
+    IsConnected() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewClient">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/client.go?s=962:1007#L27">NewClient</a>
+					<a class="permalink" href="index.html#NewClient">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewClient(transport <a href="index.html#Transport">Transport</a>) <a href="index.html#MCPClient">MCPClient</a></pre>
+				<p>NewClient creates a new MCP client with the given transport
+
+				
+				
+			
+				
+				<h3 id="NewClientFromParams">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/client.go?s=1173:1262#L35">NewClientFromParams</a>
+					<a class="permalink" href="index.html#NewClientFromParams">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewClientFromParams(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, params <a href="index.html#ConnectionParams">ConnectionParams</a>) (<a href="index.html#MCPClient">MCPClient</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewClientFromParams creates a new MCP client from connection parameters
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="MCPContent">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=3118:3291#L87">MCPContent</a>
+				<a class="permalink" href="index.html#MCPContent">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MCPContent represents content returned by an MCP tool
+
+			<pre>type MCPContent struct {
+<span id="MCPContent.Type"></span>    Type <a href="http://localhost:6060/pkg/builtin/#string">string</a>      `json:&#34;type&#34;` <span class="comment">// &#34;text&#34;, &#34;image&#34;, &#34;resource&#34;</span>
+<span id="MCPContent.Text"></span>    Text <a href="http://localhost:6060/pkg/builtin/#string">string</a>      `json:&#34;text,omitempty&#34;`
+<span id="MCPContent.Data"></span>    Data interface{} `json:&#34;data,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="MCPServerInfo">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=3334:3611#L94">MCPServerInfo</a>
+				<a class="permalink" href="index.html#MCPServerInfo">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MCPServerInfo describes an MCP server
+
+			<pre>type MCPServerInfo struct {
+<span id="MCPServerInfo.Name"></span>    Name            <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;name&#34;`
+<span id="MCPServerInfo.Version"></span>    Version         <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;version&#34;`
+<span id="MCPServerInfo.ProtocolVersion"></span>    ProtocolVersion <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;protocolVersion&#34;`
+<span id="MCPServerInfo.Capabilities"></span>    Capabilities    map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;capabilities,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="MCPToolInfo">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=2602:2793#L73">MCPToolInfo</a>
+				<a class="permalink" href="index.html#MCPToolInfo">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MCPToolInfo describes a tool exposed by an MCP server
+
+			<pre>type MCPToolInfo struct {
+<span id="MCPToolInfo.Name"></span>    Name        <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;name&#34;`
+<span id="MCPToolInfo.Description"></span>    Description <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;description&#34;`
+<span id="MCPToolInfo.InputSchema"></span>    InputSchema map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;inputSchema&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="MCPToolResult">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=2857:3059#L80">MCPToolResult</a>
+				<a class="permalink" href="index.html#MCPToolResult">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MCPToolResult represents the result of calling an MCP tool
+
+			<pre>type MCPToolResult struct {
+<span id="MCPToolResult.Content"></span>    Content          []<a href="index.html#MCPContent">MCPContent</a> `json:&#34;content&#34;`
+<span id="MCPToolResult.IsError"></span>    IsError          <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>         `json:&#34;isError,omitempty&#34;`
+<span id="MCPToolResult.StructuredResult"></span>    StructuredResult interface{}  `json:&#34;structuredResult,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="ParseToolResult">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=7227:7302#L208">ParseToolResult</a>
+					<a class="permalink" href="index.html#ParseToolResult">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func ParseToolResult(result map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}) (*<a href="index.html#MCPToolResult">MCPToolResult</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ParseToolResult parses an MCP tool result from JSON-RPC response
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="MCPToolset">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=886:1209#L19">MCPToolset</a>
+				<a class="permalink" href="index.html#MCPToolset">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MCPToolset wraps an MCP server as a collection of types.ToolDefinition
+Compatible with ADK&apos;s MCPToolset while adding distributed execution support.
+
+			<pre>type MCPToolset struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMCPToolset">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=1281:1345#L34">NewMCPToolset</a>
+					<a class="permalink" href="index.html#NewMCPToolset">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMCPToolset(params <a href="index.html#ConnectionParams">ConnectionParams</a>) (*<a href="index.html#MCPToolset">MCPToolset</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewMCPToolset creates a new MCP toolset from connection parameters
+
+				
+				
+			
+
+			
+				
+				<h3 id="MCPToolset.Connect">func (*MCPToolset) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=2105:2160#L60">Connect</a>
+					<a class="permalink" href="index.html#MCPToolset.Connect">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MCPToolset">MCPToolset</a>) Connect(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Connect establishes connection to the MCP server and discovers tools
+
+				
+				
+				
+			
+				
+				<h3 id="MCPToolset.Disconnect">func (*MCPToolset) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=2852:2891#L95">Disconnect</a>
+					<a class="permalink" href="index.html#MCPToolset.Disconnect">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MCPToolset">MCPToolset</a>) Disconnect() <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Disconnect closes the MCP server connection
+
+				
+				
+				
+			
+				
+				<h3 id="MCPToolset.GetMetrics">func (*MCPToolset) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=6281:6332#L236">GetMetrics</a>
+					<a class="permalink" href="index.html#MCPToolset.GetMetrics">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MCPToolset">MCPToolset</a>) GetMetrics() []<a href="index.html#ToolCallMetrics">ToolCallMetrics</a></pre>
+				<p>GetMetrics returns all recorded metrics
+
+				
+				
+				
+			
+				
+				<h3 id="MCPToolset.GetTools">func (*MCPToolset) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=3095:3150#L113">GetTools</a>
+					<a class="permalink" href="index.html#MCPToolset.GetTools">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MCPToolset">MCPToolset</a>) GetTools() []*<a href="../../types/index.html">types</a>.<a href="../../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+				<p>GetTools returns all discovered tools
+
+				
+				
+				
+			
+				
+				<h3 id="MCPToolset.IsConnected">func (*MCPToolset) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=3405:3444#L124">IsConnected</a>
+					<a class="permalink" href="index.html#MCPToolset.IsConnected">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MCPToolset">MCPToolset</a>) IsConnected() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>IsConnected returns true if connected to the MCP server
+
+				
+				
+				
+			
+				
+				<h3 id="MCPToolset.RegisterTools">func (*MCPToolset) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=6579:6649#L247">RegisterTools</a>
+					<a class="permalink" href="index.html#MCPToolset.RegisterTools">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MCPToolset">MCPToolset</a>) RegisterTools(registry *<a href="../index.html">tools</a>.<a href="../index.html#ToolRegistry">ToolRegistry</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>RegisterTools registers all MCP tools in the given tool registry
+
+				
+				
+				
+			
+				
+				<h3 id="MCPToolset.WithDistributedConfig">func (*MCPToolset) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=1726:1807#L48">WithDistributedConfig</a>
+					<a class="permalink" href="index.html#MCPToolset.WithDistributedConfig">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MCPToolset">MCPToolset</a>) WithDistributedConfig(cfg *<a href="index.html#DistributedMCPConfig">DistributedMCPConfig</a>) *<a href="index.html#MCPToolset">MCPToolset</a></pre>
+				<p>WithDistributedConfig sets the distributed execution configuration
+
+				
+				
+				
+			
+				
+				<h3 id="MCPToolset.WithPartitionID">func (*MCPToolset) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/toolset.go?s=1920:1988#L54">WithPartitionID</a>
+					<a class="permalink" href="index.html#MCPToolset.WithPartitionID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MCPToolset">MCPToolset</a>) WithPartitionID(partitionID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) *<a href="index.html#MCPToolset">MCPToolset</a></pre>
+				<p>WithPartitionID sets the Spark partition ID for distributed execution
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="StdioConnectionParams">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=4969:5298#L144">StdioConnectionParams</a>
+				<a class="permalink" href="index.html#StdioConnectionParams">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StdioConnectionParams configures stdio transport to subprocess
+
+			<pre>type StdioConnectionParams struct {
+<span id="StdioConnectionParams.Command"></span>    Command <a href="http://localhost:6060/pkg/builtin/#string">string</a>            <span class="comment">// Command to execute (e.g., &#34;npx&#34;)</span>
+<span id="StdioConnectionParams.Args"></span>    Args    []<a href="http://localhost:6060/pkg/builtin/#string">string</a>          <span class="comment">// Command arguments (e.g., [&#34;-y&#34;, &#34;agentql-mcp&#34;])</span>
+<span id="StdioConnectionParams.Env"></span>    Env     map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]<a href="http://localhost:6060/pkg/builtin/#string">string</a> <span class="comment">// Environment variables (e.g., {&#34;AGENTQL_API_KEY&#34;: &#34;...&#34;})</span>
+<span id="StdioConnectionParams.Timeout"></span>    Timeout <a href="http://localhost:6060/pkg/builtin/#int">int</a>               <span class="comment">// Timeout in seconds (default: 300)</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="StdioConnectionParams.Type">func (StdioConnectionParams) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=5336:5380#L152">Type</a>
+					<a class="permalink" href="index.html#StdioConnectionParams.Type">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p <a href="index.html#StdioConnectionParams">StdioConnectionParams</a>) Type() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				<p>Type returns the connection type
+
+				
+				
+				
+			
+				
+				<h3 id="StdioConnectionParams.Validate">func (StdioConnectionParams) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=5439:5486#L157">Validate</a>
+					<a class="permalink" href="index.html#StdioConnectionParams.Validate">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p <a href="index.html#StdioConnectionParams">StdioConnectionParams</a>) Validate() <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Validate validates the parameters
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="ToolCallMetrics">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=6585:7157#L194">ToolCallMetrics</a>
+				<a class="permalink" href="index.html#ToolCallMetrics">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ToolCallMetrics tracks metrics for MCP tool calls
+
+			<pre>type ToolCallMetrics struct {
+<span id="ToolCallMetrics.ToolName"></span>    ToolName      <a href="http://localhost:6060/pkg/builtin/#string">string</a>  `json:&#34;tool_name&#34;`
+<span id="ToolCallMetrics.DurationMs"></span>    DurationMs    <a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;duration_ms&#34;`
+<span id="ToolCallMetrics.RequestSize"></span>    RequestSize   <a href="http://localhost:6060/pkg/builtin/#int">int</a>     `json:&#34;request_size&#34;`
+<span id="ToolCallMetrics.ResponseSize"></span>    ResponseSize  <a href="http://localhost:6060/pkg/builtin/#int">int</a>     `json:&#34;response_size&#34;`
+<span id="ToolCallMetrics.Success"></span>    Success       <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>    `json:&#34;success&#34;`
+<span id="ToolCallMetrics.ErrorMessage"></span>    ErrorMessage  <a href="http://localhost:6060/pkg/builtin/#string">string</a>  `json:&#34;error_message,omitempty&#34;`
+<span id="ToolCallMetrics.PartitionID"></span>    PartitionID   <a href="http://localhost:6060/pkg/builtin/#string">string</a>  `json:&#34;partition_id,omitempty&#34;` <span class="comment">// Spark partition for distributed execution</span>
+<span id="ToolCallMetrics.TransportType"></span>    TransportType <a href="http://localhost:6060/pkg/builtin/#string">string</a>  `json:&#34;transport_type&#34;`
+<span id="ToolCallMetrics.ServerName"></span>    ServerName    <a href="http://localhost:6060/pkg/builtin/#string">string</a>  `json:&#34;server_name,omitempty&#34;`
+<span id="ToolCallMetrics.ServerVersion"></span>    ServerVersion <a href="http://localhost:6060/pkg/builtin/#string">string</a>  `json:&#34;server_version,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Transport">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/types.go?s=3681:3960#L102">Transport</a>
+				<a class="permalink" href="index.html#Transport">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Transport defines the interface for MCP communication transports
+
+			<pre>type Transport interface {
+    <span class="comment">// Send sends a request and returns the response</span>
+    Send(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, req *<a href="index.html#JSONRPCRequest">JSONRPCRequest</a>) (*<a href="index.html#JSONRPCResponse">JSONRPCResponse</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// Close closes the transport</span>
+    Close() <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// IsConnected returns true if the transport is connected</span>
+    IsConnected() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewHTTPTransport">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/http_transport.go?s=956:1025#L28">NewHTTPTransport</a>
+					<a class="permalink" href="index.html#NewHTTPTransport">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewHTTPTransport(params <a href="index.html#HTTPConnectionParams">HTTPConnectionParams</a>) (<a href="index.html#Transport">Transport</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewHTTPTransport creates a new HTTP transport
+
+				
+				
+			
+				
+				<h3 id="NewStdioTransport">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/mcp/stdio_transport.go?s=1230:1301#L39">NewStdioTransport</a>
+					<a class="permalink" href="index.html#NewStdioTransport">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewStdioTransport(params <a href="index.html#StdioConnectionParams">StdioConnectionParams</a>) (<a href="index.html#Transport">Transport</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewStdioTransport creates a new stdio transport
+
+				
+				
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://localhost:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

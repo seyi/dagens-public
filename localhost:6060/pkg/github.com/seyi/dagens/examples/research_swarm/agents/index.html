@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>agents - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://localhost:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://localhost:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://localhost:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package agents
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/examples/research_swarm/agents"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+				
+				<dd><a href="index.html#BuildDemoModelProviderFromEnv">func BuildDemoModelProviderFromEnv() (model.ModelProvider, func() error, bool, error)</a></dd>
+			
+				
+				<dd><a href="index.html#SynthesizeTopTrends">func SynthesizeTopTrends(findings []Finding, topK int) []string</a></dd>
+			
+			
+				
+				<dd><a href="index.html#Finding">type Finding</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LLMResearchAgent">type LLMResearchAgent</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LLMResearchAgent.Name">func (a *LLMResearchAgent) Name() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LLMResearchAgent.Run">func (a *LLMResearchAgent) Run(ctx context.Context, query string) (Finding, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#ResearchAgent">type ResearchAgent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewAcademicAgent">func NewAcademicAgent(provider model.ModelProvider) ResearchAgent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewBlogAgent">func NewBlogAgent(provider model.ModelProvider) ResearchAgent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewGitHubAgent">func NewGitHubAgent(provider model.ModelProvider) ResearchAgent</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ResultStore">type ResultStore</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ResultStore.Add">func (s *ResultStore) Add(f Finding)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ResultStore.Snapshot">func (s *ResultStore) Snapshot() []Finding</a></dd>
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/academic_agent.go">academic_agent.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/blog_agent.go">blog_agent.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/github_agent.go">github_agent.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/llm_agent.go">llm_agent.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/model_provider.go">model_provider.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/researcher.go">researcher.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+			
+			
+			<h2 id="BuildDemoModelProviderFromEnv">func <a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/model_provider.go?s=478:563#L11">BuildDemoModelProviderFromEnv</a>
+				<a class="permalink" href="index.html#BuildDemoModelProviderFromEnv">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func BuildDemoModelProviderFromEnv() (<a href="../../../pkg/model/index.html">model</a>.<a href="../../../pkg/model/index.html#ModelProvider">ModelProvider</a>, func() <a href="http://localhost:6060/pkg/builtin/#error">error</a>, <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+			<p>BuildDemoModelProviderFromEnv builds a model.ModelProvider used by internal LlmAgents.
+It prefers real LLM credentials; if absent, it falls back to a deterministic mock provider
+unless RESEARCH_SWARM_REQUIRE_LLM=true.
+
+			
+			
+
+		
+			
+			
+			<h2 id="SynthesizeTopTrends">func <a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/researcher.go?s=925:988#L37">SynthesizeTopTrends</a>
+				<a class="permalink" href="index.html#SynthesizeTopTrends">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func SynthesizeTopTrends(findings []<a href="index.html#Finding">Finding</a>, topK <a href="http://localhost:6060/pkg/builtin/#int">int</a>) []<a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+			<p>SynthesizeTopTrends aggregates all findings into a top-k trend list.
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="Finding">type <a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/researcher.go?s=115:204#L1">Finding</a>
+				<a class="permalink" href="index.html#Finding">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Finding captures one agent&apos;s research output.
+
+			<pre>type Finding struct {
+<span id="Finding.Agent"></span>    Agent   <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="Finding.Source"></span>    Source  <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="Finding.Summary"></span>    Summary <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="Finding.Trends"></span>    Trends  []<a href="http://localhost:6060/pkg/builtin/#string">string</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LLMResearchAgent">type <a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/llm_agent.go?s=376:467#L11">LLMResearchAgent</a>
+				<a class="permalink" href="index.html#LLMResearchAgent">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LLMResearchAgent wraps the internal LlmAgent from pkg/agents.
+
+			<pre>type LLMResearchAgent struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="LLMResearchAgent.Name">func (*LLMResearchAgent) <a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/llm_agent.go?s=469:509#L17">Name</a>
+					<a class="permalink" href="index.html#LLMResearchAgent.Name">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#LLMResearchAgent">LLMResearchAgent</a>) Name() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="LLMResearchAgent.Run">func (*LLMResearchAgent) <a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/llm_agent.go?s=530:612#L21">Run</a>
+					<a class="permalink" href="index.html#LLMResearchAgent.Run">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#LLMResearchAgent">LLMResearchAgent</a>) Run(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, query <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (<a href="index.html#Finding">Finding</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="ResearchAgent">type <a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/researcher.go?s=278:382#L9">ResearchAgent</a>
+				<a class="permalink" href="index.html#ResearchAgent">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ResearchAgent defines behavior for one research worker in the swarm.
+
+			<pre>type ResearchAgent interface {
+    Name() <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+    Run(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, query <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (<a href="index.html#Finding">Finding</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewAcademicAgent">func <a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/academic_agent.go?s=59:124#L1">NewAcademicAgent</a>
+					<a class="permalink" href="index.html#NewAcademicAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewAcademicAgent(provider <a href="../../../pkg/model/index.html">model</a>.<a href="../../../pkg/model/index.html#ModelProvider">ModelProvider</a>) <a href="index.html#ResearchAgent">ResearchAgent</a></pre>
+				
+				
+				
+			
+				
+				<h3 id="NewBlogAgent">func <a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/blog_agent.go?s=59:120#L1">NewBlogAgent</a>
+					<a class="permalink" href="index.html#NewBlogAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewBlogAgent(provider <a href="../../../pkg/model/index.html">model</a>.<a href="../../../pkg/model/index.html#ModelProvider">ModelProvider</a>) <a href="index.html#ResearchAgent">ResearchAgent</a></pre>
+				
+				
+				
+			
+				
+				<h3 id="NewGitHubAgent">func <a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/github_agent.go?s=59:122#L1">NewGitHubAgent</a>
+					<a class="permalink" href="index.html#NewGitHubAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewGitHubAgent(provider <a href="../../../pkg/model/index.html">model</a>.<a href="../../../pkg/model/index.html#ModelProvider">ModelProvider</a>) <a href="index.html#ResearchAgent">ResearchAgent</a></pre>
+				
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="ResultStore">type <a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/researcher.go?s=442:510#L15">ResultStore</a>
+				<a class="permalink" href="index.html#ResultStore">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ResultStore keeps findings safe for concurrent writes.
+
+			<pre>type ResultStore struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="ResultStore.Add">func (*ResultStore) <a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/researcher.go?s=539:575#L21">Add</a>
+					<a class="permalink" href="index.html#ResultStore.Add">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#ResultStore">ResultStore</a>) Add(f <a href="index.html#Finding">Finding</a>)</pre>
+				<p>Add stores one finding.
+
+				
+				
+				
+			
+				
+				<h3 id="ResultStore.Snapshot">func (*ResultStore) <a href="http://localhost:6060/src/github.com/seyi/dagens/examples/research_swarm/agents/researcher.go?s=695:737#L28">Snapshot</a>
+					<a class="permalink" href="index.html#ResultStore.Snapshot">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#ResultStore">ResultStore</a>) Snapshot() []<a href="index.html#Finding">Finding</a></pre>
+				<p>Snapshot returns a copy of all findings.
+
+				
+				
+				
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://localhost:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

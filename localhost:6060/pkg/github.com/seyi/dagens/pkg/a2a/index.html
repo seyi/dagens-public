@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>a2a - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://localhost:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://localhost:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://localhost:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package a2a
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/a2a"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package a2a provides HTTP server implementation for the Agent-to-Agent protocol
+<h3 id="hdr-Package_a2a_provides_instrumented_A2A_server_and_client_with_OpenTelemetry_support">Package a2a provides instrumented A2A server and client with OpenTelemetry support</h3>
+<p>Package a2a implements Agent-to-Agent protocol for distributed agent communication
+Based on the A2A Protocol specification (JSON-RPC 2.0 over HTTP(S))
+Inspired by <a href="https://github.com/a2aproject">https://github.com/a2aproject</a> and ADK patterns
+<p>Package a2a provides Server-Sent Events (SSE) support for A2A streaming
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+				
+				<dd><a href="index.html#InstrumentHTTPHandler">func InstrumentHTTPHandler(handler http.Handler, tel *A2ATelemetry) http.Handler</a></dd>
+			
+			
+				
+				<dd><a href="index.html#A2AClient">type A2AClient</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#A2AMetrics">type A2AMetrics</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#A2AServer">type A2AServer</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#A2ATelemetry">type A2ATelemetry</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewA2ATelemetry">func NewA2ATelemetry(collector *telemetry.TelemetryCollector) *A2ATelemetry</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#A2ATelemetry.GetMetrics">func (t *A2ATelemetry) GetMetrics() *A2AMetrics</a></dd>
+				
+			
+				
+				<dd><a href="index.html#AgentCard">type AgentCard</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentInfo">type AgentInfo</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentStatus">type AgentStatus</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentStreamInput">type AgentStreamInput</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentStreamOutput">type AgentStreamOutput</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AuthScheme">type AuthScheme</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AuthType">type AuthType</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Capability">type Capability</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#CommunicationPattern">type CommunicationPattern</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#DiscoveryRegistry">type DiscoveryRegistry</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewDiscoveryRegistry">func NewDiscoveryRegistry() *DiscoveryRegistry</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DiscoveryRegistry.FindByCapability">func (r *DiscoveryRegistry) FindByCapability(capability string) []*AgentInfo</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DiscoveryRegistry.GetAgent">func (r *DiscoveryRegistry) GetAgent(agentID string) (*AgentInfo, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DiscoveryRegistry.GetAgentCard">func (r *DiscoveryRegistry) GetAgentCard(agentID string) (*AgentCard, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DiscoveryRegistry.ListAll">func (r *DiscoveryRegistry) ListAll() []*AgentInfo</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DiscoveryRegistry.Register">func (r *DiscoveryRegistry) Register(card *AgentCard) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DiscoveryRegistry.Unregister">func (r *DiscoveryRegistry) Unregister(agentID string) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#HTTPClient">type HTTPClient</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewHTTPA2AClient">func NewHTTPA2AClient(registry *DiscoveryRegistry) *HTTPClient</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HTTPClient.DiscoverAgents">func (c *HTTPClient) DiscoverAgents(ctx context.Context, capability string) ([]*AgentInfo, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HTTPClient.GetAgentCard">func (c *HTTPClient) GetAgentCard(ctx context.Context, agentID string) (*AgentCard, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HTTPClient.InvokeAgent">func (c *HTTPClient) InvokeAgent(ctx context.Context, agentID string, input *agent.AgentInput) (*agent.AgentOutput, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HTTPClient.StreamInvocation">func (c *HTTPClient) StreamInvocation(ctx context.Context, agentID string, input *agent.AgentInput) (&lt;-chan *StreamChunk, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#HTTPServer">type HTTPServer</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewHTTPServer">func NewHTTPServer(registry *DiscoveryRegistry) *HTTPServer</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HTTPServer.HandleInvocation">func (s *HTTPServer) HandleInvocation(ctx context.Context, req *InvocationRequest) (*InvocationResponse, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HTTPServer.RegisterAgent">func (s *HTTPServer) RegisterAgent(agent agent.Agent, card *AgentCard) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HTTPServer.Start">func (s *HTTPServer) Start(address string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HTTPServer.Stop">func (s *HTTPServer) Stop() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HTTPServer.UnregisterAgent">func (s *HTTPServer) UnregisterAgent(agentID string) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#InstrumentedHTTPClient">type InstrumentedHTTPClient</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewInstrumentedHTTPClient">func NewInstrumentedHTTPClient(registry *DiscoveryRegistry, tel *A2ATelemetry) *InstrumentedHTTPClient</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InstrumentedHTTPClient.DiscoverAgents">func (c *InstrumentedHTTPClient) DiscoverAgents(ctx context.Context, capability string) ([]*AgentInfo, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InstrumentedHTTPClient.GetAgentCard">func (c *InstrumentedHTTPClient) GetAgentCard(ctx context.Context, agentID string) (*AgentCard, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InstrumentedHTTPClient.InvokeAgent">func (c *InstrumentedHTTPClient) InvokeAgent(ctx context.Context, agentID string, input *agent.AgentInput) (*agent.AgentOutput, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#InstrumentedHTTPServer">type InstrumentedHTTPServer</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewInstrumentedHTTPServer">func NewInstrumentedHTTPServer(registry *DiscoveryRegistry, tel *A2ATelemetry) *InstrumentedHTTPServer</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InstrumentedHTTPServer.HandleInvocation">func (s *InstrumentedHTTPServer) HandleInvocation(ctx context.Context, req *InvocationRequest) (*InvocationResponse, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InstrumentedHTTPServer.RegisterAgent">func (s *InstrumentedHTTPServer) RegisterAgent(agent agent.Agent, card *AgentCard) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#InstrumentedRemoteAgentWrapper">type InstrumentedRemoteAgentWrapper</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewInstrumentedRemoteAgentWrapper">func NewInstrumentedRemoteAgentWrapper(info *AgentInfo, tel *A2ATelemetry) *InstrumentedRemoteAgentWrapper</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InstrumentedRemoteAgentWrapper.Execute">func (r *InstrumentedRemoteAgentWrapper) Execute(ctx context.Context, input *agent.AgentInput) (*agent.AgentOutput, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#InvocationRequest">type InvocationRequest</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#InvocationResponse">type InvocationResponse</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Modality">type Modality</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#RPCError">type RPCError</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#RemoteAgentWrapper">type RemoteAgentWrapper</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewRemoteAgentWrapper">func NewRemoteAgentWrapper(info *AgentInfo) *RemoteAgentWrapper</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteAgentWrapper.Capabilities">func (r *RemoteAgentWrapper) Capabilities() []string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteAgentWrapper.Dependencies">func (r *RemoteAgentWrapper) Dependencies() []agent.Agent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteAgentWrapper.Description">func (r *RemoteAgentWrapper) Description() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteAgentWrapper.Execute">func (r *RemoteAgentWrapper) Execute(ctx context.Context, input *agent.AgentInput) (*agent.AgentOutput, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteAgentWrapper.ID">func (r *RemoteAgentWrapper) ID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteAgentWrapper.Name">func (r *RemoteAgentWrapper) Name() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RemoteAgentWrapper.Partition">func (r *RemoteAgentWrapper) Partition() string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SSEEvent">type SSEEvent</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#SSEReader">type SSEReader</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSSEReader">func NewSSEReader(r io.Reader) *SSEReader</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SSEReader.ReadEvent">func (r *SSEReader) ReadEvent() (*SSEEvent, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SSEStreamHandler">type SSEStreamHandler</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSSEStreamHandler">func NewSSEStreamHandler(handler func(ctx context.Context, req *InvocationRequest) (&lt;-chan interface{}, error)) *SSEStreamHandler</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SSEStreamHandler.ServeHTTP">func (h *SSEStreamHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SSEWriter">type SSEWriter</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSSEWriter">func NewSSEWriter(w http.ResponseWriter) (*SSEWriter, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SSEWriter.Close">func (w *SSEWriter) Close() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SSEWriter.WriteComment">func (w *SSEWriter) WriteComment(comment string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SSEWriter.WriteData">func (w *SSEWriter) WriteData(data interface{}) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SSEWriter.WriteEvent">func (w *SSEWriter) WriteEvent(event *SSEEvent) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SimpleAgentWrapper">type SimpleAgentWrapper</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleAgentWrapper.Capabilities">func (s *SimpleAgentWrapper) Capabilities() []string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleAgentWrapper.Dependencies">func (s *SimpleAgentWrapper) Dependencies() []agent.Agent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleAgentWrapper.Description">func (s *SimpleAgentWrapper) Description() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleAgentWrapper.Execute">func (s *SimpleAgentWrapper) Execute(ctx context.Context, input *agent.AgentInput) (*agent.AgentOutput, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleAgentWrapper.ID">func (s *SimpleAgentWrapper) ID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleAgentWrapper.Name">func (s *SimpleAgentWrapper) Name() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleAgentWrapper.Partition">func (s *SimpleAgentWrapper) Partition() string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#StreamChunk">type StreamChunk</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#StreamOutputType">type StreamOutputType</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#StreamingAgent">type StreamingAgent</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go">http_server.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go">instrumented.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go">protocol.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go">sse.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+			
+			
+			<h2 id="InstrumentHTTPHandler">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=9696:9776#L316">InstrumentHTTPHandler</a>
+				<a class="permalink" href="index.html#InstrumentHTTPHandler">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func InstrumentHTTPHandler(handler <a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#Handler">Handler</a>, tel *<a href="index.html#A2ATelemetry">A2ATelemetry</a>) <a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#Handler">Handler</a></pre>
+			<p>InstrumentHTTPHandler wraps an http.Handler with request tracing
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="A2AClient">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=498:1106#L13">A2AClient</a>
+				<a class="permalink" href="index.html#A2AClient">&#xb6;</a>
+				
+				
+			</h2>
+			<p>A2AClient enables agent-to-agent communication
+
+			<pre>type A2AClient interface {
+    <span class="comment">// InvokeAgent calls a remote agent</span>
+    InvokeAgent(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// DiscoverAgents finds agents with specific capabilities</span>
+    DiscoverAgents(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, capability <a href="http://localhost:6060/pkg/builtin/#string">string</a>) ([]*<a href="index.html#AgentInfo">AgentInfo</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// GetAgentCard retrieves an agent&#39;s capability declaration</span>
+    GetAgentCard(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#AgentCard">AgentCard</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// StreamInvocation invokes agent with streaming response</span>
+    StreamInvocation(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (&lt;-chan *<a href="index.html#StreamChunk">StreamChunk</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="A2AMetrics">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=11129:11527#L366">A2AMetrics</a>
+				<a class="permalink" href="index.html#A2AMetrics">&#xb6;</a>
+				
+				
+			</h2>
+			<p>A2AMetrics provides structured access to A2A metrics
+
+			<pre>type A2AMetrics struct {
+<span id="A2AMetrics.RequestsTotal"></span>    RequestsTotal     <a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;requests_total&#34;`
+<span id="A2AMetrics.ErrorsTotal"></span>    ErrorsTotal       <a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;errors_total&#34;`
+<span id="A2AMetrics.ActiveConnections"></span>    ActiveConnections <a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;active_connections&#34;`
+<span id="A2AMetrics.RequestDuration"></span>    RequestDuration   struct {
+        Count <a href="http://localhost:6060/pkg/builtin/#int">int</a>     `json:&#34;count&#34;`
+        Sum   <a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;sum_ms&#34;`
+        Min   <a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;min_ms&#34;`
+        Max   <a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;max_ms&#34;`
+        Mean  <a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;mean_ms&#34;`
+    } `json:&#34;request_duration&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="A2AServer">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=1162:1636#L28">A2AServer</a>
+				<a class="permalink" href="index.html#A2AServer">&#xb6;</a>
+				
+				
+			</h2>
+			<p>A2AServer handles incoming agent-to-agent requests
+
+			<pre>type A2AServer interface {
+    <span class="comment">// RegisterAgent registers an agent for A2A communication</span>
+    RegisterAgent(agent <a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a>, card *<a href="index.html#AgentCard">AgentCard</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// UnregisterAgent removes an agent</span>
+    UnregisterAgent(agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// HandleInvocation processes an invocation request</span>
+    HandleInvocation(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, req *<a href="index.html#InvocationRequest">InvocationRequest</a>) (*<a href="index.html#InvocationResponse">InvocationResponse</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// Start starts the A2A server</span>
+    Start(address <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// Stop stops the A2A server</span>
+    Stop() <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="A2ATelemetry">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=284:550#L4">A2ATelemetry</a>
+				<a class="permalink" href="index.html#A2ATelemetry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>A2ATelemetry provides telemetry components for A2A operations
+
+			<pre>type A2ATelemetry struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewA2ATelemetry">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=608:683#L17">NewA2ATelemetry</a>
+					<a class="permalink" href="index.html#NewA2ATelemetry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewA2ATelemetry(collector *<a href="../telemetry/index.html">telemetry</a>.<a href="../telemetry/index.html#TelemetryCollector">TelemetryCollector</a>) *<a href="index.html#A2ATelemetry">A2ATelemetry</a></pre>
+				<p>NewA2ATelemetry creates telemetry for A2A operations
+
+				
+				
+			
+
+			
+				
+				<h3 id="A2ATelemetry.GetMetrics">func (*A2ATelemetry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=11571:11618#L380">GetMetrics</a>
+					<a class="permalink" href="index.html#A2ATelemetry.GetMetrics">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (t *<a href="index.html#A2ATelemetry">A2ATelemetry</a>) GetMetrics() *<a href="index.html#A2AMetrics">A2AMetrics</a></pre>
+				<p>GetMetrics returns current A2A metrics
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="AgentCard">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=1711:2471#L46">AgentCard</a>
+				<a class="permalink" href="index.html#AgentCard">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentCard represents an agent&apos;s capability declaration (A2A standard)
+
+			<pre>type AgentCard struct {
+<span id="AgentCard.ID"></span>    ID                <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;id&#34;`
+<span id="AgentCard.Name"></span>    Name              <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;name&#34;`
+<span id="AgentCard.Description"></span>    Description       <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;description&#34;`
+<span id="AgentCard.Version"></span>    Version           <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;version&#34;`
+<span id="AgentCard.Endpoint"></span>    Endpoint          <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;endpoint&#34;`
+<span id="AgentCard.Capabilities"></span>    Capabilities      []<a href="index.html#Capability">Capability</a>           `json:&#34;capabilities&#34;`
+<span id="AgentCard.Modalities"></span>    Modalities        []<a href="index.html#Modality">Modality</a>             `json:&#34;modalities&#34;`
+<span id="AgentCard.AuthScheme"></span>    AuthScheme        <a href="index.html#AuthScheme">AuthScheme</a>             `json:&#34;auth_scheme&#34;`
+<span id="AgentCard.Metadata"></span>    Metadata          map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;metadata&#34;`
+<span id="AgentCard.SupportedPatterns"></span>    SupportedPatterns []<a href="index.html#CommunicationPattern">CommunicationPattern</a> `json:&#34;supported_patterns&#34;`
+<span id="AgentCard.CreatedAt"></span>    CreatedAt         <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a>              `json:&#34;created_at&#34;`
+<span id="AgentCard.UpdatedAt"></span>    UpdatedAt         <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a>              `json:&#34;updated_at&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentInfo">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=3800:4137#L107">AgentInfo</a>
+				<a class="permalink" href="index.html#AgentInfo">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentInfo provides basic agent information for discovery
+
+			<pre>type AgentInfo struct {
+<span id="AgentInfo.ID"></span>    ID           <a href="http://localhost:6060/pkg/builtin/#string">string</a>      `json:&#34;id&#34;`
+<span id="AgentInfo.Name"></span>    Name         <a href="http://localhost:6060/pkg/builtin/#string">string</a>      `json:&#34;name&#34;`
+<span id="AgentInfo.Description"></span>    Description  <a href="http://localhost:6060/pkg/builtin/#string">string</a>      `json:&#34;description&#34;`
+<span id="AgentInfo.Endpoint"></span>    Endpoint     <a href="http://localhost:6060/pkg/builtin/#string">string</a>      `json:&#34;endpoint&#34;`
+<span id="AgentInfo.Capabilities"></span>    Capabilities []<a href="http://localhost:6060/pkg/builtin/#string">string</a>    `json:&#34;capabilities&#34;`
+<span id="AgentInfo.Modalities"></span>    Modalities   []<a href="index.html#Modality">Modality</a>  `json:&#34;modalities&#34;`
+<span id="AgentInfo.Status"></span>    Status       <a href="index.html#AgentStatus">AgentStatus</a> `json:&#34;status&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentStatus">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=4184:4207#L118">AgentStatus</a>
+				<a class="permalink" href="index.html#AgentStatus">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentStatus represents agent availability
+
+			<pre>type AgentStatus <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="StatusAvailable">StatusAvailable</span>   <a href="index.html#AgentStatus">AgentStatus</a> = &#34;available&#34;
+    <span id="StatusBusy">StatusBusy</span>        <a href="index.html#AgentStatus">AgentStatus</a> = &#34;busy&#34;
+    <span id="StatusMaintenance">StatusMaintenance</span> <a href="index.html#AgentStatus">AgentStatus</a> = &#34;maintenance&#34;
+    <span id="StatusOffline">StatusOffline</span>     <a href="index.html#AgentStatus">AgentStatus</a> = &#34;offline&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentStreamInput">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=6916:7131#L292">AgentStreamInput</a>
+				<a class="permalink" href="index.html#AgentStreamInput">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentStreamInput represents input for streaming agent execution
+
+			<pre>type AgentStreamInput struct {
+<span id="AgentStreamInput.Instruction"></span>    Instruction <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;instruction&#34;`
+<span id="AgentStreamInput.Context"></span>    Context     map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;context,omitempty&#34;`
+<span id="AgentStreamInput.TaskID"></span>    TaskID      <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;task_id,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentStreamOutput">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=7193:7508#L299">AgentStreamOutput</a>
+				<a class="permalink" href="index.html#AgentStreamOutput">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentStreamOutput represents a chunk of streaming output
+
+			<pre>type AgentStreamOutput struct {
+<span id="AgentStreamOutput.Type"></span>    Type      <a href="index.html#StreamOutputType">StreamOutputType</a>       `json:&#34;type&#34;`
+<span id="AgentStreamOutput.Content"></span>    Content   <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;content,omitempty&#34;`
+<span id="AgentStreamOutput.Data"></span>    Data      interface{}            `json:&#34;data,omitempty&#34;`
+<span id="AgentStreamOutput.Metadata"></span>    Metadata  map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;metadata,omitempty&#34;`
+<span id="AgentStreamOutput.Timestamp"></span>    Timestamp <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a>              `json:&#34;timestamp&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AuthScheme">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=3368:3498#L90">AuthScheme</a>
+				<a class="permalink" href="index.html#AuthScheme">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AuthScheme defines authentication method
+
+			<pre>type AuthScheme struct {
+<span id="AuthScheme.Type"></span>    Type       <a href="index.html#AuthType">AuthType</a>               `json:&#34;type&#34;`
+<span id="AuthScheme.Parameters"></span>    Parameters map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;parameters&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AuthType">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=3531:3551#L96">AuthType</a>
+				<a class="permalink" href="index.html#AuthType">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AuthType defines auth types
+
+			<pre>type AuthType <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="AuthTypeNone">AuthTypeNone</span>   <a href="index.html#AuthType">AuthType</a> = &#34;none&#34;
+    <span id="AuthTypeBasic">AuthTypeBasic</span>  <a href="index.html#AuthType">AuthType</a> = &#34;basic&#34;
+    <span id="AuthTypeBearer">AuthTypeBearer</span> <a href="index.html#AuthType">AuthType</a> = &#34;bearer&#34;
+    <span id="AuthTypeAPIKey">AuthTypeAPIKey</span> <a href="index.html#AuthType">AuthType</a> = &#34;api_key&#34;
+    <span id="AuthTypeMTLS">AuthTypeMTLS</span>   <a href="index.html#AuthType">AuthType</a> = &#34;mtls&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Capability">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=2518:2822#L62">Capability</a>
+				<a class="permalink" href="index.html#Capability">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Capability describes what an agent can do
+
+			<pre>type Capability struct {
+<span id="Capability.Name"></span>    Name         <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;name&#34;`
+<span id="Capability.Description"></span>    Description  <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;description&#34;`
+<span id="Capability.InputSchema"></span>    InputSchema  interface{}            `json:&#34;input_schema&#34;`
+<span id="Capability.OutputSchema"></span>    OutputSchema interface{}            `json:&#34;output_schema&#34;`
+<span id="Capability.Metadata"></span>    Metadata     map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;metadata&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="CommunicationPattern">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=3085:3117#L81">CommunicationPattern</a>
+				<a class="permalink" href="index.html#CommunicationPattern">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CommunicationPattern defines supported patterns
+
+			<pre>type CommunicationPattern <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="PatternRequestResponse">PatternRequestResponse</span> <a href="index.html#CommunicationPattern">CommunicationPattern</a> = &#34;request_response&#34;
+    <span id="PatternSSE">PatternSSE</span>             <a href="index.html#CommunicationPattern">CommunicationPattern</a> = &#34;server_sent_events&#34;
+    <span id="PatternAsyncPush">PatternAsyncPush</span>       <a href="index.html#CommunicationPattern">CommunicationPattern</a> = &#34;async_push&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="DiscoveryRegistry">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=11271:11385#L390">DiscoveryRegistry</a>
+				<a class="permalink" href="index.html#DiscoveryRegistry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DiscoveryRegistry manages agent discovery
+
+			<pre>type DiscoveryRegistry struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewDiscoveryRegistry">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=11434:11480#L397">NewDiscoveryRegistry</a>
+					<a class="permalink" href="index.html#NewDiscoveryRegistry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewDiscoveryRegistry() *<a href="index.html#DiscoveryRegistry">DiscoveryRegistry</a></pre>
+				<p>NewDiscoveryRegistry creates a new registry
+
+				
+				
+			
+
+			
+				
+				<h3 id="DiscoveryRegistry.FindByCapability">func (*DiscoveryRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=12879:12955#L463">FindByCapability</a>
+					<a class="permalink" href="index.html#DiscoveryRegistry.FindByCapability">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DiscoveryRegistry">DiscoveryRegistry</a>) FindByCapability(capability <a href="http://localhost:6060/pkg/builtin/#string">string</a>) []*<a href="index.html#AgentInfo">AgentInfo</a></pre>
+				<p>FindByCapability finds agents with a capability
+
+				
+				
+				
+			
+				
+				<h3 id="DiscoveryRegistry.GetAgent">func (*DiscoveryRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=12299:12371#L437">GetAgent</a>
+					<a class="permalink" href="index.html#DiscoveryRegistry.GetAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DiscoveryRegistry">DiscoveryRegistry</a>) GetAgent(agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#AgentInfo">AgentInfo</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetAgent retrieves agent info
+
+				
+				
+				
+			
+				
+				<h3 id="DiscoveryRegistry.GetAgentCard">func (*DiscoveryRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=12578:12654#L450">GetAgentCard</a>
+					<a class="permalink" href="index.html#DiscoveryRegistry.GetAgentCard">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DiscoveryRegistry">DiscoveryRegistry</a>) GetAgentCard(agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#AgentCard">AgentCard</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetAgentCard retrieves agent card
+
+				
+				
+				
+			
+				
+				<h3 id="DiscoveryRegistry.ListAll">func (*DiscoveryRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=13250:13300#L482">ListAll</a>
+					<a class="permalink" href="index.html#DiscoveryRegistry.ListAll">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DiscoveryRegistry">DiscoveryRegistry</a>) ListAll() []*<a href="index.html#AgentInfo">AgentInfo</a></pre>
+				<p>ListAll returns all registered agents
+
+				
+				
+				
+			
+				
+				<h3 id="DiscoveryRegistry.Register">func (*DiscoveryRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=11637:11696#L405">Register</a>
+					<a class="permalink" href="index.html#DiscoveryRegistry.Register">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DiscoveryRegistry">DiscoveryRegistry</a>) Register(card *<a href="index.html#AgentCard">AgentCard</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Register adds an agent to the registry
+
+				
+				
+				
+			
+				
+				<h3 id="DiscoveryRegistry.Unregister">func (*DiscoveryRegistry) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=12099:12159#L426">Unregister</a>
+					<a class="permalink" href="index.html#DiscoveryRegistry.Unregister">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DiscoveryRegistry">DiscoveryRegistry</a>) Unregister(agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Unregister removes an agent
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="HTTPClient">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=5354:5455#L160">HTTPClient</a>
+				<a class="permalink" href="index.html#HTTPClient">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HTTPA2AClient implements A2A client over HTTP
+
+			<pre>type HTTPClient struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewHTTPA2AClient">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=5513:5575#L167">NewHTTPA2AClient</a>
+					<a class="permalink" href="index.html#NewHTTPA2AClient">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewHTTPA2AClient(registry *<a href="index.html#DiscoveryRegistry">DiscoveryRegistry</a>) *<a href="index.html#HTTPClient">HTTPClient</a></pre>
+				<p>NewHTTPA2AClient creates a new HTTP-based A2A client
+
+				
+				
+			
+
+			
+				
+				<h3 id="HTTPClient.DiscoverAgents">func (*HTTPClient) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=7662:7759#L248">DiscoverAgents</a>
+					<a class="permalink" href="index.html#HTTPClient.DiscoverAgents">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#HTTPClient">HTTPClient</a>) DiscoverAgents(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, capability <a href="http://localhost:6060/pkg/builtin/#string">string</a>) ([]*<a href="index.html#AgentInfo">AgentInfo</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>DiscoverAgents finds agents with specific capabilities
+
+				
+				
+				
+			
+				
+				<h3 id="HTTPClient.GetAgentCard">func (*HTTPClient) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=7860:7950#L253">GetAgentCard</a>
+					<a class="permalink" href="index.html#HTTPClient.GetAgentCard">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#HTTPClient">HTTPClient</a>) GetAgentCard(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#AgentCard">AgentCard</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetAgentCard retrieves an agent&apos;s card
+
+				
+				
+				
+			
+				
+				<h3 id="HTTPClient.InvokeAgent">func (*HTTPClient) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=5743:5865#L177">InvokeAgent</a>
+					<a class="permalink" href="index.html#HTTPClient.InvokeAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#HTTPClient">HTTPClient</a>) InvokeAgent(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>InvokeAgent calls a remote agent via JSON-RPC 2.0
+
+				
+				
+				
+			
+				
+				<h3 id="HTTPClient.StreamInvocation">func (*HTTPClient) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=8054:8182#L258">StreamInvocation</a>
+					<a class="permalink" href="index.html#HTTPClient.StreamInvocation">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#HTTPClient">HTTPClient</a>) StreamInvocation(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (&lt;-chan *<a href="index.html#StreamChunk">StreamChunk</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>StreamInvocation invokes with streaming (SSE pattern)
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="HTTPServer">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=359:564#L10">HTTPServer</a>
+				<a class="permalink" href="index.html#HTTPServer">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HTTPServer implements the A2AServer interface using HTTP/JSON-RPC 2.0
+
+			<pre>type HTTPServer struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewHTTPServer">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=613:672#L20">NewHTTPServer</a>
+					<a class="permalink" href="index.html#NewHTTPServer">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewHTTPServer(registry *<a href="index.html#DiscoveryRegistry">DiscoveryRegistry</a>) *<a href="index.html#HTTPServer">HTTPServer</a></pre>
+				<p>NewHTTPServer creates a new A2A HTTP server
+
+				
+				
+			
+
+			
+				
+				<h3 id="HTTPServer.HandleInvocation">func (*HTTPServer) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=1966:2077#L71">HandleInvocation</a>
+					<a class="permalink" href="index.html#HTTPServer.HandleInvocation">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#HTTPServer">HTTPServer</a>) HandleInvocation(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, req *<a href="index.html#InvocationRequest">InvocationRequest</a>) (*<a href="index.html#InvocationResponse">InvocationResponse</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>HandleInvocation processes an invocation request
+
+				
+				
+				
+			
+				
+				<h3 id="HTTPServer.RegisterAgent">func (*HTTPServer) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=1268:1344#L43">RegisterAgent</a>
+					<a class="permalink" href="index.html#HTTPServer.RegisterAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#HTTPServer">HTTPServer</a>) RegisterAgent(agent <a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a>, card *<a href="index.html#AgentCard">AgentCard</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>RegisterAgent registers an agent for A2A communication
+
+				
+				
+				
+			
+				
+				<h3 id="HTTPServer.Start">func (*HTTPServer) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=3107:3155#L125">Start</a>
+					<a class="permalink" href="index.html#HTTPServer.Start">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#HTTPServer">HTTPServer</a>) Start(address <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Start starts the A2A server
+
+				
+				
+				
+			
+				
+				<h3 id="HTTPServer.Stop">func (*HTTPServer) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=3397:3430#L139">Stop</a>
+					<a class="permalink" href="index.html#HTTPServer.Stop">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#HTTPServer">HTTPServer</a>) Stop() <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Stop stops the A2A server
+
+				
+				
+				
+			
+				
+				<h3 id="HTTPServer.UnregisterAgent">func (*HTTPServer) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=1669:1727#L59">UnregisterAgent</a>
+					<a class="permalink" href="index.html#HTTPServer.UnregisterAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#HTTPServer">HTTPServer</a>) UnregisterAgent(agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>UnregisterAgent removes an agent
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="InstrumentedHTTPClient">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=4200:4276#L135">InstrumentedHTTPClient</a>
+				<a class="permalink" href="index.html#InstrumentedHTTPClient">&#xb6;</a>
+				
+				
+			</h2>
+			<p>InstrumentedHTTPClient wraps HTTPClient with telemetry
+
+			<pre>type InstrumentedHTTPClient struct {
+    *<a href="index.html#HTTPClient">HTTPClient</a>
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewInstrumentedHTTPClient">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=4350:4452#L141">NewInstrumentedHTTPClient</a>
+					<a class="permalink" href="index.html#NewInstrumentedHTTPClient">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewInstrumentedHTTPClient(registry *<a href="index.html#DiscoveryRegistry">DiscoveryRegistry</a>, tel *<a href="index.html#A2ATelemetry">A2ATelemetry</a>) *<a href="index.html#InstrumentedHTTPClient">InstrumentedHTTPClient</a></pre>
+				<p>NewInstrumentedHTTPClient creates a new instrumented A2A HTTP client
+
+				
+				
+			
+
+			
+				
+				<h3 id="InstrumentedHTTPClient.DiscoverAgents">func (*InstrumentedHTTPClient) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=6263:6372#L204">DiscoverAgents</a>
+					<a class="permalink" href="index.html#InstrumentedHTTPClient.DiscoverAgents">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#InstrumentedHTTPClient">InstrumentedHTTPClient</a>) DiscoverAgents(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, capability <a href="http://localhost:6060/pkg/builtin/#string">string</a>) ([]*<a href="index.html#AgentInfo">AgentInfo</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>DiscoverAgents finds agents with telemetry
+
+				
+				
+				
+			
+				
+				<h3 id="InstrumentedHTTPClient.GetAgentCard">func (*InstrumentedHTTPClient) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=7130:7232#L234">GetAgentCard</a>
+					<a class="permalink" href="index.html#InstrumentedHTTPClient.GetAgentCard">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#InstrumentedHTTPClient">InstrumentedHTTPClient</a>) GetAgentCard(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#AgentCard">AgentCard</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetAgentCard retrieves an agent&apos;s card with telemetry
+
+				
+				
+				
+			
+				
+				<h3 id="InstrumentedHTTPClient.InvokeAgent">func (*InstrumentedHTTPClient) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=4624:4758#L150">InvokeAgent</a>
+					<a class="permalink" href="index.html#InstrumentedHTTPClient.InvokeAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#InstrumentedHTTPClient">InstrumentedHTTPClient</a>) InvokeAgent(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, agentID <a href="http://localhost:6060/pkg/builtin/#string">string</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>InvokeAgent calls a remote agent with telemetry
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="InstrumentedHTTPServer">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=1160:1236#L32">InstrumentedHTTPServer</a>
+				<a class="permalink" href="index.html#InstrumentedHTTPServer">&#xb6;</a>
+				
+				
+			</h2>
+			<p>InstrumentedHTTPServer wraps HTTPServer with telemetry
+
+			<pre>type InstrumentedHTTPServer struct {
+    *<a href="index.html#HTTPServer">HTTPServer</a>
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewInstrumentedHTTPServer">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=1310:1412#L38">NewInstrumentedHTTPServer</a>
+					<a class="permalink" href="index.html#NewInstrumentedHTTPServer">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewInstrumentedHTTPServer(registry *<a href="index.html#DiscoveryRegistry">DiscoveryRegistry</a>, tel *<a href="index.html#A2ATelemetry">A2ATelemetry</a>) *<a href="index.html#InstrumentedHTTPServer">InstrumentedHTTPServer</a></pre>
+				<p>NewInstrumentedHTTPServer creates a new instrumented A2A HTTP server
+
+				
+				
+			
+
+			
+				
+				<h3 id="InstrumentedHTTPServer.HandleInvocation">func (*InstrumentedHTTPServer) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=2559:2682#L78">HandleInvocation</a>
+					<a class="permalink" href="index.html#InstrumentedHTTPServer.HandleInvocation">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InstrumentedHTTPServer">InstrumentedHTTPServer</a>) HandleInvocation(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, req *<a href="index.html#InvocationRequest">InvocationRequest</a>) (*<a href="index.html#InvocationResponse">InvocationResponse</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>HandleInvocation processes an invocation with telemetry
+
+				
+				
+				
+			
+				
+				<h3 id="InstrumentedHTTPServer.RegisterAgent">func (*InstrumentedHTTPServer) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=1581:1669#L47">RegisterAgent</a>
+					<a class="permalink" href="index.html#InstrumentedHTTPServer.RegisterAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InstrumentedHTTPServer">InstrumentedHTTPServer</a>) RegisterAgent(agent <a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a>, card *<a href="index.html#AgentCard">AgentCard</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>RegisterAgent registers an agent with telemetry
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="InstrumentedRemoteAgentWrapper">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=7817:7909#L256">InstrumentedRemoteAgentWrapper</a>
+				<a class="permalink" href="index.html#InstrumentedRemoteAgentWrapper">&#xb6;</a>
+				
+				
+			</h2>
+			<p>InstrumentedRemoteAgentWrapper wraps RemoteAgentWrapper with telemetry
+
+			<pre>type InstrumentedRemoteAgentWrapper struct {
+    *<a href="index.html#RemoteAgentWrapper">RemoteAgentWrapper</a>
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewInstrumentedRemoteAgentWrapper">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=7981:8087#L262">NewInstrumentedRemoteAgentWrapper</a>
+					<a class="permalink" href="index.html#NewInstrumentedRemoteAgentWrapper">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewInstrumentedRemoteAgentWrapper(info *<a href="index.html#AgentInfo">AgentInfo</a>, tel *<a href="index.html#A2ATelemetry">A2ATelemetry</a>) *<a href="index.html#InstrumentedRemoteAgentWrapper">InstrumentedRemoteAgentWrapper</a></pre>
+				<p>NewInstrumentedRemoteAgentWrapper creates a wrapper with telemetry
+
+				
+				
+			
+
+			
+				
+				<h3 id="InstrumentedRemoteAgentWrapper.Execute">func (*InstrumentedRemoteAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/instrumented.go?s=8266:8388#L270">Execute</a>
+					<a class="permalink" href="index.html#InstrumentedRemoteAgentWrapper.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#InstrumentedRemoteAgentWrapper">InstrumentedRemoteAgentWrapper</a>) Execute(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Execute invokes the remote agent with telemetry
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="InvocationRequest">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=4462:4684#L128">InvocationRequest</a>
+				<a class="permalink" href="index.html#InvocationRequest">&#xb6;</a>
+				
+				
+			</h2>
+			<p>InvocationRequest represents an agent invocation (JSON-RPC 2.0)
+
+			<pre>type InvocationRequest struct {
+<span id="InvocationRequest.JSONRPC"></span>    JSONRPC <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;jsonrpc&#34;`
+<span id="InvocationRequest.ID"></span>    ID      <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;id&#34;`
+<span id="InvocationRequest.Method"></span>    Method  <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;method&#34;`
+<span id="InvocationRequest.Params"></span>    Params  map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;params&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="InvocationResponse">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=4747:4945#L136">InvocationResponse</a>
+				<a class="permalink" href="index.html#InvocationResponse">&#xb6;</a>
+				
+				
+			</h2>
+			<p>InvocationResponse represents the response (JSON-RPC 2.0)
+
+			<pre>type InvocationResponse struct {
+<span id="InvocationResponse.JSONRPC"></span>    JSONRPC <a href="http://localhost:6060/pkg/builtin/#string">string</a>      `json:&#34;jsonrpc&#34;`
+<span id="InvocationResponse.ID"></span>    ID      <a href="http://localhost:6060/pkg/builtin/#string">string</a>      `json:&#34;id&#34;`
+<span id="InvocationResponse.Result"></span>    Result  interface{} `json:&#34;result,omitempty&#34;`
+<span id="InvocationResponse.Error"></span>    Error   *<a href="index.html#RPCError">RPCError</a>   `json:&#34;error,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Modality">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=2862:2882#L71">Modality</a>
+				<a class="permalink" href="index.html#Modality">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Modality defines interaction modes
+
+			<pre>type Modality <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="ModalityText">ModalityText</span>   <a href="index.html#Modality">Modality</a> = &#34;text&#34;
+    <span id="ModalityForm">ModalityForm</span>   <a href="index.html#Modality">Modality</a> = &#34;form&#34;
+    <span id="ModalityMedia">ModalityMedia</span>  <a href="index.html#Modality">Modality</a> = &#34;media&#34;
+    <span id="ModalityStream">ModalityStream</span> <a href="index.html#Modality">Modality</a> = &#34;stream&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="RPCError">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=4987:5129#L144">RPCError</a>
+				<a class="permalink" href="index.html#RPCError">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RPCError represents a JSON-RPC error
+
+			<pre>type RPCError struct {
+<span id="RPCError.Code"></span>    Code    <a href="http://localhost:6060/pkg/builtin/#int">int</a>         `json:&#34;code&#34;`
+<span id="RPCError.Message"></span>    Message <a href="http://localhost:6060/pkg/builtin/#string">string</a>      `json:&#34;message&#34;`
+<span id="RPCError.Data"></span>    Data    interface{} `json:&#34;data,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="RemoteAgentWrapper">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=8274:8442#L317">RemoteAgentWrapper</a>
+				<a class="permalink" href="index.html#RemoteAgentWrapper">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RemoteAgentWrapper wraps a remote agent for A2A communication
+It implements the agent.Agent interface and delegates execution to the remote endpoint
+
+			<pre>type RemoteAgentWrapper struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewRemoteAgentWrapper">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=8506:8569#L327">NewRemoteAgentWrapper</a>
+					<a class="permalink" href="index.html#NewRemoteAgentWrapper">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewRemoteAgentWrapper(info *<a href="index.html#AgentInfo">AgentInfo</a>) *<a href="index.html#RemoteAgentWrapper">RemoteAgentWrapper</a></pre>
+				<p>NewRemoteAgentWrapper creates a wrapper for a remote agent
+
+				
+				
+			
+
+			
+				
+				<h3 id="RemoteAgentWrapper.Capabilities">func (*RemoteAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=9089:9141#L355">Capabilities</a>
+					<a class="permalink" href="index.html#RemoteAgentWrapper.Capabilities">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RemoteAgentWrapper">RemoteAgentWrapper</a>) Capabilities() []<a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RemoteAgentWrapper.Dependencies">func (*RemoteAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=9170:9227#L359">Dependencies</a>
+					<a class="permalink" href="index.html#RemoteAgentWrapper.Dependencies">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RemoteAgentWrapper">RemoteAgentWrapper</a>) Dependencies() []<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RemoteAgentWrapper.Description">func (*RemoteAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=8944:8993#L348">Description</a>
+					<a class="permalink" href="index.html#RemoteAgentWrapper.Description">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RemoteAgentWrapper">RemoteAgentWrapper</a>) Description() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RemoteAgentWrapper.Execute">func (*RemoteAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=9389:9499#L368">Execute</a>
+					<a class="permalink" href="index.html#RemoteAgentWrapper.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RemoteAgentWrapper">RemoteAgentWrapper</a>) Execute(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Execute invokes the remote agent via HTTP JSON-RPC 2.0
+
+				
+				
+				
+			
+				
+				<h3 id="RemoteAgentWrapper.ID">func (*RemoteAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=8822:8862#L340">ID</a>
+					<a class="permalink" href="index.html#RemoteAgentWrapper.ID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RemoteAgentWrapper">RemoteAgentWrapper</a>) ID() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RemoteAgentWrapper.Name">func (*RemoteAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=8881:8923#L344">Name</a>
+					<a class="permalink" href="index.html#RemoteAgentWrapper.Name">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RemoteAgentWrapper">RemoteAgentWrapper</a>) Name() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RemoteAgentWrapper.Partition">func (*RemoteAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=9257:9304#L363">Partition</a>
+					<a class="permalink" href="index.html#RemoteAgentWrapper.Partition">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RemoteAgentWrapper">RemoteAgentWrapper</a>) Partition() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SSEEvent">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=233:429#L7">SSEEvent</a>
+				<a class="permalink" href="index.html#SSEEvent">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SSEEvent represents a Server-Sent Event
+
+			<pre>type SSEEvent struct {
+<span id="SSEEvent.ID"></span>    ID    <a href="http://localhost:6060/pkg/builtin/#string">string</a>      `json:&#34;id,omitempty&#34;`
+<span id="SSEEvent.Event"></span>    Event <a href="http://localhost:6060/pkg/builtin/#string">string</a>      `json:&#34;event,omitempty&#34;`
+<span id="SSEEvent.Data"></span>    Data  interface{} `json:&#34;data,omitempty&#34;`
+<span id="SSEEvent.Retry"></span>    Retry <a href="http://localhost:6060/pkg/builtin/#int">int</a>         `json:&#34;retry,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="SSEReader">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=487:534#L15">SSEReader</a>
+				<a class="permalink" href="index.html#SSEReader">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SSEReader reads Server-Sent Events from an io.Reader
+
+			<pre>type SSEReader struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewSSEReader">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=577:618#L20">NewSSEReader</a>
+					<a class="permalink" href="index.html#NewSSEReader">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSSEReader(r <a href="http://localhost:6060/pkg/io/">io</a>.<a href="http://localhost:6060/pkg/io/#Reader">Reader</a>) *<a href="index.html#SSEReader">SSEReader</a></pre>
+				<p>NewSSEReader creates a new SSE reader
+
+				
+				
+			
+
+			
+				
+				<h3 id="SSEReader.ReadEvent">func (*SSEReader) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=781:831#L28">ReadEvent</a>
+					<a class="permalink" href="index.html#SSEReader.ReadEvent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#SSEReader">SSEReader</a>) ReadEvent() (*<a href="index.html#SSEEvent">SSEEvent</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ReadEvent reads the next SSE event from the stream
+Returns nil, nil for empty events (keep-alive)
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SSEStreamHandler">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=4887:5008#L208">SSEStreamHandler</a>
+				<a class="permalink" href="index.html#SSEStreamHandler">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SSEStreamHandler handles SSE streaming for A2A server
+
+			<pre>type SSEStreamHandler struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewSSEStreamHandler">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=5066:5195#L213">NewSSEStreamHandler</a>
+					<a class="permalink" href="index.html#NewSSEStreamHandler">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSSEStreamHandler(handler func(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, req *<a href="index.html#InvocationRequest">InvocationRequest</a>) (&lt;-chan interface{}, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)) *<a href="index.html#SSEStreamHandler">SSEStreamHandler</a></pre>
+				<p>NewSSEStreamHandler creates a new SSE stream handler
+
+				
+				
+			
+
+			
+				
+				<h3 id="SSEStreamHandler.ServeHTTP">func (*SSEStreamHandler) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=5308:5384#L220">ServeHTTP</a>
+					<a class="permalink" href="index.html#SSEStreamHandler.ServeHTTP">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (h *<a href="index.html#SSEStreamHandler">SSEStreamHandler</a>) ServeHTTP(w <a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#ResponseWriter">ResponseWriter</a>, r *<a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#Request">Request</a>)</pre>
+				<p>ServeHTTP implements http.Handler for SSE streaming
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SSEWriter">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=2704:2780#L112">SSEWriter</a>
+				<a class="permalink" href="index.html#SSEWriter">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SSEWriter writes Server-Sent Events to an http.ResponseWriter
+
+			<pre>type SSEWriter struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewSSEWriter">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=2823:2883#L118">NewSSEWriter</a>
+					<a class="permalink" href="index.html#NewSSEWriter">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSSEWriter(w <a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#ResponseWriter">ResponseWriter</a>) (*<a href="index.html#SSEWriter">SSEWriter</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewSSEWriter creates a new SSE writer
+
+				
+				
+			
+
+			
+				
+				<h3 id="SSEWriter.Close">func (*SSEWriter) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=4683:4716#L200">Close</a>
+					<a class="permalink" href="index.html#SSEWriter.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (w *<a href="index.html#SSEWriter">SSEWriter</a>) Close() <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Close writes a done event and closes the stream
+
+				
+				
+				
+			
+				
+				<h3 id="SSEWriter.WriteComment">func (*SSEWriter) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=4459:4513#L190">WriteComment</a>
+					<a class="permalink" href="index.html#SSEWriter.WriteComment">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (w *<a href="index.html#SSEWriter">SSEWriter</a>) WriteComment(comment <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>WriteComment writes an SSE comment (for keep-alive)
+
+				
+				
+				
+			
+				
+				<h3 id="SSEWriter.WriteData">func (*SSEWriter) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=4301:4354#L185">WriteData</a>
+					<a class="permalink" href="index.html#SSEWriter.WriteData">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (w *<a href="index.html#SSEWriter">SSEWriter</a>) WriteData(data interface{}) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>WriteData writes a simple data-only event
+
+				
+				
+				
+			
+				
+				<h3 id="SSEWriter.WriteEvent">func (*SSEWriter) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=3313:3366#L137">WriteEvent</a>
+					<a class="permalink" href="index.html#SSEWriter.WriteEvent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (w *<a href="index.html#SSEWriter">SSEWriter</a>) WriteEvent(event *<a href="index.html#SSEEvent">SSEEvent</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>WriteEvent writes an SSE event to the stream
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SimpleAgentWrapper">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=11585:11645#L441">SimpleAgentWrapper</a>
+				<a class="permalink" href="index.html#SimpleAgentWrapper">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SimpleAgentWrapper is kept for backward compatibility with local agents
+Use RemoteAgentWrapper for remote A2A agents
+
+			<pre>type SimpleAgentWrapper struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="SimpleAgentWrapper.Capabilities">func (*SimpleAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=11858:11910#L458">Capabilities</a>
+					<a class="permalink" href="index.html#SimpleAgentWrapper.Capabilities">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleAgentWrapper">SimpleAgentWrapper</a>) Capabilities() []<a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="SimpleAgentWrapper.Dependencies">func (*SimpleAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=11935:11992#L462">Dependencies</a>
+					<a class="permalink" href="index.html#SimpleAgentWrapper.Dependencies">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleAgentWrapper">SimpleAgentWrapper</a>) Dependencies() []<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="SimpleAgentWrapper.Description">func (*SimpleAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=11769:11818#L454">Description</a>
+					<a class="permalink" href="index.html#SimpleAgentWrapper.Description">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleAgentWrapper">SimpleAgentWrapper</a>) Description() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="SimpleAgentWrapper.Execute">func (*SimpleAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=12095:12205#L470">Execute</a>
+					<a class="permalink" href="index.html#SimpleAgentWrapper.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleAgentWrapper">SimpleAgentWrapper</a>) Execute(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="SimpleAgentWrapper.ID">func (*SimpleAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=11647:11687#L446">ID</a>
+					<a class="permalink" href="index.html#SimpleAgentWrapper.ID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleAgentWrapper">SimpleAgentWrapper</a>) ID() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="SimpleAgentWrapper.Name">func (*SimpleAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=11706:11748#L450">Name</a>
+					<a class="permalink" href="index.html#SimpleAgentWrapper.Name">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleAgentWrapper">SimpleAgentWrapper</a>) Name() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="SimpleAgentWrapper.Partition">func (*SimpleAgentWrapper) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/http_server.go?s=12022:12069#L466">Partition</a>
+					<a class="permalink" href="index.html#SimpleAgentWrapper.Partition">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleAgentWrapper">SimpleAgentWrapper</a>) Partition() <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="StreamChunk">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/protocol.go?s=5183:5303#L151">StreamChunk</a>
+				<a class="permalink" href="index.html#StreamChunk">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StreamChunk represents a chunk of streaming data
+
+			<pre>type StreamChunk struct {
+<span id="StreamChunk.ID"></span>    ID        <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="StreamChunk.Sequence"></span>    Sequence  <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+<span id="StreamChunk.Data"></span>    Data      interface{}
+<span id="StreamChunk.Final"></span>    Final     <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+<span id="StreamChunk.Timestamp"></span>    Timestamp <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="StreamOutputType">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=7561:7589#L308">StreamOutputType</a>
+				<a class="permalink" href="index.html#StreamOutputType">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StreamOutputType defines types of stream output
+
+			<pre>type StreamOutputType <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="StreamOutputText">StreamOutputText</span>       <a href="index.html#StreamOutputType">StreamOutputType</a> = &#34;text&#34;
+    <span id="StreamOutputThinking">StreamOutputThinking</span>   <a href="index.html#StreamOutputType">StreamOutputType</a> = &#34;thinking&#34;
+    <span id="StreamOutputToolCall">StreamOutputToolCall</span>   <a href="index.html#StreamOutputType">StreamOutputType</a> = &#34;tool_call&#34;
+    <span id="StreamOutputToolResult">StreamOutputToolResult</span> <a href="index.html#StreamOutputType">StreamOutputType</a> = &#34;tool_result&#34;
+    <span id="StreamOutputComplete">StreamOutputComplete</span>   <a href="index.html#StreamOutputType">StreamOutputType</a> = &#34;complete&#34;
+    <span id="StreamOutputError">StreamOutputError</span>      <a href="index.html#StreamOutputType">StreamOutputType</a> = &#34;error&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="StreamingAgent">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/a2a/sse.go?s=6718:6847#L287">StreamingAgent</a>
+				<a class="permalink" href="index.html#StreamingAgent">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StreamingAgent interface for agents that support streaming
+
+			<pre>type StreamingAgent interface {
+    ExecuteStream(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, input *<a href="index.html#AgentStreamInput">AgentStreamInput</a>) (&lt;-chan *<a href="index.html#AgentStreamOutput">AgentStreamOutput</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://localhost:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

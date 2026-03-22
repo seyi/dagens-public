@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>manifest - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://localhost:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://localhost:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://localhost:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package manifest
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/manifest"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package manifest provides YAML manifest parsing and validation
+<p>Package manifest provides YAML-based agent and orchestration definitions
+Inspired by Kubernetes-style declarative configuration
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+				
+				<dd><a href="index.html#AgentManifestToYAML">func AgentManifestToYAML(manifest *AgentManifest) ([]byte, error)</a></dd>
+			
+				
+				<dd><a href="index.html#OrchestrationManifestToYAML">func OrchestrationManifestToYAML(manifest *OrchestrationManifest) ([]byte, error)</a></dd>
+			
+				
+				<dd><a href="index.html#WriteAgentManifest">func WriteAgentManifest(manifest *AgentManifest, path string) error</a></dd>
+			
+				
+				<dd><a href="index.html#WriteOrchestrationManifest">func WriteOrchestrationManifest(manifest *OrchestrationManifest, path string) error</a></dd>
+			
+			
+				
+				<dd><a href="index.html#AgentManifest">type AgentManifest</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentMetadata">type AgentMetadata</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentPhase">type AgentPhase</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentRef">type AgentRef</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentSpec">type AgentSpec</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentStatus">type AgentStatus</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AuthSpec">type AuthSpec</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#CommunicationSpec">type CommunicationSpec</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#DockerRuntimeSpec">type DockerRuntimeSpec</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#EnvVar">type EnvVar</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ExternalRuntimeSpec">type ExternalRuntimeSpec</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#GoRuntimeSpec">type GoRuntimeSpec</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#HealthCheckSpec">type HealthCheckSpec</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MCPToolRef">type MCPToolRef</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#OrchestrationManifest">type OrchestrationManifest</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#OrchestrationSpec">type OrchestrationSpec</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#OrchestratorSettings">type OrchestratorSettings</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Parser">type Parser</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewParser">func NewParser(basePath string) *Parser</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Parser.ParseAgentManifest">func (p *Parser) ParseAgentManifest(path string) (*AgentManifest, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Parser.ParseAgentManifestBytes">func (p *Parser) ParseAgentManifestBytes(data []byte) (*AgentManifest, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Parser.ParseAgentManifestReader">func (p *Parser) ParseAgentManifestReader(r io.Reader) (*AgentManifest, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Parser.ParseAny">func (p *Parser) ParseAny(path string) (interface{}, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Parser.ParseDirectory">func (p *Parser) ParseDirectory(dir string) ([]*AgentManifest, []*OrchestrationManifest, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Parser.ParseOrchestrationManifest">func (p *Parser) ParseOrchestrationManifest(path string) (*OrchestrationManifest, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Parser.ParseOrchestrationManifestBytes">func (p *Parser) ParseOrchestrationManifestBytes(data []byte) (*OrchestrationManifest, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#PortSpec">type PortSpec</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#PythonRuntimeSpec">type PythonRuntimeSpec</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ResourceSpec">type ResourceSpec</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#RetryPolicy">type RetryPolicy</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#RuntimeSpec">type RuntimeSpec</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#RuntimeType">type RuntimeType</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#SecretRef">type SecretRef</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#TLSSpec">type TLSSpec</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ToolRef">type ToolRef</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#TransferRule">type TransferRule</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#VolumeSpec">type VolumeSpec</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/parser.go">parser.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go">types.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+			
+			
+			<h2 id="AgentManifestToYAML">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/parser.go?s=7400:7465#L283">AgentManifestToYAML</a>
+				<a class="permalink" href="index.html#AgentManifestToYAML">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func AgentManifestToYAML(manifest *<a href="index.html#AgentManifest">AgentManifest</a>) ([]<a href="http://localhost:6060/pkg/builtin/#byte">byte</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+			<p>AgentManifestToYAML converts an agent manifest to YAML bytes
+
+			
+			
+
+		
+			
+			
+			<h2 id="OrchestrationManifestToYAML">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/parser.go?s=7582:7663#L288">OrchestrationManifestToYAML</a>
+				<a class="permalink" href="index.html#OrchestrationManifestToYAML">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func OrchestrationManifestToYAML(manifest *<a href="index.html#OrchestrationManifest">OrchestrationManifest</a>) ([]<a href="http://localhost:6060/pkg/builtin/#byte">byte</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+			<p>OrchestrationManifestToYAML converts an orchestration manifest to YAML bytes
+
+			
+			
+
+		
+			
+			
+			<h2 id="WriteAgentManifest">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/parser.go?s=6789:6856#L263">WriteAgentManifest</a>
+				<a class="permalink" href="index.html#WriteAgentManifest">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func WriteAgentManifest(manifest *<a href="index.html#AgentManifest">AgentManifest</a>, path <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+			<p>WriteAgentManifest writes an agent manifest to a file
+
+			
+			
+
+		
+			
+			
+			<h2 id="WriteOrchestrationManifest">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/parser.go?s=7091:7174#L273">WriteOrchestrationManifest</a>
+				<a class="permalink" href="index.html#WriteOrchestrationManifest">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func WriteOrchestrationManifest(manifest *<a href="index.html#OrchestrationManifest">OrchestrationManifest</a>, path <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+			<p>WriteOrchestrationManifest writes an orchestration manifest to a file
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="AgentManifest">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=221:574#L1">AgentManifest</a>
+				<a class="permalink" href="index.html#AgentManifest">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentManifest defines an agent in YAML format
+
+			<pre>type AgentManifest struct {
+<span id="AgentManifest.APIVersion"></span>    APIVersion <a href="http://localhost:6060/pkg/builtin/#string">string</a>        `yaml:&#34;apiVersion&#34; json:&#34;apiVersion&#34;`
+<span id="AgentManifest.Kind"></span>    Kind       <a href="http://localhost:6060/pkg/builtin/#string">string</a>        `yaml:&#34;kind&#34; json:&#34;kind&#34;`
+<span id="AgentManifest.Metadata"></span>    Metadata   <a href="index.html#AgentMetadata">AgentMetadata</a> `yaml:&#34;metadata&#34; json:&#34;metadata&#34;`
+<span id="AgentManifest.Spec"></span>    Spec       <a href="index.html#AgentSpec">AgentSpec</a>     `yaml:&#34;spec&#34; json:&#34;spec&#34;`
+<span id="AgentManifest.Status"></span>    Status     *<a href="index.html#AgentStatus">AgentStatus</a>  `yaml:&#34;status,omitempty&#34; json:&#34;status,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentMetadata">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=635:980#L9">AgentMetadata</a>
+				<a class="permalink" href="index.html#AgentMetadata">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentMetadata contains agent identification information
+
+			<pre>type AgentMetadata struct {
+<span id="AgentMetadata.Name"></span>    Name        <a href="http://localhost:6060/pkg/builtin/#string">string</a>            `yaml:&#34;name&#34; json:&#34;name&#34;`
+<span id="AgentMetadata.Namespace"></span>    Namespace   <a href="http://localhost:6060/pkg/builtin/#string">string</a>            `yaml:&#34;namespace,omitempty&#34; json:&#34;namespace,omitempty&#34;`
+<span id="AgentMetadata.Labels"></span>    Labels      map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]<a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;labels,omitempty&#34; json:&#34;labels,omitempty&#34;`
+<span id="AgentMetadata.Annotations"></span>    Annotations map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]<a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;annotations,omitempty&#34; json:&#34;annotations,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentPhase">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=9449:9471#L265">AgentPhase</a>
+				<a class="permalink" href="index.html#AgentPhase">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentPhase represents the lifecycle phase of an agent
+
+			<pre>type AgentPhase <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="AgentPhasePending">AgentPhasePending</span>   <a href="index.html#AgentPhase">AgentPhase</a> = &#34;Pending&#34;
+    <span id="AgentPhaseStarting">AgentPhaseStarting</span>  <a href="index.html#AgentPhase">AgentPhase</a> = &#34;Starting&#34;
+    <span id="AgentPhaseRunning">AgentPhaseRunning</span>   <a href="index.html#AgentPhase">AgentPhase</a> = &#34;Running&#34;
+    <span id="AgentPhaseHealthy">AgentPhaseHealthy</span>   <a href="index.html#AgentPhase">AgentPhase</a> = &#34;Healthy&#34;
+    <span id="AgentPhaseUnhealthy">AgentPhaseUnhealthy</span> <a href="index.html#AgentPhase">AgentPhase</a> = &#34;Unhealthy&#34;
+    <span id="AgentPhaseStopping">AgentPhaseStopping</span>  <a href="index.html#AgentPhase">AgentPhase</a> = &#34;Stopping&#34;
+    <span id="AgentPhaseStopped">AgentPhaseStopped</span>   <a href="index.html#AgentPhase">AgentPhase</a> = &#34;Stopped&#34;
+    <span id="AgentPhaseFailed">AgentPhaseFailed</span>    <a href="index.html#AgentPhase">AgentPhase</a> = &#34;Failed&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentRef">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=10717:10931#L302">AgentRef</a>
+				<a class="permalink" href="index.html#AgentRef">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentRef references an agent
+
+			<pre>type AgentRef struct {
+<span id="AgentRef.Name"></span>    Name      <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;name&#34; json:&#34;name&#34;`
+<span id="AgentRef.Manifest"></span>    Manifest  <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;manifest,omitempty&#34; json:&#34;manifest,omitempty&#34;`
+<span id="AgentRef.Namespace"></span>    Namespace <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;namespace,omitempty&#34; json:&#34;namespace,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentSpec">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=1029:1962#L17">AgentSpec</a>
+				<a class="permalink" href="index.html#AgentSpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentSpec defines the agent&apos;s configuration
+
+			<pre>type AgentSpec struct {
+<span id="AgentSpec.Runtime"></span>    <span class="comment">// Runtime configuration</span>
+    Runtime <a href="index.html#RuntimeSpec">RuntimeSpec</a> `yaml:&#34;runtime&#34; json:&#34;runtime&#34;`
+
+    <span class="comment">// Agent capabilities</span>
+<span id="AgentSpec.Capabilities"></span>    Capabilities []<a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;capabilities,omitempty&#34; json:&#34;capabilities,omitempty&#34;`
+
+<span id="AgentSpec.Communication"></span>    <span class="comment">// Communication settings</span>
+    Communication <a href="index.html#CommunicationSpec">CommunicationSpec</a> `yaml:&#34;communication,omitempty&#34; json:&#34;communication,omitempty&#34;`
+
+<span id="AgentSpec.Resources"></span>    <span class="comment">// Resources and limits</span>
+    Resources <a href="index.html#ResourceSpec">ResourceSpec</a> `yaml:&#34;resources,omitempty&#34; json:&#34;resources,omitempty&#34;`
+
+    <span class="comment">// Health check configuration</span>
+<span id="AgentSpec.HealthCheck"></span>    HealthCheck *<a href="index.html#HealthCheckSpec">HealthCheckSpec</a> `yaml:&#34;healthCheck,omitempty&#34; json:&#34;healthCheck,omitempty&#34;`
+
+    <span class="comment">// Environment variables</span>
+<span id="AgentSpec.Env"></span>    Env []<a href="index.html#EnvVar">EnvVar</a> `yaml:&#34;env,omitempty&#34; json:&#34;env,omitempty&#34;`
+
+<span id="AgentSpec.Tools"></span>    <span class="comment">// Tools available to the agent</span>
+    Tools []<a href="index.html#ToolRef">ToolRef</a> `yaml:&#34;tools,omitempty&#34; json:&#34;tools,omitempty&#34;`
+
+    <span class="comment">// Dependencies on other agents</span>
+<span id="AgentSpec.DependsOn"></span>    DependsOn []<a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;dependsOn,omitempty&#34; json:&#34;dependsOn,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentStatus">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=9021:9390#L256">AgentStatus</a>
+				<a class="permalink" href="index.html#AgentStatus">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentStatus represents the current status of an agent
+
+			<pre>type AgentStatus struct {
+<span id="AgentStatus.Phase"></span>    Phase       <a href="index.html#AgentPhase">AgentPhase</a> `yaml:&#34;phase&#34; json:&#34;phase&#34;`
+<span id="AgentStatus.Ready"></span>    Ready       <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>       `yaml:&#34;ready&#34; json:&#34;ready&#34;`
+<span id="AgentStatus.Endpoint"></span>    Endpoint    <a href="http://localhost:6060/pkg/builtin/#string">string</a>     `yaml:&#34;endpoint,omitempty&#34; json:&#34;endpoint,omitempty&#34;`
+<span id="AgentStatus.LastUpdated"></span>    LastUpdated <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a>  `yaml:&#34;lastUpdated,omitempty&#34; json:&#34;lastUpdated,omitempty&#34;`
+<span id="AgentStatus.Message"></span>    Message     <a href="http://localhost:6060/pkg/builtin/#string">string</a>     `yaml:&#34;message,omitempty&#34; json:&#34;message,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AuthSpec">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=8419:8644#L241">AuthSpec</a>
+				<a class="permalink" href="index.html#AuthSpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AuthSpec defines authentication configuration
+
+			<pre>type AuthSpec struct {
+<span id="AuthSpec.Type"></span>    Type   <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;type&#34; json:&#34;type&#34;` <span class="comment">// bearer, basic, api_key, mtls</span>
+<span id="AuthSpec.Token"></span>    Token  <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;token,omitempty&#34; json:&#34;token,omitempty&#34;`
+<span id="AuthSpec.Header"></span>    Header <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;header,omitempty&#34; json:&#34;header,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="CommunicationSpec">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=5107:5628#L141">CommunicationSpec</a>
+				<a class="permalink" href="index.html#CommunicationSpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CommunicationSpec defines communication settings
+
+			<pre>type CommunicationSpec struct {
+<span id="CommunicationSpec.Protocol"></span>    <span class="comment">// Protocol: http, grpc</span>
+    Protocol <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;protocol,omitempty&#34; json:&#34;protocol,omitempty&#34;`
+
+<span id="CommunicationSpec.Port"></span>    <span class="comment">// Port to listen on</span>
+    Port <a href="http://localhost:6060/pkg/builtin/#int">int</a> `yaml:&#34;port,omitempty&#34; json:&#34;port,omitempty&#34;`
+
+    <span class="comment">// Supported modalities</span>
+<span id="CommunicationSpec.Modalities"></span>    Modalities []<a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;modalities,omitempty&#34; json:&#34;modalities,omitempty&#34;`
+
+<span id="CommunicationSpec.Streaming"></span>    <span class="comment">// Streaming support</span>
+    Streaming <a href="http://localhost:6060/pkg/builtin/#bool">bool</a> `yaml:&#34;streaming,omitempty&#34; json:&#34;streaming,omitempty&#34;`
+
+<span id="CommunicationSpec.TLS"></span>    <span class="comment">// TLS configuration</span>
+    TLS *<a href="index.html#TLSSpec">TLSSpec</a> `yaml:&#34;tls,omitempty&#34; json:&#34;tls,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="DockerRuntimeSpec">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=4101:4794#L108">DockerRuntimeSpec</a>
+				<a class="permalink" href="index.html#DockerRuntimeSpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DockerRuntimeSpec defines Docker agent configuration
+
+			<pre>type DockerRuntimeSpec struct {
+    <span class="comment">// Docker image</span>
+<span id="DockerRuntimeSpec.Image"></span>    Image <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;image&#34; json:&#34;image&#34;`
+
+    <span class="comment">// Pull policy: Always, IfNotPresent, Never</span>
+<span id="DockerRuntimeSpec.PullPolicy"></span>    PullPolicy <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;pullPolicy,omitempty&#34; json:&#34;pullPolicy,omitempty&#34;`
+
+<span id="DockerRuntimeSpec.Command"></span>    <span class="comment">// Command to run</span>
+    Command []<a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;command,omitempty&#34; json:&#34;command,omitempty&#34;`
+
+    <span class="comment">// Container arguments</span>
+<span id="DockerRuntimeSpec.Args"></span>    Args []<a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;args,omitempty&#34; json:&#34;args,omitempty&#34;`
+
+    <span class="comment">// Port mappings</span>
+<span id="DockerRuntimeSpec.Ports"></span>    Ports []<a href="index.html#PortSpec">PortSpec</a> `yaml:&#34;ports,omitempty&#34; json:&#34;ports,omitempty&#34;`
+
+    <span class="comment">// Volume mounts</span>
+<span id="DockerRuntimeSpec.Volumes"></span>    Volumes []<a href="index.html#VolumeSpec">VolumeSpec</a> `yaml:&#34;volumes,omitempty&#34; json:&#34;volumes,omitempty&#34;`
+
+<span id="DockerRuntimeSpec.Network"></span>    <span class="comment">// Network mode</span>
+    Network <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;network,omitempty&#34; json:&#34;network,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="EnvVar">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=6998:7225#L195">EnvVar</a>
+				<a class="permalink" href="index.html#EnvVar">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EnvVar defines an environment variable
+
+			<pre>type EnvVar struct {
+<span id="EnvVar.Name"></span>    Name  <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;name&#34; json:&#34;name&#34;`
+<span id="EnvVar.Value"></span>    Value <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;value,omitempty&#34; json:&#34;value,omitempty&#34;`
+
+    <span class="comment">// Reference to secret</span>
+<span id="EnvVar.SecretRef"></span>    SecretRef *<a href="index.html#SecretRef">SecretRef</a> `yaml:&#34;secretRef,omitempty&#34; json:&#34;secretRef,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ExternalRuntimeSpec">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=4856:5053#L132">ExternalRuntimeSpec</a>
+				<a class="permalink" href="index.html#ExternalRuntimeSpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ExternalRuntimeSpec defines external agent configuration
+
+			<pre>type ExternalRuntimeSpec struct {
+<span id="ExternalRuntimeSpec.Endpoint"></span>    <span class="comment">// Endpoint URL</span>
+    Endpoint <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;endpoint&#34; json:&#34;endpoint&#34;`
+
+    <span class="comment">// Authentication</span>
+<span id="ExternalRuntimeSpec.Auth"></span>    Auth *<a href="index.html#AuthSpec">AuthSpec</a> `yaml:&#34;auth,omitempty&#34; json:&#34;auth,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="GoRuntimeSpec">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=3745:4043#L96">GoRuntimeSpec</a>
+				<a class="permalink" href="index.html#GoRuntimeSpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>GoRuntimeSpec defines Go agent configuration
+
+			<pre>type GoRuntimeSpec struct {
+<span id="GoRuntimeSpec.Package"></span>    <span class="comment">// Package path</span>
+    Package <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;package&#34; json:&#34;package&#34;`
+
+    <span class="comment">// Build tags</span>
+<span id="GoRuntimeSpec.BuildTags"></span>    BuildTags []<a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;buildTags,omitempty&#34; json:&#34;buildTags,omitempty&#34;`
+
+<span id="GoRuntimeSpec.Binary"></span>    <span class="comment">// Binary path (if pre-built)</span>
+    Binary <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;binary,omitempty&#34; json:&#34;binary,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="HealthCheckSpec">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=6208:6954#L174">HealthCheckSpec</a>
+				<a class="permalink" href="index.html#HealthCheckSpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HealthCheckSpec defines health check configuration
+
+			<pre>type HealthCheckSpec struct {
+<span id="HealthCheckSpec.Endpoint"></span>    <span class="comment">// Endpoint to check</span>
+    Endpoint <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;endpoint,omitempty&#34; json:&#34;endpoint,omitempty&#34;`
+
+    <span class="comment">// Check interval</span>
+<span id="HealthCheckSpec.Interval"></span>    Interval <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;interval,omitempty&#34; json:&#34;interval,omitempty&#34;`
+
+<span id="HealthCheckSpec.Timeout"></span>    <span class="comment">// Timeout for health check</span>
+    Timeout <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;timeout,omitempty&#34; json:&#34;timeout,omitempty&#34;`
+
+    <span class="comment">// Number of failures before unhealthy</span>
+<span id="HealthCheckSpec.FailureThreshold"></span>    FailureThreshold <a href="http://localhost:6060/pkg/builtin/#int">int</a> `yaml:&#34;failureThreshold,omitempty&#34; json:&#34;failureThreshold,omitempty&#34;`
+
+    <span class="comment">// Number of successes before healthy</span>
+<span id="HealthCheckSpec.SuccessThreshold"></span>    SuccessThreshold <a href="http://localhost:6060/pkg/builtin/#int">int</a> `yaml:&#34;successThreshold,omitempty&#34; json:&#34;successThreshold,omitempty&#34;`
+
+    <span class="comment">// Initial delay before first check</span>
+<span id="HealthCheckSpec.InitialDelay"></span>    InitialDelay <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;initialDelay,omitempty&#34; json:&#34;initialDelay,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="MCPToolRef">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=7686:7826#L221">MCPToolRef</a>
+				<a class="permalink" href="index.html#MCPToolRef">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MCPToolRef references an MCP server
+
+			<pre>type MCPToolRef struct {
+<span id="MCPToolRef.Server"></span>    Server <a href="http://localhost:6060/pkg/builtin/#string">string</a>   `yaml:&#34;server&#34; json:&#34;server&#34;`
+<span id="MCPToolRef.Tools"></span>    Tools  []<a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;tools,omitempty&#34; json:&#34;tools,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="OrchestrationManifest">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=9910:10207#L279">OrchestrationManifest</a>
+				<a class="permalink" href="index.html#OrchestrationManifest">&#xb6;</a>
+				
+				
+			</h2>
+			<p>OrchestrationManifest defines an orchestration flow
+
+			<pre>type OrchestrationManifest struct {
+<span id="OrchestrationManifest.APIVersion"></span>    APIVersion <a href="http://localhost:6060/pkg/builtin/#string">string</a>            `yaml:&#34;apiVersion&#34; json:&#34;apiVersion&#34;`
+<span id="OrchestrationManifest.Kind"></span>    Kind       <a href="http://localhost:6060/pkg/builtin/#string">string</a>            `yaml:&#34;kind&#34; json:&#34;kind&#34;`
+<span id="OrchestrationManifest.Metadata"></span>    Metadata   <a href="index.html#AgentMetadata">AgentMetadata</a>     `yaml:&#34;metadata&#34; json:&#34;metadata&#34;`
+<span id="OrchestrationManifest.Spec"></span>    Spec       <a href="index.html#OrchestrationSpec">OrchestrationSpec</a> `yaml:&#34;spec&#34; json:&#34;spec&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="OrchestrationSpec">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=10270:10683#L287">OrchestrationSpec</a>
+				<a class="permalink" href="index.html#OrchestrationSpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>OrchestrationSpec defines the orchestration configuration
+
+			<pre>type OrchestrationSpec struct {
+    <span class="comment">// Entry point agent</span>
+<span id="OrchestrationSpec.EntryPoint"></span>    EntryPoint <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;entryPoint&#34; json:&#34;entryPoint&#34;`
+
+    <span class="comment">// Agent references</span>
+<span id="OrchestrationSpec.Agents"></span>    Agents []<a href="index.html#AgentRef">AgentRef</a> `yaml:&#34;agents&#34; json:&#34;agents&#34;`
+
+    <span class="comment">// Transfer rules</span>
+<span id="OrchestrationSpec.Transfers"></span>    Transfers []<a href="index.html#TransferRule">TransferRule</a> `yaml:&#34;transfers,omitempty&#34; json:&#34;transfers,omitempty&#34;`
+
+    <span class="comment">// Global settings</span>
+<span id="OrchestrationSpec.Settings"></span>    Settings <a href="index.html#OrchestratorSettings">OrchestratorSettings</a> `yaml:&#34;settings,omitempty&#34; json:&#34;settings,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="OrchestratorSettings">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=11234:11608#L316">OrchestratorSettings</a>
+				<a class="permalink" href="index.html#OrchestratorSettings">&#xb6;</a>
+				
+				
+			</h2>
+			<p>OrchestratorSettings defines global orchestration settings
+
+			<pre>type OrchestratorSettings struct {
+    <span class="comment">// Maximum depth of agent transfers</span>
+<span id="OrchestratorSettings.MaxTransferDepth"></span>    MaxTransferDepth <a href="http://localhost:6060/pkg/builtin/#int">int</a> `yaml:&#34;maxTransferDepth,omitempty&#34; json:&#34;maxTransferDepth,omitempty&#34;`
+
+    <span class="comment">// Global timeout</span>
+<span id="OrchestratorSettings.Timeout"></span>    Timeout <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;timeout,omitempty&#34; json:&#34;timeout,omitempty&#34;`
+
+    <span class="comment">// Retry policy</span>
+<span id="OrchestratorSettings.RetryPolicy"></span>    RetryPolicy *<a href="index.html#RetryPolicy">RetryPolicy</a> `yaml:&#34;retryPolicy,omitempty&#34; json:&#34;retryPolicy,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Parser">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/parser.go?s=215:254#L5">Parser</a>
+				<a class="permalink" href="index.html#Parser">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Parser parses agent and orchestration manifests
+
+			<pre>type Parser struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewParser">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/parser.go?s=299:338#L10">NewParser</a>
+					<a class="permalink" href="index.html#NewParser">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewParser(basePath <a href="http://localhost:6060/pkg/builtin/#string">string</a>) *<a href="index.html#Parser">Parser</a></pre>
+				<p>NewParser creates a new manifest parser
+
+				
+				
+			
+
+			
+				
+				<h3 id="Parser.ParseAgentManifest">func (*Parser) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/parser.go?s=445:517#L17">ParseAgentManifest</a>
+					<a class="permalink" href="index.html#Parser.ParseAgentManifest">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Parser">Parser</a>) ParseAgentManifest(path <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#AgentManifest">AgentManifest</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ParseAgentManifest parses an agent manifest from a file
+
+				
+				
+				
+			
+				
+				<h3 id="Parser.ParseAgentManifestBytes">func (*Parser) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/parser.go?s=778:855#L29">ParseAgentManifestBytes</a>
+					<a class="permalink" href="index.html#Parser.ParseAgentManifestBytes">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Parser">Parser</a>) ParseAgentManifestBytes(data []<a href="http://localhost:6060/pkg/builtin/#byte">byte</a>) (*<a href="index.html#AgentManifest">AgentManifest</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ParseAgentManifestBytes parses an agent manifest from bytes
+
+				
+				
+				
+			
+				
+				<h3 id="Parser.ParseAgentManifestReader">func (*Parser) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/parser.go?s=1217:1295#L44">ParseAgentManifestReader</a>
+					<a class="permalink" href="index.html#Parser.ParseAgentManifestReader">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Parser">Parser</a>) ParseAgentManifestReader(r <a href="http://localhost:6060/pkg/io/">io</a>.<a href="http://localhost:6060/pkg/io/#Reader">Reader</a>) (*<a href="index.html#AgentManifest">AgentManifest</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ParseAgentManifestReader parses an agent manifest from a reader
+
+				
+				
+				
+			
+				
+				<h3 id="Parser.ParseAny">func (*Parser) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/parser.go?s=2355:2414#L81">ParseAny</a>
+					<a class="permalink" href="index.html#Parser.ParseAny">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Parser">Parser</a>) ParseAny(path <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (interface{}, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ParseAny parses either an agent or orchestration manifest
+
+				
+				
+				
+			
+				
+				<h3 id="Parser.ParseDirectory">func (*Parser) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/parser.go?s=3053:3148#L109">ParseDirectory</a>
+					<a class="permalink" href="index.html#Parser.ParseDirectory">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Parser">Parser</a>) ParseDirectory(dir <a href="http://localhost:6060/pkg/builtin/#string">string</a>) ([]*<a href="index.html#AgentManifest">AgentManifest</a>, []*<a href="index.html#OrchestrationManifest">OrchestrationManifest</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ParseDirectory parses all manifests in a directory
+
+				
+				
+				
+			
+				
+				<h3 id="Parser.ParseOrchestrationManifest">func (*Parser) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/parser.go?s=1517:1605#L54">ParseOrchestrationManifest</a>
+					<a class="permalink" href="index.html#Parser.ParseOrchestrationManifest">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Parser">Parser</a>) ParseOrchestrationManifest(path <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#OrchestrationManifest">OrchestrationManifest</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ParseOrchestrationManifest parses an orchestration manifest from a file
+
+				
+				
+				
+			
+				
+				<h3 id="Parser.ParseOrchestrationManifestBytes">func (*Parser) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/parser.go?s=1890:1983#L66">ParseOrchestrationManifestBytes</a>
+					<a class="permalink" href="index.html#Parser.ParseOrchestrationManifestBytes">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Parser">Parser</a>) ParseOrchestrationManifestBytes(data []<a href="http://localhost:6060/pkg/builtin/#byte">byte</a>) (*<a href="index.html#OrchestrationManifest">OrchestrationManifest</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ParseOrchestrationManifestBytes parses an orchestration manifest from bytes
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="PortSpec">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=7863:8105#L227">PortSpec</a>
+				<a class="permalink" href="index.html#PortSpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>PortSpec defines a port mapping
+
+			<pre>type PortSpec struct {
+<span id="PortSpec.ContainerPort"></span>    ContainerPort <a href="http://localhost:6060/pkg/builtin/#int">int</a>    `yaml:&#34;containerPort&#34; json:&#34;containerPort&#34;`
+<span id="PortSpec.HostPort"></span>    HostPort      <a href="http://localhost:6060/pkg/builtin/#int">int</a>    `yaml:&#34;hostPort,omitempty&#34; json:&#34;hostPort,omitempty&#34;`
+<span id="PortSpec.Protocol"></span>    Protocol      <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;protocol,omitempty&#34; json:&#34;protocol,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="PythonRuntimeSpec">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=2967:3695#L72">PythonRuntimeSpec</a>
+				<a class="permalink" href="index.html#PythonRuntimeSpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>PythonRuntimeSpec defines Python agent configuration
+
+			<pre>type PythonRuntimeSpec struct {
+<span id="PythonRuntimeSpec.Framework"></span>    <span class="comment">// Framework: crewai, langgraph, autogen, custom</span>
+    Framework <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;framework&#34; json:&#34;framework&#34;`
+
+    <span class="comment">// Entry point file</span>
+<span id="PythonRuntimeSpec.EntryPoint"></span>    EntryPoint <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;entryPoint&#34; json:&#34;entryPoint&#34;`
+
+    <span class="comment">// Working directory</span>
+<span id="PythonRuntimeSpec.WorkDir"></span>    WorkDir <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;workDir,omitempty&#34; json:&#34;workDir,omitempty&#34;`
+
+    <span class="comment">// Python version</span>
+<span id="PythonRuntimeSpec.Version"></span>    Version <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;version,omitempty&#34; json:&#34;version,omitempty&#34;`
+
+    <span class="comment">// Virtual environment path</span>
+<span id="PythonRuntimeSpec.VenvPath"></span>    VenvPath <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;venvPath,omitempty&#34; json:&#34;venvPath,omitempty&#34;`
+
+<span id="PythonRuntimeSpec.Requirements"></span>    <span class="comment">// Requirements file</span>
+    Requirements <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;requirements,omitempty&#34; json:&#34;requirements,omitempty&#34;`
+
+    <span class="comment">// Additional Python arguments</span>
+<span id="PythonRuntimeSpec.Args"></span>    Args []<a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;args,omitempty&#34; json:&#34;args,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ResourceSpec">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=5670:6152#L159">ResourceSpec</a>
+				<a class="permalink" href="index.html#ResourceSpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ResourceSpec defines resource limits
+
+			<pre>type ResourceSpec struct {
+    <span class="comment">// CPU limit (e.g., &#34;100m&#34;, &#34;1&#34;)</span>
+<span id="ResourceSpec.CPULimit"></span>    CPULimit <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;cpuLimit,omitempty&#34; json:&#34;cpuLimit,omitempty&#34;`
+
+    <span class="comment">// Memory limit (e.g., &#34;128Mi&#34;, &#34;1Gi&#34;)</span>
+<span id="ResourceSpec.MemoryLimit"></span>    MemoryLimit <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;memoryLimit,omitempty&#34; json:&#34;memoryLimit,omitempty&#34;`
+
+<span id="ResourceSpec.Timeout"></span>    <span class="comment">// Timeout for operations</span>
+    Timeout <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;timeout,omitempty&#34; json:&#34;timeout,omitempty&#34;`
+
+    <span class="comment">// Maximum concurrent requests</span>
+<span id="ResourceSpec.MaxConcurrent"></span>    MaxConcurrent <a href="http://localhost:6060/pkg/builtin/#int">int</a> `yaml:&#34;maxConcurrent,omitempty&#34; json:&#34;maxConcurrent,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="RetryPolicy">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=11648:11803#L328">RetryPolicy</a>
+				<a class="permalink" href="index.html#RetryPolicy">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RetryPolicy defines retry behavior
+
+			<pre>type RetryPolicy struct {
+<span id="RetryPolicy.MaxRetries"></span>    MaxRetries <a href="http://localhost:6060/pkg/builtin/#int">int</a>    `yaml:&#34;maxRetries&#34; json:&#34;maxRetries&#34;`
+<span id="RetryPolicy.Backoff"></span>    Backoff    <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;backoff,omitempty&#34; json:&#34;backoff,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="RuntimeSpec">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=2021:2650#L44">RuntimeSpec</a>
+				<a class="permalink" href="index.html#RuntimeSpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RuntimeSpec defines the agent&apos;s runtime configuration
+
+			<pre>type RuntimeSpec struct {
+<span id="RuntimeSpec.Type"></span>    <span class="comment">// Type of agent runtime: python, go, docker, external</span>
+    Type <a href="index.html#RuntimeType">RuntimeType</a> `yaml:&#34;type&#34; json:&#34;type&#34;`
+
+    <span class="comment">// For Python agents (CrewAI, LangGraph, etc.)</span>
+<span id="RuntimeSpec.Python"></span>    Python *<a href="index.html#PythonRuntimeSpec">PythonRuntimeSpec</a> `yaml:&#34;python,omitempty&#34; json:&#34;python,omitempty&#34;`
+
+    <span class="comment">// For Go agents (native dagens agents)</span>
+<span id="RuntimeSpec.Go"></span>    Go *<a href="index.html#GoRuntimeSpec">GoRuntimeSpec</a> `yaml:&#34;go,omitempty&#34; json:&#34;go,omitempty&#34;`
+
+    <span class="comment">// For Docker-based agents</span>
+<span id="RuntimeSpec.Docker"></span>    Docker *<a href="index.html#DockerRuntimeSpec">DockerRuntimeSpec</a> `yaml:&#34;docker,omitempty&#34; json:&#34;docker,omitempty&#34;`
+
+    <span class="comment">// For external agents (already running)</span>
+<span id="RuntimeSpec.External"></span>    External *<a href="index.html#ExternalRuntimeSpec">ExternalRuntimeSpec</a> `yaml:&#34;external,omitempty&#34; json:&#34;external,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="RuntimeType">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=2701:2724#L62">RuntimeType</a>
+				<a class="permalink" href="index.html#RuntimeType">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RuntimeType defines the type of agent runtime
+
+			<pre>type RuntimeType <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="RuntimeTypePython">RuntimeTypePython</span>   <a href="index.html#RuntimeType">RuntimeType</a> = &#34;python&#34;
+    <span id="RuntimeTypeGo">RuntimeTypeGo</span>       <a href="index.html#RuntimeType">RuntimeType</a> = &#34;go&#34;
+    <span id="RuntimeTypeDocker">RuntimeTypeDocker</span>   <a href="index.html#RuntimeType">RuntimeType</a> = &#34;docker&#34;
+    <span id="RuntimeTypeExternal">RuntimeTypeExternal</span> <a href="index.html#RuntimeType">RuntimeType</a> = &#34;external&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="SecretRef">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=7260:7361#L204">SecretRef</a>
+				<a class="permalink" href="index.html#SecretRef">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SecretRef references a secret
+
+			<pre>type SecretRef struct {
+<span id="SecretRef.Name"></span>    Name <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;name&#34; json:&#34;name&#34;`
+<span id="SecretRef.Key"></span>    Key  <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;key&#34; json:&#34;key&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="TLSSpec">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=8683:8962#L248">TLSSpec</a>
+				<a class="permalink" href="index.html#TLSSpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TLSSpec defines TLS configuration
+
+			<pre>type TLSSpec struct {
+<span id="TLSSpec.Enabled"></span>    Enabled  <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>   `yaml:&#34;enabled&#34; json:&#34;enabled&#34;`
+<span id="TLSSpec.CertFile"></span>    CertFile <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;certFile,omitempty&#34; json:&#34;certFile,omitempty&#34;`
+<span id="TLSSpec.KeyFile"></span>    KeyFile  <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;keyFile,omitempty&#34; json:&#34;keyFile,omitempty&#34;`
+<span id="TLSSpec.CAFile"></span>    CAFile   <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;caFile,omitempty&#34; json:&#34;caFile,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ToolRef">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=7392:7645#L210">ToolRef</a>
+				<a class="permalink" href="index.html#ToolRef">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ToolRef references a tool
+
+			<pre>type ToolRef struct {
+<span id="ToolRef.Name"></span>    Name <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;name&#34; json:&#34;name&#34;`
+
+<span id="ToolRef.MCP"></span>    <span class="comment">// MCP server reference</span>
+    MCP *<a href="index.html#MCPToolRef">MCPToolRef</a> `yaml:&#34;mcp,omitempty&#34; json:&#34;mcp,omitempty&#34;`
+
+    <span class="comment">// Built-in tool type</span>
+<span id="ToolRef.BuiltIn"></span>    BuiltIn <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;builtIn,omitempty&#34; json:&#34;builtIn,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="TransferRule">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=10978:11170#L309">TransferRule</a>
+				<a class="permalink" href="index.html#TransferRule">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TransferRule defines agent transfer rules
+
+			<pre>type TransferRule struct {
+<span id="TransferRule.From"></span>    From      <a href="http://localhost:6060/pkg/builtin/#string">string</a>   `yaml:&#34;from&#34; json:&#34;from&#34;`
+<span id="TransferRule.To"></span>    To        []<a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;to&#34; json:&#34;to&#34;`
+<span id="TransferRule.Condition"></span>    Condition <a href="http://localhost:6060/pkg/builtin/#string">string</a>   `yaml:&#34;condition,omitempty&#34; json:&#34;condition,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="VolumeSpec">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/manifest/types.go?s=8144:8368#L234">VolumeSpec</a>
+				<a class="permalink" href="index.html#VolumeSpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>VolumeSpec defines a volume mount
+
+			<pre>type VolumeSpec struct {
+<span id="VolumeSpec.HostPath"></span>    HostPath      <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;hostPath&#34; json:&#34;hostPath&#34;`
+<span id="VolumeSpec.ContainerPath"></span>    ContainerPath <a href="http://localhost:6060/pkg/builtin/#string">string</a> `yaml:&#34;containerPath&#34; json:&#34;containerPath&#34;`
+<span id="VolumeSpec.ReadOnly"></span>    ReadOnly      <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>   `yaml:&#34;readOnly,omitempty&#34; json:&#34;readOnly,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://localhost:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

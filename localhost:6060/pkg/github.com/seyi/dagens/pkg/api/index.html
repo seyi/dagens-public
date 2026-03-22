@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>api - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://localhost:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://localhost:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://localhost:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package api
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/api"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+			
+				
+				<dd><a href="index.html#AgentNodeConfig">type AgentNodeConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#EdgeDefinition">type EdgeDefinition</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#JobInput">type JobInput</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#JobResponse">type JobResponse</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#JobSubmissionRequest">type JobSubmissionRequest</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#NodeDefinition">type NodeDefinition</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#PolicyNodeConfig">type PolicyNodeConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#PolicyRuleDefinition">type PolicyRuleDefinition</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Server">type Server</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewServer">func NewServer(sched *scheduler.Scheduler) *Server</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Server.GetJobHandler">func (s *Server) GetJobHandler(w http.ResponseWriter, r *http.Request)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Server.ListJobsHandler">func (s *Server) ListJobsHandler(w http.ResponseWriter, r *http.Request)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Server.Routes">func (s *Server) Routes() http.Handler</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Server.SubmitJobHandler">func (s *Server) SubmitJobHandler(w http.ResponseWriter, r *http.Request)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Server.UpdateWorkerCapacityHandler">func (s *Server) UpdateWorkerCapacityHandler(w http.ResponseWriter, r *http.Request)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#WorkerCapacityUpdateRequest">type WorkerCapacityUpdateRequest</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/server.go">server.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/types.go">types.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+		
+			
+			
+			<h2 id="AgentNodeConfig">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/types.go?s=2550:2728#L46">AgentNodeConfig</a>
+				<a class="permalink" href="index.html#AgentNodeConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentNodeConfig specific configuration for agent nodes
+
+			<pre>type AgentNodeConfig struct {
+<span id="AgentNodeConfig.Model"></span>    Model       <a href="http://localhost:6060/pkg/builtin/#string">string</a>   `json:&#34;model,omitempty&#34;`
+<span id="AgentNodeConfig.Instruction"></span>    Instruction <a href="http://localhost:6060/pkg/builtin/#string">string</a>   `json:&#34;instruction,omitempty&#34;`
+<span id="AgentNodeConfig.Tools"></span>    Tools       []<a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;tools,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="EdgeDefinition">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/types.go?s=2783:2865#L53">EdgeDefinition</a>
+				<a class="permalink" href="index.html#EdgeDefinition">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EdgeDefinition defines a connection between nodes
+
+			<pre>type EdgeDefinition struct {
+<span id="EdgeDefinition.From"></span>    From <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;from&#34;`
+<span id="EdgeDefinition.To"></span>    To   <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;to&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="JobInput">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/types.go?s=2917:3058#L59">JobInput</a>
+				<a class="permalink" href="index.html#JobInput">&#xb6;</a>
+				
+				
+			</h2>
+			<p>JobInput defines the initial input for the job
+
+			<pre>type JobInput struct {
+<span id="JobInput.Instruction"></span>    Instruction <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;instruction&#34;`
+<span id="JobInput.Data"></span>    Data        map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;data,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="JobResponse">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/types.go?s=3127:3309#L65">JobResponse</a>
+				<a class="permalink" href="index.html#JobResponse">&#xb6;</a>
+				
+				
+			</h2>
+			<p>JobResponse represents the standard response for job operations
+
+			<pre>type JobResponse struct {
+<span id="JobResponse.JobID"></span>    JobID       <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;job_id&#34;`
+<span id="JobResponse.Status"></span>    Status      <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;status&#34;`
+<span id="JobResponse.SubmittedAt"></span>    SubmittedAt <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;submitted_at&#34;`
+<span id="JobResponse.Message"></span>    Message     <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;message,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="JobSubmissionRequest">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/types.go?s=95:724#L1">JobSubmissionRequest</a>
+				<a class="permalink" href="index.html#JobSubmissionRequest">&#xb6;</a>
+				
+				
+			</h2>
+			<p>JobSubmissionRequest represents the payload to submit a new job
+
+			<pre>type JobSubmissionRequest struct {
+<span id="JobSubmissionRequest.Name"></span>    Name        <a href="http://localhost:6060/pkg/builtin/#string">string</a>           `json:&#34;name&#34;`
+<span id="JobSubmissionRequest.Description"></span>    Description <a href="http://localhost:6060/pkg/builtin/#string">string</a>           `json:&#34;description,omitempty&#34;`
+<span id="JobSubmissionRequest.Nodes"></span>    Nodes       []<a href="index.html#NodeDefinition">NodeDefinition</a> `json:&#34;nodes&#34;`
+<span id="JobSubmissionRequest.Edges"></span>    Edges       []<a href="index.html#EdgeDefinition">EdgeDefinition</a> `json:&#34;edges&#34;`
+<span id="JobSubmissionRequest.EntryNode"></span>    EntryNode   <a href="http://localhost:6060/pkg/builtin/#string">string</a>           `json:&#34;entry_node&#34;`
+<span id="JobSubmissionRequest.FinishNodes"></span>    FinishNodes []<a href="http://localhost:6060/pkg/builtin/#string">string</a>         `json:&#34;finish_nodes&#34;`
+<span id="JobSubmissionRequest.Input"></span>    Input       <a href="index.html#JobInput">JobInput</a>         `json:&#34;input&#34;`
+<span id="JobSubmissionRequest.SessionID"></span>    <span class="comment">// SessionID enables sticky scheduling. When provided, all tasks in this job</span>
+    <span class="comment">// will be routed to the same worker as previous jobs with this SessionID,</span>
+    <span class="comment">// preserving in-memory context on that worker.</span>
+    SessionID <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;session_id,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="NodeDefinition">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/types.go?s=772:1643#L11">NodeDefinition</a>
+				<a class="permalink" href="index.html#NodeDefinition">&#xb6;</a>
+				
+				
+			</h2>
+			<p>NodeDefinition defines a node in the graph
+
+			<pre>type NodeDefinition struct {
+<span id="NodeDefinition.ID"></span>    ID       <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;id&#34;`
+<span id="NodeDefinition.Type"></span>    Type     <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;type&#34;` <span class="comment">// &#34;function&#34;, &#34;agent&#34;, &#34;policy&#34;, &#34;parallel&#34;, &#34;loop&#34;, &#34;conditional&#34;</span>
+<span id="NodeDefinition.Name"></span>    Name     <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;name,omitempty&#34;`
+<span id="NodeDefinition.Metadata"></span>    Metadata map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;metadata,omitempty&#34;`
+    <span class="comment">// For &#34;agent&#34; type nodes</span>
+<span id="NodeDefinition.AgentConfig"></span>    AgentConfig *<a href="index.html#AgentNodeConfig">AgentNodeConfig</a> `json:&#34;agent_config,omitempty&#34;`
+    <span class="comment">// For &#34;policy&#34; type nodes (guardrails)</span>
+<span id="NodeDefinition.PolicyConfig"></span>    PolicyConfig *<a href="index.html#PolicyNodeConfig">PolicyNodeConfig</a> `json:&#34;policy_config,omitempty&#34;`
+    <span class="comment">// For &#34;parallel&#34; nodes, children are referenced by edge relationships in the flat list,</span>
+    <span class="comment">// OR we can allow nesting. Flat list with edges is usually cleaner for APIs.</span>
+    <span class="comment">// However, Dagens ParallelNode struct expects `[]Node` children.</span>
+    <span class="comment">// To keep JSON simple, we might use a &#34;Children&#34; list of IDs for structural nodes.</span>
+<span id="NodeDefinition.Children"></span>    Children []<a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;children,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="PolicyNodeConfig">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/types.go?s=1715:1953#L28">PolicyNodeConfig</a>
+				<a class="permalink" href="index.html#PolicyNodeConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>PolicyNodeConfig specific configuration for policy/guardrail nodes
+
+			<pre>type PolicyNodeConfig struct {
+<span id="PolicyNodeConfig.Rules"></span>    Rules            []<a href="index.html#PolicyRuleDefinition">PolicyRuleDefinition</a> `json:&#34;rules&#34;`
+<span id="PolicyNodeConfig.FailOpen"></span>    FailOpen         <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>                   `json:&#34;fail_open,omitempty&#34;`
+<span id="PolicyNodeConfig.StopOnFirstMatch"></span>    StopOnFirstMatch <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>                   `json:&#34;stop_on_first_match,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="PolicyRuleDefinition">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/types.go?s=2008:2490#L35">PolicyRuleDefinition</a>
+				<a class="permalink" href="index.html#PolicyRuleDefinition">&#xb6;</a>
+				
+				
+			</h2>
+			<p>PolicyRuleDefinition defines a single policy rule
+
+			<pre>type PolicyRuleDefinition struct {
+<span id="PolicyRuleDefinition.ID"></span>    ID       <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;id&#34;`
+<span id="PolicyRuleDefinition.Name"></span>    Name     <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;name,omitempty&#34;`
+<span id="PolicyRuleDefinition.Type"></span>    Type     <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;type&#34;`   <span class="comment">// &#34;pii&#34;, &#34;content&#34;, &#34;length&#34;, &#34;regex&#34;</span>
+<span id="PolicyRuleDefinition.Action"></span>    Action   <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;action&#34;` <span class="comment">// &#34;pass&#34;, &#34;block&#34;, &#34;redact&#34;, &#34;warn&#34;</span>
+<span id="PolicyRuleDefinition.Severity"></span>    Severity <a href="http://localhost:6060/pkg/builtin/#string">string</a>                 `json:&#34;severity,omitempty&#34;`
+<span id="PolicyRuleDefinition.Enabled"></span>    Enabled  <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>                   `json:&#34;enabled&#34;`
+<span id="PolicyRuleDefinition.Config"></span>    Config   map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;config,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Server">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/server.go?s=679:994#L22">Server</a>
+				<a class="permalink" href="index.html#Server">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Server provides an HTTP API for job submission and monitoring
+
+			<pre>type Server struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewServer">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/server.go?s=1034:1084#L33">NewServer</a>
+					<a class="permalink" href="index.html#NewServer">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewServer(sched *<a href="../scheduler/index.html">scheduler</a>.<a href="../scheduler/index.html#Scheduler">Scheduler</a>) *<a href="index.html#Server">Server</a></pre>
+				<p>NewServer creates a new API server
+
+				
+				
+			
+
+			
+				
+				<h3 id="Server.GetJobHandler">func (*Server) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/server.go?s=9684:9754#L336">GetJobHandler</a>
+					<a class="permalink" href="index.html#Server.GetJobHandler">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#Server">Server</a>) GetJobHandler(w <a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#ResponseWriter">ResponseWriter</a>, r *<a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#Request">Request</a>)</pre>
+				<p>GetJobHandler returns job status
+
+				
+				
+				
+			
+				
+				<h3 id="Server.ListJobsHandler">func (*Server) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/server.go?s=9384:9456#L327">ListJobsHandler</a>
+					<a class="permalink" href="index.html#Server.ListJobsHandler">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#Server">Server</a>) ListJobsHandler(w <a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#ResponseWriter">ResponseWriter</a>, r *<a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#Request">Request</a>)</pre>
+				<p>ListJobsHandler returns all jobs
+
+				
+				
+				
+			
+				
+				<h3 id="Server.Routes">func (*Server) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/server.go?s=12280:12318#L417">Routes</a>
+					<a class="permalink" href="index.html#Server.Routes">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#Server">Server</a>) Routes() <a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#Handler">Handler</a></pre>
+				<p>Routes returns a ServeMux with configured routes
+
+				
+				
+				
+			
+				
+				<h3 id="Server.SubmitJobHandler">func (*Server) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/server.go?s=1646:1719#L46">SubmitJobHandler</a>
+					<a class="permalink" href="index.html#Server.SubmitJobHandler">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#Server">Server</a>) SubmitJobHandler(w <a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#ResponseWriter">ResponseWriter</a>, r *<a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#Request">Request</a>)</pre>
+				<p>SubmitJobHandler handles job submission requests
+
+				
+				
+				
+			
+				
+				<h3 id="Server.UpdateWorkerCapacityHandler">func (*Server) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/server.go?s=10236:10320#L355">UpdateWorkerCapacityHandler</a>
+					<a class="permalink" href="index.html#Server.UpdateWorkerCapacityHandler">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#Server">Server</a>) UpdateWorkerCapacityHandler(w <a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#ResponseWriter">ResponseWriter</a>, r *<a href="http://localhost:6060/pkg/net/http/">http</a>.<a href="http://localhost:6060/pkg/net/http/#Request">Request</a>)</pre>
+				<p>UpdateWorkerCapacityHandler accepts worker heartbeats with capacity snapshots.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="WorkerCapacityUpdateRequest">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/api/types.go?s=3392:3630#L73">WorkerCapacityUpdateRequest</a>
+				<a class="permalink" href="index.html#WorkerCapacityUpdateRequest">&#xb6;</a>
+				
+				
+			</h2>
+			<p>WorkerCapacityUpdateRequest represents a worker heartbeat with capacity data.
+
+			<pre>type WorkerCapacityUpdateRequest struct {
+<span id="WorkerCapacityUpdateRequest.NodeID"></span>    NodeID          <a href="http://localhost:6060/pkg/builtin/#string">string</a>    `json:&#34;node_id&#34;`
+<span id="WorkerCapacityUpdateRequest.InFlight"></span>    InFlight        <a href="http://localhost:6060/pkg/builtin/#int">int</a>       `json:&#34;in_flight&#34;`
+<span id="WorkerCapacityUpdateRequest.MaxConcurrency"></span>    MaxConcurrency  <a href="http://localhost:6060/pkg/builtin/#int">int</a>       `json:&#34;max_concurrency&#34;`
+<span id="WorkerCapacityUpdateRequest.ReportTimestamp"></span>    ReportTimestamp <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a> `json:&#34;report_timestamp&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://localhost:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

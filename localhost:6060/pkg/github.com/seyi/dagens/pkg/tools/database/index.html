@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>database - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://localhost:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://localhost:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://localhost:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package database
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/tools/database"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package database provides vendor-neutral database tools for AI agents.
+Leverages Spark SQL for distributed query execution across multiple database types.
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+				
+				<dd><a href="index.html#SimpleDatabaseToolset">func SimpleDatabaseToolset(config *DatabaseConfig) ([]*types.ToolDefinition, error)</a></dd>
+			
+			
+				
+				<dd><a href="index.html#ColumnInfo">type ColumnInfo</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ConfidenceInterval">type ConfidenceInterval</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#DatabaseConfig">type DatabaseConfig</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DefaultDatabaseConfig">func DefaultDatabaseConfig(dbType DatabaseType, connectionString string) *DatabaseConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#DatabaseConnector">type DatabaseConnector</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#DatabaseInfo">type DatabaseInfo</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#DatabaseToolset">type DatabaseToolset</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewDatabaseToolset">func NewDatabaseToolset(config *DatabaseConfig) (*DatabaseToolset, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DatabaseToolset.Connect">func (t *DatabaseToolset) Connect(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DatabaseToolset.Disconnect">func (t *DatabaseToolset) Disconnect(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DatabaseToolset.GetTools">func (t *DatabaseToolset) GetTools() []*types.ToolDefinition</a></dd>
+				
+			
+				
+				<dd><a href="index.html#DatabaseType">type DatabaseType</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ForecastPoint">type ForecastPoint</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ForecastResult">type ForecastResult</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#PaginationConfig">type PaginationConfig</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DefaultPaginationConfig">func DefaultPaginationConfig() *PaginationConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#QueryResult">type QueryResult</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#CollectStream">func CollectStream(stream *QueryResultStream) (*QueryResult, error)</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#QueryResultPage">type QueryResultPage</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#QueryResultStream">type QueryResultStream</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#SessionStats">type SessionStats</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#SparkSQLConnector">type SparkSQLConnector</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSparkSQLConnector">func NewSparkSQLConnector(config *DatabaseConfig) (*SparkSQLConnector, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSQLConnector.Connect">func (s *SparkSQLConnector) Connect(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSQLConnector.Disconnect">func (s *SparkSQLConnector) Disconnect(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSQLConnector.ExecuteQuery">func (s *SparkSQLConnector) ExecuteQuery(ctx context.Context, query string) (*QueryResult, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSQLConnector.ExecuteQueryPaginated">func (s *SparkSQLConnector) ExecuteQueryPaginated(ctx context.Context, query string, config *PaginationConfig) (*QueryResultPage, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSQLConnector.GetConnectionInfo">func (s *SparkSQLConnector) GetConnectionInfo() map[string]interface{}</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSQLConnector.GetDatabaseInfo">func (s *SparkSQLConnector) GetDatabaseInfo(ctx context.Context, database string) (*DatabaseInfo, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSQLConnector.GetDatabases">func (s *SparkSQLConnector) GetDatabases(ctx context.Context) ([]string, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSQLConnector.GetTableInfo">func (s *SparkSQLConnector) GetTableInfo(ctx context.Context, database, table string) (*TableInfo, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSQLConnector.GetTables">func (s *SparkSQLConnector) GetTables(ctx context.Context, database string) ([]string, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSQLConnector.IsConnected">func (s *SparkSQLConnector) IsConnected() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSQLConnector.StreamQuery">func (s *SparkSQLConnector) StreamQuery(ctx context.Context, query string, config *StreamConfig) (*QueryResultStream, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSQLConnector.ValidateQuery">func (s *SparkSQLConnector) ValidateQuery(query string) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SparkSession">type SparkSession</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSparkSession">func NewSparkSession(config *DatabaseConfig) (*SparkSession, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSession.Connect">func (s *SparkSession) Connect(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSession.Disconnect">func (s *SparkSession) Disconnect(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSession.ExecuteQuery">func (s *SparkSession) ExecuteQuery(ctx context.Context, query string) (*QueryResult, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSession.ExecuteQueryPaginated">func (s *SparkSession) ExecuteQueryPaginated(ctx context.Context, query string, config *PaginationConfig) (*QueryResultPage, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSession.GetDatabases">func (s *SparkSession) GetDatabases(ctx context.Context) ([]string, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSession.GetStats">func (s *SparkSession) GetStats() SessionStats</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSession.GetTableSchema">func (s *SparkSession) GetTableSchema(ctx context.Context, database, table string) (*TableInfo, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSession.GetTables">func (s *SparkSession) GetTables(ctx context.Context, database string) ([]string, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSession.IsConnected">func (s *SparkSession) IsConnected() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SparkSession.StreamQuery">func (s *SparkSession) StreamQuery(ctx context.Context, query string, config *StreamConfig) (*QueryResultStream, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#StreamConfig">type StreamConfig</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DefaultStreamConfig">func DefaultStreamConfig() *StreamConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#StreamMetadata">type StreamMetadata</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#TableInfo">type TableInfo</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#WriteMode">type WriteMode</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/config.go">config.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go">connector.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/session.go">session.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/streaming.go">streaming.go</a>
+			
+				<a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/toolset.go">toolset.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+			
+			
+			<h2 id="SimpleDatabaseToolset">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/toolset.go?s=14351:14434#L421">SimpleDatabaseToolset</a>
+				<a class="permalink" href="index.html#SimpleDatabaseToolset">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func SimpleDatabaseToolset(config *<a href="index.html#DatabaseConfig">DatabaseConfig</a>) ([]*<a href="../../types/index.html">types</a>.<a href="../../types/index.html#ToolDefinition">ToolDefinition</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+			<p>SimpleDatabaseToolset creates a simplified database toolset for common use cases.
+Returns individual tools instead of a toolset object.
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="ColumnInfo">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/config.go?s=7489:7963#L215">ColumnInfo</a>
+				<a class="permalink" href="index.html#ColumnInfo">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ColumnInfo contains metadata about a table column.
+
+			<pre>type ColumnInfo struct {
+    <span class="comment">// Column name</span>
+<span id="ColumnInfo.Name"></span>    Name <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;name&#34;`
+
+    <span class="comment">// Data type (SQL type string)</span>
+<span id="ColumnInfo.DataType"></span>    DataType <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;data_type&#34;`
+
+    <span class="comment">// Is nullable</span>
+<span id="ColumnInfo.Nullable"></span>    Nullable <a href="http://localhost:6060/pkg/builtin/#bool">bool</a> `json:&#34;nullable&#34;`
+
+    <span class="comment">// Is primary key</span>
+<span id="ColumnInfo.IsPrimaryKey"></span>    IsPrimaryKey <a href="http://localhost:6060/pkg/builtin/#bool">bool</a> `json:&#34;is_primary_key,omitempty&#34;`
+
+    <span class="comment">// Default value</span>
+<span id="ColumnInfo.DefaultValue"></span>    DefaultValue *<a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;default_value,omitempty&#34;`
+
+<span id="ColumnInfo.Description"></span>    <span class="comment">// Description/comment</span>
+    Description <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;description,omitempty&#34;`
+
+    <span class="comment">// Column position (ordinal)</span>
+<span id="ColumnInfo.Position"></span>    Position <a href="http://localhost:6060/pkg/builtin/#int">int</a> `json:&#34;position&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ConfidenceInterval">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/config.go?s=10378:10596#L328">ConfidenceInterval</a>
+				<a class="permalink" href="index.html#ConfidenceInterval">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ConfidenceInterval represents a confidence interval for forecasts.
+
+			<pre>type ConfidenceInterval struct {
+    <span class="comment">// Confidence level (e.g., 0.95 for 95%)</span>
+<span id="ConfidenceInterval.Level"></span>    Level <a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;level&#34;`
+
+<span id="ConfidenceInterval.Lower"></span>    <span class="comment">// Lower bound series</span>
+    Lower []<a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;lower&#34;`
+
+<span id="ConfidenceInterval.Upper"></span>    <span class="comment">// Upper bound series</span>
+    Upper []<a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;upper&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="DatabaseConfig">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/config.go?s=2603:5601#L64">DatabaseConfig</a>
+				<a class="permalink" href="index.html#DatabaseConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DatabaseConfig configures database access for the toolset.
+Supports multiple database types through Spark SQL abstraction.
+
+			<pre>type DatabaseConfig struct {
+<span id="DatabaseConfig.Type"></span>    <span class="comment">// Type specifies the database type (bigquery, postgresql, snowflake, etc.)</span>
+    Type <a href="index.html#DatabaseType">DatabaseType</a>
+
+<span id="DatabaseConfig.ConnectionString"></span>    <span class="comment">// ConnectionString is the database connection string.</span>
+    <span class="comment">// Format depends on database type:</span>
+    <span class="comment">// - BigQuery: &#34;bigquery://project/dataset&#34;</span>
+    <span class="comment">// - PostgreSQL: &#34;postgresql://host:port/database&#34;</span>
+    <span class="comment">// - Snowflake: &#34;snowflake://account/database/schema&#34;</span>
+    ConnectionString <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DatabaseConfig.Database"></span>    <span class="comment">// Database name (optional, can be in connection string)</span>
+    Database <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DatabaseConfig.Schema"></span>    <span class="comment">// Schema/Dataset name (optional, can be in connection string)</span>
+    Schema <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DatabaseConfig.Credentials"></span>    <span class="comment">// Credentials for authentication.</span>
+    <span class="comment">// Type depends on database:</span>
+    <span class="comment">// - BigQuery: *google.Credentials or ADC</span>
+    <span class="comment">// - PostgreSQL: username/password in connection string</span>
+    <span class="comment">// - Snowflake: SnowflakeCredentials</span>
+    Credentials interface{}
+
+<span id="DatabaseConfig.WriteMode"></span>    <span class="comment">// WriteMode controls allowed operations (BLOCKED, READ_ONLY, FULL)</span>
+    WriteMode <a href="index.html#WriteMode">WriteMode</a>
+
+<span id="DatabaseConfig.SparkMaster"></span>    <span class="comment">// SparkMaster is the Spark master URL (e.g., &#34;local[*]&#34;, &#34;spark://host:port&#34;)</span>
+    <span class="comment">// If empty, uses existing Spark session or creates local session</span>
+    SparkMaster <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DatabaseConfig.SparkAppName"></span>    <span class="comment">// SparkAppName is the application name for the Spark session</span>
+    SparkAppName <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DatabaseConfig.EnableCaching"></span>    <span class="comment">// EnableCaching enables Spark SQL query result caching for performance</span>
+    EnableCaching <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+
+<span id="DatabaseConfig.PartitionCount"></span>    <span class="comment">// PartitionCount is the number of partitions for distributed queries</span>
+    <span class="comment">// 0 means use Spark defaults</span>
+    PartitionCount <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+
+<span id="DatabaseConfig.QueryTimeout"></span>    <span class="comment">// QueryTimeout is the maximum time allowed for query execution</span>
+    QueryTimeout <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>
+
+<span id="DatabaseConfig.MaxResultRows"></span>    <span class="comment">// MaxResultRows limits the number of rows returned from queries</span>
+    <span class="comment">// Prevents memory issues from large result sets</span>
+    MaxResultRows <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+
+<span id="DatabaseConfig.JDBCDriver"></span>    <span class="comment">// JDBCDriver is the JDBC driver class name</span>
+    <span class="comment">// e.g., &#34;org.postgresql.Driver&#34;, &#34;com.mysql.jdbc.Driver&#34;</span>
+    JDBCDriver <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DatabaseConfig.JDBCProperties"></span>    <span class="comment">// JDBCProperties are additional JDBC connection properties</span>
+    JDBCProperties map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]<a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DatabaseConfig.BigQueryProject"></span>    <span class="comment">// BigQueryProject is the GCP project ID (for BigQuery)</span>
+    BigQueryProject <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DatabaseConfig.BigQueryDataset"></span>    <span class="comment">// BigQueryDataset is the default dataset (for BigQuery)</span>
+    BigQueryDataset <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DatabaseConfig.BigQueryMaterializationProject"></span>    <span class="comment">// BigQueryMaterializationProject is the project for query materialization</span>
+    BigQueryMaterializationProject <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DatabaseConfig.BigQueryMaterializationDataset"></span>    <span class="comment">// BigQueryMaterializationDataset is the dataset for temp tables</span>
+    BigQueryMaterializationDataset <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DatabaseConfig.AllowedDatabases"></span>    <span class="comment">// AllowedDatabases restricts which databases agents can access</span>
+    <span class="comment">// Empty means all databases accessible with credentials</span>
+    AllowedDatabases []<a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DatabaseConfig.AllowedTables"></span>    <span class="comment">// AllowedTables restricts which tables agents can query</span>
+    <span class="comment">// Format: &#34;database.table&#34; or &#34;table&#34; for current database</span>
+    <span class="comment">// Empty means all tables allowed</span>
+    AllowedTables []<a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DatabaseConfig.BlockedKeywords"></span>    <span class="comment">// BlockedKeywords prevents queries containing these SQL keywords</span>
+    <span class="comment">// e.g., [&#34;DROP&#34;, &#34;TRUNCATE&#34;] to prevent destructive operations</span>
+    BlockedKeywords []<a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="DatabaseConfig.RequireWhereClause"></span>    <span class="comment">// RequireWhereClause forces all SELECT queries to have WHERE clause</span>
+    <span class="comment">// Prevents accidental full table scans</span>
+    RequireWhereClause <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="DefaultDatabaseConfig">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/config.go?s=5666:5754#L158">DefaultDatabaseConfig</a>
+					<a class="permalink" href="index.html#DefaultDatabaseConfig">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func DefaultDatabaseConfig(dbType <a href="index.html#DatabaseType">DatabaseType</a>, connectionString <a href="http://localhost:6060/pkg/builtin/#string">string</a>) *<a href="index.html#DatabaseConfig">DatabaseConfig</a></pre>
+				<p>DefaultDatabaseConfig returns a safe default configuration.
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="DatabaseConnector">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=817:1970#L15">DatabaseConnector</a>
+				<a class="permalink" href="index.html#DatabaseConnector">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DatabaseConnector provides vendor-neutral database access through Spark SQL.
+All database operations are executed via Spark for distributed processing.
+
+			<pre>type DatabaseConnector interface {
+    <span class="comment">// Connect establishes connection to the database</span>
+    Connect(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// Disconnect closes the database connection</span>
+    Disconnect(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// IsConnected returns true if currently connected</span>
+    IsConnected() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+
+    <span class="comment">// ExecuteQuery executes a SQL query and returns results</span>
+    ExecuteQuery(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, query <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#QueryResult">QueryResult</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// GetDatabases lists all accessible databases/datasets</span>
+    GetDatabases(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) ([]<a href="http://localhost:6060/pkg/builtin/#string">string</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// GetDatabaseInfo retrieves metadata about a specific database</span>
+    GetDatabaseInfo(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, database <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#DatabaseInfo">DatabaseInfo</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// GetTables lists all tables in a database</span>
+    GetTables(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, database <a href="http://localhost:6060/pkg/builtin/#string">string</a>) ([]<a href="http://localhost:6060/pkg/builtin/#string">string</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// GetTableInfo retrieves schema and metadata for a table</span>
+    GetTableInfo(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, database, table <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#TableInfo">TableInfo</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// ValidateQuery checks if a query is allowed based on WriteMode and security settings</span>
+    ValidateQuery(query <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// GetConnectionInfo returns connection details (for debugging)</span>
+    GetConnectionInfo() map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="DatabaseInfo">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/config.go?s=8077:8762#L240">DatabaseInfo</a>
+				<a class="permalink" href="index.html#DatabaseInfo">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DatabaseInfo contains metadata about a database/dataset.
+Compatible with ADK&apos;s get_dataset_info response.
+
+			<pre>type DatabaseInfo struct {
+    <span class="comment">// Database/Dataset name</span>
+<span id="DatabaseInfo.Name"></span>    Name <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;name&#34;`
+
+    <span class="comment">// Fully qualified name (e.g., &#34;project.dataset&#34;)</span>
+<span id="DatabaseInfo.FullyQualifiedName"></span>    FullyQualifiedName <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;fully_qualified_name&#34;`
+
+    <span class="comment">// Database type</span>
+<span id="DatabaseInfo.Type"></span>    Type <a href="index.html#DatabaseType">DatabaseType</a> `json:&#34;type&#34;`
+
+    <span class="comment">// Creation timestamp</span>
+<span id="DatabaseInfo.CreatedAt"></span>    CreatedAt *<a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a> `json:&#34;created_at,omitempty&#34;`
+
+    <span class="comment">// Last modified timestamp</span>
+<span id="DatabaseInfo.ModifiedAt"></span>    ModifiedAt *<a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a> `json:&#34;modified_at,omitempty&#34;`
+
+<span id="DatabaseInfo.Description"></span>    <span class="comment">// Description</span>
+    Description <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;description,omitempty&#34;`
+
+<span id="DatabaseInfo.Location"></span>    <span class="comment">// Location/region</span>
+    Location <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;location,omitempty&#34;`
+
+    <span class="comment">// Table count</span>
+<span id="DatabaseInfo.TableCount"></span>    TableCount <a href="http://localhost:6060/pkg/builtin/#int">int</a> `json:&#34;table_count,omitempty&#34;`
+
+    <span class="comment">// Additional metadata</span>
+<span id="DatabaseInfo.Metadata"></span>    Metadata map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;metadata,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="DatabaseToolset">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/toolset.go?s=1333:1455#L25">DatabaseToolset</a>
+				<a class="permalink" href="index.html#DatabaseToolset">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DatabaseToolset provides a complete set of database tools for AI agents.
+Compatible with ADK&apos;s BigQueryToolset while being vendor-neutral.
+<p>Tools included:
+- list_databases: List available databases/datasets (ADK: list_dataset_ids)
+- get_database_info: Get database metadata (ADK: get_dataset_info)
+- list_tables: List tables in a database (ADK: list_table_ids)
+- get_table_schema: Get table schema (ADK: get_table_info)
+- execute_sql: Execute SQL queries (ADK: execute_sql)
+- forecast: Time series forecasting (ADK: forecast using BigQuery AI)
+- ask_data_insights: Natural language queries (ADK: ask_data_insights)
+
+			<pre>type DatabaseToolset struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewDatabaseToolset">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/toolset.go?s=1600:1673#L33">NewDatabaseToolset</a>
+					<a class="permalink" href="index.html#NewDatabaseToolset">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewDatabaseToolset(config *<a href="index.html#DatabaseConfig">DatabaseConfig</a>) (*<a href="index.html#DatabaseToolset">DatabaseToolset</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewDatabaseToolset creates a new database toolset with the given configuration.
+All tools use Spark SQL for distributed query execution.
+
+				
+				
+			
+
+			
+				
+				<h3 id="DatabaseToolset.Connect">func (*DatabaseToolset) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/toolset.go?s=2692:2752#L76">Connect</a>
+					<a class="permalink" href="index.html#DatabaseToolset.Connect">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (t *<a href="index.html#DatabaseToolset">DatabaseToolset</a>) Connect(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Connect establishes connection to the database.
+Should be called before using any tools.
+
+				
+				
+				
+			
+				
+				<h3 id="DatabaseToolset.Disconnect">func (*DatabaseToolset) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/toolset.go?s=2837:2900#L81">Disconnect</a>
+					<a class="permalink" href="index.html#DatabaseToolset.Disconnect">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (t *<a href="index.html#DatabaseToolset">DatabaseToolset</a>) Disconnect(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Disconnect closes the database connection.
+
+				
+				
+				
+			
+				
+				<h3 id="DatabaseToolset.GetTools">func (*DatabaseToolset) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/toolset.go?s=2515:2575#L70">GetTools</a>
+					<a class="permalink" href="index.html#DatabaseToolset.GetTools">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (t *<a href="index.html#DatabaseToolset">DatabaseToolset</a>) GetTools() []*<a href="../../types/index.html">types</a>.<a href="../../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+				<p>GetTools returns all tool definitions in this toolset.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="DatabaseType">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/config.go?s=1469:1493#L31">DatabaseType</a>
+				<a class="permalink" href="index.html#DatabaseType">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DatabaseType represents supported database types.
+All types are accessed through Spark SQL for unified interface.
+
+			<pre>type DatabaseType <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span class="comment">// DatabaseTypeBigQuery - Google BigQuery via Spark BigQuery connector</span>
+    <span id="DatabaseTypeBigQuery">DatabaseTypeBigQuery</span> <a href="index.html#DatabaseType">DatabaseType</a> = &#34;bigquery&#34;
+
+    <span class="comment">// DatabaseTypePostgreSQL - PostgreSQL via Spark JDBC</span>
+    <span id="DatabaseTypePostgreSQL">DatabaseTypePostgreSQL</span> <a href="index.html#DatabaseType">DatabaseType</a> = &#34;postgresql&#34;
+
+    <span class="comment">// DatabaseTypeMySQL - MySQL via Spark JDBC</span>
+    <span id="DatabaseTypeMySQL">DatabaseTypeMySQL</span> <a href="index.html#DatabaseType">DatabaseType</a> = &#34;mysql&#34;
+
+    <span class="comment">// DatabaseTypeSnowflake - Snowflake via Spark connector</span>
+    <span id="DatabaseTypeSnowflake">DatabaseTypeSnowflake</span> <a href="index.html#DatabaseType">DatabaseType</a> = &#34;snowflake&#34;
+
+    <span class="comment">// DatabaseTypeRedshift - Amazon Redshift via Spark JDBC</span>
+    <span id="DatabaseTypeRedshift">DatabaseTypeRedshift</span> <a href="index.html#DatabaseType">DatabaseType</a> = &#34;redshift&#34;
+
+    <span class="comment">// DatabaseTypeDatabricks - Databricks SQL via connector</span>
+    <span id="DatabaseTypeDatabricks">DatabaseTypeDatabricks</span> <a href="index.html#DatabaseType">DatabaseType</a> = &#34;databricks&#34;
+
+    <span class="comment">// DatabaseTypeSQLServer - Microsoft SQL Server via Spark JDBC</span>
+    <span id="DatabaseTypeSQLServer">DatabaseTypeSQLServer</span> <a href="index.html#DatabaseType">DatabaseType</a> = &#34;sqlserver&#34;
+
+    <span class="comment">// DatabaseTypeOracle - Oracle via Spark JDBC</span>
+    <span id="DatabaseTypeOracle">DatabaseTypeOracle</span> <a href="index.html#DatabaseType">DatabaseType</a> = &#34;oracle&#34;
+
+    <span class="comment">// DatabaseTypeSpark - Spark SQL native (Hive, Delta Lake, Iceberg, etc.)</span>
+    <span id="DatabaseTypeSpark">DatabaseTypeSpark</span> <a href="index.html#DatabaseType">DatabaseType</a> = &#34;spark&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ForecastPoint">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/config.go?s=10000:10306#L313">ForecastPoint</a>
+				<a class="permalink" href="index.html#ForecastPoint">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ForecastPoint represents a single forecasted data point.
+
+			<pre>type ForecastPoint struct {
+<span id="ForecastPoint.Timestamp"></span>    <span class="comment">// Timestamp or index</span>
+    Timestamp interface{} `json:&#34;timestamp&#34;`
+
+    <span class="comment">// Forecasted value</span>
+<span id="ForecastPoint.Value"></span>    Value <a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;value&#34;`
+
+    <span class="comment">// Lower confidence bound</span>
+<span id="ForecastPoint.LowerBound"></span>    LowerBound *<a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;lower_bound,omitempty&#34;`
+
+    <span class="comment">// Upper confidence bound</span>
+<span id="ForecastPoint.UpperBound"></span>    UpperBound *<a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;upper_bound,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ForecastResult">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/config.go?s=9586:9938#L298">ForecastResult</a>
+				<a class="permalink" href="index.html#ForecastResult">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ForecastResult represents the result of a time series forecast.
+Compatible with ADK&apos;s BigQuery AI.FORECAST result.
+
+			<pre>type ForecastResult struct {
+    <span class="comment">// Forecasted values</span>
+<span id="ForecastResult.Forecast"></span>    Forecast []<a href="index.html#ForecastPoint">ForecastPoint</a> `json:&#34;forecast&#34;`
+
+    <span class="comment">// Model metrics</span>
+<span id="ForecastResult.Metrics"></span>    Metrics map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]<a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;metrics,omitempty&#34;`
+
+    <span class="comment">// Model type used</span>
+<span id="ForecastResult.ModelType"></span>    ModelType <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;model_type&#34;`
+
+    <span class="comment">// Confidence intervals (if available)</span>
+<span id="ForecastResult.ConfidenceIntervals"></span>    ConfidenceIntervals []<a href="index.html#ConfidenceInterval">ConfidenceInterval</a> `json:&#34;confidence_intervals,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="PaginationConfig">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/streaming.go?s=6131:6395#L254">PaginationConfig</a>
+				<a class="permalink" href="index.html#PaginationConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>PaginationConfig configures pagination behavior.
+
+			<pre>type PaginationConfig struct {
+<span id="PaginationConfig.PageSize"></span>    <span class="comment">// PageSize is the number of rows per page (default: 1000)</span>
+    PageSize <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+
+<span id="PaginationConfig.Page"></span>    <span class="comment">// Page is the page number to fetch (1-based)</span>
+    Page <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+
+<span id="PaginationConfig.IncludeTotalCount"></span>    <span class="comment">// IncludeTotalCount whether to execute COUNT(*) query (can be expensive)</span>
+    IncludeTotalCount <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="DefaultPaginationConfig">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/streaming.go?s=6466:6514#L266">DefaultPaginationConfig</a>
+					<a class="permalink" href="index.html#DefaultPaginationConfig">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func DefaultPaginationConfig() *<a href="index.html#PaginationConfig">PaginationConfig</a></pre>
+				<p>DefaultPaginationConfig returns default pagination configuration.
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="QueryResult">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/config.go?s=8827:9463#L270">QueryResult</a>
+				<a class="permalink" href="index.html#QueryResult">&#xb6;</a>
+				
+				
+			</h2>
+			<p>QueryResult represents the result of a SQL query execution.
+
+			<pre>type QueryResult struct {
+    <span class="comment">// Column names</span>
+<span id="QueryResult.Columns"></span>    Columns []<a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;columns&#34;`
+
+    <span class="comment">// Row data (each row is a map of column name to value)</span>
+<span id="QueryResult.Rows"></span>    Rows []map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;rows&#34;`
+
+    <span class="comment">// Number of rows returned</span>
+<span id="QueryResult.RowCount"></span>    RowCount <a href="http://localhost:6060/pkg/builtin/#int">int</a> `json:&#34;row_count&#34;`
+
+    <span class="comment">// Execution time in seconds</span>
+<span id="QueryResult.ExecutionTime"></span>    ExecutionTime <a href="http://localhost:6060/pkg/builtin/#float64">float64</a> `json:&#34;execution_time&#34;`
+
+    <span class="comment">// Bytes processed (if available)</span>
+<span id="QueryResult.BytesProcessed"></span>    BytesProcessed <a href="http://localhost:6060/pkg/builtin/#int64">int64</a> `json:&#34;bytes_processed,omitempty&#34;`
+
+    <span class="comment">// Was result cached (Spark cache)</span>
+<span id="QueryResult.Cached"></span>    Cached <a href="http://localhost:6060/pkg/builtin/#bool">bool</a> `json:&#34;cached,omitempty&#34;`
+
+<span id="QueryResult.Query"></span>    <span class="comment">// Query that was executed (sanitized)</span>
+    Query <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;query,omitempty&#34;`
+
+    <span class="comment">// Any warnings</span>
+<span id="QueryResult.Warnings"></span>    Warnings []<a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;warnings,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="CollectStream">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/streaming.go?s=10222:10289#L409">CollectStream</a>
+					<a class="permalink" href="index.html#CollectStream">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func CollectStream(stream *<a href="index.html#QueryResultStream">QueryResultStream</a>) (*<a href="index.html#QueryResult">QueryResult</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>CollectStream collects all rows from a stream into a QueryResult.
+Useful for converting streaming results back to standard results.
+WARNING: This loads all data into memory - defeats the purpose of streaming!
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="QueryResultPage">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/streaming.go?s=5483:6077#L224">QueryResultPage</a>
+				<a class="permalink" href="index.html#QueryResultPage">&#xb6;</a>
+				
+				
+			</h2>
+			<p>QueryResultPage represents a paginated query result.
+Alternative to streaming for when you want discrete pages.
+
+			<pre>type QueryResultPage struct {
+<span id="QueryResultPage.Columns"></span>    <span class="comment">// Columns is the list of column names</span>
+    Columns []<a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="QueryResultPage.Rows"></span>    <span class="comment">// Rows contains the current page of data</span>
+    Rows []map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}
+
+<span id="QueryResultPage.RowCount"></span>    <span class="comment">// RowCount is the number of rows in this page</span>
+    RowCount <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+
+<span id="QueryResultPage.Page"></span>    <span class="comment">// Page is the current page number (1-based)</span>
+    Page <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+
+<span id="QueryResultPage.PageSize"></span>    <span class="comment">// PageSize is the size of each page</span>
+    PageSize <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+
+<span id="QueryResultPage.HasNextPage"></span>    <span class="comment">// HasNextPage indicates if more pages are available</span>
+    HasNextPage <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+
+<span id="QueryResultPage.TotalRows"></span>    <span class="comment">// TotalRows is the total count if known (-1 if unknown)</span>
+    TotalRows <a href="http://localhost:6060/pkg/builtin/#int64">int64</a>
+
+<span id="QueryResultPage.ExecutionTime"></span>    <span class="comment">// ExecutionTime for fetching this page</span>
+    ExecutionTime <a href="http://localhost:6060/pkg/builtin/#float64">float64</a>
+
+<span id="QueryResultPage.Query"></span>    <span class="comment">// Query that was executed</span>
+    Query <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="QueryResultStream">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/streaming.go?s=793:1183#L15">QueryResultStream</a>
+				<a class="permalink" href="index.html#QueryResultStream">&#xb6;</a>
+				
+				
+			</h2>
+			<p>QueryResultStream represents a streaming query result.
+Used for processing large result sets without loading all data into memory.
+
+			<pre>type QueryResultStream struct {
+<span id="QueryResultStream.Columns"></span>    <span class="comment">// Columns is the list of column names</span>
+    Columns []<a href="http://localhost:6060/pkg/builtin/#string">string</a>
+
+<span id="QueryResultStream.Rows"></span>    <span class="comment">// Rows is a channel that streams result rows</span>
+    Rows &lt;-chan map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}
+
+<span id="QueryResultStream.Errors"></span>    <span class="comment">// Errors is a channel for errors during streaming</span>
+    Errors &lt;-chan <a href="http://localhost:6060/pkg/builtin/#error">error</a>
+
+<span id="QueryResultStream.Metadata"></span>    <span class="comment">// Metadata contains query metadata</span>
+    Metadata *<a href="index.html#StreamMetadata">StreamMetadata</a>
+
+<span id="QueryResultStream.Cancel"></span>    <span class="comment">// Cancel can be called to stop streaming early</span>
+    Cancel <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#CancelFunc">CancelFunc</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="SessionStats">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/session.go?s=1115:1266#L27">SessionStats</a>
+				<a class="permalink" href="index.html#SessionStats">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SessionStats tracks query execution statistics.
+
+			<pre>type SessionStats struct {
+<span id="SessionStats.QueriesExecuted"></span>    QueriesExecuted <a href="http://localhost:6060/pkg/builtin/#int64">int64</a>
+<span id="SessionStats.TotalBytes"></span>    TotalBytes      <a href="http://localhost:6060/pkg/builtin/#int64">int64</a>
+<span id="SessionStats.TotalTime"></span>    TotalTime       <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>
+<span id="SessionStats.CacheHits"></span>    CacheHits       <a href="http://localhost:6060/pkg/builtin/#int64">int64</a>
+<span id="SessionStats.CacheMisses"></span>    CacheMisses     <a href="http://localhost:6060/pkg/builtin/#int64">int64</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="SparkSQLConnector">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=2111:2231#L49">SparkSQLConnector</a>
+				<a class="permalink" href="index.html#SparkSQLConnector">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SparkSQLConnector implements DatabaseConnector using Spark SQL.
+Provides distributed query execution across multiple database types.
+
+			<pre>type SparkSQLConnector struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewSparkSQLConnector">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=2301:2378#L56">NewSparkSQLConnector</a>
+					<a class="permalink" href="index.html#NewSparkSQLConnector">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSparkSQLConnector(config *<a href="index.html#DatabaseConfig">DatabaseConfig</a>) (*<a href="index.html#SparkSQLConnector">SparkSQLConnector</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewSparkSQLConnector creates a new Spark SQL database connector.
+
+				
+				
+			
+
+			
+				
+				<h3 id="SparkSQLConnector.Connect">func (*SparkSQLConnector) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=8125:8187#L226">Connect</a>
+					<a class="permalink" href="index.html#SparkSQLConnector.Connect">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSQLConnector">SparkSQLConnector</a>) Connect(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Connect establishes connection to the database.
+For Spark SQL, this means initializing the Spark session with appropriate config.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSQLConnector.Disconnect">func (*SparkSQLConnector) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=8300:8365#L232">Disconnect</a>
+					<a class="permalink" href="index.html#SparkSQLConnector.Disconnect">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSQLConnector">SparkSQLConnector</a>) Disconnect(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Disconnect closes the database connection.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSQLConnector.ExecuteQuery">func (*SparkSQLConnector) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=8696:8793#L244">ExecuteQuery</a>
+					<a class="permalink" href="index.html#SparkSQLConnector.ExecuteQuery">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSQLConnector">SparkSQLConnector</a>) ExecuteQuery(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, query <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#QueryResult">QueryResult</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ExecuteQuery executes a SQL query and returns results.
+Query is executed through Spark SQL for distributed processing.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSQLConnector.ExecuteQueryPaginated">func (*SparkSQLConnector) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=14214:14350#L415">ExecuteQueryPaginated</a>
+					<a class="permalink" href="index.html#SparkSQLConnector.ExecuteQueryPaginated">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSQLConnector">SparkSQLConnector</a>) ExecuteQueryPaginated(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, query <a href="http://localhost:6060/pkg/builtin/#string">string</a>, config *<a href="index.html#PaginationConfig">PaginationConfig</a>) (*<a href="index.html#QueryResultPage">QueryResultPage</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ExecuteQueryPaginated executes a SQL query with pagination.
+Alternative to streaming for discrete pages.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSQLConnector.GetConnectionInfo">func (*SparkSQLConnector) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=12987:13057#L384">GetConnectionInfo</a>
+					<a class="permalink" href="index.html#SparkSQLConnector.GetConnectionInfo">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSQLConnector">SparkSQLConnector</a>) GetConnectionInfo() map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{}</pre>
+				<p>GetConnectionInfo returns connection details for debugging.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSQLConnector.GetDatabaseInfo">func (*SparkSQLConnector) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=11263:11367#L325">GetDatabaseInfo</a>
+					<a class="permalink" href="index.html#SparkSQLConnector.GetDatabaseInfo">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSQLConnector">SparkSQLConnector</a>) GetDatabaseInfo(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, database <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#DatabaseInfo">DatabaseInfo</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetDatabaseInfo retrieves metadata about a specific database.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSQLConnector.GetDatabases">func (*SparkSQLConnector) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=10633:10712#L300">GetDatabases</a>
+					<a class="permalink" href="index.html#SparkSQLConnector.GetDatabases">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSQLConnector">SparkSQLConnector</a>) GetDatabases(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) ([]<a href="http://localhost:6060/pkg/builtin/#string">string</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetDatabases lists all accessible databases/datasets.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSQLConnector.GetTableInfo">func (*SparkSQLConnector) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=12702:12807#L378">GetTableInfo</a>
+					<a class="permalink" href="index.html#SparkSQLConnector.GetTableInfo">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSQLConnector">SparkSQLConnector</a>) GetTableInfo(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, database, table <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#TableInfo">TableInfo</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetTableInfo retrieves schema and metadata for a table.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSQLConnector.GetTables">func (*SparkSQLConnector) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=11990:12083#L352">GetTables</a>
+					<a class="permalink" href="index.html#SparkSQLConnector.GetTables">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSQLConnector">SparkSQLConnector</a>) GetTables(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, database <a href="http://localhost:6060/pkg/builtin/#string">string</a>) ([]<a href="http://localhost:6060/pkg/builtin/#string">string</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetTables lists all tables in a database.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSQLConnector.IsConnected">func (*SparkSQLConnector) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=8487:8533#L238">IsConnected</a>
+					<a class="permalink" href="index.html#SparkSQLConnector.IsConnected">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSQLConnector">SparkSQLConnector</a>) IsConnected() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>IsConnected returns true if currently connected.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSQLConnector.StreamQuery">func (*SparkSQLConnector) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=13730:13854#L403">StreamQuery</a>
+					<a class="permalink" href="index.html#SparkSQLConnector.StreamQuery">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSQLConnector">SparkSQLConnector</a>) StreamQuery(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, query <a href="http://localhost:6060/pkg/builtin/#string">string</a>, config *<a href="index.html#StreamConfig">StreamConfig</a>) (*<a href="index.html#QueryResultStream">QueryResultStream</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>StreamQuery executes a SQL query and streams results via channel.
+Memory-efficient for large result sets.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSQLConnector.ValidateQuery">func (*SparkSQLConnector) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/connector.go?s=9145:9206#L255">ValidateQuery</a>
+					<a class="permalink" href="index.html#SparkSQLConnector.ValidateQuery">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSQLConnector">SparkSQLConnector</a>) ValidateQuery(query <a href="http://localhost:6060/pkg/builtin/#string">string</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>ValidateQuery checks if a query is allowed based on WriteMode and security settings.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SparkSession">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/session.go?s=924:1062#L18">SparkSession</a>
+				<a class="permalink" href="index.html#SparkSession">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SparkSession provides a Spark SQL session for distributed query execution.
+This is a stub implementation that delegates to standard database/sql.
+In production, this would integrate with Apache Spark via spark-connect or CGO bindings.
+
+			<pre>type SparkSession struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewSparkSession">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/session.go?s=1404:1471#L37">NewSparkSession</a>
+					<a class="permalink" href="index.html#NewSparkSession">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSparkSession(config *<a href="index.html#DatabaseConfig">DatabaseConfig</a>) (*<a href="index.html#SparkSession">SparkSession</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewSparkSession creates a new Spark SQL session.
+This stub implementation uses database/sql; production would use Spark bindings.
+
+				
+				
+			
+
+			
+				
+				<h3 id="SparkSession.Connect">func (*SparkSession) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/session.go?s=1687:1744#L49">Connect</a>
+					<a class="permalink" href="index.html#SparkSession.Connect">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSession">SparkSession</a>) Connect(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Connect establishes connection to the underlying database.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSession.Disconnect">func (*SparkSession) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/session.go?s=2005:2065#L64">Disconnect</a>
+					<a class="permalink" href="index.html#SparkSession.Disconnect">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSession">SparkSession</a>) Disconnect(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) <a href="http://localhost:6060/pkg/builtin/#error">error</a></pre>
+				<p>Disconnect closes the database connection.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSession.ExecuteQuery">func (*SparkSession) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/session.go?s=2529:2621#L91">ExecuteQuery</a>
+					<a class="permalink" href="index.html#SparkSession.ExecuteQuery">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSession">SparkSession</a>) ExecuteQuery(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, query <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#QueryResult">QueryResult</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ExecuteQuery executes a SQL query and returns results.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSession.ExecuteQueryPaginated">func (*SparkSession) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/streaming.go?s=7085:7216#L285">ExecuteQueryPaginated</a>
+					<a class="permalink" href="index.html#SparkSession.ExecuteQueryPaginated">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSession">SparkSession</a>) ExecuteQueryPaginated(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, query <a href="http://localhost:6060/pkg/builtin/#string">string</a>, config *<a href="index.html#PaginationConfig">PaginationConfig</a>) (*<a href="index.html#QueryResultPage">QueryResultPage</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ExecuteQueryPaginated executes a SQL query and returns a paginated result.
+This is useful when you want discrete pages instead of streaming.
+<p>Example usage:
+<pre>config := &amp;PaginationConfig{PageSize: 100, Page: 1}
+page, err := session.ExecuteQueryPaginated(ctx, &quot;SELECT * FROM users&quot;, config)
+if page.HasNextPage {
+    // Fetch next page
+    nextPage, _ := session.ExecuteQueryPaginated(ctx, query, &amp;PaginationConfig{Page: 2})
+}
+</pre>
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSession.GetDatabases">func (*SparkSession) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/session.go?s=3224:3298#L120">GetDatabases</a>
+					<a class="permalink" href="index.html#SparkSession.GetDatabases">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSession">SparkSession</a>) GetDatabases(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>) ([]<a href="http://localhost:6060/pkg/builtin/#string">string</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetDatabases lists all accessible databases.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSession.GetStats">func (*SparkSession) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/session.go?s=4426:4472#L167">GetStats</a>
+					<a class="permalink" href="index.html#SparkSession.GetStats">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSession">SparkSession</a>) GetStats() <a href="index.html#SessionStats">SessionStats</a></pre>
+				<p>GetStats returns session statistics.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSession.GetTableSchema">func (*SparkSession) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/session.go?s=3855:3957#L146">GetTableSchema</a>
+					<a class="permalink" href="index.html#SparkSession.GetTableSchema">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSession">SparkSession</a>) GetTableSchema(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, database, table <a href="http://localhost:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#TableInfo">TableInfo</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetTableSchema retrieves schema information for a table.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSession.GetTables">func (*SparkSession) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/session.go?s=3525:3613#L133">GetTables</a>
+					<a class="permalink" href="index.html#SparkSession.GetTables">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSession">SparkSession</a>) GetTables(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, database <a href="http://localhost:6060/pkg/builtin/#string">string</a>) ([]<a href="http://localhost:6060/pkg/builtin/#string">string</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetTables lists all tables in a database.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSession.IsConnected">func (*SparkSession) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/session.go?s=2368:2409#L84">IsConnected</a>
+					<a class="permalink" href="index.html#SparkSession.IsConnected">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSession">SparkSession</a>) IsConnected() <a href="http://localhost:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>IsConnected returns true if the session is connected.
+
+				
+				
+				
+			
+				
+				<h3 id="SparkSession.StreamQuery">func (*SparkSession) <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/streaming.go?s=2508:2627#L87">StreamQuery</a>
+					<a class="permalink" href="index.html#SparkSession.StreamQuery">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SparkSession">SparkSession</a>) StreamQuery(ctx <a href="http://localhost:6060/pkg/context/">context</a>.<a href="http://localhost:6060/pkg/context/#Context">Context</a>, query <a href="http://localhost:6060/pkg/builtin/#string">string</a>, config *<a href="index.html#StreamConfig">StreamConfig</a>) (*<a href="index.html#QueryResultStream">QueryResultStream</a>, <a href="http://localhost:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>StreamQuery executes a SQL query and streams results via channel.
+This is memory-efficient for large result sets.
+<p>Example usage:
+<pre>stream, err := session.StreamQuery(ctx, &quot;SELECT * FROM large_table&quot;)
+if err != nil {
+    return err
+}
+defer stream.Cancel()
+
+for row := range stream.Rows {
+    // Process row
+    fmt.Printf(&quot;Row: %v\n&quot;, row)
+}
+
+// Check for errors
+if err := &lt;-stream.Errors; err != nil {
+    return err
+}
+</pre>
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="StreamConfig">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/streaming.go?s=1462:1794#L43">StreamConfig</a>
+				<a class="permalink" href="index.html#StreamConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StreamConfig configures streaming behavior.
+
+			<pre>type StreamConfig struct {
+<span id="StreamConfig.BufferSize"></span>    <span class="comment">// BufferSize is the channel buffer size (default: 100)</span>
+    BufferSize <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+
+<span id="StreamConfig.BatchSize"></span>    <span class="comment">// BatchSize is the number of rows to fetch at once (default: 1000)</span>
+    BatchSize <a href="http://localhost:6060/pkg/builtin/#int">int</a>
+
+<span id="StreamConfig.MaxRows"></span>    <span class="comment">// MaxRows limits the total rows streamed (0 = unlimited)</span>
+    MaxRows <a href="http://localhost:6060/pkg/builtin/#int64">int64</a>
+
+<span id="StreamConfig.Timeout"></span>    <span class="comment">// Timeout for the entire streaming operation</span>
+    Timeout <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Duration">Duration</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="DefaultStreamConfig">func <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/streaming.go?s=1860:1900#L58">DefaultStreamConfig</a>
+					<a class="permalink" href="index.html#DefaultStreamConfig">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func DefaultStreamConfig() *<a href="index.html#StreamConfig">StreamConfig</a></pre>
+				<p>DefaultStreamConfig returns default streaming configuration.
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="StreamMetadata">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/streaming.go?s=1248:1413#L33">StreamMetadata</a>
+				<a class="permalink" href="index.html#StreamMetadata">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StreamMetadata contains metadata about the streaming query.
+
+			<pre>type StreamMetadata struct {
+<span id="StreamMetadata.Query"></span>    Query         <a href="http://localhost:6060/pkg/builtin/#string">string</a>
+<span id="StreamMetadata.StartTime"></span>    StartTime     <a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a>
+<span id="StreamMetadata.RowsStreamed"></span>    RowsStreamed  <a href="http://localhost:6060/pkg/builtin/#int64">int64</a>
+<span id="StreamMetadata.BytesStreamed"></span>    BytesStreamed <a href="http://localhost:6060/pkg/builtin/#int64">int64</a>
+<span id="StreamMetadata.Completed"></span>    Completed     <a href="http://localhost:6060/pkg/builtin/#bool">bool</a>
+<span id="StreamMetadata.CompletedAt"></span>    CompletedAt   *<a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="TableInfo">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/config.go?s=6439:7433#L176">TableInfo</a>
+				<a class="permalink" href="index.html#TableInfo">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TableInfo contains metadata about a database table.
+Compatible with ADK&apos;s get_table_info response.
+
+			<pre>type TableInfo struct {
+<span id="TableInfo.Database"></span>    <span class="comment">// Database/Dataset name</span>
+    Database <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;database&#34;`
+
+<span id="TableInfo.Schema"></span>    <span class="comment">// Schema name (for databases that support schemas)</span>
+    Schema <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;schema,omitempty&#34;`
+
+<span id="TableInfo.Table"></span>    <span class="comment">// Table name</span>
+    Table <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;table&#34;`
+
+    <span class="comment">// Fully qualified name (e.g., &#34;project.dataset.table&#34;)</span>
+<span id="TableInfo.FullyQualifiedName"></span>    FullyQualifiedName <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;fully_qualified_name&#34;`
+
+    <span class="comment">// Table type (TABLE, VIEW, EXTERNAL, etc.)</span>
+<span id="TableInfo.Type"></span>    Type <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;type&#34;`
+
+    <span class="comment">// Column information</span>
+<span id="TableInfo.Columns"></span>    Columns []<a href="index.html#ColumnInfo">ColumnInfo</a> `json:&#34;columns&#34;`
+
+    <span class="comment">// Row count (if available, -1 if unknown)</span>
+<span id="TableInfo.RowCount"></span>    RowCount <a href="http://localhost:6060/pkg/builtin/#int64">int64</a> `json:&#34;row_count&#34;`
+
+    <span class="comment">// Size in bytes (if available, -1 if unknown)</span>
+<span id="TableInfo.SizeBytes"></span>    SizeBytes <a href="http://localhost:6060/pkg/builtin/#int64">int64</a> `json:&#34;size_bytes,omitempty&#34;`
+
+    <span class="comment">// Creation timestamp</span>
+<span id="TableInfo.CreatedAt"></span>    CreatedAt *<a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a> `json:&#34;created_at,omitempty&#34;`
+
+    <span class="comment">// Last modified timestamp</span>
+<span id="TableInfo.ModifiedAt"></span>    ModifiedAt *<a href="http://localhost:6060/pkg/time/">time</a>.<a href="http://localhost:6060/pkg/time/#Time">Time</a> `json:&#34;modified_at,omitempty&#34;`
+
+<span id="TableInfo.Description"></span>    <span class="comment">// Description/comment</span>
+    Description <a href="http://localhost:6060/pkg/builtin/#string">string</a> `json:&#34;description,omitempty&#34;`
+
+    <span class="comment">// Additional metadata (database-specific)</span>
+<span id="TableInfo.Metadata"></span>    Metadata map[<a href="http://localhost:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;metadata,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="WriteMode">type <a href="http://localhost:6060/src/github.com/seyi/dagens/pkg/tools/database/config.go?s=937:958#L15">WriteMode</a>
+				<a class="permalink" href="index.html#WriteMode">&#xb6;</a>
+				
+				
+			</h2>
+			<p>WriteMode controls what write operations are allowed on the database.
+Mirrors ADK&apos;s BigQueryToolConfig.WriteMode for compatibility.
+
+			<pre>type WriteMode <a href="http://localhost:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span class="comment">// WriteModeBlocked prevents all write operations (safest for agent usage)</span>
+    <span id="WriteModeBlocked">WriteModeBlocked</span> <a href="index.html#WriteMode">WriteMode</a> = &#34;BLOCKED&#34;
+
+    <span class="comment">// WriteModeReadOnly allows SELECT queries only</span>
+    <span id="WriteModeReadOnly">WriteModeReadOnly</span> <a href="index.html#WriteMode">WriteMode</a> = &#34;READ_ONLY&#34;
+
+    <span class="comment">// WriteModeFull allows all operations including INSERT, UPDATE, DELETE, CREATE, DROP</span>
+    <span class="comment">// Use with extreme caution in agent contexts</span>
+    <span id="WriteModeFull">WriteModeFull</span> <a href="index.html#WriteMode">WriteMode</a> = &#34;FULL&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://localhost:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>
