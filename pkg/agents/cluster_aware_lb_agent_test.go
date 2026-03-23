@@ -62,17 +62,20 @@ func TestClusterAwareLoadBalancerAgent_RealRemoteExecution(t *testing.T) {
 	defer reg.Stop()
 
 	// Actually we should just register a second registry instance to simulate the worker
-	workerReg, _ := registry.NewDistributedAgentRegistry(registry.RegistryConfig{
+	workerReg, err := registry.NewDistributedAgentRegistry(registry.RegistryConfig{
 		EtcdEndpoints: endpoints,
 		NodeID:        "remote-node-1",
 		NodeAddress:   "127.0.0.1",
 		NodePort:      remotePort,
 	})
-	workerReg.Start(ctx)
+	require.NoError(t, err)
+	require.NoError(t, workerReg.Start(ctx))
 	defer workerReg.Stop()
 
-	// Give time for discovery
-	time.Sleep(1 * time.Second)
+	require.Eventually(t, func() bool {
+		node, ok := reg.GetNode("remote-node-1")
+		return ok && node.Healthy && node.Port == remotePort
+	}, 5*time.Second, 100*time.Millisecond, "remote node was not discovered by registry")
 
 	remoteExec := remote.NewRemoteExecutor(reg, 5*time.Second)
 	defer remoteExec.Close()
