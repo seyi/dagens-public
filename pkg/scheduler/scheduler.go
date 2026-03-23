@@ -1230,7 +1230,9 @@ func (s *Scheduler) markJobDequeued(job *Job) {
 func (s *Scheduler) executeJob(ctx context.Context, job *Job) {
 	s.mu.Lock()
 	if job != nil {
-		if _, exists := s.jobs[job.ID]; !exists {
+		if existing, exists := s.jobs[job.ID]; exists && existing != nil {
+			job = existing
+		} else {
 			s.jobs[job.ID] = job
 		}
 	}
