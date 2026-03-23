@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>openai - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package openai
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/models/openai"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+				
+				<dd><a href="index.html#EstimateCost">func EstimateCost(model string, promptTokens, completionTokens int) float64</a></dd>
+			
+				
+				<dd><a href="index.html#EstimateCostWithCache">func EstimateCostWithCache(model string, promptTokens, completionTokens, cachedTokens int) float64</a></dd>
+			
+			
+				
+				<dd><a href="index.html#Config">type Config</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ModelPricing">type ModelPricing</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LookupPricing">func LookupPricing(model string) (ModelPricing, bool)</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Parameters">type Parameters</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Provider">type Provider</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewProvider">func NewProvider(cfg Config) (*Provider, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Provider.Chat">func (p *Provider) Chat(ctx context.Context, req *models.ModelRequest) (*models.ModelResponse, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Provider.Close">func (p *Provider) Close() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Provider.ContextWindow">func (p *Provider) ContextWindow() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Provider.HealthCheck">func (p *Provider) HealthCheck(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Provider.MaxOutputTokens">func (p *Provider) MaxOutputTokens() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Provider.Stream">func (p *Provider) Stream(ctx context.Context, req *models.ModelRequest, handler models.StreamHandler) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Provider.SupportsJSONMode">func (p *Provider) SupportsJSONMode() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Provider.SupportsStreaming">func (p *Provider) SupportsStreaming() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Provider.SupportsTools">func (p *Provider) SupportsTools() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Provider.SupportsVision">func (p *Provider) SupportsVision() bool</a></dd>
+				
+			
+				
+				<dd><a href="index.html#RateLimitConfig">type RateLimitConfig</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/adapter.go">adapter.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/pricing.go">pricing.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go">provider.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+			
+			
+			<h2 id="EstimateCost">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/pricing.go?s=2181:2256#L78">EstimateCost</a>
+				<a class="permalink" href="index.html#EstimateCost">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func EstimateCost(model <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, promptTokens, completionTokens <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a></pre>
+			<p>EstimateCost calculates the USD estimate for the supplied token usage.
+
+			
+			
+
+		
+			
+			
+			<h2 id="EstimateCostWithCache">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/pricing.go?s=2622:2720#L90">EstimateCostWithCache</a>
+				<a class="permalink" href="index.html#EstimateCostWithCache">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func EstimateCostWithCache(model <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, promptTokens, completionTokens, cachedTokens <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a></pre>
+			<p>EstimateCostWithCache calculates cost considering context caching (cached tokens are 50% cheaper).
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="Config">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=478:973#L19">Config</a>
+				<a class="permalink" href="index.html#Config">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Config controls how the OpenAI provider is instantiated.
+
+			<pre>type Config struct {
+<span id="Config.ID"></span>    ID             <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="Config.Model"></span>    Model          <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="Config.APIKey"></span>    APIKey         <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="Config.APIKeyEnv"></span>    APIKeyEnv      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="Config.OrganizationID"></span>    OrganizationID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="Config.BaseURL"></span>    BaseURL        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+<span id="Config.SecretProvider"></span>    <span class="comment">// SecretProvider allows retrieving the API key securely.</span>
+    SecretProvider <a href="../../secrets/index.html">secrets</a>.<a href="../../secrets/index.html#SecretProvider">SecretProvider</a>
+
+<span id="Config.Parameters"></span>    Parameters <a href="index.html#Parameters">Parameters</a>
+<span id="Config.RateLimit"></span>    RateLimit  <a href="index.html#RateLimitConfig">RateLimitConfig</a>
+
+<span id="Config.MaxRetries"></span>    MaxRetries     <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="Config.RetryBaseDelay"></span>    RetryBaseDelay <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+
+<span id="Config.HTTPClient"></span>    <span class="comment">// HTTPClient allows custom HTTP transport tuning (important for Spark concurrency)</span>
+    HTTPClient *<a href="http://127.0.0.1:6060/pkg/net/http/">http</a>.<a href="http://127.0.0.1:6060/pkg/net/http/#Client">Client</a>
+
+<span id="Config.Logger"></span>    Logger *<a href="http://127.0.0.1:6060/pkg/log/slog/">slog</a>.<a href="http://127.0.0.1:6060/pkg/log/slog/#Logger">Logger</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ModelPricing">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/pricing.go?s=122:310#L1">ModelPricing</a>
+				<a class="permalink" href="index.html#ModelPricing">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ModelPricing captures pricing, capability, and context metadata for an OpenAI model.
+
+			<pre>type ModelPricing struct {
+<span id="ModelPricing.PromptCostPer1K"></span>    PromptCostPer1K     <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+<span id="ModelPricing.CompletionCostPer1K"></span>    CompletionCostPer1K <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+<span id="ModelPricing.ContextWindow"></span>    ContextWindow       <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="ModelPricing.MaxOutputTokens"></span>    MaxOutputTokens     <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="ModelPricing.SupportsVision"></span>    SupportsVision      <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+<span id="ModelPricing.SupportsJSONMode"></span>    SupportsJSONMode    <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="LookupPricing">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/pricing.go?s=1851:1904#L65">LookupPricing</a>
+					<a class="permalink" href="index.html#LookupPricing">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func LookupPricing(model <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="index.html#ModelPricing">ModelPricing</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)</pre>
+				<p>LookupPricing returns pricing metadata for the supplied model name.
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="Parameters">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=1054:1151#L43">Parameters</a>
+				<a class="permalink" href="index.html#Parameters">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Parameters defines default generation parameters when a request omits them.
+
+			<pre>type Parameters struct {
+<span id="Parameters.Temperature"></span>    Temperature     <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+<span id="Parameters.TopP"></span>    TopP            <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+<span id="Parameters.MaxOutputTokens"></span>    MaxOutputTokens <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Provider">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=1370:1520#L56">Provider</a>
+				<a class="permalink" href="index.html#Provider">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Provider implements models.ModelProvider for OpenAI&apos;s chat-completions API.
+
+			<pre>type Provider struct {
+    *<a href="../index.html">models</a>.<a href="../index.html#BaseProvider">BaseProvider</a>
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewProvider">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=1691:1738#L70">NewProvider</a>
+					<a class="permalink" href="index.html#NewProvider">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewProvider(cfg <a href="index.html#Config">Config</a>) (*<a href="index.html#Provider">Provider</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewProvider creates a configured OpenAI provider instance.
+
+				
+				
+			
+
+			
+				
+				<h3 id="Provider.Chat">func (*Provider) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=3995:4096#L162">Chat</a>
+					<a class="permalink" href="index.html#Provider.Chat">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Provider">Provider</a>) Chat(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, req *<a href="../index.html">models</a>.<a href="../index.html#ModelRequest">ModelRequest</a>) (*<a href="../index.html">models</a>.<a href="../index.html#ModelResponse">ModelResponse</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Chat executes a non-streaming completion request.
+
+				
+				
+				
+			
+				
+				<h3 id="Provider.Close">func (*Provider) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=9741:9773#L364">Close</a>
+					<a class="permalink" href="index.html#Provider.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Provider">Provider</a>) Close() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Close allows the provider to release resources. (No-op currently.)
+
+				
+				
+				
+			
+				
+				<h3 id="Provider.ContextWindow">func (*Provider) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=8784:8822#L327">ContextWindow</a>
+					<a class="permalink" href="index.html#Provider.ContextWindow">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Provider">Provider</a>) ContextWindow() <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+				<p>ContextWindow returns the model&apos;s context window if known.
+
+				
+				
+				
+			
+				
+				<h3 id="Provider.HealthCheck">func (*Provider) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=9206:9263#L343">HealthCheck</a>
+					<a class="permalink" href="index.html#Provider.HealthCheck">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Provider">Provider</a>) HealthCheck(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>HealthCheck verifies the API key and model accessibility.
+
+				
+				
+				
+			
+				
+				<h3 id="Provider.MaxOutputTokens">func (*Provider) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=8984:9024#L335">MaxOutputTokens</a>
+					<a class="permalink" href="index.html#Provider.MaxOutputTokens">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Provider">Provider</a>) MaxOutputTokens() <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+				<p>MaxOutputTokens returns the configured or priced max output token count.
+
+				
+				
+				
+			
+				
+				<h3 id="Provider.Stream">func (*Provider) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=5683:5791#L219">Stream</a>
+					<a class="permalink" href="index.html#Provider.Stream">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Provider">Provider</a>) Stream(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, req *<a href="../index.html">models</a>.<a href="../index.html#ModelRequest">ModelRequest</a>, handler <a href="../index.html">models</a>.<a href="../index.html#StreamHandler">StreamHandler</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Stream executes a streaming completion request.
+
+				
+				
+				
+			
+				
+				<h3 id="Provider.SupportsJSONMode">func (*Provider) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=8639:8681#L322">SupportsJSONMode</a>
+					<a class="permalink" href="index.html#Provider.SupportsJSONMode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Provider">Provider</a>) SupportsJSONMode() <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>SupportsJSONMode reports whether JSON mode is supported.
+
+				
+				
+				
+			
+				
+				<h3 id="Provider.SupportsStreaming">func (*Provider) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=8517:8560#L317">SupportsStreaming</a>
+					<a class="permalink" href="index.html#Provider.SupportsStreaming">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Provider">Provider</a>) SupportsStreaming() <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>SupportsStreaming reports whether the provider supports streaming responses.
+
+				
+				
+				
+			
+				
+				<h3 id="Provider.SupportsTools">func (*Provider) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=8221:8260#L307">SupportsTools</a>
+					<a class="permalink" href="index.html#Provider.SupportsTools">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Provider">Provider</a>) SupportsTools() <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>SupportsTools reports whether the provider supports function/tool calls.
+
+				
+				
+				
+			
+				
+				<h3 id="Provider.SupportsVision">func (*Provider) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=8358:8398#L312">SupportsVision</a>
+					<a class="permalink" href="index.html#Provider.SupportsVision">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (p *<a href="index.html#Provider">Provider</a>) SupportsVision() <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>SupportsVision reports whether the configured model supports vision inputs.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="RateLimitConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/models/openai/provider.go?s=1208:1289#L50">RateLimitConfig</a>
+				<a class="permalink" href="index.html#RateLimitConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RateLimitConfig configures the client-side limiter.
+
+			<pre>type RateLimitConfig struct {
+<span id="RateLimitConfig.RequestsPerSecond"></span>    RequestsPerSecond <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+<span id="RateLimitConfig.Burst"></span>    Burst             <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

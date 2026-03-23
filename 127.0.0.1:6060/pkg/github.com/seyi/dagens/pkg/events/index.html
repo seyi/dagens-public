@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>events - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package events
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/events"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package events provides event tracking and telemetry
+Inspired by ADK&apos;s event system and OpenTelemetry integration
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+				<dd><a href="index.html#pkg-variables">Variables</a></dd>
+			
+			
+				
+				<dd><a href="index.html#OnStateChange">func OnStateChange(callback StateChangeCallback) error</a></dd>
+			
+				
+				<dd><a href="index.html#PublishStateChange">func PublishStateChange(key string, oldValue, newValue interface{}, agentName, partition string) error</a></dd>
+			
+			
+				
+				<dd><a href="index.html#BaseEvent">type BaseEvent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewAgentEvent">func NewAgentEvent(eventType EventType, agentID, sessionID string, data interface{}) *BaseEvent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewStateChangeEvent">func NewStateChangeEvent(key string, oldValue, newValue interface{}, agentName, partition string) *BaseEvent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewTaskEvent">func NewTaskEvent(eventType EventType, taskID, jobID string, data interface{}) *BaseEvent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewToolEvent">func NewToolEvent(eventType EventType, toolName, agentID string, data interface{}) *BaseEvent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewTransferCompletedEvent">func NewTransferCompletedEvent(fromAgent, toAgent, fromPartition, toPartition string, duration time.Duration, transferType string) *BaseEvent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewTransferFailedEvent">func NewTransferFailedEvent(fromAgent, toAgent, reason, errorMsg, fromPartition string) *BaseEvent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewTransferRequestEvent">func NewTransferRequestEvent(fromAgent, toAgent, reason, fromPartition string) *BaseEvent</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseEvent.AgentID">func (b *BaseEvent) AgentID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseEvent.Data">func (b *BaseEvent) Data() interface{}</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseEvent.Metadata">func (b *BaseEvent) Metadata() map[string]interface{}</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseEvent.SessionID">func (b *BaseEvent) SessionID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseEvent.Timestamp">func (b *BaseEvent) Timestamp() time.Time</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseEvent.Type">func (b *BaseEvent) Type() EventType</a></dd>
+				
+			
+				
+				<dd><a href="index.html#Event">type Event</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#EventBus">type EventBus</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#EventFilter">type EventFilter</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#EventHandler">type EventHandler</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#EventLogger">type EventLogger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewEventLogger">func NewEventLogger() *EventLogger</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#EventLogger.Log">func (l *EventLogger) Log(ctx context.Context, event Event) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#EventMetrics">type EventMetrics</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewEventMetrics">func NewEventMetrics() *EventMetrics</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#EventMetrics.GetAllCounts">func (m *EventMetrics) GetAllCounts() map[EventType]int64</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#EventMetrics.GetCount">func (m *EventMetrics) GetCount(eventType EventType) int64</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#EventMetrics.Track">func (m *EventMetrics) Track(ctx context.Context, event Event) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#EventRecorder">type EventRecorder</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewEventRecorder">func NewEventRecorder(bus EventBus, store EventStore) *EventRecorder</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#EventRecorder.Publish">func (r *EventRecorder) Publish(event Event) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#EventRecorder.Query">func (r *EventRecorder) Query(ctx context.Context, filter EventFilter) ([]Event, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#EventStore">type EventStore</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#EventType">type EventType</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MemoryEventBus">type MemoryEventBus</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMemoryEventBus">func NewMemoryEventBus() *MemoryEventBus</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryEventBus.Close">func (m *MemoryEventBus) Close() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryEventBus.OnStateChange">func (m *MemoryEventBus) OnStateChange(callback StateChangeCallback) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryEventBus.Publish">func (m *MemoryEventBus) Publish(event Event) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryEventBus.PublishStateChange">func (m *MemoryEventBus) PublishStateChange(key string, oldValue, newValue interface{}, agentName, partition string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryEventBus.Subscribe">func (m *MemoryEventBus) Subscribe(eventType EventType, handler EventHandler) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryEventBus.Unsubscribe">func (m *MemoryEventBus) Unsubscribe(eventType EventType, handler EventHandler) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MemoryEventStore">type MemoryEventStore</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMemoryEventStore">func NewMemoryEventStore() *MemoryEventStore</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryEventStore.Load">func (s *MemoryEventStore) Load(ctx context.Context, filter EventFilter) ([]Event, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryEventStore.Store">func (s *MemoryEventStore) Store(ctx context.Context, event Event) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#StateChangeCallback">type StateChangeCallback</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#StateChangeData">type StateChangeData</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#TransferCompletedData">type TransferCompletedData</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#TransferFailedData">type TransferFailedData</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#TransferRequestData">type TransferRequestData</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go">events.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+			<h2 id="pkg-variables">Variables</h2>
+			
+				<p>Global event bus instance for convenience (ADK pattern)
+
+				<pre>var <span id="GlobalEventBus">GlobalEventBus</span> = <a href="index.html#NewMemoryEventBus">NewMemoryEventBus</a>()</pre>
+			
+		
+		
+			
+			
+			<h2 id="OnStateChange">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=12026:12080#L464">OnStateChange</a>
+				<a class="permalink" href="index.html#OnStateChange">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func OnStateChange(callback <a href="index.html#StateChangeCallback">StateChangeCallback</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+			<p>OnStateChange is a convenience function using the global event bus
+
+			
+			
+
+		
+			
+			
+			<h2 id="PublishStateChange">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=12208:12310#L469">PublishStateChange</a>
+				<a class="permalink" href="index.html#PublishStateChange">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func PublishStateChange(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, oldValue, newValue interface{}, agentName, partition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+			<p>PublishStateChange is a convenience function using the global event bus
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="BaseEvent">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=3190:3356#L91">BaseEvent</a>
+				<a class="permalink" href="index.html#BaseEvent">&#xb6;</a>
+				
+				
+			</h2>
+			<p>BaseEvent provides common event fields
+
+			<pre>type BaseEvent struct {
+<span id="BaseEvent.EventType"></span>    EventType <a href="index.html#EventType">EventType</a>
+<span id="BaseEvent.EventTime"></span>    EventTime <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="BaseEvent.Agent"></span>    Agent     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="BaseEvent.Session"></span>    Session   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="BaseEvent.EventData"></span>    EventData interface{}
+<span id="BaseEvent.Meta"></span>    Meta      map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewAgentEvent">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=9362:9457#L371">NewAgentEvent</a>
+					<a class="permalink" href="index.html#NewAgentEvent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewAgentEvent(eventType <a href="index.html#EventType">EventType</a>, agentID, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, data interface{}) *<a href="index.html#BaseEvent">BaseEvent</a></pre>
+				
+				
+				
+			
+				
+				<h3 id="NewStateChangeEvent">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=10531:10639#L421">NewStateChangeEvent</a>
+					<a class="permalink" href="index.html#NewStateChangeEvent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewStateChangeEvent(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, oldValue, newValue interface{}, agentName, partition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) *<a href="index.html#BaseEvent">BaseEvent</a></pre>
+				<p>NewStateChangeEvent creates a state change event
+
+				
+				
+			
+				
+				<h3 id="NewTaskEvent">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=9649:9738#L382">NewTaskEvent</a>
+					<a class="permalink" href="index.html#NewTaskEvent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewTaskEvent(eventType <a href="index.html#EventType">EventType</a>, taskID, jobID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, data interface{}) *<a href="index.html#BaseEvent">BaseEvent</a></pre>
+				
+				
+				
+			
+				
+				<h3 id="NewToolEvent">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=9954:10047#L396">NewToolEvent</a>
+					<a class="permalink" href="index.html#NewToolEvent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewToolEvent(eventType <a href="index.html#EventType">EventType</a>, toolName, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, data interface{}) *<a href="index.html#BaseEvent">BaseEvent</a></pre>
+				
+				
+				
+			
+				
+				<h3 id="NewTransferCompletedEvent">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=13817:13958#L527">NewTransferCompletedEvent</a>
+					<a class="permalink" href="index.html#NewTransferCompletedEvent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewTransferCompletedEvent(fromAgent, toAgent, fromPartition, toPartition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, duration <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>, transferType <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) *<a href="index.html#BaseEvent">BaseEvent</a></pre>
+				<p>NewTransferCompletedEvent creates a transfer completed event
+
+				
+				
+			
+				
+				<h3 id="NewTransferFailedEvent">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=14587:14685#L552">NewTransferFailedEvent</a>
+					<a class="permalink" href="index.html#NewTransferFailedEvent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewTransferFailedEvent(fromAgent, toAgent, reason, errorMsg, fromPartition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) *<a href="index.html#BaseEvent">BaseEvent</a></pre>
+				<p>NewTransferFailedEvent creates a transfer failed event
+
+				
+				
+			
+				
+				<h3 id="NewTransferRequestEvent">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=13245:13334#L506">NewTransferRequestEvent</a>
+					<a class="permalink" href="index.html#NewTransferRequestEvent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewTransferRequestEvent(fromAgent, toAgent, reason, fromPartition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) *<a href="index.html#BaseEvent">BaseEvent</a></pre>
+				<p>NewTransferRequestEvent creates a transfer request event
+
+				
+				
+			
+
+			
+				
+				<h3 id="BaseEvent.AgentID">func (*BaseEvent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=3518:3554#L102">AgentID</a>
+					<a class="permalink" href="index.html#BaseEvent.AgentID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#BaseEvent">BaseEvent</a>) AgentID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="BaseEvent.Data">func (*BaseEvent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=3672:3710#L104">Data</a>
+					<a class="permalink" href="index.html#BaseEvent.Data">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#BaseEvent">BaseEvent</a>) Data() interface{}</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="BaseEvent.Metadata">func (*BaseEvent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=3752:3805#L105">Metadata</a>
+					<a class="permalink" href="index.html#BaseEvent.Metadata">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#BaseEvent">BaseEvent</a>) Metadata() map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="BaseEvent.SessionID">func (*BaseEvent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=3594:3632#L103">SessionID</a>
+					<a class="permalink" href="index.html#BaseEvent.SessionID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#BaseEvent">BaseEvent</a>) SessionID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="BaseEvent.Timestamp">func (*BaseEvent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=3438:3479#L101">Timestamp</a>
+					<a class="permalink" href="index.html#BaseEvent.Timestamp">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#BaseEvent">BaseEvent</a>) Timestamp() <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="BaseEvent.Type">func (*BaseEvent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=3358:3394#L100">Type</a>
+					<a class="permalink" href="index.html#BaseEvent.Type">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#BaseEvent">BaseEvent</a>) Type() <a href="index.html#EventType">EventType</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Event">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=639:797#L18">Event</a>
+				<a class="permalink" href="index.html#Event">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Event represents a system event
+
+			<pre>type Event interface {
+    Type() <a href="index.html#EventType">EventType</a>
+    Timestamp() <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+    AgentID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+    SessionID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+    Data() interface{}
+    Metadata() map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="EventBus">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=236:602#L3">EventBus</a>
+				<a class="permalink" href="index.html#EventBus">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EventBus manages event publishing and subscription
+
+			<pre>type EventBus interface {
+    <span class="comment">// Subscribe registers a handler for an event type</span>
+    Subscribe(eventType <a href="index.html#EventType">EventType</a>, handler <a href="index.html#EventHandler">EventHandler</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// Publish publishes an event to all subscribers</span>
+    Publish(event <a href="index.html#Event">Event</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// Unsubscribe removes a handler</span>
+    Unsubscribe(eventType <a href="index.html#EventType">EventType</a>, handler <a href="index.html#EventHandler">EventHandler</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// Close shuts down the event bus</span>
+    Close() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="EventFilter">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=6966:7115#L255">EventFilter</a>
+				<a class="permalink" href="index.html#EventFilter">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EventFilter filters events for queries
+
+			<pre>type EventFilter struct {
+<span id="EventFilter.EventTypes"></span>    EventTypes []<a href="index.html#EventType">EventType</a>
+<span id="EventFilter.AgentID"></span>    AgentID    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="EventFilter.SessionID"></span>    SessionID  <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="EventFilter.StartTime"></span>    StartTime  <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="EventFilter.EndTime"></span>    EndTime    <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="EventFilter.Limit"></span>    Limit      <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="EventHandler">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=832:894#L28">EventHandler</a>
+				<a class="permalink" href="index.html#EventHandler">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EventHandler processes events
+
+			<pre>type EventHandler func(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, event <a href="index.html#Event">Event</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="EventLogger">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=5563:5605#L185">EventLogger</a>
+				<a class="permalink" href="index.html#EventLogger">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EventLogger is a simple event logger handler
+
+			<pre>type EventLogger struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewEventLogger">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=5607:5641#L189">NewEventLogger</a>
+					<a class="permalink" href="index.html#NewEventLogger">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewEventLogger() *<a href="index.html#EventLogger">EventLogger</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="EventLogger.Log">func (*EventLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=5670:5735#L193">Log</a>
+					<a class="permalink" href="index.html#EventLogger.Log">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#EventLogger">EventLogger</a>) Log(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, event <a href="index.html#Event">Event</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="EventMetrics">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=6066:6143#L210">EventMetrics</a>
+				<a class="permalink" href="index.html#EventMetrics">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EventMetrics tracks event metrics
+
+			<pre>type EventMetrics struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewEventMetrics">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=6145:6181#L215">NewEventMetrics</a>
+					<a class="permalink" href="index.html#NewEventMetrics">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewEventMetrics() *<a href="index.html#EventMetrics">EventMetrics</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="EventMetrics.GetAllCounts">func (*EventMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=6526:6583#L236">GetAllCounts</a>
+					<a class="permalink" href="index.html#EventMetrics.GetAllCounts">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#EventMetrics">EventMetrics</a>) GetAllCounts() map[<a href="index.html#EventType">EventType</a>]<a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="EventMetrics.GetCount">func (*EventMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=6397:6455#L229">GetCount</a>
+					<a class="permalink" href="index.html#EventMetrics.GetCount">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#EventMetrics">EventMetrics</a>) GetCount(eventType <a href="index.html#EventType">EventType</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="EventMetrics.Track">func (*EventMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=6250:6318#L221">Track</a>
+					<a class="permalink" href="index.html#EventMetrics.Track">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#EventMetrics">EventMetrics</a>) Track(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, event <a href="index.html#Event">Event</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="EventRecorder">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=8671:8734#L340">EventRecorder</a>
+				<a class="permalink" href="index.html#EventRecorder">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EventRecorder combines event bus with storage
+
+			<pre>type EventRecorder struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewEventRecorder">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=8736:8804#L345">NewEventRecorder</a>
+					<a class="permalink" href="index.html#NewEventRecorder">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewEventRecorder(bus <a href="index.html#EventBus">EventBus</a>, store <a href="index.html#EventStore">EventStore</a>) *<a href="index.html#EventRecorder">EventRecorder</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="EventRecorder.Publish">func (*EventRecorder) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=9104:9154#L361">Publish</a>
+					<a class="permalink" href="index.html#EventRecorder.Publish">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#EventRecorder">EventRecorder</a>) Publish(event <a href="index.html#Event">Event</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="EventRecorder.Query">func (*EventRecorder) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=9189:9276#L365">Query</a>
+					<a class="permalink" href="index.html#EventRecorder.Query">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#EventRecorder">EventRecorder</a>) Query(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, filter <a href="index.html#EventFilter">EventFilter</a>) ([]<a href="index.html#Event">Event</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="EventStore">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=6782:6922#L249">EventStore</a>
+				<a class="permalink" href="index.html#EventStore">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EventStore persists events for auditing and replay
+
+			<pre>type EventStore interface {
+    Store(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, event <a href="index.html#Event">Event</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    Load(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, filter <a href="index.html#EventFilter">EventFilter</a>) ([]<a href="index.html#Event">Event</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="EventType">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=935:956#L31">EventType</a>
+				<a class="permalink" href="index.html#EventType">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EventType defines the type of event
+
+			<pre>type EventType <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span class="comment">// Agent lifecycle events</span>
+    <span id="EventAgentRegistered">EventAgentRegistered</span> <a href="index.html#EventType">EventType</a> = &#34;agent.registered&#34;
+    <span id="EventAgentStarted">EventAgentStarted</span>    <a href="index.html#EventType">EventType</a> = &#34;agent.started&#34;
+    <span id="EventAgentCompleted">EventAgentCompleted</span>  <a href="index.html#EventType">EventType</a> = &#34;agent.completed&#34;
+    <span id="EventAgentFailed">EventAgentFailed</span>     <a href="index.html#EventType">EventType</a> = &#34;agent.failed&#34;
+    <span id="EventAgentPaused">EventAgentPaused</span>     <a href="index.html#EventType">EventType</a> = &#34;agent.paused&#34;
+    <span id="EventAgentResumed">EventAgentResumed</span>    <a href="index.html#EventType">EventType</a> = &#34;agent.resumed&#34;
+
+    <span class="comment">// Session events</span>
+    <span id="EventSessionCreated">EventSessionCreated</span> <a href="index.html#EventType">EventType</a> = &#34;session.created&#34;
+    <span id="EventSessionUpdated">EventSessionUpdated</span> <a href="index.html#EventType">EventType</a> = &#34;session.updated&#34;
+    <span id="EventSessionDeleted">EventSessionDeleted</span> <a href="index.html#EventType">EventType</a> = &#34;session.deleted&#34;
+    <span id="EventSessionRewound">EventSessionRewound</span> <a href="index.html#EventType">EventType</a> = &#34;session.rewound&#34;
+
+    <span class="comment">// Task scheduling events</span>
+    <span id="EventTaskScheduled">EventTaskScheduled</span> <a href="index.html#EventType">EventType</a> = &#34;task.scheduled&#34;
+    <span id="EventTaskStarted">EventTaskStarted</span>   <a href="index.html#EventType">EventType</a> = &#34;task.started&#34;
+    <span id="EventTaskCompleted">EventTaskCompleted</span> <a href="index.html#EventType">EventType</a> = &#34;task.completed&#34;
+    <span id="EventTaskFailed">EventTaskFailed</span>    <a href="index.html#EventType">EventType</a> = &#34;task.failed&#34;
+    <span id="EventTaskRetrying">EventTaskRetrying</span>  <a href="index.html#EventType">EventType</a> = &#34;task.retrying&#34;
+
+    <span class="comment">// Tool invocation events</span>
+    <span id="EventToolInvoked">EventToolInvoked</span>   <a href="index.html#EventType">EventType</a> = &#34;tool.invoked&#34;
+    <span id="EventToolCompleted">EventToolCompleted</span> <a href="index.html#EventType">EventType</a> = &#34;tool.completed&#34;
+    <span id="EventToolFailed">EventToolFailed</span>    <a href="index.html#EventType">EventType</a> = &#34;tool.failed&#34;
+
+    <span class="comment">// Agent transfer events (LLM-driven delegation)</span>
+    <span id="EventTransferRequested">EventTransferRequested</span> <a href="index.html#EventType">EventType</a> = &#34;transfer.requested&#34;
+    <span id="EventTransferCompleted">EventTransferCompleted</span> <a href="index.html#EventType">EventType</a> = &#34;transfer.completed&#34;
+    <span id="EventTransferFailed">EventTransferFailed</span>    <a href="index.html#EventType">EventType</a> = &#34;transfer.failed&#34;
+    <span id="EventTransferValidated">EventTransferValidated</span> <a href="index.html#EventType">EventType</a> = &#34;transfer.validated&#34;
+
+    <span class="comment">// State management events</span>
+    <span id="EventCheckpointCreated">EventCheckpointCreated</span>  <a href="index.html#EventType">EventType</a> = &#34;checkpoint.created&#34;
+    <span id="EventCheckpointRestored">EventCheckpointRestored</span> <a href="index.html#EventType">EventType</a> = &#34;checkpoint.restored&#34;
+    <span id="EventMemoryStored">EventMemoryStored</span>       <a href="index.html#EventType">EventType</a> = &#34;memory.stored&#34;
+    <span id="EventMemoryRetrieved">EventMemoryRetrieved</span>    <a href="index.html#EventType">EventType</a> = &#34;memory.retrieved&#34;
+    <span id="EventStateChanged">EventStateChanged</span>       <a href="index.html#EventType">EventType</a> = &#34;state.changed&#34; <span class="comment">// ADK-compatible state change</span>
+
+    <span class="comment">// Job events</span>
+    <span id="EventJobSubmitted">EventJobSubmitted</span> <a href="index.html#EventType">EventType</a> = &#34;job.submitted&#34;
+    <span id="EventJobStarted">EventJobStarted</span>   <a href="index.html#EventType">EventType</a> = &#34;job.started&#34;
+    <span id="EventJobCompleted">EventJobCompleted</span> <a href="index.html#EventType">EventType</a> = &#34;job.completed&#34;
+    <span id="EventJobFailed">EventJobFailed</span>    <a href="index.html#EventType">EventType</a> = &#34;job.failed&#34;
+
+    <span class="comment">// Stage events</span>
+    <span id="EventStageStarted">EventStageStarted</span>   <a href="index.html#EventType">EventType</a> = &#34;stage.started&#34;
+    <span id="EventStageCompleted">EventStageCompleted</span> <a href="index.html#EventType">EventType</a> = &#34;stage.completed&#34;
+    <span id="EventStageFailed">EventStageFailed</span>    <a href="index.html#EventType">EventType</a> = &#34;stage.failed&#34;
+
+    <span class="comment">// Executor events</span>
+    <span id="EventExecutorRegistered">EventExecutorRegistered</span>   <a href="index.html#EventType">EventType</a> = &#34;executor.registered&#34;
+    <span id="EventExecutorUnregistered">EventExecutorUnregistered</span> <a href="index.html#EventType">EventType</a> = &#34;executor.unregistered&#34;
+    <span id="EventExecutorHealthCheck">EventExecutorHealthCheck</span>  <a href="index.html#EventType">EventType</a> = &#34;executor.health_check&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="MemoryEventBus">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=3880:4039#L108">MemoryEventBus</a>
+				<a class="permalink" href="index.html#MemoryEventBus">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MemoryEventBus implements an in-memory event bus
+
+			<pre>type MemoryEventBus struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMemoryEventBus">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=4041:4081#L115">NewMemoryEventBus</a>
+					<a class="permalink" href="index.html#NewMemoryEventBus">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMemoryEventBus() *<a href="index.html#MemoryEventBus">MemoryEventBus</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="MemoryEventBus.Close">func (*MemoryEventBus) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=5447:5485#L179">Close</a>
+					<a class="permalink" href="index.html#MemoryEventBus.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryEventBus">MemoryEventBus</a>) Close() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MemoryEventBus.OnStateChange">func (*MemoryEventBus) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=11257:11331#L445">OnStateChange</a>
+					<a class="permalink" href="index.html#MemoryEventBus.OnStateChange">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryEventBus">MemoryEventBus</a>) OnStateChange(callback <a href="index.html#StateChangeCallback">StateChangeCallback</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>OnStateChange registers an ADK-compatible state change callback
+This is syntactic sugar for Subscribe(EventStateChanged, ...)
+
+				
+				
+				
+			
+				
+				<h3 id="MemoryEventBus.Publish">func (*MemoryEventBus) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=4472:4523#L132">Publish</a>
+					<a class="permalink" href="index.html#MemoryEventBus.Publish">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryEventBus">MemoryEventBus</a>) Publish(event <a href="index.html#Event">Event</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MemoryEventBus.PublishStateChange">func (*MemoryEventBus) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=11625:11747#L455">PublishStateChange</a>
+					<a class="permalink" href="index.html#MemoryEventBus.PublishStateChange">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryEventBus">MemoryEventBus</a>) PublishStateChange(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, oldValue, newValue interface{}, agentName, partition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>PublishStateChange is a convenience method for publishing state changes
+
+				
+				
+				
+			
+				
+				<h3 id="MemoryEventBus.Subscribe">func (*MemoryEventBus) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=4266:4349#L124">Subscribe</a>
+					<a class="permalink" href="index.html#MemoryEventBus.Subscribe">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryEventBus">MemoryEventBus</a>) Subscribe(eventType <a href="index.html#EventType">EventType</a>, handler <a href="index.html#EventHandler">EventHandler</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MemoryEventBus.Unsubscribe">func (*MemoryEventBus) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=5107:5192#L167">Unsubscribe</a>
+					<a class="permalink" href="index.html#MemoryEventBus.Unsubscribe">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryEventBus">MemoryEventBus</a>) Unsubscribe(eventType <a href="index.html#EventType">EventType</a>, handler <a href="index.html#EventHandler">EventHandler</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MemoryEventStore">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=7176:7245#L265">MemoryEventStore</a>
+				<a class="permalink" href="index.html#MemoryEventStore">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MemoryEventStore implements in-memory event persistence
+
+			<pre>type MemoryEventStore struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMemoryEventStore">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=7247:7291#L270">NewMemoryEventStore</a>
+					<a class="permalink" href="index.html#NewMemoryEventStore">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMemoryEventStore() *<a href="index.html#MemoryEventStore">MemoryEventStore</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="MemoryEventStore.Load">func (*MemoryEventStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=7516:7605#L284">Load</a>
+					<a class="permalink" href="index.html#MemoryEventStore.Load">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#MemoryEventStore">MemoryEventStore</a>) Load(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, filter <a href="index.html#EventFilter">EventFilter</a>) ([]<a href="index.html#Event">Event</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MemoryEventStore.Store">func (*MemoryEventStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=7355:7427#L276">Store</a>
+					<a class="permalink" href="index.html#MemoryEventStore.Store">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#MemoryEventStore">MemoryEventStore</a>) Store(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, event <a href="index.html#Event">Event</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="StateChangeCallback">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=11050:11123#L441">StateChangeCallback</a>
+				<a class="permalink" href="index.html#StateChangeCallback">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StateChangeCallback is ADK-compatible callback for state changes
+
+			<pre>type StateChangeCallback func(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, oldValue, newValue interface{})</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="StateChangeData">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=10346:10477#L412">StateChangeData</a>
+				<a class="permalink" href="index.html#StateChangeData">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StateChangeData contains state change details
+
+			<pre>type StateChangeData struct {
+<span id="StateChangeData.Key"></span>    Key       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="StateChangeData.OldValue"></span>    OldValue  interface{}
+<span id="StateChangeData.NewValue"></span>    NewValue  interface{}
+<span id="StateChangeData.AgentName"></span>    AgentName <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="StateChangeData.Partition"></span>    Partition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="TransferCompletedData">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=12732:12956#L485">TransferCompletedData</a>
+				<a class="permalink" href="index.html#TransferCompletedData">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TransferCompletedData contains transfer completion details
+
+			<pre>type TransferCompletedData struct {
+<span id="TransferCompletedData.FromAgent"></span>    FromAgent     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TransferCompletedData.ToAgent"></span>    ToAgent       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TransferCompletedData.FromPartition"></span>    FromPartition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TransferCompletedData.ToPartition"></span>    ToPartition   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TransferCompletedData.Duration"></span>    Duration      <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="TransferCompletedData.TransferType"></span>    TransferType  <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> <span class="comment">// &#34;local&#34; or &#34;remote&#34;</span>
+<span id="TransferCompletedData.Timestamp"></span>    Timestamp     <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="TransferFailedData">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=13014:13183#L496">TransferFailedData</a>
+				<a class="permalink" href="index.html#TransferFailedData">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TransferFailedData contains transfer failure details
+
+			<pre>type TransferFailedData struct {
+<span id="TransferFailedData.FromAgent"></span>    FromAgent     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TransferFailedData.ToAgent"></span>    ToAgent       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TransferFailedData.Reason"></span>    Reason        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TransferFailedData.Error"></span>    Error         <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TransferFailedData.FromPartition"></span>    FromPartition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TransferFailedData.Timestamp"></span>    Timestamp     <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="TransferRequestData">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/events/events.go?s=12520:12668#L476">TransferRequestData</a>
+				<a class="permalink" href="index.html#TransferRequestData">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TransferRequestData contains transfer request details
+
+			<pre>type TransferRequestData struct {
+<span id="TransferRequestData.FromAgent"></span>    FromAgent     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TransferRequestData.ToAgent"></span>    ToAgent       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TransferRequestData.Reason"></span>    Reason        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TransferRequestData.FromPartition"></span>    FromPartition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TransferRequestData.Timestamp"></span>    Timestamp     <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

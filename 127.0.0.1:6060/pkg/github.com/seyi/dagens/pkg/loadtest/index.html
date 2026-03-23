@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>loadtest - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package loadtest
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/loadtest"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package loadtest provides a load testing harness for AI agents.
+Use this to stress test agent execution, identify bottlenecks, and validate resilience.
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+			
+				
+				<dd><a href="index.html#LoadTestConfig">type LoadTestConfig</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DefaultLoadTestConfig">func DefaultLoadTestConfig() LoadTestConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LoadTestHarness">type LoadTestHarness</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewLoadTestHarness">func NewLoadTestHarness(config LoadTestConfig, testAgent agent.Agent, generator RequestGenerator) *LoadTestHarness</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LoadTestHarness.Run">func (h *LoadTestHarness) Run(ctx context.Context) (*LoadTestResult, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LoadTestHarness.Stop">func (h *LoadTestHarness) Stop()</a></dd>
+				
+			
+				
+				<dd><a href="index.html#LoadTestResult">type LoadTestResult</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LoadTestResult.PrintSummary">func (r *LoadTestResult) PrintSummary()</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MockAgent">type MockAgent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMockAgent">func NewMockAgent(name string, latency time.Duration, errorRate float64) *MockAgent</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.Capabilities">func (m *MockAgent) Capabilities() []string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.Dependencies">func (m *MockAgent) Dependencies() []agent.Agent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.Description">func (m *MockAgent) Description() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.Execute">func (m *MockAgent) Execute(ctx context.Context, input *agent.AgentInput) (*agent.AgentOutput, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.ID">func (m *MockAgent) ID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.Name">func (m *MockAgent) Name() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.Partition">func (m *MockAgent) Partition() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MockAgent.Stats">func (m *MockAgent) Stats() (calls, successes, errors int64)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#PerSecondMetrics">type PerSecondMetrics</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#RequestGenerator">type RequestGenerator</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#SimpleRequestGenerator">type SimpleRequestGenerator</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSimpleRequestGenerator">func NewSimpleRequestGenerator(instructions []string) *SimpleRequestGenerator</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleRequestGenerator.Generate">func (g *SimpleRequestGenerator) Generate() (*agent.AgentInput, error)</a></dd>
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go">harness.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+		
+			
+			
+			<h2 id="LoadTestConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=407:871#L11">LoadTestConfig</a>
+				<a class="permalink" href="index.html#LoadTestConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LoadTestConfig configures a load test run
+
+			<pre>type LoadTestConfig struct {
+<span id="LoadTestConfig.Name"></span>    <span class="comment">// Name of this load test</span>
+    Name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+<span id="LoadTestConfig.Duration"></span>    <span class="comment">// Duration of the test</span>
+    Duration <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+
+    <span class="comment">// Target requests per second</span>
+<span id="LoadTestConfig.TargetRPS"></span>    TargetRPS <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+
+    <span class="comment">// Maximum concurrent requests</span>
+<span id="LoadTestConfig.MaxConcurrency"></span>    MaxConcurrency <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+
+    <span class="comment">// Ramp-up duration (0 for immediate full load)</span>
+<span id="LoadTestConfig.RampUpDuration"></span>    RampUpDuration <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+
+    <span class="comment">// Request timeout</span>
+<span id="LoadTestConfig.RequestTimeout"></span>    RequestTimeout <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+
+    <span class="comment">// Enable verbose logging</span>
+<span id="LoadTestConfig.Verbose"></span>    Verbose <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+
+    <span class="comment">// Output file for results (empty for stdout)</span>
+<span id="LoadTestConfig.OutputFile"></span>    OutputFile <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="DefaultLoadTestConfig">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=924:967#L38">DefaultLoadTestConfig</a>
+					<a class="permalink" href="index.html#DefaultLoadTestConfig">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func DefaultLoadTestConfig() <a href="index.html#LoadTestConfig">LoadTestConfig</a></pre>
+				<p>DefaultLoadTestConfig returns sensible defaults
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="LoadTestHarness">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=4561:5125#L160">LoadTestHarness</a>
+				<a class="permalink" href="index.html#LoadTestHarness">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LoadTestHarness runs load tests against agents
+
+			<pre>type LoadTestHarness struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewLoadTestHarness">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=5181:5295#L185">NewLoadTestHarness</a>
+					<a class="permalink" href="index.html#NewLoadTestHarness">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewLoadTestHarness(config <a href="index.html#LoadTestConfig">LoadTestConfig</a>, testAgent <a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a>, generator <a href="index.html#RequestGenerator">RequestGenerator</a>) *<a href="index.html#LoadTestHarness">LoadTestHarness</a></pre>
+				<p>NewLoadTestHarness creates a new load test harness
+
+				
+				
+			
+
+			
+				
+				<h3 id="LoadTestHarness.Run">func (*LoadTestHarness) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=5650:5725#L201">Run</a>
+					<a class="permalink" href="index.html#LoadTestHarness.Run">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (h *<a href="index.html#LoadTestHarness">LoadTestHarness</a>) Run(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) (*<a href="index.html#LoadTestResult">LoadTestResult</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Run executes the load test and returns results
+
+				
+				
+				
+			
+				
+				<h3 id="LoadTestHarness.Stop">func (*LoadTestHarness) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=9896:9928#L356">Stop</a>
+					<a class="permalink" href="index.html#LoadTestHarness.Stop">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (h *<a href="index.html#LoadTestHarness">LoadTestHarness</a>) Stop()</pre>
+				<p>Stop stops the load test
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="LoadTestResult">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=1258:2302#L51">LoadTestResult</a>
+				<a class="permalink" href="index.html#LoadTestResult">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LoadTestResult holds the results of a load test
+
+			<pre>type LoadTestResult struct {
+    <span class="comment">// Configuration</span>
+<span id="LoadTestResult.Config"></span>    Config <a href="index.html#LoadTestConfig">LoadTestConfig</a> `json:&#34;config&#34;`
+
+    <span class="comment">// Timing</span>
+<span id="LoadTestResult.StartTime"></span>    StartTime <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>     `json:&#34;start_time&#34;`
+<span id="LoadTestResult.EndTime"></span>    EndTime   <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>     `json:&#34;end_time&#34;`
+<span id="LoadTestResult.Duration"></span>    Duration  <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a> `json:&#34;duration_ms&#34;`
+
+    <span class="comment">// Request counts</span>
+<span id="LoadTestResult.TotalRequests"></span>    TotalRequests      <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a> `json:&#34;total_requests&#34;`
+<span id="LoadTestResult.SuccessfulRequests"></span>    SuccessfulRequests <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a> `json:&#34;successful_requests&#34;`
+<span id="LoadTestResult.FailedRequests"></span>    FailedRequests     <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a> `json:&#34;failed_requests&#34;`
+<span id="LoadTestResult.TimeoutRequests"></span>    TimeoutRequests    <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a> `json:&#34;timeout_requests&#34;`
+
+    <span class="comment">// Latency statistics (in milliseconds)</span>
+<span id="LoadTestResult.MinLatency"></span>    MinLatency <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a> `json:&#34;min_latency_ms&#34;`
+<span id="LoadTestResult.MaxLatency"></span>    MaxLatency <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a> `json:&#34;max_latency_ms&#34;`
+<span id="LoadTestResult.AvgLatency"></span>    AvgLatency <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a> `json:&#34;avg_latency_ms&#34;`
+<span id="LoadTestResult.P50Latency"></span>    P50Latency <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a> `json:&#34;p50_latency_ms&#34;`
+<span id="LoadTestResult.P90Latency"></span>    P90Latency <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a> `json:&#34;p90_latency_ms&#34;`
+<span id="LoadTestResult.P95Latency"></span>    P95Latency <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a> `json:&#34;p95_latency_ms&#34;`
+<span id="LoadTestResult.P99Latency"></span>    P99Latency <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a> `json:&#34;p99_latency_ms&#34;`
+
+    <span class="comment">// Throughput</span>
+<span id="LoadTestResult.ActualRPS"></span>    ActualRPS <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a> `json:&#34;actual_rps&#34;`
+
+    <span class="comment">// Error breakdown</span>
+<span id="LoadTestResult.ErrorCounts"></span>    ErrorCounts map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]<a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a> `json:&#34;error_counts&#34;`
+
+    <span class="comment">// Per-second data (for graphing)</span>
+<span id="LoadTestResult.PerSecondData"></span>    PerSecondData []<a href="index.html#PerSecondMetrics">PerSecondMetrics</a> `json:&#34;per_second_data,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="LoadTestResult.PrintSummary">func (*LoadTestResult) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=12602:12641#L478">PrintSummary</a>
+					<a class="permalink" href="index.html#LoadTestResult.PrintSummary">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#LoadTestResult">LoadTestResult</a>) PrintSummary()</pre>
+				<p>PrintSummary prints a human-readable summary of results
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MockAgent">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=14102:14283#L524">MockAgent</a>
+				<a class="permalink" href="index.html#MockAgent">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MockAgent is a test agent for load testing
+
+			<pre>type MockAgent struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMockAgent">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=14334:14417#L535">NewMockAgent</a>
+					<a class="permalink" href="index.html#NewMockAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMockAgent(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, latency <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>, errorRate <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>) *<a href="index.html#MockAgent">MockAgent</a></pre>
+				<p>NewMockAgent creates a mock agent for testing
+
+				
+				
+			
+
+			
+				
+				<h3 id="MockAgent.Capabilities">func (*MockAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=14724:14767#L546">Capabilities</a>
+					<a class="permalink" href="index.html#MockAgent.Capabilities">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) Capabilities() []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockAgent.Dependencies">func (*MockAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=14796:14844#L547">Dependencies</a>
+					<a class="permalink" href="index.html#MockAgent.Dependencies">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) Dependencies() []<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockAgent.Description">func (*MockAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=14641:14681#L545">Description</a>
+					<a class="permalink" href="index.html#MockAgent.Description">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) Description() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockAgent.Execute">func (*MockAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=14917:15018#L550">Execute</a>
+					<a class="permalink" href="index.html#MockAgent.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockAgent.ID">func (*MockAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=14511:14542#L543">ID</a>
+					<a class="permalink" href="index.html#MockAgent.ID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) ID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockAgent.Name">func (*MockAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=14581:14614#L544">Name</a>
+					<a class="permalink" href="index.html#MockAgent.Name">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) Name() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockAgent.Partition">func (*MockAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=14860:14898#L548">Partition</a>
+					<a class="permalink" href="index.html#MockAgent.Partition">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) Partition() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MockAgent.Stats">func (*MockAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=15813:15873#L590">Stats</a>
+					<a class="permalink" href="index.html#MockAgent.Stats">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MockAgent">MockAgent</a>) Stats() (calls, successes, errors <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>)</pre>
+				<p>Stats returns mock agent statistics
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="PerSecondMetrics">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=2358:2632#L86">PerSecondMetrics</a>
+				<a class="permalink" href="index.html#PerSecondMetrics">&#xb6;</a>
+				
+				
+			</h2>
+			<p>PerSecondMetrics holds metrics for a single second
+
+			<pre>type PerSecondMetrics struct {
+<span id="PerSecondMetrics.Second"></span>    Second      <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>     `json:&#34;second&#34;`
+<span id="PerSecondMetrics.Requests"></span>    Requests    <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>   `json:&#34;requests&#34;`
+<span id="PerSecondMetrics.Successes"></span>    Successes   <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>   `json:&#34;successes&#34;`
+<span id="PerSecondMetrics.Failures"></span>    Failures    <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>   `json:&#34;failures&#34;`
+<span id="PerSecondMetrics.AvgLatency"></span>    AvgLatency  <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a> `json:&#34;avg_latency_ms&#34;`
+<span id="PerSecondMetrics.Concurrency"></span>    Concurrency <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>     `json:&#34;concurrency&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="RequestGenerator">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=2678:2792#L96">RequestGenerator</a>
+				<a class="permalink" href="index.html#RequestGenerator">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RequestGenerator generates test requests
+
+			<pre>type RequestGenerator interface {
+    <span class="comment">// Generate creates a new test request</span>
+    Generate() (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="SimpleRequestGenerator">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=2850:2968#L102">SimpleRequestGenerator</a>
+				<a class="permalink" href="index.html#SimpleRequestGenerator">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SimpleRequestGenerator generates basic test requests
+
+			<pre>type SimpleRequestGenerator struct {
+<span id="SimpleRequestGenerator.Instructions"></span>    Instructions []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="SimpleRequestGenerator.Context"></span>    Context      map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewSimpleRequestGenerator">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=3034:3111#L109">NewSimpleRequestGenerator</a>
+					<a class="permalink" href="index.html#NewSimpleRequestGenerator">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSimpleRequestGenerator(instructions []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) *<a href="index.html#SimpleRequestGenerator">SimpleRequestGenerator</a></pre>
+				<p>NewSimpleRequestGenerator creates a simple request generator
+
+				
+				
+			
+
+			
+				
+				<h3 id="SimpleRequestGenerator.Generate">func (*SimpleRequestGenerator) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/loadtest/harness.go?s=3507:3577#L125">Generate</a>
+					<a class="permalink" href="index.html#SimpleRequestGenerator.Generate">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (g *<a href="index.html#SimpleRequestGenerator">SimpleRequestGenerator</a>) Generate() (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Generate creates a new test request
+
+				
+				
+				
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

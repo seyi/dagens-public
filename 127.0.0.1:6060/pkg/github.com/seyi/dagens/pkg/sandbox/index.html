@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>sandbox - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package sandbox
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/sandbox"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+			
+				
+				<dd><a href="index.html#DockerExecutor">type DockerExecutor</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewDockerExecutor">func NewDockerExecutor(workDir string, image string) (*DockerExecutor, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DockerExecutor.Execute">func (e *DockerExecutor) Execute(ctx context.Context, cmd []string, policy *Policy) (string, string, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DockerExecutor.ExecuteGo">func (e *DockerExecutor) ExecuteGo(ctx context.Context, code string, policy *Policy) (string, string, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#Executor">type Executor</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewExecutor">func NewExecutor(workDir string) (Executor, error)</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#GVisorExecutor">type GVisorExecutor</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewGVisorExecutor">func NewGVisorExecutor(workDir string) (*GVisorExecutor, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#GVisorExecutor.Execute">func (e *GVisorExecutor) Execute(ctx context.Context, cmd []string, policy *Policy) (string, string, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#GVisorExecutor.ExecuteGo">func (e *GVisorExecutor) ExecuteGo(ctx context.Context, code string, policy *Policy) (string, string, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#Linux">type Linux</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LinuxCPU">type LinuxCPU</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LinuxMemory">type LinuxMemory</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LinuxResources">type LinuxResources</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Mount">type Mount</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#NetworkPolicy">type NetworkPolicy</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#OCIMount">type OCIMount</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#OCISpec">type OCISpec</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Policy">type Policy</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Process">type Process</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ResourcePolicy">type ResourcePolicy</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Root">type Root</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/docker_executor.go">docker_executor.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/policy.go">policy.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go">sandbox.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+		
+			
+			
+			<h2 id="DockerExecutor">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/docker_executor.go?s=226:288#L4">DockerExecutor</a>
+				<a class="permalink" href="index.html#DockerExecutor">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DockerExecutor executes code in a restricted Docker container.
+It provides a more secure and generic alternative to basic os/exec.
+
+			<pre>type DockerExecutor struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewDockerExecutor">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/docker_executor.go?s=342:419#L10">NewDockerExecutor</a>
+					<a class="permalink" href="index.html#NewDockerExecutor">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewDockerExecutor(workDir <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, image <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#DockerExecutor">DockerExecutor</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewDockerExecutor creates a new Docker executor.
+
+				
+				
+			
+
+			
+				
+				<h3 id="DockerExecutor.Execute">func (*DockerExecutor) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/docker_executor.go?s=846:953#L24">Execute</a>
+					<a class="permalink" href="index.html#DockerExecutor.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (e *<a href="index.html#DockerExecutor">DockerExecutor</a>) Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, cmd []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, policy *<a href="index.html#Policy">Policy</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Execute runs the provided command in a restricted Docker container.
+
+				
+				
+				
+			
+				
+				<h3 id="DockerExecutor.ExecuteGo">func (*DockerExecutor) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/docker_executor.go?s=3126:3234#L90">ExecuteGo</a>
+					<a class="permalink" href="index.html#DockerExecutor.ExecuteGo">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (e *<a href="index.html#DockerExecutor">DockerExecutor</a>) ExecuteGo(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, code <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, policy *<a href="index.html#Policy">Policy</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ExecuteGo runs Go code by mounting it into a golang container, compiling and executing it.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Executor">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go?s=768:1064#L18">Executor</a>
+				<a class="permalink" href="index.html#Executor">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Executor is the interface for executing code in a sandbox.
+
+			<pre>type Executor interface {
+    <span class="comment">// Execute runs a command with the given policy.</span>
+    Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, cmd []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, policy *<a href="index.html#Policy">Policy</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+    <span class="comment">// ExecuteGo runs Go code with the given policy.</span>
+    ExecuteGo(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, code <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, policy *<a href="index.html#Policy">Policy</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewExecutor">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go?s=1138:1188#L26">NewExecutor</a>
+					<a class="permalink" href="index.html#NewExecutor">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewExecutor(workDir <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="index.html#Executor">Executor</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewExecutor creates the best available executor for the environment.
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="GVisorExecutor">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go?s=2657:2703#L87">GVisorExecutor</a>
+				<a class="permalink" href="index.html#GVisorExecutor">&#xb6;</a>
+				
+				
+			</h2>
+			<p>GVisorExecutor executes code in a gVisor sandbox.
+
+			<pre>type GVisorExecutor struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewGVisorExecutor">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go?s=2757:2820#L92">NewGVisorExecutor</a>
+					<a class="permalink" href="index.html#NewGVisorExecutor">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewGVisorExecutor(workDir <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#GVisorExecutor">GVisorExecutor</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewGVisorExecutor creates a new gVisor executor.
+
+				
+				
+			
+
+			
+				
+				<h3 id="GVisorExecutor.Execute">func (*GVisorExecutor) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go?s=3158:3265#L103">Execute</a>
+					<a class="permalink" href="index.html#GVisorExecutor.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (e *<a href="index.html#GVisorExecutor">GVisorExecutor</a>) Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, cmd []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, policy *<a href="index.html#Policy">Policy</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Execute runs the provided command in a gVisor sandbox with the given policy.
+
+				
+				
+				
+			
+				
+				<h3 id="GVisorExecutor.ExecuteGo">func (*GVisorExecutor) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go?s=3585:3693#L110">ExecuteGo</a>
+					<a class="permalink" href="index.html#GVisorExecutor.ExecuteGo">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (e *<a href="index.html#GVisorExecutor">GVisorExecutor</a>) ExecuteGo(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, code <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, policy *<a href="index.html#Policy">Policy</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ExecuteGo runs the provided Go code in a gVisor sandbox with the given policy.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Linux">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go?s=2044:2121#L61">Linux</a>
+				<a class="permalink" href="index.html#Linux">&#xb6;</a>
+				
+				
+			</h2>
+			
+			<pre>type Linux struct {
+<span id="Linux.Resources"></span>    Resources *<a href="index.html#LinuxResources">LinuxResources</a> `json:&#34;resources,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LinuxCPU">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go?s=2246:2352#L70">LinuxCPU</a>
+				<a class="permalink" href="index.html#LinuxCPU">&#xb6;</a>
+				
+				
+			</h2>
+			
+			<pre>type LinuxCPU struct {
+<span id="LinuxCPU.Quota"></span>    Quota  *<a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>  `json:&#34;quota,omitempty&#34;`
+<span id="LinuxCPU.Period"></span>    Period *<a href="http://127.0.0.1:6060/pkg/builtin/#uint64">uint64</a> `json:&#34;period,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LinuxMemory">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go?s=2354:2420#L75">LinuxMemory</a>
+				<a class="permalink" href="index.html#LinuxMemory">&#xb6;</a>
+				
+				
+			</h2>
+			
+			<pre>type LinuxMemory struct {
+<span id="LinuxMemory.Limit"></span>    Limit *<a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a> `json:&#34;limit,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LinuxResources">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go?s=2123:2244#L65">LinuxResources</a>
+				<a class="permalink" href="index.html#LinuxResources">&#xb6;</a>
+				
+				
+			</h2>
+			
+			<pre>type LinuxResources struct {
+<span id="LinuxResources.CPU"></span>    CPU    *<a href="index.html#LinuxCPU">LinuxCPU</a>    `json:&#34;cpu,omitempty&#34;`
+<span id="LinuxResources.Memory"></span>    Memory *<a href="index.html#LinuxMemory">LinuxMemory</a> `json:&#34;memory,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Mount">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/policy.go?s=1325:1590#L29">Mount</a>
+				<a class="permalink" href="index.html#Mount">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Mount defines a filesystem mount.
+
+			<pre>type Mount struct {
+<span id="Mount.Source"></span>    <span class="comment">// Source is the path on the host.</span>
+    Source <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;source&#34;`
+
+<span id="Mount.Destination"></span>    <span class="comment">// Destination is the path in the sandbox.</span>
+    Destination <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;destination&#34;`
+
+<span id="Mount.ReadOnly"></span>    <span class="comment">// ReadOnly specifies if the mount should be read-only.</span>
+    ReadOnly <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a> `json:&#34;readOnly&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="NetworkPolicy">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/policy.go?s=1035:1286#L20">NetworkPolicy</a>
+				<a class="permalink" href="index.html#NetworkPolicy">&#xb6;</a>
+				
+				
+			</h2>
+			<p>NetworkPolicy defines the network access policy.
+
+			<pre>type NetworkPolicy struct {
+<span id="NetworkPolicy.Enabled"></span>    <span class="comment">// Enabled enables or disables network access.</span>
+    Enabled <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a> `json:&#34;enabled&#34;`
+
+<span id="NetworkPolicy.AllowedHosts"></span>    <span class="comment">// AllowedHosts is a list of allowed outbound hosts. If empty, all hosts are allowed.</span>
+    AllowedHosts []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;allowedHosts,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="OCIMount">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go?s=2422:2602#L79">OCIMount</a>
+				<a class="permalink" href="index.html#OCIMount">&#xb6;</a>
+				
+				
+			</h2>
+			
+			<pre>type OCIMount struct {
+<span id="OCIMount.Destination"></span>    Destination <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>   `json:&#34;destination&#34;`
+<span id="OCIMount.Type"></span>    Type        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>   `json:&#34;type&#34;`
+<span id="OCIMount.Source"></span>    Source      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>   `json:&#34;source&#34;`
+<span id="OCIMount.Options"></span>    Options     []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;options&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="OCISpec">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go?s=1636:1872#L43">OCISpec</a>
+				<a class="permalink" href="index.html#OCISpec">&#xb6;</a>
+				
+				
+			</h2>
+			<p>OCI Spec subset for config.json
+
+			<pre>type OCISpec struct {
+<span id="OCISpec.OCIVersion"></span>    OCIVersion <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>     `json:&#34;ociVersion&#34;`
+<span id="OCISpec.Root"></span>    Root       <a href="index.html#Root">Root</a>       `json:&#34;root&#34;`
+<span id="OCISpec.Process"></span>    Process    <a href="index.html#Process">Process</a>    `json:&#34;process&#34;`
+<span id="OCISpec.Linux"></span>    Linux      *<a href="index.html#Linux">Linux</a>     `json:&#34;linux,omitempty&#34;`
+<span id="OCISpec.Mounts"></span>    Mounts     []<a href="index.html#OCIMount">OCIMount</a> `json:&#34;mounts,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Policy">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/policy.go?s=677:981#L8">Policy</a>
+				<a class="permalink" href="index.html#Policy">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Policy defines the security policy for a sandboxed tool.
+
+			<pre>type Policy struct {
+<span id="Policy.Network"></span>    <span class="comment">// Network specifies the network policy.</span>
+    Network *<a href="index.html#NetworkPolicy">NetworkPolicy</a> `json:&#34;network,omitempty&#34;`
+
+<span id="Policy.Mounts"></span>    <span class="comment">// Mounts specifies the filesystem mounts.</span>
+    Mounts []<a href="index.html#Mount">Mount</a> `json:&#34;mounts,omitempty&#34;`
+
+<span id="Policy.Resources"></span>    <span class="comment">// Resources specifies the resource limits.</span>
+    Resources *<a href="index.html#ResourcePolicy">ResourcePolicy</a> `json:&#34;resources,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Process">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go?s=1962:2042#L56">Process</a>
+				<a class="permalink" href="index.html#Process">&#xb6;</a>
+				
+				
+			</h2>
+			
+			<pre>type Process struct {
+<span id="Process.Args"></span>    Args []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;args&#34;`
+<span id="Process.Cwd"></span>    Cwd  <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>   `json:&#34;cwd&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ResourcePolicy">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/policy.go?s=1639:1839#L41">ResourcePolicy</a>
+				<a class="permalink" href="index.html#ResourcePolicy">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ResourcePolicy defines the resource limits.
+
+			<pre>type ResourcePolicy struct {
+<span id="ResourcePolicy.Cpus"></span>    <span class="comment">// Cpus specifies the number of CPUs.</span>
+    Cpus <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a> `json:&#34;cpus,omitempty&#34;`
+
+<span id="ResourcePolicy.Memory"></span>    <span class="comment">// Memory specifies the memory limit in megabytes.</span>
+    Memory <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a> `json:&#34;memory,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Root">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/sandbox/sandbox.go?s=1874:1960#L51">Root</a>
+				<a class="permalink" href="index.html#Root">&#xb6;</a>
+				
+				
+			</h2>
+			
+			<pre>type Root struct {
+<span id="Root.Path"></span>    Path     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;path&#34;`
+<span id="Root.Readonly"></span>    Readonly <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>   `json:&#34;readonly&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

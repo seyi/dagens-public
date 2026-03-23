@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>memory - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package memory
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/memory"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package memory provides long-term memory for agents
+Inspired by ADK&apos;s memory persistence for context across invocations
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+			
+				
+				<dd><a href="index.html#EmbeddingFunction">type EmbeddingFunction</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#InMemoryStore">type InMemoryStore</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewInMemoryStore">func NewInMemoryStore() *InMemoryStore</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryStore.Clear">func (s *InMemoryStore) Clear(ctx context.Context, agentID string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryStore.Delete">func (s *InMemoryStore) Delete(ctx context.Context, agentID string, key string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryStore.List">func (s *InMemoryStore) List(ctx context.Context, agentID string, limit int, offset int) ([]*MemoryEntry, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryStore.Retrieve">func (s *InMemoryStore) Retrieve(ctx context.Context, agentID string, key string) (*MemoryEntry, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryStore.Search">func (s *InMemoryStore) Search(ctx context.Context, agentID string, query *MemoryQuery) ([]*MemoryEntry, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryStore.Store">func (s *InMemoryStore) Store(ctx context.Context, agentID string, key string, value interface{}, metadata map[string]interface{}) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryStore.Update">func (s *InMemoryStore) Update(ctx context.Context, agentID string, key string, value interface{}) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MemoryEntry">type MemoryEntry</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MemoryQuery">type MemoryQuery</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MemoryStore">type MemoryStore</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#SortOrder">type SortOrder</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#TimeRange">type TimeRange</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#VectorMemoryStore">type VectorMemoryStore</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewVectorMemoryStore">func NewVectorMemoryStore(baseStore MemoryStore, embeddingFn EmbeddingFunction) *VectorMemoryStore</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#VectorMemoryStore.Clear">func (v *VectorMemoryStore) Clear(ctx context.Context, agentID string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#VectorMemoryStore.Delete">func (v *VectorMemoryStore) Delete(ctx context.Context, agentID string, key string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#VectorMemoryStore.List">func (v *VectorMemoryStore) List(ctx context.Context, agentID string, limit int, offset int) ([]*MemoryEntry, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#VectorMemoryStore.Retrieve">func (v *VectorMemoryStore) Retrieve(ctx context.Context, agentID string, key string) (*MemoryEntry, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#VectorMemoryStore.Search">func (v *VectorMemoryStore) Search(ctx context.Context, agentID string, query *MemoryQuery) ([]*MemoryEntry, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#VectorMemoryStore.Store">func (v *VectorMemoryStore) Store(ctx context.Context, agentID string, key string, value interface{}, metadata map[string]interface{}) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#VectorMemoryStore.Update">func (v *VectorMemoryStore) Update(ctx context.Context, agentID string, key string, value interface{}) error</a></dd>
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go">memory.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+		
+			
+			
+			<h2 id="EmbeddingFunction">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=8018:8077#L334">EmbeddingFunction</a>
+				<a class="permalink" href="index.html#EmbeddingFunction">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EmbeddingFunction generates vector embeddings from text
+
+			<pre>type EmbeddingFunction func(text <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="InMemoryStore">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=2037:2161#L69">InMemoryStore</a>
+				<a class="permalink" href="index.html#InMemoryStore">&#xb6;</a>
+				
+				
+			</h2>
+			<p>InMemoryStore implements in-memory storage
+
+			<pre>type InMemoryStore struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewInMemoryStore">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=2163:2201#L74">NewInMemoryStore</a>
+					<a class="permalink" href="index.html#NewInMemoryStore">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewInMemoryStore() *<a href="index.html#InMemoryStore">InMemoryStore</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="InMemoryStore.Clear">func (*InMemoryStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=7547:7619#L317">Clear</a>
+					<a class="permalink" href="index.html#InMemoryStore.Clear">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemoryStore">InMemoryStore</a>) Clear(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryStore.Delete">func (*InMemoryStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=6633:6718#L274">Delete</a>
+					<a class="permalink" href="index.html#InMemoryStore.Delete">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemoryStore">InMemoryStore</a>) Delete(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryStore.List">func (*InMemoryStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=6910:7022#L287">List</a>
+					<a class="permalink" href="index.html#InMemoryStore.List">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemoryStore">InMemoryStore</a>) List(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, limit <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>, offset <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) ([]*<a href="index.html#MemoryEntry">MemoryEntry</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryStore.Retrieve">func (*InMemoryStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=3090:3193#L114">Retrieve</a>
+					<a class="permalink" href="index.html#InMemoryStore.Retrieve">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemoryStore">InMemoryStore</a>) Retrieve(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#MemoryEntry">MemoryEntry</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryStore.Search">func (*InMemoryStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=3561:3672#L135">Search</a>
+					<a class="permalink" href="index.html#InMemoryStore.Search">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemoryStore">InMemoryStore</a>) Search(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, query *<a href="index.html#MemoryQuery">MemoryQuery</a>) ([]*<a href="index.html#MemoryEntry">MemoryEntry</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryStore.Store">func (*InMemoryStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=2288:2424#L80">Store</a>
+					<a class="permalink" href="index.html#InMemoryStore.Store">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemoryStore">InMemoryStore</a>) Store(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value interface{}, metadata map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryStore.Update">func (*InMemoryStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=6185:6289#L253">Update</a>
+					<a class="permalink" href="index.html#InMemoryStore.Update">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemoryStore">InMemoryStore</a>) Update(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value interface{}) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MemoryEntry">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=1221:1473#L29">MemoryEntry</a>
+				<a class="permalink" href="index.html#MemoryEntry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MemoryEntry represents a single memory item
+
+			<pre>type MemoryEntry struct {
+<span id="MemoryEntry.ID"></span>    ID          <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="MemoryEntry.AgentID"></span>    AgentID     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="MemoryEntry.Key"></span>    Key         <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="MemoryEntry.Value"></span>    Value       interface{}
+<span id="MemoryEntry.Timestamp"></span>    Timestamp   <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="MemoryEntry.AccessCount"></span>    AccessCount <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="MemoryEntry.LastAccess"></span>    LastAccess  <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="MemoryEntry.Metadata"></span>    Metadata    map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}
+<span id="MemoryEntry.Tags"></span>    Tags        []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="MemoryEntry.Importance"></span>    Importance  <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a> <span class="comment">// 0.0 to 1.0</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="MemoryQuery">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=1523:1690#L43">MemoryQuery</a>
+				<a class="permalink" href="index.html#MemoryQuery">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MemoryQuery represents a memory search query
+
+			<pre>type MemoryQuery struct {
+<span id="MemoryQuery.Text"></span>    Text          <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="MemoryQuery.Tags"></span>    Tags          []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="MemoryQuery.TimeRange"></span>    TimeRange     *<a href="index.html#TimeRange">TimeRange</a>
+<span id="MemoryQuery.MinImportance"></span>    MinImportance <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+<span id="MemoryQuery.Limit"></span>    Limit         <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="MemoryQuery.Offset"></span>    Offset        <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="MemoryQuery.SortBy"></span>    SortBy        <a href="index.html#SortOrder">SortOrder</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="MemoryStore">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=276:1172#L5">MemoryStore</a>
+				<a class="permalink" href="index.html#MemoryStore">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MemoryStore is the interface for agent memory persistence
+
+			<pre>type MemoryStore interface {
+    <span class="comment">// Store saves a memory entry</span>
+    Store(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value interface{}, metadata map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// Retrieve gets a memory entry by key</span>
+    Retrieve(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#MemoryEntry">MemoryEntry</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// Search finds memory entries matching a query</span>
+    Search(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, query *<a href="index.html#MemoryQuery">MemoryQuery</a>) ([]*<a href="index.html#MemoryEntry">MemoryEntry</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// Update updates an existing memory entry</span>
+    Update(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value interface{}) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// Delete removes a memory entry</span>
+    Delete(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// List returns all memory entries for an agent</span>
+    List(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, limit <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>, offset <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) ([]*<a href="index.html#MemoryEntry">MemoryEntry</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// Clear removes all memories for an agent</span>
+    Clear(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="SortOrder">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=1838:1859#L60">SortOrder</a>
+				<a class="permalink" href="index.html#SortOrder">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SortOrder defines memory sorting
+
+			<pre>type SortOrder <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="SortByTime">SortByTime</span>       <a href="index.html#SortOrder">SortOrder</a> = &#34;time&#34;
+    <span id="SortByAccess">SortByAccess</span>     <a href="index.html#SortOrder">SortOrder</a> = &#34;access&#34;
+    <span id="SortByImportance">SortByImportance</span> <a href="index.html#SortOrder">SortOrder</a> = &#34;importance&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="TimeRange">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=1741:1800#L54">TimeRange</a>
+				<a class="permalink" href="index.html#TimeRange">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TimeRange represents a time range for queries
+
+			<pre>type TimeRange struct {
+<span id="TimeRange.Start"></span>    Start <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="TimeRange.End"></span>    End   <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="VectorMemoryStore">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=7773:7957#L326">VectorMemoryStore</a>
+				<a class="permalink" href="index.html#VectorMemoryStore">&#xb6;</a>
+				
+				
+			</h2>
+			<p>VectorMemoryStore implements semantic search using vector embeddings
+
+			<pre>type VectorMemoryStore struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewVectorMemoryStore">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=8079:8177#L336">NewVectorMemoryStore</a>
+					<a class="permalink" href="index.html#NewVectorMemoryStore">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewVectorMemoryStore(baseStore <a href="index.html#MemoryStore">MemoryStore</a>, embeddingFn <a href="index.html#EmbeddingFunction">EmbeddingFunction</a>) *<a href="index.html#VectorMemoryStore">VectorMemoryStore</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="VectorMemoryStore.Clear">func (*VectorMemoryStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=11273:11349#L461">Clear</a>
+					<a class="permalink" href="index.html#VectorMemoryStore.Clear">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (v *<a href="index.html#VectorMemoryStore">VectorMemoryStore</a>) Clear(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="VectorMemoryStore.Delete">func (*VectorMemoryStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=10900:10989#L449">Delete</a>
+					<a class="permalink" href="index.html#VectorMemoryStore.Delete">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (v *<a href="index.html#VectorMemoryStore">VectorMemoryStore</a>) Delete(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="VectorMemoryStore.List">func (*VectorMemoryStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=11097:11213#L457">List</a>
+					<a class="permalink" href="index.html#VectorMemoryStore.List">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (v *<a href="index.html#VectorMemoryStore">VectorMemoryStore</a>) List(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, limit <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>, offset <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) ([]*<a href="index.html#MemoryEntry">MemoryEntry</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="VectorMemoryStore.Retrieve">func (*VectorMemoryStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=8782:8889#L363">Retrieve</a>
+					<a class="permalink" href="index.html#VectorMemoryStore.Retrieve">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (v *<a href="index.html#VectorMemoryStore">VectorMemoryStore</a>) Retrieve(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#MemoryEntry">MemoryEntry</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="VectorMemoryStore.Search">func (*VectorMemoryStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=8943:9058#L367">Search</a>
+					<a class="permalink" href="index.html#VectorMemoryStore.Search">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (v *<a href="index.html#VectorMemoryStore">VectorMemoryStore</a>) Search(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, query *<a href="index.html#MemoryQuery">MemoryQuery</a>) ([]*<a href="index.html#MemoryEntry">MemoryEntry</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="VectorMemoryStore.Store">func (*VectorMemoryStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=8311:8451#L344">Store</a>
+					<a class="permalink" href="index.html#VectorMemoryStore.Store">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (v *<a href="index.html#VectorMemoryStore">VectorMemoryStore</a>) Store(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value interface{}, metadata map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="VectorMemoryStore.Update">func (*VectorMemoryStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/memory/memory.go?s=10474:10582#L430">Update</a>
+					<a class="permalink" href="index.html#VectorMemoryStore.Update">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (v *<a href="index.html#VectorMemoryStore">VectorMemoryStore</a>) Update(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value interface{}) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

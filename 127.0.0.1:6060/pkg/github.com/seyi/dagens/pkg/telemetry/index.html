@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>telemetry - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package telemetry
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/telemetry"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package telemetry provides initialization functions for the telemetry system
+<p>Package telemetry provides enhanced observability and monitoring
+using OpenTelemetry SDK for distributed tracing with Jaeger support via OTLP
+<p>Package telemetry provides enhanced observability and monitoring
+Using OpenTelemetry SDK for production tracing or in-memory for testing
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+				
+				<dd><a href="index.html#ForceFlushGlobalTelemetry">func ForceFlushGlobalTelemetry(ctx context.Context) error</a></dd>
+			
+				
+				<dd><a href="index.html#InitGlobalTelemetry">func InitGlobalTelemetry(serviceName, serviceVersion string) error</a></dd>
+			
+				
+				<dd><a href="index.html#ShutdownGlobalTelemetry">func ShutdownGlobalTelemetry(ctx context.Context) error</a></dd>
+			
+			
+				
+				<dd><a href="index.html#CollectorConfig">type CollectorConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Counter">type Counter</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ExporterType">type ExporterType</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Gauge">type Gauge</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Histogram">type Histogram</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#HistogramStats">type HistogramStats</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#InMemoryCounter">type InMemoryCounter</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryCounter.Add">func (c *InMemoryCounter) Add(delta float64)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryCounter.Inc">func (c *InMemoryCounter) Inc()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryCounter.Value">func (c *InMemoryCounter) Value() float64</a></dd>
+				
+			
+				
+				<dd><a href="index.html#InMemoryGauge">type InMemoryGauge</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryGauge.Dec">func (g *InMemoryGauge) Dec()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryGauge.Inc">func (g *InMemoryGauge) Inc()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryGauge.Set">func (g *InMemoryGauge) Set(value float64)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryGauge.Value">func (g *InMemoryGauge) Value() float64</a></dd>
+				
+			
+				
+				<dd><a href="index.html#InMemoryHistogram">type InMemoryHistogram</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryHistogram.Record">func (h *InMemoryHistogram) Record(value float64)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryHistogram.RecordWithAttributes">func (h *InMemoryHistogram) RecordWithAttributes(value float64, attrs map[string]interface{})</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryHistogram.Statistics">func (h *InMemoryHistogram) Statistics() *HistogramStats</a></dd>
+				
+			
+				
+				<dd><a href="index.html#InMemoryLogger">type InMemoryLogger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewInMemoryLogger">func NewInMemoryLogger() *InMemoryLogger</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryLogger.Debug">func (l *InMemoryLogger) Debug(msg string, attrs map[string]interface{})</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryLogger.Error">func (l *InMemoryLogger) Error(msg string, attrs map[string]interface{})</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryLogger.GetLogs">func (l *InMemoryLogger) GetLogs() []LogEntry</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryLogger.Info">func (l *InMemoryLogger) Info(msg string, attrs map[string]interface{})</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryLogger.Warn">func (l *InMemoryLogger) Warn(msg string, attrs map[string]interface{})</a></dd>
+				
+			
+				
+				<dd><a href="index.html#InMemoryMeter">type InMemoryMeter</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewInMemoryMeter">func NewInMemoryMeter() *InMemoryMeter</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryMeter.Counter">func (m *InMemoryMeter) Counter(name string) Counter</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryMeter.Gauge">func (m *InMemoryMeter) Gauge(name string) Gauge</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryMeter.Histogram">func (m *InMemoryMeter) Histogram(name string) Histogram</a></dd>
+				
+			
+				
+				<dd><a href="index.html#InMemorySpan">type InMemorySpan</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemorySpan.AddEvent">func (s *InMemorySpan) AddEvent(name string, attributes map[string]interface{})</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemorySpan.Context">func (s *InMemorySpan) Context() context.Context</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemorySpan.End">func (s *InMemorySpan) End()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemorySpan.SetAttribute">func (s *InMemorySpan) SetAttribute(key string, value interface{})</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemorySpan.SetStatus">func (s *InMemorySpan) SetStatus(code StatusCode, message string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemorySpan.SpanContext">func (s *InMemorySpan) SpanContext() trace.SpanContext</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemorySpan.SpanID">func (s *InMemorySpan) SpanID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemorySpan.TraceID">func (s *InMemorySpan) TraceID() string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#InMemoryTracer">type InMemoryTracer</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewInMemoryTracer">func NewInMemoryTracer() *InMemoryTracer</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryTracer.GetSpan">func (t *InMemoryTracer) GetSpan(ctx context.Context) Span</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InMemoryTracer.StartSpan">func (t *InMemoryTracer) StartSpan(ctx context.Context, name string) (context.Context, Span)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#LogEntry">type LogEntry</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LogLevel">type LogLevel</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LogLevel.String">func (l LogLevel) String() string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#Logger">type Logger</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Meter">type Meter</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MetricsSnapshot">type MetricsSnapshot</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#NoOpExporter">type NoOpExporter</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NoOpExporter.ExportSpans">func (e *NoOpExporter) ExportSpans(ctx context.Context, spans []sdktrace.ReadOnlySpan) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NoOpExporter.Shutdown">func (e *NoOpExporter) Shutdown(ctx context.Context) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#OTELSpan">type OTELSpan</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OTELSpan.AddEvent">func (s *OTELSpan) AddEvent(name string, attributes map[string]interface{})</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OTELSpan.Context">func (s *OTELSpan) Context() context.Context</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OTELSpan.End">func (s *OTELSpan) End()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OTELSpan.SetAttribute">func (s *OTELSpan) SetAttribute(key string, value interface{})</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OTELSpan.SetStatus">func (s *OTELSpan) SetStatus(code StatusCode, message string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OTELSpan.SpanContext">func (s *OTELSpan) SpanContext() trace.SpanContext</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OTELSpan.SpanID">func (s *OTELSpan) SpanID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OTELSpan.TraceID">func (s *OTELSpan) TraceID() string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#OTELTracer">type OTELTracer</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewOTELTracer">func NewOTELTracer(config TracerConfig) (*OTELTracer, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OTELTracer.ForceFlush">func (t *OTELTracer) ForceFlush(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OTELTracer.GetSpan">func (t *OTELTracer) GetSpan(ctx context.Context) Span</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OTELTracer.Shutdown">func (t *OTELTracer) Shutdown(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OTELTracer.StartSpan">func (t *OTELTracer) StartSpan(ctx context.Context, name string) (context.Context, Span)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#Once">type Once</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Once.Do">func (o *Once) Do(f func() error) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#Span">type Span</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#SpanEvent">type SpanEvent</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#StatusCode">type StatusCode</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#TelemetryCollector">type TelemetryCollector</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#GetGlobalTelemetry">func GetGlobalTelemetry() *TelemetryCollector</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InitOTELTelemetry">func InitOTELTelemetry(config TracerConfig) (*TelemetryCollector, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InitTelemetry">func InitTelemetry(serviceName, serviceVersion string) (*TelemetryCollector, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewDefaultTelemetryCollector">func NewDefaultTelemetryCollector() *TelemetryCollector</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewTelemetryCollector">func NewTelemetryCollector() *TelemetryCollector</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewTelemetryCollectorSimple">func NewTelemetryCollectorSimple() *TelemetryCollector</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewTelemetryCollectorWithConfig">func NewTelemetryCollectorWithConfig(config CollectorConfig) (*TelemetryCollector, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#TelemetryCollector.ForceFlush">func (tc *TelemetryCollector) ForceFlush(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#TelemetryCollector.GetLogger">func (tc *TelemetryCollector) GetLogger() Logger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#TelemetryCollector.GetMeter">func (tc *TelemetryCollector) GetMeter() Meter</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#TelemetryCollector.GetMetricsSnapshot">func (tc *TelemetryCollector) GetMetricsSnapshot() *MetricsSnapshot</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#TelemetryCollector.GetTracer">func (tc *TelemetryCollector) GetTracer() Tracer</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#TelemetryCollector.Shutdown">func (tc *TelemetryCollector) Shutdown(ctx context.Context) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#Tracer">type Tracer</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#TracerConfig">type TracerConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#TracerType">type TracerType</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/init.go">init.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go">otel_tracer.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go">telemetry.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+			
+			
+			<h2 id="ForceFlushGlobalTelemetry">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/init.go?s=3064:3121#L103">ForceFlushGlobalTelemetry</a>
+				<a class="permalink" href="index.html#ForceFlushGlobalTelemetry">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func ForceFlushGlobalTelemetry(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+			<p>ForceFlushGlobalTelemetry flushes all remaining spans in the global collector
+
+			
+			
+
+		
+			
+			
+			<h2 id="InitGlobalTelemetry">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/init.go?s=2506:2572#L83">InitGlobalTelemetry</a>
+				<a class="permalink" href="index.html#InitGlobalTelemetry">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func InitGlobalTelemetry(serviceName, serviceVersion <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+			<p>InitGlobalTelemetry initializes the global telemetry collector
+
+			
+			
+
+		
+			
+			
+			<h2 id="ShutdownGlobalTelemetry">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/init.go?s=2839:2894#L95">ShutdownGlobalTelemetry</a>
+				<a class="permalink" href="index.html#ShutdownGlobalTelemetry">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func ShutdownGlobalTelemetry(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+			<p>ShutdownGlobalTelemetry shuts down the global telemetry collector
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="CollectorConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=500:787#L15">CollectorConfig</a>
+				<a class="permalink" href="index.html#CollectorConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CollectorConfig holds configuration for the telemetry collector
+
+			<pre>type CollectorConfig struct {
+<span id="CollectorConfig.TracerType"></span>    TracerType     <a href="index.html#TracerType">TracerType</a>
+<span id="CollectorConfig.TracerConfig"></span>    TracerConfig   <a href="index.html#TracerConfig">TracerConfig</a>
+<span id="CollectorConfig.ServiceName"></span>    ServiceName    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="CollectorConfig.ServiceVersion"></span>    ServiceVersion <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="CollectorConfig.Endpoint"></span>    Endpoint       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="CollectorConfig.ExporterType"></span>    ExporterType   <a href="index.html#ExporterType">ExporterType</a>
+<span id="CollectorConfig.SampleRatio"></span>    SampleRatio    <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+<span id="CollectorConfig.EnableMetrics"></span>    EnableMetrics  <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+<span id="CollectorConfig.EnableLogging"></span>    EnableLogging  <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Counter">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=5394:5447#L193">Counter</a>
+				<a class="permalink" href="index.html#Counter">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Counter is a monotonically increasing metric
+
+			<pre>type Counter interface {
+    Inc()
+    Add(delta <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ExporterType">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=1591:1615#L48">ExporterType</a>
+				<a class="permalink" href="index.html#ExporterType">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ExporterType defines the type of exporter to use
+
+			<pre>type ExporterType <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="ExporterOTLP">ExporterOTLP</span>    <a href="index.html#ExporterType">ExporterType</a> = &#34;otlp&#34;
+    <span id="ExporterConsole">ExporterConsole</span> <a href="index.html#ExporterType">ExporterType</a> = &#34;console&#34;
+    <span id="ExporterNoOp">ExporterNoOp</span>    <a href="index.html#ExporterType">ExporterType</a> = &#34;noop&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Gauge">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=5636:5694#L205">Gauge</a>
+				<a class="permalink" href="index.html#Gauge">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Gauge records current values
+
+			<pre>type Gauge interface {
+    Set(value <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)
+    Inc()
+    Dec()
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Histogram">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=5484:5602#L199">Histogram</a>
+				<a class="permalink" href="index.html#Histogram">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Histogram records distributions
+
+			<pre>type Histogram interface {
+    Record(value <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)
+    RecordWithAttributes(value <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>, attrs map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="HistogramStats">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=11085:11186#L463">HistogramStats</a>
+				<a class="permalink" href="index.html#HistogramStats">&#xb6;</a>
+				
+				
+			</h2>
+			
+			<pre>type HistogramStats struct {
+<span id="HistogramStats.Count"></span>    Count <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="HistogramStats.Sum"></span>    Sum   <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+<span id="HistogramStats.Min"></span>    Min   <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+<span id="HistogramStats.Max"></span>    Max   <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+<span id="HistogramStats.Mean"></span>    Mean  <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="InMemoryCounter">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=9903:9983#L393">InMemoryCounter</a>
+				<a class="permalink" href="index.html#InMemoryCounter">&#xb6;</a>
+				
+				
+			</h2>
+			<p>InMemoryCounter implements Counter
+
+			<pre>type InMemoryCounter struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="InMemoryCounter.Add">func (*InMemoryCounter) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=10034:10078#L403">Add</a>
+					<a class="permalink" href="index.html#InMemoryCounter.Add">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#InMemoryCounter">InMemoryCounter</a>) Add(delta <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryCounter.Inc">func (*InMemoryCounter) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=9985:10016#L399">Inc</a>
+					<a class="permalink" href="index.html#InMemoryCounter.Inc">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#InMemoryCounter">InMemoryCounter</a>) Inc()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryCounter.Value">func (*InMemoryCounter) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=10136:10177#L409">Value</a>
+					<a class="permalink" href="index.html#InMemoryCounter.Value">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#InMemoryCounter">InMemoryCounter</a>) Value() <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="InMemoryGauge">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=11222:11300#L472">InMemoryGauge</a>
+				<a class="permalink" href="index.html#InMemoryGauge">&#xb6;</a>
+				
+				
+			</h2>
+			<p>InMemoryGauge implements Gauge
+
+			<pre>type InMemoryGauge struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="InMemoryGauge.Dec">func (*InMemoryGauge) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=11481:11510#L490">Dec</a>
+					<a class="permalink" href="index.html#InMemoryGauge.Dec">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (g *<a href="index.html#InMemoryGauge">InMemoryGauge</a>) Dec()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryGauge.Inc">func (*InMemoryGauge) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=11401:11430#L484">Inc</a>
+					<a class="permalink" href="index.html#InMemoryGauge.Inc">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (g *<a href="index.html#InMemoryGauge">InMemoryGauge</a>) Inc()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryGauge.Set">func (*InMemoryGauge) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=11302:11344#L478">Set</a>
+					<a class="permalink" href="index.html#InMemoryGauge.Set">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (g *<a href="index.html#InMemoryGauge">InMemoryGauge</a>) Set(value <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryGauge.Value">func (*InMemoryGauge) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=11561:11600#L496">Value</a>
+					<a class="permalink" href="index.html#InMemoryGauge.Value">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (g *<a href="index.html#InMemoryGauge">InMemoryGauge</a>) Value() <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="InMemoryHistogram">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=10277:10364#L416">InMemoryHistogram</a>
+				<a class="permalink" href="index.html#InMemoryHistogram">&#xb6;</a>
+				
+				
+			</h2>
+			<p>InMemoryHistogram implements Histogram
+
+			<pre>type InMemoryHistogram struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="InMemoryHistogram.Record">func (*InMemoryHistogram) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=10366:10415#L422">Record</a>
+					<a class="permalink" href="index.html#InMemoryHistogram.Record">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (h *<a href="index.html#InMemoryHistogram">InMemoryHistogram</a>) Record(value <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryHistogram.RecordWithAttributes">func (*InMemoryHistogram) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=10457:10550#L426">RecordWithAttributes</a>
+					<a class="permalink" href="index.html#InMemoryHistogram.RecordWithAttributes">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (h *<a href="index.html#InMemoryHistogram">InMemoryHistogram</a>) RecordWithAttributes(value <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>, attrs map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryHistogram.Statistics">func (*InMemoryHistogram) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=10626:10682#L432">Statistics</a>
+					<a class="permalink" href="index.html#InMemoryHistogram.Statistics">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (h *<a href="index.html#InMemoryHistogram">InMemoryHistogram</a>) Statistics() *<a href="index.html#HistogramStats">HistogramStats</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="InMemoryLogger">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=11706:11772#L503">InMemoryLogger</a>
+				<a class="permalink" href="index.html#InMemoryLogger">&#xb6;</a>
+				
+				
+			</h2>
+			<p>InMemoryLogger implements structured logging
+
+			<pre>type InMemoryLogger struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewInMemoryLogger">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=12097:12137#L528">NewInMemoryLogger</a>
+					<a class="permalink" href="index.html#NewInMemoryLogger">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewInMemoryLogger() *<a href="index.html#InMemoryLogger">InMemoryLogger</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="InMemoryLogger.Debug">func (*InMemoryLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=12641:12713#L555">Debug</a>
+					<a class="permalink" href="index.html#InMemoryLogger.Debug">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#InMemoryLogger">InMemoryLogger</a>) Debug(msg <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attrs map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryLogger.Error">func (*InMemoryLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=12973:13045#L567">Error</a>
+					<a class="permalink" href="index.html#InMemoryLogger.Error">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#InMemoryLogger">InMemoryLogger</a>) Error(msg <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attrs map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryLogger.GetLogs">func (*InMemoryLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=13085:13130#L571">GetLogs</a>
+					<a class="permalink" href="index.html#InMemoryLogger.GetLogs">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#InMemoryLogger">InMemoryLogger</a>) GetLogs() []<a href="index.html#LogEntry">LogEntry</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryLogger.Info">func (*InMemoryLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=12753:12824#L559">Info</a>
+					<a class="permalink" href="index.html#InMemoryLogger.Info">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#InMemoryLogger">InMemoryLogger</a>) Info(msg <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attrs map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryLogger.Warn">func (*InMemoryLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=12863:12934#L563">Warn</a>
+					<a class="permalink" href="index.html#InMemoryLogger.Warn">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#InMemoryLogger">InMemoryLogger</a>) Warn(msg <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attrs map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})</pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="InMemoryMeter">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=8686:8860#L335">InMemoryMeter</a>
+				<a class="permalink" href="index.html#InMemoryMeter">&#xb6;</a>
+				
+				
+			</h2>
+			<p>InMemoryMeter implements in-memory metrics
+
+			<pre>type InMemoryMeter struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewInMemoryMeter">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=8862:8900#L342">NewInMemoryMeter</a>
+					<a class="permalink" href="index.html#NewInMemoryMeter">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewInMemoryMeter() *<a href="index.html#InMemoryMeter">InMemoryMeter</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="InMemoryMeter.Counter">func (*InMemoryMeter) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=9080:9132#L350">Counter</a>
+					<a class="permalink" href="index.html#InMemoryMeter.Counter">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#InMemoryMeter">InMemoryMeter</a>) Counter(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="index.html#Counter">Counter</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryMeter.Gauge">func (*InMemoryMeter) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=9636:9684#L379">Gauge</a>
+					<a class="permalink" href="index.html#InMemoryMeter.Gauge">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#InMemoryMeter">InMemoryMeter</a>) Gauge(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="index.html#Gauge">Gauge</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryMeter.Histogram">func (*InMemoryMeter) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=9329:9385#L363">Histogram</a>
+					<a class="permalink" href="index.html#InMemoryMeter.Histogram">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#InMemoryMeter">InMemoryMeter</a>) Histogram(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="index.html#Histogram">Histogram</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="InMemorySpan">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=7289:7544#L275">InMemorySpan</a>
+				<a class="permalink" href="index.html#InMemorySpan">&#xb6;</a>
+				
+				
+			</h2>
+			<p>InMemorySpan implements Span
+
+			<pre>type InMemorySpan struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="InMemorySpan.AddEvent">func (*InMemorySpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=7927:8006#L307">AddEvent</a>
+					<a class="permalink" href="index.html#InMemorySpan.AddEvent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemorySpan">InMemorySpan</a>) AddEvent(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attributes map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemorySpan.Context">func (*InMemorySpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=8254:8302#L323">Context</a>
+					<a class="permalink" href="index.html#InMemorySpan.Context">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemorySpan">InMemorySpan</a>) Context() <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemorySpan.End">func (*InMemorySpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=8162:8190#L317">End</a>
+					<a class="permalink" href="index.html#InMemorySpan.End">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemorySpan">InMemorySpan</a>) End()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemorySpan.SetAttribute">func (*InMemorySpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=7649:7715#L294">SetAttribute</a>
+					<a class="permalink" href="index.html#InMemorySpan.SetAttribute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemorySpan">InMemorySpan</a>) SetAttribute(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value interface{})</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemorySpan.SetStatus">func (*InMemorySpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=7782:7847#L300">SetStatus</a>
+					<a class="permalink" href="index.html#InMemorySpan.SetStatus">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemorySpan">InMemorySpan</a>) SetStatus(code <a href="index.html#StatusCode">StatusCode</a>, message <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemorySpan.SpanContext">func (*InMemorySpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=8553:8607#L331">SpanContext</a>
+					<a class="permalink" href="index.html#InMemorySpan.SpanContext">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemorySpan">InMemorySpan</a>) SpanContext() <a href="http://127.0.0.1:6060/pkg/go.opentelemetry.io/otel/trace/">trace</a>.<a href="http://127.0.0.1:6060/pkg/go.opentelemetry.io/otel/trace/#SpanContext">SpanContext</a></pre>
+				<p>SpanContext returns an invalid SpanContext for InMemorySpan
+
+				
+				
+				
+			
+				
+				<h3 id="InMemorySpan.SpanID">func (*InMemorySpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=8429:8467#L328">SpanID</a>
+					<a class="permalink" href="index.html#InMemorySpan.SpanID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemorySpan">InMemorySpan</a>) SpanID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemorySpan.TraceID">func (*InMemorySpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=8368:8407#L327">TraceID</a>
+					<a class="permalink" href="index.html#InMemorySpan.TraceID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#InMemorySpan">InMemorySpan</a>) TraceID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="InMemoryTracer">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=6043:6125#L220">InMemoryTracer</a>
+				<a class="permalink" href="index.html#InMemoryTracer">&#xb6;</a>
+				
+				
+			</h2>
+			<p>InMemoryTracer implements in-memory tracing (for backward compatibility and testing)
+
+			<pre>type InMemoryTracer struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewInMemoryTracer">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=6127:6167#L225">NewInMemoryTracer</a>
+					<a class="permalink" href="index.html#NewInMemoryTracer">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewInMemoryTracer() *<a href="index.html#InMemoryTracer">InMemoryTracer</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="InMemoryTracer.GetSpan">func (*InMemoryTracer) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=7115:7173#L266">GetSpan</a>
+					<a class="permalink" href="index.html#InMemoryTracer.GetSpan">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (t *<a href="index.html#InMemoryTracer">InMemoryTracer</a>) GetSpan(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="index.html#Span">Span</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="InMemoryTracer.StartSpan">func (*InMemoryTracer) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=6298:6390#L235">StartSpan</a>
+					<a class="permalink" href="index.html#InMemoryTracer.StartSpan">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (t *<a href="index.html#InMemoryTracer">InMemoryTracer</a>) StartSpan(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, <a href="index.html#Span">Span</a>)</pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="LogEntry">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=11774:11895#L508">LogEntry</a>
+				<a class="permalink" href="index.html#LogEntry">&#xb6;</a>
+				
+				
+			</h2>
+			
+			<pre>type LogEntry struct {
+<span id="LogEntry.Level"></span>    Level      <a href="index.html#LogLevel">LogLevel</a>
+<span id="LogEntry.Message"></span>    Message    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="LogEntry.Attributes"></span>    Attributes map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}
+<span id="LogEntry.Timestamp"></span>    Timestamp  <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LogLevel">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=11897:11914#L515">LogLevel</a>
+				<a class="permalink" href="index.html#LogLevel">&#xb6;</a>
+				
+				
+			</h2>
+			
+			<pre>type LogLevel <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="LogLevelDebug">LogLevelDebug</span> <a href="index.html#LogLevel">LogLevel</a> = <a href="http://127.0.0.1:6060/pkg/builtin/#iota">iota</a>
+    <span id="LogLevelInfo">LogLevelInfo</span>
+    <span id="LogLevelWarn">LogLevelWarn</span>
+    <span id="LogLevelError">LogLevelError</span>
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="LogLevel.String">func (LogLevel) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=12001:12034#L524">String</a>
+					<a class="permalink" href="index.html#LogLevel.String">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l <a href="index.html#LogLevel">LogLevel</a>) String() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Logger">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=5734:5953#L212">Logger</a>
+				<a class="permalink" href="index.html#Logger">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Logger provides structured logging
+
+			<pre>type Logger interface {
+    Debug(msg <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attrs map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})
+    Info(msg <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attrs map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})
+    Warn(msg <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attrs map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})
+    Error(msg <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attrs map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Meter">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=5230:5344#L186">Meter</a>
+				<a class="permalink" href="index.html#Meter">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Meter provides metrics collection
+
+			<pre>type Meter interface {
+    Counter(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="index.html#Counter">Counter</a>
+    Histogram(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="index.html#Histogram">Histogram</a>
+    Gauge(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="index.html#Gauge">Gauge</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="MetricsSnapshot">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=13305:13459#L581">MetricsSnapshot</a>
+				<a class="permalink" href="index.html#MetricsSnapshot">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MetricsSnapshot provides a point-in-time view of metrics
+
+			<pre>type MetricsSnapshot struct {
+<span id="MetricsSnapshot.Timestamp"></span>    Timestamp  <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="MetricsSnapshot.Counters"></span>    Counters   map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]<a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+<span id="MetricsSnapshot.Histograms"></span>    Histograms map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]*<a href="index.html#HistogramStats">HistogramStats</a>
+<span id="MetricsSnapshot.Gauges"></span>    Gauges     map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]<a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="NoOpExporter">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=724:750#L16">NoOpExporter</a>
+				<a class="permalink" href="index.html#NoOpExporter">&#xb6;</a>
+				
+				
+			</h2>
+			<p>NoOpExporter is a no-op implementation of SpanExporter
+
+			<pre>type NoOpExporter struct{}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="NoOpExporter.ExportSpans">func (*NoOpExporter) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=805:897#L19">ExportSpans</a>
+					<a class="permalink" href="index.html#NoOpExporter.ExportSpans">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (e *<a href="index.html#NoOpExporter">NoOpExporter</a>) ExportSpans(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, spans []<a href="http://127.0.0.1:6060/pkg/go.opentelemetry.io/otel/sdk/trace/">sdktrace</a>.<a href="http://127.0.0.1:6060/pkg/go.opentelemetry.io/otel/sdk/trace/#ReadOnlySpan">ReadOnlySpan</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>ExportSpans implements the SpanExporter interface
+
+				
+				
+				
+			
+				
+				<h3 id="NoOpExporter.Shutdown">func (*NoOpExporter) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=965:1023#L24">Shutdown</a>
+					<a class="permalink" href="index.html#NoOpExporter.Shutdown">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (e *<a href="index.html#NoOpExporter">NoOpExporter</a>) Shutdown(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Shutdown implements the SpanExporter interface
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="OTELSpan">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=4922:5053#L158">OTELSpan</a>
+				<a class="permalink" href="index.html#OTELSpan">&#xb6;</a>
+				
+				
+			</h2>
+			<p>OTELSpan wraps the OTEL span to implement our Span interface
+
+			<pre>type OTELSpan struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="OTELSpan.AddEvent">func (*OTELSpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=5992:6067#L202">AddEvent</a>
+					<a class="permalink" href="index.html#OTELSpan.AddEvent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#OTELSpan">OTELSpan</a>) AddEvent(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attributes map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})</pre>
+				<p>AddEvent adds an event to the span
+
+				
+				
+				
+			
+				
+				<h3 id="OTELSpan.Context">func (*OTELSpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=6499:6543#L224">Context</a>
+					<a class="permalink" href="index.html#OTELSpan.Context">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#OTELSpan">OTELSpan</a>) Context() <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a></pre>
+				<p>Context returns the span&apos;s context
+
+				
+				
+				
+			
+				
+				<h3 id="OTELSpan.End">func (*OTELSpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=6383:6407#L217">End</a>
+					<a class="permalink" href="index.html#OTELSpan.End">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#OTELSpan">OTELSpan</a>) End()</pre>
+				<p>End ends the span
+
+				
+				
+				
+			
+				
+				<h3 id="OTELSpan.SetAttribute">func (*OTELSpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=5101:5163#L164">SetAttribute</a>
+					<a class="permalink" href="index.html#OTELSpan.SetAttribute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#OTELSpan">OTELSpan</a>) SetAttribute(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value interface{})</pre>
+				<p>SetAttribute sets an attribute on the span
+
+				
+				
+				
+			
+				
+				<h3 id="OTELSpan.SetStatus">func (*OTELSpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=5655:5716#L185">SetStatus</a>
+					<a class="permalink" href="index.html#OTELSpan.SetStatus">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#OTELSpan">OTELSpan</a>) SetStatus(code <a href="index.html#StatusCode">StatusCode</a>, message <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>SetStatus sets the status of the span
+
+				
+				
+				
+			
+				
+				<h3 id="OTELSpan.SpanContext">func (*OTELSpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=7082:7132#L242">SpanContext</a>
+					<a class="permalink" href="index.html#OTELSpan.SpanContext">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#OTELSpan">OTELSpan</a>) SpanContext() <a href="http://127.0.0.1:6060/pkg/go.opentelemetry.io/otel/trace/">trace</a>.<a href="http://127.0.0.1:6060/pkg/go.opentelemetry.io/otel/trace/#SpanContext">SpanContext</a></pre>
+				<p>SpanContext returns the underlying OpenTelemetry SpanContext
+
+				
+				
+				
+			
+				
+				<h3 id="OTELSpan.SpanID">func (*OTELSpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=6931:6965#L237">SpanID</a>
+					<a class="permalink" href="index.html#OTELSpan.SpanID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#OTELSpan">OTELSpan</a>) SpanID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>SpanID returns the span ID
+
+				
+				
+				
+			
+				
+				<h3 id="OTELSpan.TraceID">func (*OTELSpan) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=6812:6847#L232">TraceID</a>
+					<a class="permalink" href="index.html#OTELSpan.TraceID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#OTELSpan">OTELSpan</a>) TraceID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>TraceID returns the trace ID
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="OTELTracer">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=1111:1212#L29">OTELTracer</a>
+				<a class="permalink" href="index.html#OTELTracer">&#xb6;</a>
+				
+				
+			</h2>
+			<p>OTELTracer implements the Tracer interface using OpenTelemetry SDK
+
+			<pre>type OTELTracer struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewOTELTracer">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=1823:1883#L57">NewOTELTracer</a>
+					<a class="permalink" href="index.html#NewOTELTracer">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewOTELTracer(config <a href="index.html#TracerConfig">TracerConfig</a>) (*<a href="index.html#OTELTracer">OTELTracer</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewOTELTracer creates a new OTEL tracer with the given configuration
+
+				
+				
+			
+
+			
+				
+				<h3 id="OTELTracer.ForceFlush">func (*OTELTracer) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=4718:4776#L152">ForceFlush</a>
+					<a class="permalink" href="index.html#OTELTracer.ForceFlush">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (t *<a href="index.html#OTELTracer">OTELTracer</a>) ForceFlush(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>ForceFlush flushes all remaining spans
+
+				
+				
+				
+			
+				
+				<h3 id="OTELTracer.GetSpan">func (*OTELTracer) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=4340:4394#L138">GetSpan</a>
+					<a class="permalink" href="index.html#OTELTracer.GetSpan">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (t *<a href="index.html#OTELTracer">OTELTracer</a>) GetSpan(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="index.html#Span">Span</a></pre>
+				<p>GetSpan retrieves the current span from context
+
+				
+				
+				
+			
+				
+				<h3 id="OTELTracer.Shutdown">func (*OTELTracer) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=4587:4643#L147">Shutdown</a>
+					<a class="permalink" href="index.html#OTELTracer.Shutdown">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (t *<a href="index.html#OTELTracer">OTELTracer</a>) Shutdown(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Shutdown gracefully shuts down the tracer provider
+
+				
+				
+				
+			
+				
+				<h3 id="OTELTracer.StartSpan">func (*OTELTracer) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=4120:4208#L132">StartSpan</a>
+					<a class="permalink" href="index.html#OTELTracer.StartSpan">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (t *<a href="index.html#OTELTracer">OTELTracer</a>) StartSpan(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, <a href="index.html#Span">Span</a>)</pre>
+				<p>StartSpan starts a new span and returns the updated context
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Once">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/init.go?s=1825:1875#L54">Once</a>
+				<a class="permalink" href="index.html#Once">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Once is similar to sync.Once but with error handling
+
+			<pre>type Once struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="Once.Do">func (*Once) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/init.go?s=1964:2003#L60">Do</a>
+					<a class="permalink" href="index.html#Once.Do">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (o *<a href="index.html#Once">Once</a>) Do(f func() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Do calls the function f if and only if Do has not been invoked without error before
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Span">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=4796:5068#L165">Span</a>
+				<a class="permalink" href="index.html#Span">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Span represents a trace span
+
+			<pre>type Span interface {
+    SetAttribute(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value interface{})
+    SetStatus(code <a href="index.html#StatusCode">StatusCode</a>, message <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)
+    AddEvent(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attributes map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})
+    End()
+    Context() <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>
+    TraceID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+    SpanID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+    SpanContext() <a href="http://127.0.0.1:6060/pkg/go.opentelemetry.io/otel/trace/">trace</a>.<a href="http://127.0.0.1:6060/pkg/go.opentelemetry.io/otel/trace/#SpanContext">SpanContext</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="SpanEvent">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=7546:7647#L288">SpanEvent</a>
+				<a class="permalink" href="index.html#SpanEvent">&#xb6;</a>
+				
+				
+			</h2>
+			
+			<pre>type SpanEvent struct {
+<span id="SpanEvent.Name"></span>    Name       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="SpanEvent.Timestamp"></span>    Timestamp  <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="SpanEvent.Attributes"></span>    Attributes map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="StatusCode">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=5107:5126#L177">StatusCode</a>
+				<a class="permalink" href="index.html#StatusCode">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StatusCode represents span status
+
+			<pre>type StatusCode <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="StatusUnset">StatusUnset</span> <a href="index.html#StatusCode">StatusCode</a> = <a href="http://127.0.0.1:6060/pkg/builtin/#iota">iota</a>
+    <span id="StatusOK">StatusOK</span>
+    <span id="StatusError">StatusError</span>
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="TelemetryCollector">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=303:431#L6">TelemetryCollector</a>
+				<a class="permalink" href="index.html#TelemetryCollector">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TelemetryCollector provides comprehensive observability
+
+			<pre>type TelemetryCollector struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="GetGlobalTelemetry">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/init.go?s=2206:2251#L74">GetGlobalTelemetry</a>
+					<a class="permalink" href="index.html#GetGlobalTelemetry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func GetGlobalTelemetry() *<a href="index.html#TelemetryCollector">TelemetryCollector</a></pre>
+				<p>GetGlobalTelemetry returns the global telemetry collector instance
+
+				
+				
+			
+				
+				<h3 id="InitOTELTelemetry">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/init.go?s=1381:1453#L38">InitOTELTelemetry</a>
+					<a class="permalink" href="index.html#InitOTELTelemetry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func InitOTELTelemetry(config <a href="index.html#TracerConfig">TracerConfig</a>) (*<a href="index.html#TelemetryCollector">TelemetryCollector</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>InitOTELTelemetry initializes the telemetry system with OTEL configuration
+
+				
+				
+			
+				
+				<h3 id="InitTelemetry">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/init.go?s=296:379#L2">InitTelemetry</a>
+					<a class="permalink" href="index.html#InitTelemetry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func InitTelemetry(serviceName, serviceVersion <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#TelemetryCollector">TelemetryCollector</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>InitTelemetry initializes the telemetry system with the specified configuration
+It reads from environment variables if available, otherwise uses defaults
+
+				
+				
+			
+				
+				<h3 id="NewDefaultTelemetryCollector">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=1486:1541#L48">NewDefaultTelemetryCollector</a>
+					<a class="permalink" href="index.html#NewDefaultTelemetryCollector">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewDefaultTelemetryCollector() *<a href="index.html#TelemetryCollector">TelemetryCollector</a></pre>
+				<p>NewDefaultTelemetryCollector creates a new telemetry collector with default configuration (in-memory for compatibility)
+
+				
+				
+			
+				
+				<h3 id="NewTelemetryCollector">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=1894:1942#L60">NewTelemetryCollector</a>
+					<a class="permalink" href="index.html#NewTelemetryCollector">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewTelemetryCollector() *<a href="index.html#TelemetryCollector">TelemetryCollector</a></pre>
+				<p>NewTelemetryCollector creates a new telemetry collector with default in-memory configuration (for backward compatibility)
+
+				
+				
+			
+				
+				<h3 id="NewTelemetryCollectorSimple">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=1082:1136#L37">NewTelemetryCollectorSimple</a>
+					<a class="permalink" href="index.html#NewTelemetryCollectorSimple">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewTelemetryCollectorSimple() *<a href="index.html#TelemetryCollector">TelemetryCollector</a></pre>
+				<p>NewTelemetryCollectorSimple creates a new telemetry collector with default in-memory configuration (for backward compatibility)
+
+				
+				
+			
+				
+				<h3 id="NewTelemetryCollectorWithConfig">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=2271:2360#L71">NewTelemetryCollectorWithConfig</a>
+					<a class="permalink" href="index.html#NewTelemetryCollectorWithConfig">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewTelemetryCollectorWithConfig(config <a href="index.html#CollectorConfig">CollectorConfig</a>) (*<a href="index.html#TelemetryCollector">TelemetryCollector</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewTelemetryCollectorWithConfig creates a new telemetry collector with the specified configuration
+
+				
+				
+			
+
+			
+				
+				<h3 id="TelemetryCollector.ForceFlush">func (*TelemetryCollector) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=4375:4442#L150">ForceFlush</a>
+					<a class="permalink" href="index.html#TelemetryCollector.ForceFlush">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (tc *<a href="index.html#TelemetryCollector">TelemetryCollector</a>) ForceFlush(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>ForceFlush flushes all remaining spans
+
+				
+				
+				
+			
+				
+				<h3 id="TelemetryCollector.GetLogger">func (*TelemetryCollector) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=3988:4036#L136">GetLogger</a>
+					<a class="permalink" href="index.html#TelemetryCollector.GetLogger">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (tc *<a href="index.html#TelemetryCollector">TelemetryCollector</a>) GetLogger() <a href="index.html#Logger">Logger</a></pre>
+				<p>GetLogger returns the configured logger
+
+				
+				
+				
+			
+				
+				<h3 id="TelemetryCollector.GetMeter">func (*TelemetryCollector) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=3876:3922#L131">GetMeter</a>
+					<a class="permalink" href="index.html#TelemetryCollector.GetMeter">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (tc *<a href="index.html#TelemetryCollector">TelemetryCollector</a>) GetMeter() <a href="index.html#Meter">Meter</a></pre>
+				<p>GetMeter returns the configured meter
+
+				
+				
+				
+			
+				
+				<h3 id="TelemetryCollector.GetMetricsSnapshot">func (*TelemetryCollector) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=13507:13574#L589">GetMetricsSnapshot</a>
+					<a class="permalink" href="index.html#TelemetryCollector.GetMetricsSnapshot">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (tc *<a href="index.html#TelemetryCollector">TelemetryCollector</a>) GetMetricsSnapshot() *<a href="index.html#MetricsSnapshot">MetricsSnapshot</a></pre>
+				<p>GetMetricsSnapshot returns current metrics
+
+				
+				
+				
+			
+				
+				<h3 id="TelemetryCollector.GetTracer">func (*TelemetryCollector) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=3763:3811#L126">GetTracer</a>
+					<a class="permalink" href="index.html#TelemetryCollector.GetTracer">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (tc *<a href="index.html#TelemetryCollector">TelemetryCollector</a>) GetTracer() <a href="index.html#Tracer">Tracer</a></pre>
+				<p>GetTracer returns the configured tracer
+
+				
+				
+				
+			
+				
+				<h3 id="TelemetryCollector.Shutdown">func (*TelemetryCollector) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=4118:4183#L141">Shutdown</a>
+					<a class="permalink" href="index.html#TelemetryCollector.Shutdown">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (tc *<a href="index.html#TelemetryCollector">TelemetryCollector</a>) Shutdown(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Shutdown gracefully shuts down the telemetry collector
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Tracer">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=4633:4762#L159">Tracer</a>
+				<a class="permalink" href="index.html#Tracer">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Tracer provides distributed tracing
+
+			<pre>type Tracer interface {
+    StartSpan(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, <a href="index.html#Span">Span</a>)
+    GetSpan(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="index.html#Span">Span</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="TracerConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/otel_tracer.go?s=1270:1537#L36">TracerConfig</a>
+				<a class="permalink" href="index.html#TracerConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TracerConfig holds configuration for the OTEL tracer
+
+			<pre>type TracerConfig struct {
+<span id="TracerConfig.ServiceName"></span>    ServiceName    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TracerConfig.ServiceVersion"></span>    ServiceVersion <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TracerConfig.Endpoint"></span>    Endpoint       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TracerConfig.ExporterType"></span>    ExporterType   <a href="index.html#ExporterType">ExporterType</a>
+<span id="TracerConfig.SampleRatio"></span>    SampleRatio    <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+<span id="TracerConfig.Insecure"></span>    Insecure       <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+<span id="TracerConfig.Headers"></span>    Headers        map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="TracerConfig.Timeout"></span>    Timeout        <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="TracerType">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/telemetry/telemetry.go?s=837:859#L28">TracerType</a>
+				<a class="permalink" href="index.html#TracerType">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TracerType defines the type of tracer to use
+
+			<pre>type TracerType <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="TracerOTEL">TracerOTEL</span>     <a href="index.html#TracerType">TracerType</a> = &#34;otel&#34;
+    <span id="TracerInMemory">TracerInMemory</span> <a href="index.html#TracerType">TracerType</a> = &#34;inmemory&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

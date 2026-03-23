@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>interaction - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package interaction
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/llm"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package interaction provides types and interfaces for LLM chat protocol compatibility.
+It enables dagens agents to communicate using standard chat message formats while
+maintaining type-safe, structured data flow internally.
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+				<dd><a href="index.html#pkg-constants">Constants</a></dd>
+			
+			
+				<dd><a href="index.html#pkg-variables">Variables</a></dd>
+			
+			
+				
+				<dd><a href="index.html#GetSessionID">func GetSessionID(ctx context.Context) string</a></dd>
+			
+				
+				<dd><a href="index.html#WithHistory">func WithHistory(ctx context.Context, history []Message) context.Context</a></dd>
+			
+				
+				<dd><a href="index.html#WithSessionID">func WithSessionID(ctx context.Context, sessionID string) context.Context</a></dd>
+			
+			
+				
+				<dd><a href="index.html#ChatAdapter">type ChatAdapter</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Function">type Function</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#MemorySessionManager">type MemorySessionManager</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMemorySessionManager">func NewMemorySessionManager(opts ...MemorySessionOption) *MemorySessionManager</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemorySessionManager.Append">func (m *MemorySessionManager) Append(_ context.Context, sessionID string, msgs ...Message) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemorySessionManager.Checkpoint">func (m *MemorySessionManager) Checkpoint(_ context.Context, sessionID string, state []byte) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemorySessionManager.Clear">func (m *MemorySessionManager) Clear()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemorySessionManager.DeleteSession">func (m *MemorySessionManager) DeleteSession(_ context.Context, sessionID string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemorySessionManager.LoadCheckpoint">func (m *MemorySessionManager) LoadCheckpoint(_ context.Context, sessionID string) ([]byte, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemorySessionManager.LoadHistory">func (m *MemorySessionManager) LoadHistory(_ context.Context, sessionID string) ([]Message, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemorySessionManager.SessionCount">func (m *MemorySessionManager) SessionCount() int</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MemorySessionOption">type MemorySessionOption</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#WithMaxHistory">func WithMaxHistory(max int) MemorySessionOption</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Message">type Message</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#GetHistory">func GetHistory(ctx context.Context) []Message</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewAssistantMessage">func NewAssistantMessage(content string) Message</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewAssistantToolCallMessage">func NewAssistantToolCallMessage(toolCalls []ToolCall) Message</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSystemMessage">func NewSystemMessage(content string) Message</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewToolMessage">func NewToolMessage(toolCallID, content string) Message</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewUserMessage">func NewUserMessage(content string) Message</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Message.IsToolCall">func (m Message) IsToolCall() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Message.IsToolResponse">func (m Message) IsToolResponse() bool</a></dd>
+				
+			
+				
+				<dd><a href="index.html#NoOpSessionManager">type NoOpSessionManager</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NoOpSessionManager.Append">func (n NoOpSessionManager) Append(_ context.Context, _ string, _ ...Message) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NoOpSessionManager.Checkpoint">func (n NoOpSessionManager) Checkpoint(_ context.Context, _ string, _ []byte) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NoOpSessionManager.DeleteSession">func (n NoOpSessionManager) DeleteSession(_ context.Context, _ string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NoOpSessionManager.LoadCheckpoint">func (n NoOpSessionManager) LoadCheckpoint(_ context.Context, _ string) ([]byte, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NoOpSessionManager.LoadHistory">func (n NoOpSessionManager) LoadHistory(_ context.Context, _ string) ([]Message, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SessionManager">type SessionManager</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ToolCall">type ToolCall</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/interfaces.go">interfaces.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/memory_session.go">memory_session.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/types.go">types.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+			<h2 id="pkg-constants">Constants</h2>
+			
+				<p>Role constants for standard chat roles (OpenAI/Anthropic compatible)
+
+				<pre>const (
+    <span id="RoleSystem">RoleSystem</span>    = &#34;system&#34;
+    <span id="RoleUser">RoleUser</span>      = &#34;user&#34;
+    <span id="RoleAssistant">RoleAssistant</span> = &#34;assistant&#34;
+    <span id="RoleTool">RoleTool</span>      = &#34;tool&#34;
+)</pre>
+			
+		
+		
+			<h2 id="pkg-variables">Variables</h2>
+			
+				<p>ErrCheckpointNotFound is returned when a checkpoint doesn&apos;t exist for a session.
+
+				<pre>var <span id="ErrCheckpointNotFound">ErrCheckpointNotFound</span> = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;checkpoint not found&#34;)</pre>
+			
+				<p>ErrSessionNotFound is returned when a session doesn&apos;t exist.
+
+				<pre>var <span id="ErrSessionNotFound">ErrSessionNotFound</span> = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;session not found&#34;)</pre>
+			
+				<p>HistoryKey is used to store/retrieve message history from context.
+
+				<pre>var <span id="HistoryKey">HistoryKey</span> = historyKeyType{}</pre>
+			
+				<p>SessionKey is used to store/retrieve session IDs from context.
+
+				<pre>var <span id="SessionKey">SessionKey</span> = sessionKeyType{}</pre>
+			
+		
+		
+			
+			
+			<h2 id="GetSessionID">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/interfaces.go?s=3878:3923#L92">GetSessionID</a>
+				<a class="permalink" href="index.html#GetSessionID">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func GetSessionID(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+			<p>GetSessionID extracts the session ID from context.
+Returns empty string if not present.
+
+			
+			
+
+		
+			
+			
+			<h2 id="WithHistory">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/interfaces.go?s=4286:4358#L108">WithHistory</a>
+				<a class="permalink" href="index.html#WithHistory">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func WithHistory(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, history []<a href="index.html#Message">Message</a>) <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a></pre>
+			<p>WithHistory returns a context with message history attached.
+
+			
+			
+
+		
+			
+			
+			<h2 id="WithSessionID">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/interfaces.go?s=3651:3724#L86">WithSessionID</a>
+				<a class="permalink" href="index.html#WithSessionID">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func WithSessionID(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a></pre>
+			<p>WithSessionID returns a context with the session ID attached.
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="ChatAdapter">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/interfaces.go?s=656:1242#L10">ChatAdapter</a>
+				<a class="permalink" href="index.html#ChatAdapter">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ChatAdapter defines how a strictly-typed agent input converts to/from chat messages.
+This enables agents to maintain type-safe internal logic while communicating
+via standard LLM chat protocols.
+<p>Type parameter T is the agent&apos;s input type.
+Type parameter R is the agent&apos;s output type (for FromResponse conversion).
+
+			<pre>type ChatAdapter[T <a href="http://127.0.0.1:6060/pkg/builtin/#any">any</a>, R <a href="http://127.0.0.1:6060/pkg/builtin/#any">any</a>] interface {
+    <span class="comment">// SystemPrompt returns the static system instruction for this agent.</span>
+    <span class="comment">// This establishes the agent&#39;s role and behavioral constraints.</span>
+    SystemPrompt() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// ToMessages converts the strictly typed input T into chat messages.</span>
+    <span class="comment">// This allows the agent&#39;s structured input to be presented to an LLM.</span>
+    ToMessages(input T) ([]<a href="index.html#Message">Message</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// FromResponse extracts the typed output R from the LLM&#39;s response message.</span>
+    <span class="comment">// This parses unstructured LLM output back into the agent&#39;s typed format.</span>
+    FromResponse(response <a href="index.html#Message">Message</a>) (R, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Function">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/types.go?s=1557:1743#L36">Function</a>
+				<a class="permalink" href="index.html#Function">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Function represents the function call details within a ToolCall.
+
+			<pre>type Function struct {
+<span id="Function.Name"></span>    <span class="comment">// Name is the function identifier</span>
+    Name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;name&#34;`
+
+<span id="Function.Arguments"></span>    <span class="comment">// Arguments is a JSON-encoded string of function arguments</span>
+    Arguments <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;arguments&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="MemorySessionManager">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/memory_session.go?s=266:483#L1">MemorySessionManager</a>
+				<a class="permalink" href="index.html#MemorySessionManager">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MemorySessionManager is an in-memory implementation of SessionManager.
+Suitable for development, testing, and single-instance deployments.
+For distributed systems, use Redis or PostgreSQL implementations.
+
+			<pre>type MemorySessionManager struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMemorySessionManager">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/memory_session.go?s=919:998#L22">NewMemorySessionManager</a>
+					<a class="permalink" href="index.html#NewMemorySessionManager">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMemorySessionManager(opts ...<a href="index.html#MemorySessionOption">MemorySessionOption</a>) *<a href="index.html#MemorySessionManager">MemorySessionManager</a></pre>
+				<p>NewMemorySessionManager creates a new in-memory session manager.
+
+				
+				
+			
+
+			
+				
+				<h3 id="MemorySessionManager.Append">func (*MemorySessionManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/memory_session.go?s=1709:1806#L50">Append</a>
+					<a class="permalink" href="index.html#MemorySessionManager.Append">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemorySessionManager">MemorySessionManager</a>) Append(_ <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, msgs ...<a href="index.html#Message">Message</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Append adds new messages to the session&apos;s conversation history.
+
+				
+				
+				
+			
+				
+				<h3 id="MemorySessionManager.Checkpoint">func (*MemorySessionManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/memory_session.go?s=2236:2334#L72">Checkpoint</a>
+					<a class="permalink" href="index.html#MemorySessionManager.Checkpoint">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemorySessionManager">MemorySessionManager</a>) Checkpoint(_ <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, state []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Checkpoint saves execution state for HITL resumption.
+
+				
+				
+				
+			
+				
+				<h3 id="MemorySessionManager.Clear">func (*MemorySessionManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/memory_session.go?s=3449:3487#L117">Clear</a>
+					<a class="permalink" href="index.html#MemorySessionManager.Clear">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemorySessionManager">MemorySessionManager</a>) Clear()</pre>
+				<p>Clear removes all sessions and checkpoints (useful for testing).
+
+				
+				
+				
+			
+				
+				<h3 id="MemorySessionManager.DeleteSession">func (*MemorySessionManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/memory_session.go?s=2982:3069#L100">DeleteSession</a>
+					<a class="permalink" href="index.html#MemorySessionManager.DeleteSession">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemorySessionManager">MemorySessionManager</a>) DeleteSession(_ <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>DeleteSession removes all data for a session.
+
+				
+				
+				
+			
+				
+				<h3 id="MemorySessionManager.LoadCheckpoint">func (*MemorySessionManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/memory_session.go?s=2580:2678#L84">LoadCheckpoint</a>
+					<a class="permalink" href="index.html#MemorySessionManager.LoadCheckpoint">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemorySessionManager">MemorySessionManager</a>) LoadCheckpoint(_ <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>LoadCheckpoint retrieves the saved execution state.
+
+				
+				
+				
+			
+				
+				<h3 id="MemorySessionManager.LoadHistory">func (*MemorySessionManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/memory_session.go?s=1232:1330#L34">LoadHistory</a>
+					<a class="permalink" href="index.html#MemorySessionManager.LoadHistory">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemorySessionManager">MemorySessionManager</a>) LoadHistory(_ <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="index.html#Message">Message</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>LoadHistory fetches the conversation history for a session.
+
+				
+				
+				
+			
+				
+				<h3 id="MemorySessionManager.SessionCount">func (*MemorySessionManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/memory_session.go?s=3266:3315#L110">SessionCount</a>
+					<a class="permalink" href="index.html#MemorySessionManager.SessionCount">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemorySessionManager">MemorySessionManager</a>) SessionCount() <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+				<p>SessionCount returns the number of active sessions (useful for monitoring).
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MemorySessionOption">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/memory_session.go?s=543:595#L11">MemorySessionOption</a>
+				<a class="permalink" href="index.html#MemorySessionOption">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MemorySessionOption configures a MemorySessionManager.
+
+			<pre>type MemorySessionOption func(*<a href="index.html#MemorySessionManager">MemorySessionManager</a>)</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="WithMaxHistory">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/memory_session.go?s=733:781#L15">WithMaxHistory</a>
+					<a class="permalink" href="index.html#WithMaxHistory">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func WithMaxHistory(max <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) <a href="index.html#MemorySessionOption">MemorySessionOption</a></pre>
+				<p>WithMaxHistory sets the maximum number of messages to retain per session.
+Oldest messages are dropped when the limit is exceeded.
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="Message">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/types.go?s=565:1134#L6">Message</a>
+				<a class="permalink" href="index.html#Message">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Message represents a standardized LLM chat message.
+Compatible with OpenAI, Anthropic, and other major LLM providers.
+
+			<pre>type Message struct {
+<span id="Message.Role"></span>    <span class="comment">// Role identifies the message sender (system, user, assistant, tool)</span>
+    Role <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;role&#34;`
+
+<span id="Message.Content"></span>    <span class="comment">// Content is the text content of the message</span>
+    Content <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;content&#34;`
+
+<span id="Message.Name"></span>    <span class="comment">// Name is an optional identifier for the participant (used in multi-agent scenarios)</span>
+    Name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;name,omitempty&#34;`
+
+<span id="Message.ToolCalls"></span>    <span class="comment">// ToolCalls contains function/tool invocation requests from the assistant</span>
+    ToolCalls []<a href="index.html#ToolCall">ToolCall</a> `json:&#34;tool_calls,omitempty&#34;`
+
+<span id="Message.ToolCallID"></span>    <span class="comment">// ToolCallID links a tool response to its original request</span>
+    ToolCallID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;tool_call_id,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="GetHistory">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/interfaces.go?s=4500:4546#L114">GetHistory</a>
+					<a class="permalink" href="index.html#GetHistory">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func GetHistory(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) []<a href="index.html#Message">Message</a></pre>
+				<p>GetHistory extracts message history from context.
+Returns nil if not present.
+
+				
+				
+			
+				
+				<h3 id="NewAssistantMessage">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/types.go?s=2157:2205#L55">NewAssistantMessage</a>
+					<a class="permalink" href="index.html#NewAssistantMessage">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewAssistantMessage(content <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="index.html#Message">Message</a></pre>
+				<p>NewAssistantMessage creates an assistant message with the given content.
+
+				
+				
+			
+				
+				<h3 id="NewAssistantToolCallMessage">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/types.go?s=2548:2610#L69">NewAssistantToolCallMessage</a>
+					<a class="permalink" href="index.html#NewAssistantToolCallMessage">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewAssistantToolCallMessage(toolCalls []<a href="index.html#ToolCall">ToolCall</a>) <a href="index.html#Message">Message</a></pre>
+				<p>NewAssistantToolCallMessage creates an assistant message with tool calls.
+
+				
+				
+			
+				
+				<h3 id="NewSystemMessage">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/types.go?s=1814:1859#L45">NewSystemMessage</a>
+					<a class="permalink" href="index.html#NewSystemMessage">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSystemMessage(content <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="index.html#Message">Message</a></pre>
+				<p>NewSystemMessage creates a system message with the given content.
+
+				
+				
+			
+				
+				<h3 id="NewToolMessage">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/types.go?s=2317:2372#L60">NewToolMessage</a>
+					<a class="permalink" href="index.html#NewToolMessage">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewToolMessage(toolCallID, content <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="index.html#Message">Message</a></pre>
+				<p>NewToolMessage creates a tool response message.
+
+				
+				
+			
+				
+				<h3 id="NewUserMessage">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/types.go?s=1982:2025#L50">NewUserMessage</a>
+					<a class="permalink" href="index.html#NewUserMessage">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewUserMessage(content <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="index.html#Message">Message</a></pre>
+				<p>NewUserMessage creates a user message with the given content.
+
+				
+				
+			
+
+			
+				
+				<h3 id="Message.IsToolCall">func (Message) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/types.go?s=2760:2794#L77">IsToolCall</a>
+					<a class="permalink" href="index.html#Message.IsToolCall">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m <a href="index.html#Message">Message</a>) IsToolCall() <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>IsToolCall returns true if this message contains tool call requests.
+
+				
+				
+				
+			
+				
+				<h3 id="Message.IsToolResponse">func (Message) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/types.go?s=2896:2934#L82">IsToolResponse</a>
+					<a class="permalink" href="index.html#Message.IsToolResponse">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m <a href="index.html#Message">Message</a>) IsToolResponse() <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>IsToolResponse returns true if this message is a tool response.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="NoOpSessionManager">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/interfaces.go?s=2479:2511#L49">NoOpSessionManager</a>
+				<a class="permalink" href="index.html#NoOpSessionManager">&#xb6;</a>
+				
+				
+			</h2>
+			<p>NoOpSessionManager is a SessionManager that does nothing.
+Use this for batch mode where conversation history isn&apos;t tracked.
+
+			<pre>type NoOpSessionManager struct{}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="NoOpSessionManager.Append">func (NoOpSessionManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/interfaces.go?s=2737:2820#L57">Append</a>
+					<a class="permalink" href="index.html#NoOpSessionManager.Append">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (n <a href="index.html#NoOpSessionManager">NoOpSessionManager</a>) Append(_ <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, _ <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, _ ...<a href="index.html#Message">Message</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Append does nothing in batch mode.
+
+				
+				
+				
+			
+				
+				<h3 id="NoOpSessionManager.Checkpoint">func (NoOpSessionManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/interfaces.go?s=2880:2963#L62">Checkpoint</a>
+					<a class="permalink" href="index.html#NoOpSessionManager.Checkpoint">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (n <a href="index.html#NoOpSessionManager">NoOpSessionManager</a>) Checkpoint(_ <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, _ <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, _ []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Checkpoint does nothing in batch mode.
+
+				
+				
+				
+			
+				
+				<h3 id="NoOpSessionManager.DeleteSession">func (NoOpSessionManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/interfaces.go?s=3205:3281#L72">DeleteSession</a>
+					<a class="permalink" href="index.html#NoOpSessionManager.DeleteSession">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (n <a href="index.html#NoOpSessionManager">NoOpSessionManager</a>) DeleteSession(_ <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, _ <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>DeleteSession does nothing in batch mode.
+
+				
+				
+				
+			
+				
+				<h3 id="NoOpSessionManager.LoadCheckpoint">func (NoOpSessionManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/interfaces.go?s=3032:3119#L67">LoadCheckpoint</a>
+					<a class="permalink" href="index.html#NoOpSessionManager.LoadCheckpoint">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (n <a href="index.html#NoOpSessionManager">NoOpSessionManager</a>) LoadCheckpoint(_ <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, _ <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>LoadCheckpoint returns not found in batch mode.
+
+				
+				
+				
+			
+				
+				<h3 id="NoOpSessionManager.LoadHistory">func (NoOpSessionManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/interfaces.go?s=2589:2676#L52">LoadHistory</a>
+					<a class="permalink" href="index.html#NoOpSessionManager.LoadHistory">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (n <a href="index.html#NoOpSessionManager">NoOpSessionManager</a>) LoadHistory(_ <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, _ <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="index.html#Message">Message</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>LoadHistory returns an empty history (batch mode doesn&apos;t track history).
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SessionManager">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/interfaces.go?s=1405:2347#L26">SessionManager</a>
+				<a class="permalink" href="index.html#SessionManager">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SessionManager handles the persistence of conversation state in a distributed system.
+Implementations can use Redis, PostgreSQL, or any distributed store.
+
+			<pre>type SessionManager interface {
+    <span class="comment">// LoadHistory fetches the conversation history for a session.</span>
+    <span class="comment">// Returns ErrSessionNotFound if the session doesn&#39;t exist.</span>
+    LoadHistory(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="index.html#Message">Message</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// Append adds new messages to the session&#39;s conversation history.</span>
+    <span class="comment">// Creates the session if it doesn&#39;t exist.</span>
+    Append(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, msgs ...<a href="index.html#Message">Message</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// Checkpoint saves execution state for HITL (Human-in-the-Loop) resumption.</span>
+    <span class="comment">// The state is opaque bytes that the caller defines.</span>
+    Checkpoint(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, state []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// LoadCheckpoint retrieves the saved execution state.</span>
+    <span class="comment">// Returns ErrCheckpointNotFound if no checkpoint exists.</span>
+    LoadCheckpoint(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// DeleteSession removes all data for a session (history and checkpoints).</span>
+    DeleteSession(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ToolCall">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/llm/types.go?s=1210:1487#L24">ToolCall</a>
+				<a class="permalink" href="index.html#ToolCall">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ToolCall represents a request from the LLM to execute a tool/function.
+
+			<pre>type ToolCall struct {
+<span id="ToolCall.ID"></span>    <span class="comment">// ID uniquely identifies this tool call for response matching</span>
+    ID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;id&#34;`
+
+<span id="ToolCall.Type"></span>    <span class="comment">// Type is the kind of tool (typically &#34;function&#34;)</span>
+    Type <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;type&#34;`
+
+<span id="ToolCall.Function"></span>    <span class="comment">// Function contains the function call details</span>
+    Function <a href="index.html#Function">Function</a> `json:&#34;function&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

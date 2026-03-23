@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>ipc - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package ipc
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/ipc"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package ipc provides interprocess communication mechanisms for agents
+using stdin/stdout as the communication channel, similar to Erlang&apos;s
+message passing model.
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+				<dd><a href="index.html#pkg-constants">Constants</a></dd>
+			
+			
+			
+			
+				
+				<dd><a href="index.html#Message">type Message</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ProcessAgent">type ProcessAgent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewProcessAgent">func NewProcessAgent(id, command string, args ...string) *ProcessAgent</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ProcessAgent.ReceiveMessage">func (pa *ProcessAgent) ReceiveMessage(timeout time.Duration) (Message, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ProcessAgent.SendMessage">func (pa *ProcessAgent) SendMessage(msg Message) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ProcessAgent.SendRequest">func (pa *ProcessAgent) SendRequest(payload map[string]interface{}) (Message, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ProcessAgent.Start">func (pa *ProcessAgent) Start() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ProcessAgent.Stop">func (pa *ProcessAgent) Stop() error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#StdioAgentNode">type StdioAgentNode</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewStdioAgentNode">func NewStdioAgentNode(config StdioAgentNodeConfig) *StdioAgentNode</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#StdioAgentNode.Execute">func (n *StdioAgentNode) Execute(ctx context.Context, state graph.State) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#StdioAgentNodeConfig">type StdioAgentNodeConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#StdioAgentServer">type StdioAgentServer</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewStdioAgentServer">func NewStdioAgentServer() *StdioAgentServer</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#StdioAgentServer.RegisterAgent">func (s *StdioAgentServer) RegisterAgent(id string, agent agent.Agent)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#StdioAgentServer.Start">func (s *StdioAgentServer) Start() error</a></dd>
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go">stdio_ipc.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+			<h2 id="pkg-constants">Constants</h2>
+			
+				<p>Message types
+
+				<pre>const (
+    <span id="MessageTypeRequest">MessageTypeRequest</span>  = &#34;request&#34;
+    <span id="MessageTypeResponse">MessageTypeResponse</span> = &#34;response&#34;
+    <span id="MessageTypeError">MessageTypeError</span>    = &#34;error&#34;
+    <span id="MessageTypePing">MessageTypePing</span>     = &#34;ping&#34;
+    <span id="MessageTypePong">MessageTypePong</span>     = &#34;pong&#34;
+)</pre>
+			
+		
+		
+		
+		
+			
+			
+			<h2 id="Message">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=413:781#L13">Message</a>
+				<a class="permalink" href="index.html#Message">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Message represents a message in the IPC system
+
+			<pre>type Message struct {
+<span id="Message.ID"></span>    ID       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;id&#34;`
+<span id="Message.From"></span>    From     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;from&#34;`
+<span id="Message.To"></span>    To       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;to&#34;`
+<span id="Message.Type"></span>    Type     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;type&#34;`
+<span id="Message.Payload"></span>    Payload  map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;payload&#34;`
+<span id="Message.SentAt"></span>    SentAt   <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>              `json:&#34;sent_at&#34;`
+<span id="Message.Metadata"></span>    Metadata map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;metadata,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ProcessAgent">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=1035:1344#L33">ProcessAgent</a>
+				<a class="permalink" href="index.html#ProcessAgent">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ProcessAgent represents an agent running in a separate process
+
+			<pre>type ProcessAgent struct {
+<span id="ProcessAgent.ID"></span>    ID      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="ProcessAgent.Command"></span>    Command <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="ProcessAgent.Args"></span>    Args    []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewProcessAgent">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=1415:1485#L49">NewProcessAgent</a>
+					<a class="permalink" href="index.html#NewProcessAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewProcessAgent(id, command <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, args ...<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) *<a href="index.html#ProcessAgent">ProcessAgent</a></pre>
+				<p>NewProcessAgent creates a new agent running in a separate process
+
+				
+				
+			
+
+			
+				
+				<h3 id="ProcessAgent.ReceiveMessage">func (*ProcessAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=4472:4550#L200">ReceiveMessage</a>
+					<a class="permalink" href="index.html#ProcessAgent.ReceiveMessage">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (pa *<a href="index.html#ProcessAgent">ProcessAgent</a>) ReceiveMessage(timeout <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>) (<a href="index.html#Message">Message</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ReceiveMessage receives a message from the process agent
+
+				
+				
+				
+			
+				
+				<h3 id="ProcessAgent.SendMessage">func (*ProcessAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=3675:3729#L166">SendMessage</a>
+					<a class="permalink" href="index.html#ProcessAgent.SendMessage">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (pa *<a href="index.html#ProcessAgent">ProcessAgent</a>) SendMessage(msg <a href="index.html#Message">Message</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>SendMessage sends a message to the process agent
+
+				
+				
+				
+			
+				
+				<h3 id="ProcessAgent.SendRequest">func (*ProcessAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=4838:4922#L213">SendRequest</a>
+					<a class="permalink" href="index.html#ProcessAgent.SendRequest">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (pa *<a href="index.html#ProcessAgent">ProcessAgent</a>) SendRequest(payload map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}) (<a href="index.html#Message">Message</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>SendRequest sends a request and waits for a response
+
+				
+				
+				
+			
+				
+				<h3 id="ProcessAgent.Start">func (*ProcessAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=1709:1746#L60">Start</a>
+					<a class="permalink" href="index.html#ProcessAgent.Start">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (pa *<a href="index.html#ProcessAgent">ProcessAgent</a>) Start() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Start starts the process agent
+
+				
+				
+				
+			
+				
+				<h3 id="ProcessAgent.Stop">func (*ProcessAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=2434:2470#L94">Stop</a>
+					<a class="permalink" href="index.html#ProcessAgent.Stop">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (pa *<a href="index.html#ProcessAgent">ProcessAgent</a>) Stop() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Stop stops the process agent
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="StdioAgentNode">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=5645:5713#L240">StdioAgentNode</a>
+				<a class="permalink" href="index.html#StdioAgentNode">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StdioAgentNode represents a node that communicates with an agent via stdin/stdout
+
+			<pre>type StdioAgentNode struct {
+    *<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#BaseNode">BaseNode</a>
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewStdioAgentNode">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=5953:6020#L252">NewStdioAgentNode</a>
+					<a class="permalink" href="index.html#NewStdioAgentNode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewStdioAgentNode(config <a href="index.html#StdioAgentNodeConfig">StdioAgentNodeConfig</a>) *<a href="index.html#StdioAgentNode">StdioAgentNode</a></pre>
+				<p>NewStdioAgentNode creates a new node that communicates with an agent via stdin/stdout
+
+				
+				
+			
+
+			
+				
+				<h3 id="StdioAgentNode.Execute">func (*StdioAgentNode) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=6233:6311#L260">Execute</a>
+					<a class="permalink" href="index.html#StdioAgentNode.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (n *<a href="index.html#StdioAgentNode">StdioAgentNode</a>) Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, state <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Execute sends the current state to the agent process and updates the state with the response
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="StdioAgentNodeConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=5789:5862#L246">StdioAgentNodeConfig</a>
+				<a class="permalink" href="index.html#StdioAgentNodeConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StdioAgentNodeConfig holds configuration for creating a StdioAgentNode
+
+			<pre>type StdioAgentNodeConfig struct {
+<span id="StdioAgentNodeConfig.ID"></span>    ID    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="StdioAgentNodeConfig.Agent"></span>    Agent *<a href="index.html#ProcessAgent">ProcessAgent</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="StdioAgentServer">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=7181:7244#L293">StdioAgentServer</a>
+				<a class="permalink" href="index.html#StdioAgentServer">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StdioAgentServer provides a server that listens on stdin/stdout for agent requests
+
+			<pre>type StdioAgentServer struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewStdioAgentServer">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=7309:7353#L298">NewStdioAgentServer</a>
+					<a class="permalink" href="index.html#NewStdioAgentServer">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewStdioAgentServer() *<a href="index.html#StdioAgentServer">StdioAgentServer</a></pre>
+				<p>NewStdioAgentServer creates a new stdin/stdout agent server
+
+				
+				
+			
+
+			
+				
+				<h3 id="StdioAgentServer.RegisterAgent">func (*StdioAgentServer) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=7481:7551#L305">RegisterAgent</a>
+					<a class="permalink" href="index.html#StdioAgentServer.RegisterAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#StdioAgentServer">StdioAgentServer</a>) RegisterAgent(id <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, agent <a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a>)</pre>
+				<p>RegisterAgent registers an agent with the server
+
+				
+				
+				
+			
+				
+				<h3 id="StdioAgentServer.Start">func (*StdioAgentServer) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/ipc/stdio_ipc.go?s=7633:7673#L310">Start</a>
+					<a class="permalink" href="index.html#StdioAgentServer.Start">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#StdioAgentServer">StdioAgentServer</a>) Start() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Start starts the server, listening on stdin/stdout
+
+				
+				
+				
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

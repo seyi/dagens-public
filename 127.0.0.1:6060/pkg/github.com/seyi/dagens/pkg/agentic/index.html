@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>agentic - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package agentic
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/agentic"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package agentic provides self-monitoring capabilities for agents using
+semantic conventions and direct telemetry integration.
+<p>This package follows the principle of being UNOPINIONATED about domain logic.
+The framework provides transport (telemetry hooks), agents provide meaning (domain metrics).
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+				<dd><a href="index.html#pkg-constants">Constants</a></dd>
+			
+			
+			
+			
+				
+				<dd><a href="index.html#AgenticAgent">type AgenticAgent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewAgenticAgent">func NewAgenticAgent(original agent.Agent, opts ...AgenticOption) *AgenticAgent</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgenticAgent.Capabilities">func (a *AgenticAgent) Capabilities() []string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgenticAgent.Dependencies">func (a *AgenticAgent) Dependencies() []agent.Agent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgenticAgent.Description">func (a *AgenticAgent) Description() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgenticAgent.Execute">func (a *AgenticAgent) Execute(ctx context.Context, input *agent.AgentInput) (*agent.AgentOutput, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgenticAgent.Feedback">func (a *AgenticAgent) Feedback() FeedbackReceiver</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgenticAgent.GetAverageFeedback">func (a *AgenticAgent) GetAverageFeedback() float64</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgenticAgent.ID">func (a *AgenticAgent) ID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgenticAgent.Monitoring">func (a *AgenticAgent) Monitoring() *MonitoringContext</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgenticAgent.Name">func (a *AgenticAgent) Name() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgenticAgent.Partition">func (a *AgenticAgent) Partition() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgenticAgent.RecordDomainMetric">func (a *AgenticAgent) RecordDomainMetric(name string, value float64)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgenticAgent.RecordFeedback">func (a *AgenticAgent) RecordFeedback(ctx context.Context, taskID string, score float64, source, comments string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AgenticAgent.RecordOutcome">func (a *AgenticAgent) RecordOutcome(score float64)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#AgenticOption">type AgenticOption</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#WithFeedback">func WithFeedback(fb FeedbackReceiver) AgenticOption</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#WithHealing">func WithHealing(config SelfHealingConfig) AgenticOption</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#WithMaxRetries">func WithMaxRetries(n int) AgenticOption</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#WithMonitoring">func WithMonitoring(mc *MonitoringContext) AgenticOption</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Feedback">type Feedback</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#FeedbackReceiver">type FeedbackReceiver</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#HealingAction">type HealingAction</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HealingAction.String">func (h HealingAction) String() string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MonitoringContext">type MonitoringContext</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMonitoringContext">func NewMonitoringContext(agentID, agentName, agentType string, collector *telemetry.TelemetryCollector) *MonitoringContext</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMonitoringContextWithDefaults">func NewMonitoringContextWithDefaults(agentID, agentName, agentType string) *MonitoringContext</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.AgentID">func (mc *MonitoringContext) AgentID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.AgentName">func (mc *MonitoringContext) AgentName() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.AgentType">func (mc *MonitoringContext) AgentType() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.GetDomainMetric">func (mc *MonitoringContext) GetDomainMetric(name string) (float64, bool)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.LogDebug">func (mc *MonitoringContext) LogDebug(msg string, attrs map[string]interface{})</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.LogError">func (mc *MonitoringContext) LogError(msg string, attrs map[string]interface{})</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.LogInfo">func (mc *MonitoringContext) LogInfo(msg string, attrs map[string]interface{})</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.LogWarn">func (mc *MonitoringContext) LogWarn(msg string, attrs map[string]interface{})</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.Logger">func (mc *MonitoringContext) Logger() telemetry.Logger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.Meter">func (mc *MonitoringContext) Meter() telemetry.Meter</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.RecordConsumption">func (mc *MonitoringContext) RecordConsumption(cost float64)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.RecordDomainCounter">func (mc *MonitoringContext) RecordDomainCounter(name string, delta float64)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.RecordDomainGauge">func (mc *MonitoringContext) RecordDomainGauge(name string, value float64)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.RecordDomainHistogram">func (mc *MonitoringContext) RecordDomainHistogram(name string, value float64)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.RecordEnvironment">func (mc *MonitoringContext) RecordEnvironment(ready float64)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.RecordExecutionCount">func (mc *MonitoringContext) RecordExecutionCount()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.RecordExecutionDuration">func (mc *MonitoringContext) RecordExecutionDuration(duration time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.RecordHealth">func (mc *MonitoringContext) RecordHealth(status float64)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.RecordOutcome">func (mc *MonitoringContext) RecordOutcome(score float64)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.StartSpan">func (mc *MonitoringContext) StartSpan(ctx context.Context, operation string) (context.Context, telemetry.Span)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringContext.Tracer">func (mc *MonitoringContext) Tracer() telemetry.Tracer</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SelfHealing">type SelfHealing</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSelfHealing">func NewSelfHealing(config SelfHealingConfig, monitoring *MonitoringContext, opts ...SelfHealingOption) *SelfHealing</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SelfHealing.CircuitBreaker">func (sh *SelfHealing) CircuitBreaker() *resilience.CircuitBreaker</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SelfHealing.CurrentRetry">func (sh *SelfHealing) CurrentRetry() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SelfHealing.ExecuteWithHealing">func (sh *SelfHealing) ExecuteWithHealing(ctx context.Context, fn func(ctx context.Context) error) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SelfHealing.LastError">func (sh *SelfHealing) LastError() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SelfHealing.Reset">func (sh *SelfHealing) Reset()</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SelfHealingConfig">type SelfHealingConfig</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DefaultSelfHealingConfig">func DefaultSelfHealingConfig() SelfHealingConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#SelfHealingOption">type SelfHealingOption</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#WithCircuitBreaker">func WithCircuitBreaker(cb *resilience.CircuitBreaker) SelfHealingOption</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#WithCircuitBreakerName">func WithCircuitBreakerName(name string) SelfHealingOption</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#SimpleFeedbackReceiver">type SimpleFeedbackReceiver</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSimpleFeedbackReceiver">func NewSimpleFeedbackReceiver() *SimpleFeedbackReceiver</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleFeedbackReceiver.Clear">func (r *SimpleFeedbackReceiver) Clear()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleFeedbackReceiver.GetAverageScore">func (r *SimpleFeedbackReceiver) GetAverageScore() float64</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleFeedbackReceiver.GetFeedback">func (r *SimpleFeedbackReceiver) GetFeedback(taskID string) (*Feedback, bool)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleFeedbackReceiver.GetRecentFeedback">func (r *SimpleFeedbackReceiver) GetRecentFeedback(n int) []*Feedback</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleFeedbackReceiver.RecordFeedback">func (r *SimpleFeedbackReceiver) RecordFeedback(ctx context.Context, taskID string, score float64, source string, comments string)</a></dd>
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go">agent.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/conventions.go">conventions.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/feedback.go">feedback.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go">healing.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go">monitoring.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+			<h2 id="pkg-constants">Constants</h2>
+			
+				<p>Metric name constants for universal dimensions
+
+				<pre>const (
+    <span class="comment">// Outcome dimension - Was the output good?</span>
+    <span id="MetricOutcomeScore">MetricOutcomeScore</span> = &#34;dagens.outcome.score&#34;
+
+    <span class="comment">// Execution dimension - Did I do the work?</span>
+    <span id="MetricExecutionDuration">MetricExecutionDuration</span> = &#34;dagens.execution.duration&#34;
+    <span id="MetricExecutionCount">MetricExecutionCount</span>    = &#34;dagens.execution.count&#34;
+
+    <span class="comment">// Consumption dimension - What resources did I use?</span>
+    <span id="MetricConsumptionCost">MetricConsumptionCost</span> = &#34;dagens.consumption.cost&#34;
+
+    <span class="comment">// Health dimension - Am I functioning well?</span>
+    <span id="MetricHealthStatus">MetricHealthStatus</span> = &#34;dagens.health.status&#34;
+
+    <span class="comment">// Environment dimension - What external factors affect me?</span>
+    <span id="MetricEnvironmentReady">MetricEnvironmentReady</span> = &#34;dagens.environment.ready&#34;
+)</pre>
+			
+				<p>Attribute keys for common labels
+
+				<pre>const (
+    <span id="AttrAgentID">AttrAgentID</span>   = &#34;agent.id&#34;
+    <span id="AttrAgentName">AttrAgentName</span> = &#34;agent.name&#34;
+    <span id="AttrAgentType">AttrAgentType</span> = &#34;agent.type&#34;
+    <span id="AttrTaskID">AttrTaskID</span>    = &#34;task.id&#34;
+)</pre>
+			
+				<p>HealthStatus values
+
+				<pre>const (
+    <span id="HealthOK">HealthOK</span>       = 1.0
+    <span id="HealthDegraded">HealthDegraded</span> = 0.5
+    <span id="HealthFailing">HealthFailing</span>  = 0.0
+)</pre>
+			
+				<p>FeedbackSource constants
+
+				<pre>const (
+    <span id="FeedbackSourceHuman">FeedbackSourceHuman</span>     = &#34;human&#34;
+    <span id="FeedbackSourceAutomated">FeedbackSourceAutomated</span> = &#34;automated&#34;
+    <span id="FeedbackSourcePeerAgent">FeedbackSourcePeerAgent</span> = &#34;peer_agent&#34;
+    <span id="FeedbackSourceHybrid">FeedbackSourceHybrid</span>    = &#34;hybrid&#34;
+)</pre>
+			
+		
+		
+		
+		
+			
+			
+			<h2 id="AgenticAgent">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=340:477#L4">AgenticAgent</a>
+				<a class="permalink" href="index.html#AgenticAgent">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgenticAgent wraps an existing agent with self-monitoring and self-healing capabilities.
+It is unopinionated about domain logic - agents define their own metrics via the
+MonitoringContext&apos;s domain methods.
+
+			<pre>type AgenticAgent struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewAgenticAgent">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=1446:1525#L45">NewAgenticAgent</a>
+					<a class="permalink" href="index.html#NewAgenticAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewAgenticAgent(original <a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a>, opts ...<a href="index.html#AgenticOption">AgenticOption</a>) *<a href="index.html#AgenticAgent">AgenticAgent</a></pre>
+				<p>NewAgenticAgent wraps an existing agent with agentic capabilities.
+
+				
+				
+			
+
+			
+				
+				<h3 id="AgenticAgent.Capabilities">func (*AgenticAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=5288:5334#L170">Capabilities</a>
+					<a class="permalink" href="index.html#AgenticAgent.Capabilities">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#AgenticAgent">AgenticAgent</a>) Capabilities() []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>Capabilities returns the agent&apos;s capabilities.
+
+				
+				
+				
+			
+				
+				<h3 id="AgenticAgent.Dependencies">func (*AgenticAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=5423:5474#L173">Dependencies</a>
+					<a class="permalink" href="index.html#AgenticAgent.Dependencies">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#AgenticAgent">AgenticAgent</a>) Dependencies() []<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a></pre>
+				<p>Dependencies returns the agent&apos;s dependencies.
+
+				
+				
+				
+			
+				
+				<h3 id="AgenticAgent.Description">func (*AgenticAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=5157:5200#L167">Description</a>
+					<a class="permalink" href="index.html#AgenticAgent.Description">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#AgenticAgent">AgenticAgent</a>) Description() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>Description returns the agent&apos;s description.
+
+				
+				
+				
+			
+				
+				<h3 id="AgenticAgent.Execute">func (*AgenticAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=2189:2293#L76">Execute</a>
+					<a class="permalink" href="index.html#AgenticAgent.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#AgenticAgent">AgenticAgent</a>) Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Execute runs the agent with self-monitoring and self-healing.
+
+				
+				
+				
+			
+				
+				<h3 id="AgenticAgent.Feedback">func (*AgenticAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=4639:4689#L152">Feedback</a>
+					<a class="permalink" href="index.html#AgenticAgent.Feedback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#AgenticAgent">AgenticAgent</a>) Feedback() <a href="index.html#FeedbackReceiver">FeedbackReceiver</a></pre>
+				<p>Feedback returns the feedback receiver.
+
+				
+				
+				
+			
+				
+				<h3 id="AgenticAgent.GetAverageFeedback">func (*AgenticAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=4356:4407#L142">GetAverageFeedback</a>
+					<a class="permalink" href="index.html#AgenticAgent.GetAverageFeedback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#AgenticAgent">AgenticAgent</a>) GetAverageFeedback() <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a></pre>
+				<p>GetAverageFeedback returns the average feedback score.
+
+				
+				
+				
+			
+				
+				<h3 id="AgenticAgent.ID">func (*AgenticAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=4945:4979#L161">ID</a>
+					<a class="permalink" href="index.html#AgenticAgent.ID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#AgenticAgent">AgenticAgent</a>) ID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>ID returns the agent&apos;s ID.
+
+				
+				
+				
+			
+				
+				<h3 id="AgenticAgent.Monitoring">func (*AgenticAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=4515:4569#L147">Monitoring</a>
+					<a class="permalink" href="index.html#AgenticAgent.Monitoring">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#AgenticAgent">AgenticAgent</a>) Monitoring() *<a href="index.html#MonitoringContext">MonitoringContext</a></pre>
+				<p>Monitoring returns the monitoring context for advanced usage.
+
+				
+				
+				
+			
+				
+				<h3 id="AgenticAgent.Name">func (*AgenticAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=5042:5078#L164">Name</a>
+					<a class="permalink" href="index.html#AgenticAgent.Name">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#AgenticAgent">AgenticAgent</a>) Name() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>Name returns the agent&apos;s name.
+
+				
+				
+				
+			
+				
+				<h3 id="AgenticAgent.Partition">func (*AgenticAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=5557:5598#L176">Partition</a>
+					<a class="permalink" href="index.html#AgenticAgent.Partition">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#AgenticAgent">AgenticAgent</a>) Partition() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>Partition returns the agent&apos;s partition.
+
+				
+				
+				
+			
+				
+				<h3 id="AgenticAgent.RecordDomainMetric">func (*AgenticAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=3811:3880#L130">RecordDomainMetric</a>
+					<a class="permalink" href="index.html#AgenticAgent.RecordDomainMetric">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#AgenticAgent">AgenticAgent</a>) RecordDomainMetric(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)</pre>
+				<p>RecordDomainMetric allows the agent to record domain-specific metrics.
+
+				
+				
+				
+			
+				
+				<h3 id="AgenticAgent.RecordFeedback">func (*AgenticAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=3997:4110#L135">RecordFeedback</a>
+					<a class="permalink" href="index.html#AgenticAgent.RecordFeedback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#AgenticAgent">AgenticAgent</a>) RecordFeedback(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, taskID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, score <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>, source, comments <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordFeedback records external feedback for the current task.
+
+				
+				
+				
+			
+				
+				<h3 id="AgenticAgent.RecordOutcome">func (*AgenticAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=3645:3696#L125">RecordOutcome</a>
+					<a class="permalink" href="index.html#AgenticAgent.RecordOutcome">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#AgenticAgent">AgenticAgent</a>) RecordOutcome(score <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)</pre>
+				<p>RecordOutcome allows the agent to record its outcome score.
+This should be called by the agent after evaluating its output quality.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="AgenticOption">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=524:562#L12">AgenticOption</a>
+				<a class="permalink" href="index.html#AgenticOption">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgenticOption configures an AgenticAgent.
+
+			<pre>type AgenticOption func(*<a href="index.html#AgenticAgent">AgenticAgent</a>)</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="WithFeedback">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=999:1051#L29">WithFeedback</a>
+					<a class="permalink" href="index.html#WithFeedback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func WithFeedback(fb <a href="index.html#FeedbackReceiver">FeedbackReceiver</a>) <a href="index.html#AgenticOption">AgenticOption</a></pre>
+				<p>WithFeedback sets a feedback receiver for external input.
+
+				
+				
+			
+				
+				<h3 id="WithHealing">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=790:846#L22">WithHealing</a>
+					<a class="permalink" href="index.html#WithHealing">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func WithHealing(config <a href="index.html#SelfHealingConfig">SelfHealingConfig</a>) <a href="index.html#AgenticOption">AgenticOption</a></pre>
+				<p>WithHealing sets a custom self-healing configuration.
+
+				
+				
+			
+				
+				<h3 id="WithMaxRetries">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=1181:1221#L36">WithMaxRetries</a>
+					<a class="permalink" href="index.html#WithMaxRetries">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func WithMaxRetries(n <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) <a href="index.html#AgenticOption">AgenticOption</a></pre>
+				<p>WithMaxRetries sets the maximum number of retries for self-healing.
+
+				
+				
+			
+				
+				<h3 id="WithMonitoring">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/agent.go?s=616:672#L15">WithMonitoring</a>
+					<a class="permalink" href="index.html#WithMonitoring">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func WithMonitoring(mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) <a href="index.html#AgenticOption">AgenticOption</a></pre>
+				<p>WithMonitoring sets a custom monitoring context.
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="Feedback">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/feedback.go?s=918:1036#L17">Feedback</a>
+				<a class="permalink" href="index.html#Feedback">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Feedback represents external feedback for a task.
+
+			<pre>type Feedback struct {
+<span id="Feedback.TaskID"></span>    TaskID    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="Feedback.Score"></span>    Score     <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+<span id="Feedback.Source"></span>    Source    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="Feedback.Comments"></span>    Comments  <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="Feedback.Timestamp"></span>    Timestamp <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="FeedbackReceiver">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/feedback.go?s=281:863#L2">FeedbackReceiver</a>
+				<a class="permalink" href="index.html#FeedbackReceiver">&#xb6;</a>
+				
+				
+			</h2>
+			<p>FeedbackReceiver allows external systems (humans, automated evaluators, peer agents)
+to provide feedback to an agent. This enables learning loops without the framework
+needing to understand domain-specific concepts.
+
+			<pre>type FeedbackReceiver interface {
+    <span class="comment">// RecordFeedback records external feedback for a specific task.</span>
+    <span class="comment">// score: normalized feedback score (0.0-1.0)</span>
+    <span class="comment">// source: who provided the feedback (&#34;human&#34;, &#34;automated&#34;, &#34;peer_agent&#34;)</span>
+    <span class="comment">// comments: optional textual feedback</span>
+    RecordFeedback(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, taskID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, score <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>, source <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, comments <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)
+
+    <span class="comment">// GetFeedback retrieves feedback for a task if available.</span>
+    GetFeedback(taskID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#Feedback">Feedback</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)
+
+    <span class="comment">// GetAverageScore returns the average feedback score across all recorded feedback.</span>
+    GetAverageScore() <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="HealingAction">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go?s=262:284#L4">HealingAction</a>
+				<a class="permalink" href="index.html#HealingAction">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HealingAction represents what the system should do when issues are detected.
+The framework provides basic actions; agents decide when to trigger them.
+
+			<pre>type HealingAction <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+
+			
+				
+				<pre>const (
+    <span class="comment">// HealingNone means no action is needed.</span>
+    <span id="HealingNone">HealingNone</span> <a href="index.html#HealingAction">HealingAction</a> = <a href="http://127.0.0.1:6060/pkg/builtin/#iota">iota</a>
+
+    <span class="comment">// HealingRetry means retry the current operation.</span>
+    <span id="HealingRetry">HealingRetry</span>
+
+    <span class="comment">// HealingRestart means reset agent state and try fresh.</span>
+    <span id="HealingRestart">HealingRestart</span>
+
+    <span class="comment">// HealingDegrade means reduce scope/capabilities gracefully.</span>
+    <span id="HealingDegrade">HealingDegrade</span>
+
+    <span class="comment">// HealingEscalate means alert a human supervisor.</span>
+    <span id="HealingEscalate">HealingEscalate</span>
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="HealingAction.String">func (HealingAction) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go?s=666:704#L23">String</a>
+					<a class="permalink" href="index.html#HealingAction.String">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (h <a href="index.html#HealingAction">HealingAction</a>) String() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MonitoringContext">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=280:576#L4">MonitoringContext</a>
+				<a class="permalink" href="index.html#MonitoringContext">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MonitoringContext provides telemetry capabilities to agents.
+It wraps the telemetry package and provides convenient methods
+for recording metrics using semantic conventions.
+
+			<pre>type MonitoringContext struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMonitoringContext">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=645:768#L18">NewMonitoringContext</a>
+					<a class="permalink" href="index.html#NewMonitoringContext">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMonitoringContext(agentID, agentName, agentType <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, collector *<a href="../telemetry/index.html">telemetry</a>.<a href="../telemetry/index.html#TelemetryCollector">TelemetryCollector</a>) *<a href="index.html#MonitoringContext">MonitoringContext</a></pre>
+				<p>NewMonitoringContext creates a monitoring context for an agent.
+
+				
+				
+			
+				
+				<h3 id="NewMonitoringContextWithDefaults">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=1140:1234#L31">NewMonitoringContextWithDefaults</a>
+					<a class="permalink" href="index.html#NewMonitoringContextWithDefaults">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMonitoringContextWithDefaults(agentID, agentName, agentType <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) *<a href="index.html#MonitoringContext">MonitoringContext</a></pre>
+				<p>NewMonitoringContextWithDefaults creates a monitoring context with a default collector.
+
+				
+				
+			
+
+			
+				
+				<h3 id="MonitoringContext.AgentID">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=6060:6105#L164">AgentID</a>
+					<a class="permalink" href="index.html#MonitoringContext.AgentID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) AgentID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>AgentID returns the agent&apos;s ID.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.AgentName">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=6168:6215#L167">AgentName</a>
+					<a class="permalink" href="index.html#MonitoringContext.AgentName">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) AgentName() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>AgentName returns the agent&apos;s name.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.AgentType">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=6280:6327#L170">AgentType</a>
+					<a class="permalink" href="index.html#MonitoringContext.AgentType">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) AgentType() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>AgentType returns the agent&apos;s type.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.GetDomainMetric">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=3679:3752#L95">GetDomainMetric</a>
+					<a class="permalink" href="index.html#MonitoringContext.GetDomainMetric">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) GetDomainMetric(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)</pre>
+				<p>GetDomainMetric retrieves a stored domain metric value.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.LogDebug">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=5204:5283#L135">LogDebug</a>
+					<a class="permalink" href="index.html#MonitoringContext.LogDebug">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) LogDebug(msg <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attrs map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})</pre>
+				<p>LogDebug logs a debug message with agent context.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.LogError">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=5018:5097#L130">LogError</a>
+					<a class="permalink" href="index.html#MonitoringContext.LogError">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) LogError(msg <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attrs map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})</pre>
+				<p>LogError logs an error message with agent context.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.LogInfo">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=4648:4726#L120">LogInfo</a>
+					<a class="permalink" href="index.html#MonitoringContext.LogInfo">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) LogInfo(msg <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attrs map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})</pre>
+				<p>LogInfo logs an informational message with agent context.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.LogWarn">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=4833:4911#L125">LogWarn</a>
+					<a class="permalink" href="index.html#MonitoringContext.LogWarn">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) LogWarn(msg <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, attrs map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{})</pre>
+				<p>LogWarn logs a warning message with agent context.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.Logger">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=6682:6736#L179">Logger</a>
+					<a class="permalink" href="index.html#MonitoringContext.Logger">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) Logger() <a href="../telemetry/index.html">telemetry</a>.<a href="../telemetry/index.html#Logger">Logger</a></pre>
+				<p>Logger returns the underlying logger for advanced usage.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.Meter">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=6411:6463#L173">Meter</a>
+					<a class="permalink" href="index.html#MonitoringContext.Meter">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) Meter() <a href="../telemetry/index.html">telemetry</a>.<a href="../telemetry/index.html#Meter">Meter</a></pre>
+				<p>Meter returns the underlying meter for advanced usage.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.RecordConsumption">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=2245:2305#L57">RecordConsumption</a>
+					<a class="permalink" href="index.html#MonitoringContext.RecordConsumption">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) RecordConsumption(cost <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)</pre>
+				<p>RecordConsumption records resource consumption (tokens, cost, time units).
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.RecordDomainCounter">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=3306:3382#L85">RecordDomainCounter</a>
+					<a class="permalink" href="index.html#MonitoringContext.RecordDomainCounter">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) RecordDomainCounter(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, delta <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)</pre>
+				<p>RecordDomainCounter increments a domain-specific counter.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.RecordDomainGauge">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=3070:3144#L77">RecordDomainGauge</a>
+					<a class="permalink" href="index.html#MonitoringContext.RecordDomainGauge">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) RecordDomainGauge(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)</pre>
+				<p>RecordDomainGauge records a domain-specific gauge value.
+Use the &quot;domain.&quot; prefix for consistency: domain.graduation_rate, domain.wind_speed
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.RecordDomainHistogram">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=3496:3574#L90">RecordDomainHistogram</a>
+					<a class="permalink" href="index.html#MonitoringContext.RecordDomainHistogram">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) RecordDomainHistogram(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)</pre>
+				<p>RecordDomainHistogram records a value in a domain-specific histogram.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.RecordEnvironment">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=2588:2649#L67">RecordEnvironment</a>
+					<a class="permalink" href="index.html#MonitoringContext.RecordEnvironment">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) RecordEnvironment(ready <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)</pre>
+				<p>RecordEnvironment records external dependency readiness (0.0-1.0).
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.RecordExecutionCount">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=2064:2115#L52">RecordExecutionCount</a>
+					<a class="permalink" href="index.html#MonitoringContext.RecordExecutionCount">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) RecordExecutionCount()</pre>
+				<p>RecordExecutionCount increments the execution counter.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.RecordExecutionDuration">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=1852:1928#L47">RecordExecutionDuration</a>
+					<a class="permalink" href="index.html#MonitoringContext.RecordExecutionDuration">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) RecordExecutionDuration(duration <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>)</pre>
+				<p>RecordExecutionDuration records how long an operation took.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.RecordHealth">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=2407:2464#L62">RecordHealth</a>
+					<a class="permalink" href="index.html#MonitoringContext.RecordHealth">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) RecordHealth(status <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)</pre>
+				<p>RecordHealth records agent health status.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.RecordOutcome">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=1627:1684#L41">RecordOutcome</a>
+					<a class="permalink" href="index.html#MonitoringContext.RecordOutcome">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) RecordOutcome(score <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)</pre>
+				<p>RecordOutcome records the primary success metric (0.0-1.0 normalized).
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.StartSpan">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=4080:4191#L107">StartSpan</a>
+					<a class="permalink" href="index.html#MonitoringContext.StartSpan">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) StartSpan(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, operation <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, <a href="../telemetry/index.html">telemetry</a>.<a href="../telemetry/index.html#Span">Span</a>)</pre>
+				<p>StartSpan starts a new trace span for an operation.
+
+				
+				
+				
+			
+				
+				<h3 id="MonitoringContext.Tracer">func (*MonitoringContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/monitoring.go?s=6545:6599#L176">Tracer</a>
+					<a class="permalink" href="index.html#MonitoringContext.Tracer">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mc *<a href="index.html#MonitoringContext">MonitoringContext</a>) Tracer() <a href="../telemetry/index.html">telemetry</a>.<a href="../telemetry/index.html#Tracer">Tracer</a></pre>
+				<p>Tracer returns the underlying tracer for advanced usage.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SelfHealing">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go?s=1894:2101#L65">SelfHealing</a>
+				<a class="permalink" href="index.html#SelfHealing">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SelfHealing provides retry-with-backoff functionality for agents.
+
+			<pre>type SelfHealing struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewSelfHealing">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go?s=2256:2372#L76">NewSelfHealing</a>
+					<a class="permalink" href="index.html#NewSelfHealing">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSelfHealing(config <a href="index.html#SelfHealingConfig">SelfHealingConfig</a>, monitoring *<a href="index.html#MonitoringContext">MonitoringContext</a>, opts ...<a href="index.html#SelfHealingOption">SelfHealingOption</a>) *<a href="index.html#SelfHealing">SelfHealing</a></pre>
+				<p>NewSelfHealing creates a new self-healing instance.
+Optional SelfHealingOption functions can be provided to configure circuit breaker integration.
+
+				
+				
+			
+
+			
+				
+				<h3 id="SelfHealing.CircuitBreaker">func (*SelfHealing) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go?s=5587:5653#L194">CircuitBreaker</a>
+					<a class="permalink" href="index.html#SelfHealing.CircuitBreaker">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (sh *<a href="index.html#SelfHealing">SelfHealing</a>) CircuitBreaker() *<a href="../resilience/index.html">resilience</a>.<a href="../resilience/index.html#CircuitBreaker">CircuitBreaker</a></pre>
+				<p>CircuitBreaker returns the configured circuit breaker, or nil if none is set.
+
+				
+				
+				
+			
+				
+				<h3 id="SelfHealing.CurrentRetry">func (*SelfHealing) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go?s=5182:5223#L178">CurrentRetry</a>
+					<a class="permalink" href="index.html#SelfHealing.CurrentRetry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (sh *<a href="index.html#SelfHealing">SelfHealing</a>) CurrentRetry() <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+				<p>CurrentRetry returns the current retry count.
+
+				
+				
+				
+			
+				
+				<h3 id="SelfHealing.ExecuteWithHealing">func (*SelfHealing) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go?s=2789:2893#L93">ExecuteWithHealing</a>
+					<a class="permalink" href="index.html#SelfHealing.ExecuteWithHealing">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (sh *<a href="index.html#SelfHealing">SelfHealing</a>) ExecuteWithHealing(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, fn func(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>ExecuteWithHealing executes a function with automatic retry on failure.
+If a circuit breaker is configured, each attempt is wrapped with the circuit breaker.
+When the circuit breaker is open, the retry loop aborts immediately with ErrCircuitOpen.
+
+				
+				
+				
+			
+				
+				<h3 id="SelfHealing.LastError">func (*SelfHealing) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go?s=5302:5342#L183">LastError</a>
+					<a class="permalink" href="index.html#SelfHealing.LastError">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (sh *<a href="index.html#SelfHealing">SelfHealing</a>) LastError() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>LastError returns the last error encountered.
+
+				
+				
+				
+			
+				
+				<h3 id="SelfHealing.Reset">func (*SelfHealing) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go?s=5429:5459#L188">Reset</a>
+					<a class="permalink" href="index.html#SelfHealing.Reset">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (sh *<a href="index.html#SelfHealing">SelfHealing</a>) Reset()</pre>
+				<p>Reset resets the self-healing state for a new execution.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SelfHealingConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go?s=839:976#L28">SelfHealingConfig</a>
+				<a class="permalink" href="index.html#SelfHealingConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SelfHealingConfig configures self-healing behavior.
+
+			<pre>type SelfHealingConfig struct {
+<span id="SelfHealingConfig.MaxRetries"></span>    MaxRetries     <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="SelfHealingConfig.InitialBackoff"></span>    InitialBackoff <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="SelfHealingConfig.MaxBackoff"></span>    MaxBackoff     <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="SelfHealingConfig.BackoffFactor"></span>    BackoffFactor  <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="DefaultSelfHealingConfig">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go?s=1033:1082#L36">DefaultSelfHealingConfig</a>
+					<a class="permalink" href="index.html#DefaultSelfHealingConfig">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func DefaultSelfHealingConfig() <a href="index.html#SelfHealingConfig">SelfHealingConfig</a></pre>
+				<p>DefaultSelfHealingConfig returns sensible defaults.
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="SelfHealingOption">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go?s=1313:1354#L46">SelfHealingOption</a>
+				<a class="permalink" href="index.html#SelfHealingOption">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SelfHealingOption is a functional option for configuring SelfHealing.
+
+			<pre>type SelfHealingOption func(*<a href="index.html#SelfHealing">SelfHealing</a>)</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="WithCircuitBreaker">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go?s=1420:1492#L49">WithCircuitBreaker</a>
+					<a class="permalink" href="index.html#WithCircuitBreaker">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func WithCircuitBreaker(cb *<a href="../resilience/index.html">resilience</a>.<a href="../resilience/index.html#CircuitBreaker">CircuitBreaker</a>) <a href="index.html#SelfHealingOption">SelfHealingOption</a></pre>
+				<p>WithCircuitBreaker sets a circuit breaker instance directly.
+
+				
+				
+			
+				
+				<h3 id="WithCircuitBreakerName">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/healing.go?s=1646:1704#L56">WithCircuitBreakerName</a>
+					<a class="permalink" href="index.html#WithCircuitBreakerName">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func WithCircuitBreakerName(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="index.html#SelfHealingOption">SelfHealingOption</a></pre>
+				<p>WithCircuitBreakerName retrieves a circuit breaker from the global registry by name.
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="SimpleFeedbackReceiver">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/feedback.go?s=1316:1428#L34">SimpleFeedbackReceiver</a>
+				<a class="permalink" href="index.html#SimpleFeedbackReceiver">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SimpleFeedbackReceiver provides a basic in-memory implementation of FeedbackReceiver.
+
+			<pre>type SimpleFeedbackReceiver struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewSimpleFeedbackReceiver">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/feedback.go?s=1502:1558#L41">NewSimpleFeedbackReceiver</a>
+					<a class="permalink" href="index.html#NewSimpleFeedbackReceiver">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSimpleFeedbackReceiver() *<a href="index.html#SimpleFeedbackReceiver">SimpleFeedbackReceiver</a></pre>
+				<p>NewSimpleFeedbackReceiver creates a new in-memory feedback receiver.
+
+				
+				
+			
+
+			
+				
+				<h3 id="SimpleFeedbackReceiver.Clear">func (*SimpleFeedbackReceiver) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/feedback.go?s=2940:2980#L106">Clear</a>
+					<a class="permalink" href="index.html#SimpleFeedbackReceiver.Clear">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#SimpleFeedbackReceiver">SimpleFeedbackReceiver</a>) Clear()</pre>
+				<p>Clear removes all feedback.
+
+				
+				
+				
+			
+				
+				<h3 id="SimpleFeedbackReceiver.GetAverageScore">func (*SimpleFeedbackReceiver) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/feedback.go?s=2340:2398#L75">GetAverageScore</a>
+					<a class="permalink" href="index.html#SimpleFeedbackReceiver.GetAverageScore">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#SimpleFeedbackReceiver">SimpleFeedbackReceiver</a>) GetAverageScore() <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a></pre>
+				<p>GetAverageScore implements FeedbackReceiver.
+
+				
+				
+				
+			
+				
+				<h3 id="SimpleFeedbackReceiver.GetFeedback">func (*SimpleFeedbackReceiver) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/feedback.go?s=2127:2204#L66">GetFeedback</a>
+					<a class="permalink" href="index.html#SimpleFeedbackReceiver.GetFeedback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#SimpleFeedbackReceiver">SimpleFeedbackReceiver</a>) GetFeedback(taskID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#Feedback">Feedback</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)</pre>
+				<p>GetFeedback implements FeedbackReceiver.
+
+				
+				
+				
+			
+				
+				<h3 id="SimpleFeedbackReceiver.GetRecentFeedback">func (*SimpleFeedbackReceiver) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/feedback.go?s=2644:2713#L91">GetRecentFeedback</a>
+					<a class="permalink" href="index.html#SimpleFeedbackReceiver.GetRecentFeedback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#SimpleFeedbackReceiver">SimpleFeedbackReceiver</a>) GetRecentFeedback(n <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) []*<a href="index.html#Feedback">Feedback</a></pre>
+				<p>GetRecentFeedback returns feedback from the last n entries.
+
+				
+				
+				
+			
+				
+				<h3 id="SimpleFeedbackReceiver.RecordFeedback">func (*SimpleFeedbackReceiver) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agentic/feedback.go?s=1719:1849#L49">RecordFeedback</a>
+					<a class="permalink" href="index.html#SimpleFeedbackReceiver.RecordFeedback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#SimpleFeedbackReceiver">SimpleFeedbackReceiver</a>) RecordFeedback(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, taskID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, score <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>, source <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, comments <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RecordFeedback implements FeedbackReceiver.
+
+				
+				
+				
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

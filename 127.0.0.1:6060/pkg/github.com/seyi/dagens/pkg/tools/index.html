@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>tools - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package tools
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/tools"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+				<dd><a href="index.html#pkg-subdirectories">Subdirectories</a></dd>
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package tools provides composable tool implementations for agents
+Inspired by the tool-based architecture in Zen MCP and ADK
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+				
+				<dd><a href="index.html#CodeExecutionTool">func CodeExecutionTool(config CodeExecutionConfig) *types.ToolDefinition</a></dd>
+			
+				
+				<dd><a href="index.html#ConsensusTool">func ConsensusTool() *types.ToolDefinition</a></dd>
+			
+				
+				<dd><a href="index.html#GetAvailableAgentsTool">func GetAvailableAgentsTool() *types.ToolDefinition</a></dd>
+			
+				
+				<dd><a href="index.html#HybridRagRetrievalTool">func HybridRagRetrievalTool(config HybridRagRetrievalConfig) *types.ToolDefinition</a></dd>
+			
+				
+				<dd><a href="index.html#PlannerTool">func PlannerTool() *types.ToolDefinition</a></dd>
+			
+				
+				<dd><a href="index.html#PythonOnlyCodeExecutionTool">func PythonOnlyCodeExecutionTool() *types.ToolDefinition</a></dd>
+			
+				
+				<dd><a href="index.html#RagRetrievalTool">func RagRetrievalTool(config RagRetrievalConfig) *types.ToolDefinition</a></dd>
+			
+				
+				<dd><a href="index.html#RegisterBuiltinTools">func RegisterBuiltinTools(registry *ToolRegistry) error</a></dd>
+			
+				
+				<dd><a href="index.html#RegisterCodeExecutionTools">func RegisterCodeExecutionTools(registry *ToolRegistry, config CodeExecutionConfig) error</a></dd>
+			
+				
+				<dd><a href="index.html#RegisterHybridRagTools">func RegisterHybridRagTools(registry *ToolRegistry, hybridStore rag.HybridVectorStore, embeddingService rag.EmbeddingService, defaultCollection string) error</a></dd>
+			
+				
+				<dd><a href="index.html#RegisterRagTools">func RegisterRagTools(registry *ToolRegistry, searchFunc func(ctx context.Context, query string, topK int, minScore float64) (interface{}, error)) error</a></dd>
+			
+				
+				<dd><a href="index.html#RegisterTransferTools">func RegisterTransferTools(registry *ToolRegistry, rootAgent ...agent.Agent) error</a></dd>
+			
+				
+				<dd><a href="index.html#SearchTool">func SearchTool() *types.ToolDefinition</a></dd>
+			
+				
+				<dd><a href="index.html#SimpleCodeExecutionTool">func SimpleCodeExecutionTool() *types.ToolDefinition</a></dd>
+			
+				
+				<dd><a href="index.html#SimpleHybridRagTool">func SimpleHybridRagTool() *types.ToolDefinition</a></dd>
+			
+				
+				<dd><a href="index.html#SimpleRagRetrievalTool">func SimpleRagRetrievalTool() *types.ToolDefinition</a></dd>
+			
+				
+				<dd><a href="index.html#TransferToAgentTool">func TransferToAgentTool() *types.ToolDefinition</a></dd>
+			
+				
+				<dd><a href="index.html#ValidateTransferScopeTool">func ValidateTransferScopeTool() *types.ToolDefinition</a></dd>
+			
+			
+				
+				<dd><a href="index.html#CodeExecutionConfig">type CodeExecutionConfig</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DefaultCodeExecutionConfig">func DefaultCodeExecutionConfig() CodeExecutionConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#CodeExecutionResult">type CodeExecutionResult</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#HybridRagCorpusManager">type HybridRagCorpusManager</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewHybridRagCorpusManager">func NewHybridRagCorpusManager(hybridStore rag.HybridVectorStore, embeddingService rag.EmbeddingService, chunker rag.TextChunker, defaultCollection string) *HybridRagCorpusManager</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HybridRagCorpusManager.IngestDocument">func (m *HybridRagCorpusManager) IngestDocument(ctx context.Context, content string, metadata map[string]interface{}) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HybridRagCorpusManager.IngestDocuments">func (m *HybridRagCorpusManager) IngestDocuments(ctx context.Context, contents []string, metadataList []map[string]interface{}) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HybridRagCorpusManager.RebuildKeywordIndex">func (m *HybridRagCorpusManager) RebuildKeywordIndex(ctx context.Context, collection string) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#HybridRagRetrievalConfig">type HybridRagRetrievalConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#RagRetrievalConfig">type RagRetrievalConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ToolRegistry">type ToolRegistry</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewToolRegistry">func NewToolRegistry() *ToolRegistry</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ToolRegistry.Execute">func (tr *ToolRegistry) Execute(ctx context.Context, name string, params map[string]interface{}) (interface{}, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ToolRegistry.Get">func (tr *ToolRegistry) Get(name string) (*types.ToolDefinition, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ToolRegistry.List">func (tr *ToolRegistry) List() []*types.ToolDefinition</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ToolRegistry.Register">func (tr *ToolRegistry) Register(tool *types.ToolDefinition) error</a></dd>
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/code_execution.go">code_execution.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/hybrid_rag_retrieval.go">hybrid_rag_retrieval.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/rag_retrieval.go">rag_retrieval.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/tools.go">tools.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/transfer_tool.go">transfer_tool.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+			
+			
+			<h2 id="CodeExecutionTool">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/code_execution.go?s=1677:1749#L57">CodeExecutionTool</a>
+				<a class="permalink" href="index.html#CodeExecutionTool">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func CodeExecutionTool(config <a href="index.html#CodeExecutionConfig">CodeExecutionConfig</a>) *<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+			<p>CodeExecutionTool creates a secure code execution sandbox tool
+Inspired by ADK&apos;s geminitool.CodeExecution but designed for distributed systems
+
+			
+			
+
+		
+			
+			
+			<h2 id="ConsensusTool">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/tools.go?s=2710:2752#L93">ConsensusTool</a>
+				<a class="permalink" href="index.html#ConsensusTool">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func ConsensusTool() *<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+			<p>ConsensusToolReaches consensus across multiple agents
+
+			
+			
+
+		
+			
+			
+			<h2 id="GetAvailableAgentsTool">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/transfer_tool.go?s=2365:2416#L60">GetAvailableAgentsTool</a>
+				<a class="permalink" href="index.html#GetAvailableAgentsTool">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func GetAvailableAgentsTool() *<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+			<p>GetAvailableAgentsTool creates a tool that lists the available agents in the
+current hierarchy.
+
+			
+			
+
+		
+			
+			
+			<h2 id="HybridRagRetrievalTool">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/hybrid_rag_retrieval.go?s=1190:1272#L38">HybridRagRetrievalTool</a>
+				<a class="permalink" href="index.html#HybridRagRetrievalTool">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func HybridRagRetrievalTool(config <a href="index.html#HybridRagRetrievalConfig">HybridRagRetrievalConfig</a>) *<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+			<p>HybridRagRetrievalTool creates a hybrid RAG retrieval tool
+Combines semantic vector search with BM25 keyword search for better results
+
+			
+			
+
+		
+			
+			
+			<h2 id="PlannerTool">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/tools.go?s=3500:3540#L121">PlannerTool</a>
+				<a class="permalink" href="index.html#PlannerTool">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func PlannerTool() *<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+			<p>PlannerTool breaks down complex tasks
+
+			
+			
+
+		
+			
+			
+			<h2 id="PythonOnlyCodeExecutionTool">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/code_execution.go?s=11779:11835#L401">PythonOnlyCodeExecutionTool</a>
+				<a class="permalink" href="index.html#PythonOnlyCodeExecutionTool">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func PythonOnlyCodeExecutionTool() *<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+			<p>PythonOnlyCodeExecutionTool creates a Python-only code execution tool
+More restrictive, suitable for math/data analysis use cases
+
+			
+			
+
+		
+			
+			
+			<h2 id="RagRetrievalTool">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/rag_retrieval.go?s=504:574#L8">RagRetrievalTool</a>
+				<a class="permalink" href="index.html#RagRetrievalTool">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func RagRetrievalTool(config <a href="index.html#RagRetrievalConfig">RagRetrievalConfig</a>) *<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+			<p>RagRetrievalTool creates a tool for RAG retrieval
+
+			
+			
+
+		
+			
+			
+			<h2 id="RegisterBuiltinTools">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/tools.go?s=4241:4296#L148">RegisterBuiltinTools</a>
+				<a class="permalink" href="index.html#RegisterBuiltinTools">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func RegisterBuiltinTools(registry *<a href="index.html#ToolRegistry">ToolRegistry</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+			<p>RegisterBuiltinTools registers all built-in tools
+
+			
+			
+
+		
+			
+			
+			<h2 id="RegisterCodeExecutionTools">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/code_execution.go?s=12038:12127#L408">RegisterCodeExecutionTools</a>
+				<a class="permalink" href="index.html#RegisterCodeExecutionTools">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func RegisterCodeExecutionTools(registry *<a href="index.html#ToolRegistry">ToolRegistry</a>, config <a href="index.html#CodeExecutionConfig">CodeExecutionConfig</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+			<p>RegisterCodeExecutionTools registers code execution tools in the registry
+
+			
+			
+
+		
+			
+			
+			<h2 id="RegisterHybridRagTools">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/hybrid_rag_retrieval.go?s=7640:7804#L236">RegisterHybridRagTools</a>
+				<a class="permalink" href="index.html#RegisterHybridRagTools">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func RegisterHybridRagTools(
+    registry *<a href="index.html#ToolRegistry">ToolRegistry</a>,
+    hybridStore <a href="../rag/index.html">rag</a>.<a href="../rag/index.html#HybridVectorStore">HybridVectorStore</a>,
+    embeddingService <a href="../rag/index.html">rag</a>.<a href="../rag/index.html#EmbeddingService">EmbeddingService</a>,
+    defaultCollection <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>,
+) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+			<p>RegisterHybridRagTools registers hybrid RAG tools in the tool registry
+
+			
+			
+
+		
+			
+			
+			<h2 id="RegisterRagTools">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/rag_retrieval.go?s=2204:2356#L69">RegisterRagTools</a>
+				<a class="permalink" href="index.html#RegisterRagTools">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func RegisterRagTools(registry *<a href="index.html#ToolRegistry">ToolRegistry</a>, searchFunc func(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, query <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, topK <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>, minScore <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>) (interface{}, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+			<p>RegisterRagTools registers the RAG tools
+
+			
+			
+
+		
+			
+			
+			<h2 id="RegisterTransferTools">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/transfer_tool.go?s=5563:5645#L148">RegisterTransferTools</a>
+				<a class="permalink" href="index.html#RegisterTransferTools">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func RegisterTransferTools(registry *<a href="index.html#ToolRegistry">ToolRegistry</a>, rootAgent ...<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#Agent">Agent</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+			<p>RegisterTransferTools registers all transfer-related tools in the registry.
+The rootAgent parameter is optional and reserved for future use.
+
+			
+			
+
+		
+			
+			
+			<h2 id="SearchTool">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/tools.go?s=1964:2003#L66">SearchTool</a>
+				<a class="permalink" href="index.html#SearchTool">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func SearchTool() *<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+			<p>SearchTool performs distributed search across agent knowledge
+
+			
+			
+
+		
+			
+			
+			<h2 id="SimpleCodeExecutionTool">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/code_execution.go?s=11529:11581#L395">SimpleCodeExecutionTool</a>
+				<a class="permalink" href="index.html#SimpleCodeExecutionTool">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func SimpleCodeExecutionTool() *<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+			<p>SimpleCodeExecutionTool creates a basic code execution tool with defaults
+Use this for quick setup without custom configuration
+
+			
+			
+
+		
+			
+			
+			<h2 id="SimpleHybridRagTool">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/hybrid_rag_retrieval.go?s=7099:7147#L219">SimpleHybridRagTool</a>
+				<a class="permalink" href="index.html#SimpleHybridRagTool">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func SimpleHybridRagTool() *<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+			<p>SimpleHybridRagTool creates a simple hybrid RAG tool with in-memory storage
+
+			
+			
+
+		
+			
+			
+			<h2 id="SimpleRagRetrievalTool">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/rag_retrieval.go?s=1716:1767#L52">SimpleRagRetrievalTool</a>
+				<a class="permalink" href="index.html#SimpleRagRetrievalTool">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func SimpleRagRetrievalTool() *<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+			<p>SimpleRagRetrievalTool creates a simple RAG retrieval tool
+
+			
+			
+
+		
+			
+			
+			<h2 id="TransferToAgentTool">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/transfer_tool.go?s=255:303#L4">TransferToAgentTool</a>
+				<a class="permalink" href="index.html#TransferToAgentTool">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func TransferToAgentTool() *<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+			<p>TransferToAgentTool creates a tool that allows an agent to transfer control
+to another agent.
+
+			
+			
+
+		
+			
+			
+			<h2 id="ValidateTransferScopeTool">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/transfer_tool.go?s=3975:4029#L103">ValidateTransferScopeTool</a>
+				<a class="permalink" href="index.html#ValidateTransferScopeTool">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func ValidateTransferScopeTool() *<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+			<p>ValidateTransferScopeTool creates a tool that can be used to validate if a
+transfer to another agent is allowed within the current scope.
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="CodeExecutionConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/code_execution.go?s=211:778#L5">CodeExecutionConfig</a>
+				<a class="permalink" href="index.html#CodeExecutionConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CodeExecutionConfig configures the code execution sandbox
+
+			<pre>type CodeExecutionConfig struct {
+<span id="CodeExecutionConfig.SandboxType"></span>    <span class="comment">// SandboxType specifies the sandbox to use (&#34;gvisor&#34; or &#34;docker&#34;). Default: &#34;gvisor&#34;</span>
+    SandboxType <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Maximum execution time (default: 30s)</span>
+<span id="CodeExecutionConfig.Timeout"></span>    Timeout <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+
+    <span class="comment">// Maximum memory in MB (default: 256MB)</span>
+<span id="CodeExecutionConfig.MaxMemoryMB"></span>    MaxMemoryMB <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>
+
+    <span class="comment">// Allowed languages (default: python)</span>
+<span id="CodeExecutionConfig.AllowedLanguages"></span>    AllowedLanguages []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Docker image per language (for docker sandbox)</span>
+<span id="CodeExecutionConfig.DockerImages"></span>    DockerImages map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Enable network access (default: false for security)</span>
+<span id="CodeExecutionConfig.AllowNetwork"></span>    AllowNetwork <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+
+    <span class="comment">// Maximum output size in bytes (default: 10MB)</span>
+<span id="CodeExecutionConfig.MaxOutputSize"></span>    MaxOutputSize <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="DefaultCodeExecutionConfig">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/code_execution.go?s=1090:1143#L40">DefaultCodeExecutionConfig</a>
+					<a class="permalink" href="index.html#DefaultCodeExecutionConfig">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func DefaultCodeExecutionConfig() <a href="index.html#CodeExecutionConfig">CodeExecutionConfig</a></pre>
+				<p>DefaultCodeExecutionConfig returns secure default configuration
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="CodeExecutionResult">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/code_execution.go?s=830:1021#L29">CodeExecutionResult</a>
+				<a class="permalink" href="index.html#CodeExecutionResult">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CodeExecutionResult contains execution results
+
+			<pre>type CodeExecutionResult struct {
+<span id="CodeExecutionResult.Stdout"></span>    Stdout        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="CodeExecutionResult.Stderr"></span>    Stderr        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="CodeExecutionResult.ExitCode"></span>    ExitCode      <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="CodeExecutionResult.ExecutionTime"></span>    ExecutionTime <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="CodeExecutionResult.Language"></span>    Language      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="CodeExecutionResult.Truncated"></span>    Truncated     <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+<span id="CodeExecutionResult.Error"></span>    Error         <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="HybridRagCorpusManager">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/hybrid_rag_retrieval.go?s=8284:8393#L258">HybridRagCorpusManager</a>
+				<a class="permalink" href="index.html#HybridRagCorpusManager">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HybridRagCorpusManager helps manage document ingestion for hybrid search
+
+			<pre>type HybridRagCorpusManager struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewHybridRagCorpusManager">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/hybrid_rag_retrieval.go?s=8460:8646#L264">NewHybridRagCorpusManager</a>
+					<a class="permalink" href="index.html#NewHybridRagCorpusManager">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewHybridRagCorpusManager(
+    hybridStore <a href="../rag/index.html">rag</a>.<a href="../rag/index.html#HybridVectorStore">HybridVectorStore</a>,
+    embeddingService <a href="../rag/index.html">rag</a>.<a href="../rag/index.html#EmbeddingService">EmbeddingService</a>,
+    chunker <a href="../rag/index.html">rag</a>.<a href="../rag/index.html#TextChunker">TextChunker</a>,
+    defaultCollection <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>,
+) *<a href="index.html#HybridRagCorpusManager">HybridRagCorpusManager</a></pre>
+				<p>NewHybridRagCorpusManager creates a hybrid RAG corpus manager
+
+				
+				
+			
+
+			
+				
+				<h3 id="HybridRagCorpusManager.IngestDocument">func (*HybridRagCorpusManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/hybrid_rag_retrieval.go?s=9173:9296#L291">IngestDocument</a>
+					<a class="permalink" href="index.html#HybridRagCorpusManager.IngestDocument">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HybridRagCorpusManager">HybridRagCorpusManager</a>) IngestDocument(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, content <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, metadata map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>IngestDocument ingests a document with both vector and keyword indexing
+
+				
+				
+				
+			
+				
+				<h3 id="HybridRagCorpusManager.IngestDocuments">func (*HybridRagCorpusManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/hybrid_rag_retrieval.go?s=9513:9646#L298">IngestDocuments</a>
+					<a class="permalink" href="index.html#HybridRagCorpusManager.IngestDocuments">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HybridRagCorpusManager">HybridRagCorpusManager</a>) IngestDocuments(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, contents []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, metadataList []map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>IngestDocuments ingests multiple documents
+
+				
+				
+				
+			
+				
+				<h3 id="HybridRagCorpusManager.RebuildKeywordIndex">func (*HybridRagCorpusManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/hybrid_rag_retrieval.go?s=9790:9888#L303">RebuildKeywordIndex</a>
+					<a class="permalink" href="index.html#HybridRagCorpusManager.RebuildKeywordIndex">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HybridRagCorpusManager">HybridRagCorpusManager</a>) RebuildKeywordIndex(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, collection <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>RebuildKeywordIndex rebuilds the BM25 keyword index for a collection
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="HybridRagRetrievalConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/hybrid_rag_retrieval.go?s=176:1047#L2">HybridRagRetrievalConfig</a>
+				<a class="permalink" href="index.html#HybridRagRetrievalConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HybridRagRetrievalConfig configures hybrid RAG retrieval
+
+			<pre>type HybridRagRetrievalConfig struct {
+<span id="HybridRagRetrievalConfig.HybridStore"></span>    <span class="comment">// HybridStore is the hybrid vector store</span>
+    HybridStore <a href="../rag/index.html">rag</a>.<a href="../rag/index.html#HybridVectorStore">HybridVectorStore</a>
+
+<span id="HybridRagRetrievalConfig.EmbeddingService"></span>    <span class="comment">// EmbeddingService generates embeddings for queries</span>
+    EmbeddingService <a href="../rag/index.html">rag</a>.<a href="../rag/index.html#EmbeddingService">EmbeddingService</a>
+
+<span id="HybridRagRetrievalConfig.DefaultCollection"></span>    <span class="comment">// DefaultCollection is the default collection to search</span>
+    DefaultCollection <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+<span id="HybridRagRetrievalConfig.DefaultTopK"></span>    <span class="comment">// DefaultTopK is the default number of results</span>
+    DefaultTopK <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+
+<span id="HybridRagRetrievalConfig.DefaultMinScore"></span>    <span class="comment">// DefaultMinScore is the default minimum score</span>
+    DefaultMinScore <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+
+<span id="HybridRagRetrievalConfig.DefaultVectorWeight"></span>    <span class="comment">// DefaultVectorWeight for hybrid search (0.0-1.0)</span>
+    <span class="comment">// 0.0 = keyword only, 1.0 = semantic only</span>
+    <span class="comment">// Default: 0.7 (70% semantic, 30% keyword)</span>
+    DefaultVectorWeight <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>
+
+<span id="HybridRagRetrievalConfig.EnableReranking"></span>    <span class="comment">// EnableReranking enables result re-ranking</span>
+    EnableReranking <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+
+<span id="HybridRagRetrievalConfig.Name"></span>    <span class="comment">// Name is the tool name</span>
+    Name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+<span id="HybridRagRetrievalConfig.Description"></span>    <span class="comment">// Description is the tool description</span>
+    Description <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+<span id="HybridRagRetrievalConfig.IncludeGrounding"></span>    <span class="comment">// IncludeGrounding whether to include grounding spans in results</span>
+    IncludeGrounding <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="RagRetrievalConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/rag_retrieval.go?s=232:449#L2">RagRetrievalConfig</a>
+				<a class="permalink" href="index.html#RagRetrievalConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RagRetrievalConfig configures the RAG retrieval tool
+
+			<pre>type RagRetrievalConfig struct {
+    <span class="comment">// Temporarily using a generic interface{} until Corpus type is properly defined</span>
+<span id="RagRetrievalConfig.SearchFunc"></span>    SearchFunc func(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, query <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, topK <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>, minScore <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>) (interface{}, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ToolRegistry">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/tools.go?s=308:376#L4">ToolRegistry</a>
+				<a class="permalink" href="index.html#ToolRegistry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ToolRegistry manages the registration and retrieval of tools that can be used
+by agents.
+
+			<pre>type ToolRegistry struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewToolRegistry">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/tools.go?s=441:477#L9">NewToolRegistry</a>
+					<a class="permalink" href="index.html#NewToolRegistry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewToolRegistry() *<a href="index.html#ToolRegistry">ToolRegistry</a></pre>
+				<p>NewToolRegistry creates and initializes a new ToolRegistry.
+
+				
+				
+			
+
+			
+				
+				<h3 id="ToolRegistry.Execute">func (*ToolRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/tools.go?s=1637:1754#L54">Execute</a>
+					<a class="permalink" href="index.html#ToolRegistry.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (tr *<a href="index.html#ToolRegistry">ToolRegistry</a>) Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, params map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}) (interface{}, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Execute finds a tool by name and executes its handler with the provided
+parameters.
+
+				
+				
+				
+			
+				
+				<h3 id="ToolRegistry.Get">func (*ToolRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/tools.go?s=1002:1073#L28">Get</a>
+					<a class="permalink" href="index.html#ToolRegistry.Get">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (tr *<a href="index.html#ToolRegistry">ToolRegistry</a>) Get(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Get retrieves a tool by its name. It returns an error if the tool is not
+found or is not enabled.
+
+				
+				
+				
+			
+				
+				<h3 id="ToolRegistry.List">func (*ToolRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/tools.go?s=1339:1393#L42">List</a>
+					<a class="permalink" href="index.html#ToolRegistry.List">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (tr *<a href="index.html#ToolRegistry">ToolRegistry</a>) List() []*<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a></pre>
+				<p>List returns a slice of all enabled tools in the registry.
+
+				
+				
+				
+			
+				
+				<h3 id="ToolRegistry.Register">func (*ToolRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/tools/tools.go?s=674:740#L17">Register</a>
+					<a class="permalink" href="index.html#ToolRegistry.Register">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (tr *<a href="index.html#ToolRegistry">ToolRegistry</a>) Register(tool *<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Register adds a tool to the registry. It returns an error if a tool with
+the same name is already registered.
+
+				
+				
+				
+			
+		
+	
+
+	
+
+
+
+
+
+	
+	
+		<h2 id="pkg-subdirectories">Subdirectories</h2>
+	
+	<div class="pkg-dir">
+		<table>
+			<tr>
+				<th class="pkg-name">Name</th>
+				<th class="pkg-synopsis">Synopsis</th>
+			</tr>
+
+			
+			<tr>
+				<td colspan="2"><a href="../index.html">..</a></td>
+			</tr>
+			
+
+			
+				<tr>
+				
+					<td class="pkg-name" style="padding-left: 0px;">
+						<a href="database/index.html">database</a>
+					</td>
+				
+					<td class="pkg-synopsis">
+						Package database provides vendor-neutral database tools for AI agents.
+					</td>
+				</tr>
+			
+				<tr>
+				
+					<td class="pkg-name" style="padding-left: 0px;">
+						<a href="mcp/index.html">mcp</a>
+					</td>
+				
+					<td class="pkg-synopsis">
+						Package mcp provides Model Context Protocol (MCP) support for third-party tools.
+					</td>
+				</tr>
+			
+		</table>
+	</div>
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

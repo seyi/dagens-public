@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>coordination - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package coordination
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/coordination"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package coordination provides distributed coordination primitives like leader election
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+				
+				<dd><a href="index.html#WaitForAgents">func WaitForAgents(ctx context.Context, barrier *DistributedBarrier, agentFunc func(context.Context) error) error</a></dd>
+			
+				
+				<dd><a href="index.html#WaitForSwarm">func WaitForSwarm(ctx context.Context, barrier *DistributedBarrier, agentFunc func(context.Context) error) error</a></dd>
+			
+			
+				
+				<dd><a href="index.html#DistributedBarrier">type DistributedBarrier</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewDistributedBarrier">func NewDistributedBarrier(client *clientv3.Client, session *concurrency.Session, key string, count int) *DistributedBarrier</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedBarrier.Reset">func (db *DistributedBarrier) Reset(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedBarrier.Wait">func (db *DistributedBarrier) Wait(ctx context.Context) (err error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#DistributedMutex">type DistributedMutex</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewDistributedMutex">func NewDistributedMutex(session *concurrency.Session, key string) *DistributedMutex</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedMutex.IsLocked">func (dm *DistributedMutex) IsLocked() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedMutex.IsOwner">func (dm *DistributedMutex) IsOwner() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedMutex.Lock">func (dm *DistributedMutex) Lock(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedMutex.TryLock">func (dm *DistributedMutex) TryLock(ctx context.Context) (bool, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedMutex.Unlock">func (dm *DistributedMutex) Unlock(ctx context.Context) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#DistributedSemaphore">type DistributedSemaphore</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewDistributedSemaphore">func NewDistributedSemaphore(client *clientv3.Client, session *concurrency.Session, key string, size int) *DistributedSemaphore</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedSemaphore.Acquire">func (ds *DistributedSemaphore) Acquire(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedSemaphore.GetAvailable">func (ds *DistributedSemaphore) GetAvailable(ctx context.Context) (int, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedSemaphore.GetHolders">func (ds *DistributedSemaphore) GetHolders(ctx context.Context) ([]string, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedSemaphore.Release">func (ds *DistributedSemaphore) Release(ctx context.Context) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#LeaderCallbacks">type LeaderCallbacks</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LeaderElectionConfig">type LeaderElectionConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LeaderElector">type LeaderElector</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewLeaderElector">func NewLeaderElector(config LeaderElectionConfig) (*LeaderElector, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LeaderElector.GetLeaderIdentity">func (le *LeaderElector) GetLeaderIdentity() (string, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LeaderElector.IsLeader">func (le *LeaderElector) IsLeader() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LeaderElector.Start">func (le *LeaderElector) Start(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LeaderElector.Stop">func (le *LeaderElector) Stop()</a></dd>
+				
+			
+				
+				<dd><a href="index.html#LeaderTask">type LeaderTask</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LeaderTaskRunner">type LeaderTaskRunner</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewLeaderTaskRunner">func NewLeaderTaskRunner(elector *LeaderElector) *LeaderTaskRunner</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LeaderTaskRunner.AddTask">func (ltr *LeaderTaskRunner) AddTask(task LeaderTask)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LeaderTaskRunner.Start">func (ltr *LeaderTaskRunner) Start(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LeaderTaskRunner.Stop">func (ltr *LeaderTaskRunner) Stop()</a></dd>
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/barrier.go">barrier.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/helpers.go">helpers.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go">leader_election.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/mutex.go">mutex.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/semaphore.go">semaphore.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+			
+			
+			<h2 id="WaitForAgents">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/helpers.go?s=192:305#L1">WaitForAgents</a>
+				<a class="permalink" href="index.html#WaitForAgents">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func WaitForAgents(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, barrier *<a href="index.html#DistributedBarrier">DistributedBarrier</a>, agentFunc func(<a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+			<p>WaitForAgents runs agentFunc and then waits on the given barrier.
+Callers must pass a context with deadline to avoid unbounded waits.
+
+			
+			
+
+		
+			
+			
+			<h2 id="WaitForSwarm">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/helpers.go?s=786:898#L19">WaitForSwarm</a>
+				<a class="permalink" href="index.html#WaitForSwarm">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func WaitForSwarm(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, barrier *<a href="index.html#DistributedBarrier">DistributedBarrier</a>, agentFunc func(<a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+			<p>WaitForSwarm is a higher-level alias for swarm-style agent rendezvous.
+It preserves the same deadline and error semantics as WaitForAgents.
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="DistributedBarrier">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/barrier.go?s=424:667#L8">DistributedBarrier</a>
+				<a class="permalink" href="index.html#DistributedBarrier">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DistributedBarrier provides a distributed barrier synchronization primitive using etcd.
+It uses lease-bound keys to ensure liveness: if a participant crashes, they are
+automatically removed from the count.
+
+			<pre>type DistributedBarrier struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewDistributedBarrier">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/barrier.go?s=729:853#L17">NewDistributedBarrier</a>
+					<a class="permalink" href="index.html#NewDistributedBarrier">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewDistributedBarrier(client *<a href="http://127.0.0.1:6060/pkg/go.etcd.io/etcd/client/v3/">clientv3</a>.<a href="http://127.0.0.1:6060/pkg/go.etcd.io/etcd/client/v3/#Client">Client</a>, session *<a href="http://127.0.0.1:6060/pkg/go.etcd.io/etcd/client/v3/concurrency/">concurrency</a>.<a href="http://127.0.0.1:6060/pkg/go.etcd.io/etcd/client/v3/concurrency/#Session">Session</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, count <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) *<a href="index.html#DistributedBarrier">DistributedBarrier</a></pre>
+				<p>NewDistributedBarrier creates a new distributed barrier.
+
+				
+				
+			
+
+			
+				
+				<h3 id="DistributedBarrier.Reset">func (*DistributedBarrier) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/barrier.go?s=6727:6789#L182">Reset</a>
+					<a class="permalink" href="index.html#DistributedBarrier.Reset">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (db *<a href="index.html#DistributedBarrier">DistributedBarrier</a>) Reset(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Reset resets the barrier for future use.
+This is dangerous if participants are still waiting; use with caution.
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedBarrier.Wait">func (*DistributedBarrier) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/barrier.go?s=1223:1290#L30">Wait</a>
+					<a class="permalink" href="index.html#DistributedBarrier.Wait">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (db *<a href="index.html#DistributedBarrier">DistributedBarrier</a>) Wait(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) (err <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Wait blocks until &apos;count&apos; participants have joined the barrier.
+It is crash-safe: dead participants (expired leases) are not counted.
+It supports timeouts via the provided context.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="DistributedMutex">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/mutex.go?s=400:592#L5">DistributedMutex</a>
+				<a class="permalink" href="index.html#DistributedMutex">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DistributedMutex provides distributed mutual exclusion using etcd.
+It wraps etcd&apos;s concurrency.Mutex with local serialization to prevent
+concurrent Lock() calls from the same session (which etcd allows as re-entrant).
+This mutex is reusable - it can be locked/unlocked multiple times.
+
+			<pre>type DistributedMutex struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewDistributedMutex">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/mutex.go?s=650:734#L15">NewDistributedMutex</a>
+					<a class="permalink" href="index.html#NewDistributedMutex">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewDistributedMutex(session *<a href="http://127.0.0.1:6060/pkg/go.etcd.io/etcd/client/v3/concurrency/">concurrency</a>.<a href="http://127.0.0.1:6060/pkg/go.etcd.io/etcd/client/v3/concurrency/#Session">Session</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) *<a href="index.html#DistributedMutex">DistributedMutex</a></pre>
+				<p>NewDistributedMutex creates a new distributed mutex.
+
+				
+				
+			
+
+			
+				
+				<h3 id="DistributedMutex.IsLocked">func (*DistributedMutex) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/mutex.go?s=3196:3239#L134">IsLocked</a>
+					<a class="permalink" href="index.html#DistributedMutex.IsLocked">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (dm *<a href="index.html#DistributedMutex">DistributedMutex</a>) IsLocked() <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>IsLocked returns whether this instance currently holds the lock.
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedMutex.IsOwner">func (*DistributedMutex) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/mutex.go?s=3405:3447#L142">IsOwner</a>
+					<a class="permalink" href="index.html#DistributedMutex.IsOwner">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (dm *<a href="index.html#DistributedMutex">DistributedMutex</a>) IsOwner() <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>IsOwner returns whether this instance currently holds the lock.
+Deprecated: Use IsLocked() instead.
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedMutex.Lock">func (*DistributedMutex) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/mutex.go?s=1157:1216#L29">Lock</a>
+					<a class="permalink" href="index.html#DistributedMutex.Lock">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (dm *<a href="index.html#DistributedMutex">DistributedMutex</a>) Lock(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Lock acquires the distributed lock.
+Blocks until the lock is available or context is cancelled.
+Uses local serialization to ensure only ONE caller can hold the lock at a time,
+even when using the same etcd session (which normally allows re-entrant locking).
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedMutex.TryLock">func (*DistributedMutex) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/mutex.go?s=2411:2481#L97">TryLock</a>
+					<a class="permalink" href="index.html#DistributedMutex.TryLock">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (dm *<a href="index.html#DistributedMutex">DistributedMutex</a>) TryLock(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>TryLock attempts to acquire the lock without blocking.
+Returns true if lock was acquired, false otherwise.
+Does NOT allow re-entrant locking - returns false if already held.
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedMutex.Unlock">func (*DistributedMutex) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/mutex.go?s=1845:1906#L68">Unlock</a>
+					<a class="permalink" href="index.html#DistributedMutex.Unlock">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (dm *<a href="index.html#DistributedMutex">DistributedMutex</a>) Unlock(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Unlock releases the distributed lock.
+The mutex can be re-acquired after unlocking (reusable).
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="DistributedSemaphore">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/semaphore.go?s=453:574#L8">DistributedSemaphore</a>
+				<a class="permalink" href="index.html#DistributedSemaphore">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DistributedSemaphore provides a distributed counting semaphore using etcd.
+It uses ephemeral keys tied to an etcd session and validates acquisition
+based on etcd create revisions, ensuring fairness (FIFO) and robustness
+against node crashes (lease-based cleanup).
+
+			<pre>type DistributedSemaphore struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewDistributedSemaphore">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/semaphore.go?s=758:885#L18">NewDistributedSemaphore</a>
+					<a class="permalink" href="index.html#NewDistributedSemaphore">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewDistributedSemaphore(client *<a href="http://127.0.0.1:6060/pkg/go.etcd.io/etcd/client/v3/">clientv3</a>.<a href="http://127.0.0.1:6060/pkg/go.etcd.io/etcd/client/v3/#Client">Client</a>, session *<a href="http://127.0.0.1:6060/pkg/go.etcd.io/etcd/client/v3/concurrency/">concurrency</a>.<a href="http://127.0.0.1:6060/pkg/go.etcd.io/etcd/client/v3/concurrency/#Session">Session</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, size <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) *<a href="index.html#DistributedSemaphore">DistributedSemaphore</a></pre>
+				<p>NewDistributedSemaphore creates a new distributed semaphore.
+The key should be a prefix used to store permits.
+The size is the maximum number of concurrent permits allowed.
+
+				
+				
+			
+
+			
+				
+				<h3 id="DistributedSemaphore.Acquire">func (*DistributedSemaphore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/semaphore.go?s=1170:1236#L30">Acquire</a>
+					<a class="permalink" href="index.html#DistributedSemaphore.Acquire">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ds *<a href="index.html#DistributedSemaphore">DistributedSemaphore</a>) Acquire(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Acquire acquires a permit from the semaphore.
+It blocks until a permit is available or the context is cancelled.
+This implementation is fair (FIFO) and crash-safe.
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedSemaphore.GetAvailable">func (*DistributedSemaphore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/semaphore.go?s=4497:4575#L126">GetAvailable</a>
+					<a class="permalink" href="index.html#DistributedSemaphore.GetAvailable">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ds *<a href="index.html#DistributedSemaphore">DistributedSemaphore</a>) GetAvailable(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetAvailable returns the number of currently active permits.
+Note: This counts &quot;waiting&quot; nodes as well if they are in the queue.
+For a more accurate &quot;remaining slots&quot; count, we compare with size.
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedSemaphore.GetHolders">func (*DistributedSemaphore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/semaphore.go?s=4925:5006#L140">GetHolders</a>
+					<a class="permalink" href="index.html#DistributedSemaphore.GetHolders">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ds *<a href="index.html#DistributedSemaphore">DistributedSemaphore</a>) GetHolders(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) ([]<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetHolders returns the list of lease IDs (as hex strings) currently holding or waiting for permits.
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedSemaphore.Release">func (*DistributedSemaphore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/semaphore.go?s=3736:3802#L105">Release</a>
+					<a class="permalink" href="index.html#DistributedSemaphore.Release">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ds *<a href="index.html#DistributedSemaphore">DistributedSemaphore</a>) Release(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Release releases a permit back to the semaphore.
+Note: This releases *one* permit held by the session.
+Ideally, the caller should pass the permitID, but keeping the interface simple
+implies we might release *any* permit held by this session.
+However, since we don&apos;t return a handle, we will release the *oldest* permit
+held by this session to approximate FIFO release.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="LeaderCallbacks">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go?s=731:948#L21">LeaderCallbacks</a>
+				<a class="permalink" href="index.html#LeaderCallbacks">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LeaderCallbacks defines callbacks for leader election events
+
+			<pre>type LeaderCallbacks struct {
+<span id="LeaderCallbacks.OnElected"></span>    OnElected    func() <span class="comment">// Called when this instance becomes leader</span>
+<span id="LeaderCallbacks.OnRevoked"></span>    OnRevoked    func() <span class="comment">// Called when leadership is lost</span>
+<span id="LeaderCallbacks.OnAttempting"></span>    OnAttempting func() <span class="comment">// Called when attempting to gain leadership</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LeaderElectionConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go?s=1001:1355#L28">LeaderElectionConfig</a>
+				<a class="permalink" href="index.html#LeaderElectionConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LeaderElectionConfig configures leader election
+
+			<pre>type LeaderElectionConfig struct {
+<span id="LeaderElectionConfig.Client"></span>    Client        *<a href="http://127.0.0.1:6060/pkg/go.etcd.io/etcd/client/v3/">clientv3</a>.<a href="http://127.0.0.1:6060/pkg/go.etcd.io/etcd/client/v3/#Client">Client</a>
+<span id="LeaderElectionConfig.SessionTTL"></span>    SessionTTL    <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>           <span class="comment">// Session TTL in seconds</span>
+<span id="LeaderElectionConfig.Key"></span>    Key           <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>        <span class="comment">// Etcd key for leader election</span>
+<span id="LeaderElectionConfig.Identity"></span>    Identity      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>        <span class="comment">// Unique identity for this instance</span>
+<span id="LeaderElectionConfig.ResignTimeout"></span>    ResignTimeout <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a> <span class="comment">// Optional explicit resign timeout on Stop</span>
+<span id="LeaderElectionConfig.Callbacks"></span>    Callbacks     <a href="index.html#LeaderCallbacks">LeaderCallbacks</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LeaderElector">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go?s=315:665#L6">LeaderElector</a>
+				<a class="permalink" href="index.html#LeaderElector">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LeaderElector manages leader election for distributed coordination
+
+			<pre>type LeaderElector struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewLeaderElector">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go?s=1406:1480#L38">NewLeaderElector</a>
+					<a class="permalink" href="index.html#NewLeaderElector">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewLeaderElector(config <a href="index.html#LeaderElectionConfig">LeaderElectionConfig</a>) (*<a href="index.html#LeaderElector">LeaderElector</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewLeaderElector creates a new leader elector
+
+				
+				
+			
+
+			
+				
+				<h3 id="LeaderElector.GetLeaderIdentity">func (*LeaderElector) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go?s=3294:3354#L112">GetLeaderIdentity</a>
+					<a class="permalink" href="index.html#LeaderElector.GetLeaderIdentity">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (le *<a href="index.html#LeaderElector">LeaderElector</a>) GetLeaderIdentity() (<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetLeaderIdentity returns the current leader&apos;s identity
+
+				
+				
+				
+			
+				
+				<h3 id="LeaderElector.IsLeader">func (*LeaderElector) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go?s=3131:3171#L105">IsLeader</a>
+					<a class="permalink" href="index.html#LeaderElector.IsLeader">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (le *<a href="index.html#LeaderElector">LeaderElector</a>) IsLeader() <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>IsLeader returns whether this instance is currently the leader
+
+				
+				
+				
+			
+				
+				<h3 id="LeaderElector.Start">func (*LeaderElector) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go?s=2498:2555#L78">Start</a>
+					<a class="permalink" href="index.html#LeaderElector.Start">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (le *<a href="index.html#LeaderElector">LeaderElector</a>) Start(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Start begins the leader election process
+
+				
+				
+				
+			
+				
+				<h3 id="LeaderElector.Stop">func (*LeaderElector) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go?s=2748:2779#L90">Stop</a>
+					<a class="permalink" href="index.html#LeaderElector.Stop">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (le *<a href="index.html#LeaderElector">LeaderElector</a>) Stop()</pre>
+				<p>Stop stops the leader election process
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="LeaderTask">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go?s=6827:7006#L260">LeaderTask</a>
+				<a class="permalink" href="index.html#LeaderTask">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LeaderTask defines a task that runs only on the leader
+
+			<pre>type LeaderTask struct {
+<span id="LeaderTask.Name"></span>    Name     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="LeaderTask.Function"></span>    Function func(<a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+<span id="LeaderTask.Interval"></span>    Interval <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="LeaderTask.RunUntil"></span>    RunUntil func() <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a> <span class="comment">// Function that returns true when task should stop</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LeaderTaskRunner">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go?s=6665:6767#L253">LeaderTaskRunner</a>
+				<a class="permalink" href="index.html#LeaderTaskRunner">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LeaderTaskRunner runs tasks that should only execute on the leader node
+
+			<pre>type LeaderTaskRunner struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewLeaderTaskRunner">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go?s=7064:7130#L268">NewLeaderTaskRunner</a>
+					<a class="permalink" href="index.html#NewLeaderTaskRunner">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewLeaderTaskRunner(elector *<a href="index.html#LeaderElector">LeaderElector</a>) *<a href="index.html#LeaderTaskRunner">LeaderTaskRunner</a></pre>
+				<p>NewLeaderTaskRunner creates a new leader task runner
+
+				
+				
+			
+
+			
+				
+				<h3 id="LeaderTaskRunner.AddTask">func (*LeaderTaskRunner) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go?s=7272:7325#L276">AddTask</a>
+					<a class="permalink" href="index.html#LeaderTaskRunner.AddTask">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ltr *<a href="index.html#LeaderTaskRunner">LeaderTaskRunner</a>) AddTask(task <a href="index.html#LeaderTask">LeaderTask</a>)</pre>
+				<p>AddTask adds a task that runs only on the leader
+
+				
+				
+				
+			
+				
+				<h3 id="LeaderTaskRunner.Start">func (*LeaderTaskRunner) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go?s=7610:7671#L288">Start</a>
+					<a class="permalink" href="index.html#LeaderTaskRunner.Start">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ltr *<a href="index.html#LeaderTaskRunner">LeaderTaskRunner</a>) Start(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Start starts running leader tasks
+
+				
+				
+				
+			
+				
+				<h3 id="LeaderTaskRunner.Stop">func (*LeaderTaskRunner) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/coordination/leader_election.go?s=7839:7874#L298">Stop</a>
+					<a class="permalink" href="index.html#LeaderTaskRunner.Stop">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ltr *<a href="index.html#LeaderTaskRunner">LeaderTaskRunner</a>) Stop()</pre>
+				<p>Stop stops all leader tasks
+
+				
+				
+				
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

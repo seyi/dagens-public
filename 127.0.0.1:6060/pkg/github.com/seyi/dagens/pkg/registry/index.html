@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>registry - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package registry
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/registry"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package registry provides distributed coordination and agent discovery
+using etcd for consistent shared state across the cluster.
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+			
+				
+				<dd><a href="index.html#DistributedAgentRegistry">type DistributedAgentRegistry</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewDistributedAgentRegistry">func NewDistributedAgentRegistry(config RegistryConfig) (*DistributedAgentRegistry, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.AddObserver">func (r *DistributedAgentRegistry) AddObserver(observer RegistryObserver)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.GetHealthyNodeCount">func (r *DistributedAgentRegistry) GetHealthyNodeCount() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.GetHealthyNodes">func (r *DistributedAgentRegistry) GetHealthyNodes() []NodeInfo</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.GetNode">func (r *DistributedAgentRegistry) GetNode(nodeID string) (NodeInfo, bool)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.GetNodeCount">func (r *DistributedAgentRegistry) GetNodeCount() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.GetNodeID">func (r *DistributedAgentRegistry) GetNodeID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.GetNodes">func (r *DistributedAgentRegistry) GetNodes() []NodeInfo</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.GetNodesByCapability">func (r *DistributedAgentRegistry) GetNodesByCapability(capability string) []NodeInfo</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.GetService">func (r *DistributedAgentRegistry) GetService(serviceName string) (ServiceInfo, bool)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.GetServices">func (r *DistributedAgentRegistry) GetServices(serviceName string) []ServiceInfo</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.NewBarrier">func (r *DistributedAgentRegistry) NewBarrier(key string, count int) *coordination.DistributedBarrier</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.NewLeaderElector">func (r *DistributedAgentRegistry) NewLeaderElector(key string, callbacks coordination.LeaderCallbacks) (*coordination.LeaderElector, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.NewMutex">func (r *DistributedAgentRegistry) NewMutex(key string) *coordination.DistributedMutex</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.NewSemaphore">func (r *DistributedAgentRegistry) NewSemaphore(key string, size int) *coordination.DistributedSemaphore</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.RegisterService">func (r *DistributedAgentRegistry) RegisterService(serviceName string, port int) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.RemoveObserver">func (r *DistributedAgentRegistry) RemoveObserver(observer RegistryObserver)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.Start">func (r *DistributedAgentRegistry) Start(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.Stop">func (r *DistributedAgentRegistry) Stop() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.UnregisterService">func (r *DistributedAgentRegistry) UnregisterService(serviceName string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedAgentRegistry.UpdateNodeLoad">func (r *DistributedAgentRegistry) UpdateNodeLoad(load float64) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#NodeInfo">type NodeInfo</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Registry">type Registry</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#RegistryConfig">type RegistryConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#RegistryObserver">type RegistryObserver</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ServiceInfo">type ServiceInfo</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go">distributed_registry.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/interface.go">interface.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+		
+			
+			
+			<h2 id="DistributedAgentRegistry">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=1382:1761#L35">DistributedAgentRegistry</a>
+				<a class="permalink" href="index.html#DistributedAgentRegistry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DistributedAgentRegistry provides distributed coordination and agent discovery
+
+			<pre>type DistributedAgentRegistry struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewDistributedAgentRegistry">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=2540:2630#L75">NewDistributedAgentRegistry</a>
+					<a class="permalink" href="index.html#NewDistributedAgentRegistry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewDistributedAgentRegistry(config <a href="index.html#RegistryConfig">RegistryConfig</a>) (*<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewDistributedAgentRegistry creates a new distributed agent registry
+
+				
+				
+			
+
+			
+				
+				<h3 id="DistributedAgentRegistry.AddObserver">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=14981:15054#L580">AddObserver</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.AddObserver">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) AddObserver(observer <a href="index.html#RegistryObserver">RegistryObserver</a>)</pre>
+				<p>AddObserver adds a registry observer
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.GetHealthyNodeCount">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=15694:15754#L607">GetHealthyNodeCount</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.GetHealthyNodeCount">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) GetHealthyNodeCount() <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+				<p>GetHealthyNodeCount returns the number of healthy nodes in the cluster
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.GetHealthyNodes">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=11508:11571#L438">GetHealthyNodes</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.GetHealthyNodes">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) GetHealthyNodes() []<a href="index.html#NodeInfo">NodeInfo</a></pre>
+				<p>GetHealthyNodes returns only healthy nodes
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.GetNode">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=11176:11250#L424">GetNode</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.GetNode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) GetNode(nodeID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="index.html#NodeInfo">NodeInfo</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)</pre>
+				<p>GetNode returns information about a specific node
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.GetNodeCount">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=15504:15557#L600">GetNodeCount</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.GetNodeCount">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) GetNodeCount() <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+				<p>GetNodeCount returns the total number of nodes in the cluster
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.GetNodeID">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=11386:11439#L433">GetNodeID</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.GetNodeID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) GetNodeID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>GetNodeID returns the local node ID
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.GetNodes">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=10901:10957#L412">GetNodes</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.GetNodes">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) GetNodes() []<a href="index.html#NodeInfo">NodeInfo</a></pre>
+				<p>GetNodes returns all known nodes in the cluster
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.GetNodesByCapability">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=11821:11906#L452">GetNodesByCapability</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.GetNodesByCapability">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) GetNodesByCapability(capability <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) []<a href="index.html#NodeInfo">NodeInfo</a></pre>
+				<p>GetNodesByCapability returns nodes that have the specified capability
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.GetService">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=14382:14467#L557">GetService</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.GetService">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) GetService(serviceName <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="index.html#ServiceInfo">ServiceInfo</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)</pre>
+				<p>GetService returns information about a service
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.GetServices">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=14638:14718#L566">GetServices</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.GetServices">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) GetServices(serviceName <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) []<a href="index.html#ServiceInfo">ServiceInfo</a></pre>
+				<p>GetServices returns all services registered under a name
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.NewBarrier">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=16228:16329#L628">NewBarrier</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.NewBarrier">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) NewBarrier(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, count <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) *<a href="../coordination/index.html">coordination</a>.<a href="../coordination/index.html#DistributedBarrier">DistributedBarrier</a></pre>
+				<p>NewBarrier creates a new distributed barrier using the registry&apos;s session
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.NewLeaderElector">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=16828:16968#L642">NewLeaderElector</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.NewLeaderElector">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) NewLeaderElector(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, callbacks <a href="../coordination/index.html">coordination</a>.<a href="../coordination/index.html#LeaderCallbacks">LeaderCallbacks</a>) (*<a href="../coordination/index.html">coordination</a>.<a href="../coordination/index.html#LeaderElector">LeaderElector</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewLeaderElector creates a new leader elector using the registry&apos;s client
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.NewMutex">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=15966:16052#L621">NewMutex</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.NewMutex">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) NewMutex(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) *<a href="../coordination/index.html">coordination</a>.<a href="../coordination/index.html#DistributedMutex">DistributedMutex</a></pre>
+				<p>NewMutex creates a new distributed mutex using the registry&apos;s session
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.NewSemaphore">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=16528:16632#L635">NewSemaphore</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.NewSemaphore">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) NewSemaphore(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, size <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) *<a href="../coordination/index.html">coordination</a>.<a href="../coordination/index.html#DistributedSemaphore">DistributedSemaphore</a></pre>
+				<p>NewSemaphore creates a new distributed semaphore using the registry&apos;s session
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.RegisterService">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=12802:12888#L493">RegisterService</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.RegisterService">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) RegisterService(serviceName <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, port <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>RegisterService registers a service on this node
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.RemoveObserver">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=15185:15261#L587">RemoveObserver</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.RemoveObserver">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) RemoveObserver(observer <a href="index.html#RegistryObserver">RegistryObserver</a>)</pre>
+				<p>RemoveObserver removes a registry observer
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.Start">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=4375:4442#L138">Start</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.Start">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) Start(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Start begins the registry operations including registration and watching
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.Stop">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=5598:5645#L188">Stop</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.Stop">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) Stop() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Stop stops the registry operations
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.UnregisterService">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=13864:13942#L537">UnregisterService</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.UnregisterService">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) UnregisterService(serviceName <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>UnregisterService removes a service registration
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedAgentRegistry.UpdateNodeLoad">func (*DistributedAgentRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=12208:12277#L469">UpdateNodeLoad</a>
+					<a class="permalink" href="index.html#DistributedAgentRegistry.UpdateNodeLoad">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#DistributedAgentRegistry">DistributedAgentRegistry</a>) UpdateNodeLoad(load <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>UpdateNodeLoad updates the load information for this node
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="NodeInfo">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=494:953#L12">NodeInfo</a>
+				<a class="permalink" href="index.html#NodeInfo">&#xb6;</a>
+				
+				
+			</h2>
+			<p>NodeInfo represents information about a node in the cluster
+
+			<pre>type NodeInfo struct {
+<span id="NodeInfo.ID"></span>    ID           <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>            `json:&#34;id&#34;`
+<span id="NodeInfo.Name"></span>    Name         <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>            `json:&#34;name&#34;`
+<span id="NodeInfo.Address"></span>    Address      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>            `json:&#34;address&#34;`
+<span id="NodeInfo.Port"></span>    Port         <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>               `json:&#34;port&#34;`
+<span id="NodeInfo.Capabilities"></span>    Capabilities []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>          `json:&#34;capabilities&#34;`
+<span id="NodeInfo.Metadata"></span>    Metadata     map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;metadata&#34;`
+<span id="NodeInfo.LastSeen"></span>    LastSeen     <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>         `json:&#34;last_seen&#34;`
+<span id="NodeInfo.Load"></span>    Load         <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>           `json:&#34;load&#34;`
+<span id="NodeInfo.Healthy"></span>    Healthy      <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>              `json:&#34;healthy&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Registry">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/interface.go?s=131:419#L1">Registry</a>
+				<a class="permalink" href="index.html#Registry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Registry is an interface wrapper for DistributedAgentRegistry to facilitate mocking/testing
+
+			<pre>type Registry interface {
+    GetHealthyNodes() []<a href="index.html#NodeInfo">NodeInfo</a>
+    GetNode(nodeID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="index.html#NodeInfo">NodeInfo</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)
+    GetNodes() []<a href="index.html#NodeInfo">NodeInfo</a>
+    GetNodeID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+    GetNodesByCapability(capability <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) []<a href="index.html#NodeInfo">NodeInfo</a>
+    GetNodeCount() <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+    GetHealthyNodeCount() <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+    Start(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    Stop() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="RegistryConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=2068:2466#L59">RegistryConfig</a>
+				<a class="permalink" href="index.html#RegistryConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RegistryConfig holds configuration for the distributed registry
+
+			<pre>type RegistryConfig struct {
+<span id="RegistryConfig.EtcdEndpoints"></span>    EtcdEndpoints     []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="RegistryConfig.EtcdDialTimeout"></span>    EtcdDialTimeout   <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="RegistryConfig.KeyPrefix"></span>    KeyPrefix         <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="RegistryConfig.NodeID"></span>    NodeID            <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="RegistryConfig.NodeName"></span>    NodeName          <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="RegistryConfig.NodeAddress"></span>    NodeAddress       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="RegistryConfig.NodePort"></span>    NodePort          <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="RegistryConfig.NodeCapabilities"></span>    NodeCapabilities  []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="RegistryConfig.NodeMetadata"></span>    NodeMetadata      map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="RegistryConfig.LeaseTTL"></span>    LeaseTTL          <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a> <span class="comment">// Lease TTL in seconds</span>
+<span id="RegistryConfig.WatchTimeout"></span>    WatchTimeout      <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="RegistryConfig.HeartbeatInterval"></span>    HeartbeatInterval <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="RegistryObserver">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=1829:1999#L51">RegistryObserver</a>
+				<a class="permalink" href="index.html#RegistryObserver">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RegistryObserver receives notifications about registry changes
+
+			<pre>type RegistryObserver interface {
+    NodeAdded(node <a href="index.html#NodeInfo">NodeInfo</a>)
+    NodeRemoved(nodeID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)
+    ServiceRegistered(service <a href="index.html#ServiceInfo">ServiceInfo</a>)
+    ServiceUnregistered(serviceName <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ServiceInfo">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/registry/distributed_registry.go?s=1027:1298#L25">ServiceInfo</a>
+				<a class="permalink" href="index.html#ServiceInfo">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ServiceInfo represents information about a service running on a node
+
+			<pre>type ServiceInfo struct {
+<span id="ServiceInfo.NodeID"></span>    NodeID      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>    `json:&#34;node_id&#34;`
+<span id="ServiceInfo.ServiceName"></span>    ServiceName <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>    `json:&#34;service_name&#34;`
+<span id="ServiceInfo.Address"></span>    Address     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>    `json:&#34;address&#34;`
+<span id="ServiceInfo.Port"></span>    Port        <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>       `json:&#34;port&#34;`
+<span id="ServiceInfo.LastSeen"></span>    LastSeen    <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a> `json:&#34;last_seen&#34;`
+<span id="ServiceInfo.Healthy"></span>    Healthy     <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>      `json:&#34;healthy&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

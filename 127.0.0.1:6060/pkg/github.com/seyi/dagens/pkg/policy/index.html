@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>policy - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package policy
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/policy"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+				<dd><a href="index.html#pkg-subdirectories">Subdirectories</a></dd>
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+			
+				
+				<dd><a href="index.html#Action">type Action</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AuditEvent">type AuditEvent</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AuditLogger">type AuditLogger</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Engine">type Engine</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewEngine">func NewEngine(auditLogger AuditLogger) *Engine</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Engine.Evaluate">func (e *Engine) Evaluate(ctx context.Context, config *PolicyConfig, content string, metadata EvaluationMetadata) (*EngineResult, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Engine.RegisterEvaluator">func (e *Engine) RegisterEvaluator(evaluator RuleEvaluator)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#EngineResult">type EngineResult</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ErrPolicyViolation">type ErrPolicyViolation</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ErrPolicyViolation.Error">func (e *ErrPolicyViolation) Error() string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#EvaluationMetadata">type EvaluationMetadata</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#EvaluationResult">type EvaluationResult</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Match">type Match</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#PolicyConfig">type PolicyConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Registry">type Registry</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewRegistry">func NewRegistry() *Registry</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Registry.Get">func (r *Registry) Get(ruleType string) (RuleEvaluator, bool)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Registry.Register">func (r *Registry) Register(e RuleEvaluator)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Registry.Types">func (r *Registry) Types() []string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#Rule">type Rule</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#RuleEvaluator">type RuleEvaluator</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Severity">type Severity</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/engine.go">engine.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/evaluator.go">evaluator.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/types.go">types.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+		
+			
+			
+			<h2 id="Action">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/types.go?s=87:105#L1">Action</a>
+				<a class="permalink" href="index.html#Action">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Action defines what happens when a rule matches
+
+			<pre>type Action <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="ActionPass">ActionPass</span>   <a href="index.html#Action">Action</a> = &#34;pass&#34;   <span class="comment">// Allow output unchanged</span>
+    <span id="ActionBlock">ActionBlock</span>  <a href="index.html#Action">Action</a> = &#34;block&#34;  <span class="comment">// Reject output entirely</span>
+    <span id="ActionRedact">ActionRedact</span> <a href="index.html#Action">Action</a> = &#34;redact&#34; <span class="comment">// Replace matched content with [REDACTED]</span>
+    <span id="ActionWarn">ActionWarn</span>   <a href="index.html#Action">Action</a> = &#34;warn&#34;   <span class="comment">// Allow but log warning</span>
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AuditEvent">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/types.go?s=2030:2886#L57">AuditEvent</a>
+				<a class="permalink" href="index.html#AuditEvent">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AuditEvent records a policy decision for compliance
+
+			<pre>type AuditEvent struct {
+<span id="AuditEvent.ID"></span>    ID          <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>             `json:&#34;id&#34;`
+<span id="AuditEvent.Timestamp"></span>    Timestamp   <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>          `json:&#34;timestamp&#34;`
+<span id="AuditEvent.SessionID"></span>    SessionID   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>             `json:&#34;session_id&#34;`
+<span id="AuditEvent.JobID"></span>    JobID       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>             `json:&#34;job_id&#34;`
+<span id="AuditEvent.NodeID"></span>    NodeID      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>             `json:&#34;node_id&#34;`
+<span id="AuditEvent.TraceID"></span>    TraceID     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>             `json:&#34;trace_id,omitempty&#34;` <span class="comment">// OTEL Trace ID</span>
+<span id="AuditEvent.SpanID"></span>    SpanID      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>             `json:&#34;span_id,omitempty&#34;`  <span class="comment">// OTEL Span ID</span>
+<span id="AuditEvent.InputHash"></span>    InputHash   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>             `json:&#34;input_hash&#34;`         <span class="comment">// SHA256 of input (not raw for privacy)</span>
+<span id="AuditEvent.OutputHash"></span>    OutputHash  <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>             `json:&#34;output_hash&#34;`        <span class="comment">// SHA256 of output</span>
+<span id="AuditEvent.Results"></span>    Results     []<a href="index.html#EvaluationResult">EvaluationResult</a> `json:&#34;results&#34;`
+<span id="AuditEvent.FinalAction"></span>    FinalAction <a href="index.html#Action">Action</a>             `json:&#34;final_action&#34;`
+<span id="AuditEvent.FinalOutput"></span>    FinalOutput <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>             `json:&#34;final_output,omitempty&#34;` <span class="comment">// Only if redacted</span>
+<span id="AuditEvent.DurationMs"></span>    DurationMs  <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>              `json:&#34;duration_ms&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AuditLogger">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/engine.go?s=215:296#L6">AuditLogger</a>
+				<a class="permalink" href="index.html#AuditLogger">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AuditLogger interface for logging policy decisions
+
+			<pre>type AuditLogger interface {
+    Log(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, event *<a href="index.html#AuditEvent">AuditEvent</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Engine">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/engine.go?s=339:409#L11">Engine</a>
+				<a class="permalink" href="index.html#Engine">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Engine orchestrates policy evaluation
+
+			<pre>type Engine struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewEngine">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/engine.go?s=480:527#L17">NewEngine</a>
+					<a class="permalink" href="index.html#NewEngine">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewEngine(auditLogger <a href="index.html#AuditLogger">AuditLogger</a>) *<a href="index.html#Engine">Engine</a></pre>
+				<p>NewEngine creates a new policy engine with the given audit logger
+
+				
+				
+			
+
+			
+				
+				<h3 id="Engine.Evaluate">func (*Engine) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/engine.go?s=841:977#L30">Evaluate</a>
+					<a class="permalink" href="index.html#Engine.Evaluate">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (e *<a href="index.html#Engine">Engine</a>) Evaluate(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, config *<a href="index.html#PolicyConfig">PolicyConfig</a>, content <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, metadata <a href="index.html#EvaluationMetadata">EvaluationMetadata</a>) (*<a href="index.html#EngineResult">EngineResult</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Evaluate runs all rules against the content and returns the final result
+
+				
+				
+				
+			
+				
+				<h3 id="Engine.RegisterEvaluator">func (*Engine) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/engine.go?s=668:727#L25">RegisterEvaluator</a>
+					<a class="permalink" href="index.html#Engine.RegisterEvaluator">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (e *<a href="index.html#Engine">Engine</a>) RegisterEvaluator(evaluator <a href="index.html#RuleEvaluator">RuleEvaluator</a>)</pre>
+				<p>RegisterEvaluator adds a rule evaluator to the engine
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="EngineResult">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/types.go?s=2936:3074#L74">EngineResult</a>
+				<a class="permalink" href="index.html#EngineResult">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EngineResult holds the final policy decision
+
+			<pre>type EngineResult struct {
+<span id="EngineResult.Allowed"></span>    Allowed     <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+<span id="EngineResult.FinalAction"></span>    FinalAction <a href="index.html#Action">Action</a>
+<span id="EngineResult.FinalOutput"></span>    FinalOutput <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="EngineResult.BlockReason"></span>    BlockReason <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="EngineResult.Results"></span>    Results     []<a href="index.html#EvaluationResult">EvaluationResult</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ErrPolicyViolation">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/types.go?s=3327:3391#L92">ErrPolicyViolation</a>
+				<a class="permalink" href="index.html#ErrPolicyViolation">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ErrPolicyViolation is returned when a policy blocks an execution
+
+			<pre>type ErrPolicyViolation struct {
+<span id="ErrPolicyViolation.Reason"></span>    Reason <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="ErrPolicyViolation.RuleID"></span>    RuleID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="ErrPolicyViolation.Error">func (*ErrPolicyViolation) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/types.go?s=3393:3436#L97">Error</a>
+					<a class="permalink" href="index.html#ErrPolicyViolation.Error">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (e *<a href="index.html#ErrPolicyViolation">ErrPolicyViolation</a>) Error() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="EvaluationMetadata">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/types.go?s=3133:3257#L83">EvaluationMetadata</a>
+				<a class="permalink" href="index.html#EvaluationMetadata">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EvaluationMetadata provides context for audit logging
+
+			<pre>type EvaluationMetadata struct {
+<span id="EvaluationMetadata.SessionID"></span>    SessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="EvaluationMetadata.JobID"></span>    JobID     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="EvaluationMetadata.NodeID"></span>    NodeID    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="EvaluationMetadata.TraceID"></span>    TraceID   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="EvaluationMetadata.SpanID"></span>    SpanID    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="EvaluationResult">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/types.go?s=1112:1422#L29">EvaluationResult</a>
+				<a class="permalink" href="index.html#EvaluationResult">&#xb6;</a>
+				
+				
+			</h2>
+			<p>EvaluationResult holds the result of evaluating a rule
+
+			<pre>type EvaluationResult struct {
+<span id="EvaluationResult.RuleID"></span>    RuleID   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="EvaluationResult.RuleName"></span>    RuleName <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="EvaluationResult.Matched"></span>    Matched  <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+<span id="EvaluationResult.Action"></span>    Action   <a href="index.html#Action">Action</a>
+<span id="EvaluationResult.Severity"></span>    Severity <a href="index.html#Severity">Severity</a>
+<span id="EvaluationResult.Original"></span>    Original <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>  <span class="comment">// Original content (for audit)</span>
+<span id="EvaluationResult.Redacted"></span>    Redacted <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>  <span class="comment">// Redacted content (if action=redact)</span>
+<span id="EvaluationResult.Matches"></span>    Matches  []<a href="index.html#Match">Match</a> <span class="comment">// What was matched</span>
+<span id="EvaluationResult.Reason"></span>    Reason   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>  <span class="comment">// Human-readable explanation</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Match">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/types.go?s=1478:1668#L42">Match</a>
+				<a class="permalink" href="index.html#Match">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Match represents a single match within the content
+
+			<pre>type Match struct {
+<span id="Match.Type"></span>    Type       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> <span class="comment">// &#34;email&#34;, &#34;phone&#34;, &#34;ssn&#34;, &#34;keyword&#34;, etc.</span>
+<span id="Match.Value"></span>    Value      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> <span class="comment">// The matched value (may be partially masked in logs)</span>
+<span id="Match.StartIndex"></span>    StartIndex <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="Match.EndIndex"></span>    EndIndex   <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="PolicyConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/types.go?s=1737:1973#L50">PolicyConfig</a>
+				<a class="permalink" href="index.html#PolicyConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>PolicyConfig holds the complete policy configuration for a node
+
+			<pre>type PolicyConfig struct {
+<span id="PolicyConfig.Rules"></span>    Rules            []<a href="index.html#Rule">Rule</a> `json:&#34;rules&#34;`
+<span id="PolicyConfig.FailOpen"></span>    FailOpen         <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>   `json:&#34;fail_open&#34;`           <span class="comment">// If true, allow on rule error</span>
+<span id="PolicyConfig.StopOnFirstMatch"></span>    StopOnFirstMatch <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>   `json:&#34;stop_on_first_match&#34;` <span class="comment">// Short-circuit evaluation</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Registry">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/evaluator.go?s=418:479#L5">Registry</a>
+				<a class="permalink" href="index.html#Registry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Registry holds all registered rule evaluators
+
+			<pre>type Registry struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewRegistry">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/evaluator.go?s=522:550#L10">NewRegistry</a>
+					<a class="permalink" href="index.html#NewRegistry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewRegistry() *<a href="index.html#Registry">Registry</a></pre>
+				<p>NewRegistry creates an empty registry
+
+				
+				
+			
+
+			
+				
+				<h3 id="Registry.Get">func (*Registry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/evaluator.go?s=786:847#L22">Get</a>
+					<a class="permalink" href="index.html#Registry.Get">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#Registry">Registry</a>) Get(ruleType <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="index.html#RuleEvaluator">RuleEvaluator</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)</pre>
+				<p>Get retrieves an evaluator by type
+
+				
+				
+				
+			
+				
+				<h3 id="Registry.Register">func (*Registry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/evaluator.go?s=670:714#L17">Register</a>
+					<a class="permalink" href="index.html#Registry.Register">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#Registry">Registry</a>) Register(e <a href="index.html#RuleEvaluator">RuleEvaluator</a>)</pre>
+				<p>Register adds an evaluator to the registry
+
+				
+				
+				
+			
+				
+				<h3 id="Registry.Types">func (*Registry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/evaluator.go?s=943:978#L28">Types</a>
+					<a class="permalink" href="index.html#Registry.Types">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#Registry">Registry</a>) Types() []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>Types returns all registered rule types
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Rule">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/types.go?s=645:1052#L18">Rule</a>
+				<a class="permalink" href="index.html#Rule">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Rule defines a single policy rule
+
+			<pre>type Rule struct {
+<span id="Rule.ID"></span>    ID       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;id&#34;`
+<span id="Rule.Name"></span>    Name     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;name&#34;`
+<span id="Rule.Type"></span>    Type     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;type&#34;` <span class="comment">// &#34;pii&#34;, &#34;content&#34;, &#34;length&#34;, &#34;regex&#34;, &#34;custom&#34;</span>
+<span id="Rule.Action"></span>    Action   <a href="index.html#Action">Action</a>                 `json:&#34;action&#34;`
+<span id="Rule.Severity"></span>    Severity <a href="index.html#Severity">Severity</a>               `json:&#34;severity&#34;`
+<span id="Rule.Enabled"></span>    Enabled  <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>                   `json:&#34;enabled&#34;`
+<span id="Rule.Config"></span>    Config   map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;config&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="RuleEvaluator">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/evaluator.go?s=98:367#L1">RuleEvaluator</a>
+				<a class="permalink" href="index.html#RuleEvaluator">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RuleEvaluator is the interface all rule types must implement
+
+			<pre>type RuleEvaluator interface {
+    <span class="comment">// Type returns the rule type identifier (e.g., &#34;pii&#34;, &#34;content&#34;)</span>
+    Type() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Evaluate checks the content against the rule</span>
+    Evaluate(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, content <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, config map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}) (*<a href="index.html#EvaluationResult">EvaluationResult</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Severity">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/types.go?s=426:446#L8">Severity</a>
+				<a class="permalink" href="index.html#Severity">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Severity indicates the seriousness of a policy violation
+
+			<pre>type Severity <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="SeverityLow">SeverityLow</span>      <a href="index.html#Severity">Severity</a> = &#34;low&#34;
+    <span id="SeverityMedium">SeverityMedium</span>   <a href="index.html#Severity">Severity</a> = &#34;medium&#34;
+    <span id="SeverityHigh">SeverityHigh</span>     <a href="index.html#Severity">Severity</a> = &#34;high&#34;
+    <span id="SeverityCritical">SeverityCritical</span> <a href="index.html#Severity">Severity</a> = &#34;critical&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+	
+	
+		<h2 id="pkg-subdirectories">Subdirectories</h2>
+	
+	<div class="pkg-dir">
+		<table>
+			<tr>
+				<th class="pkg-name">Name</th>
+				<th class="pkg-synopsis">Synopsis</th>
+			</tr>
+
+			
+			<tr>
+				<td colspan="2"><a href="../index.html">..</a></td>
+			</tr>
+			
+
+			
+				<tr>
+				
+					<td class="pkg-name" style="padding-left: 0px;">
+						<a href="audit/index.html">audit</a>
+					</td>
+				
+					<td class="pkg-synopsis">
+						
+					</td>
+				</tr>
+			
+				<tr>
+				
+					<td class="pkg-name" style="padding-left: 0px;">
+						<a href="rules/index.html">rules</a>
+					</td>
+				
+					<td class="pkg-synopsis">
+						
+					</td>
+				</tr>
+			
+		</table>
+	</div>
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

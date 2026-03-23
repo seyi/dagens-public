@@ -1,0 +1,4014 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>hitl - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package hitl
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/hitl"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package hitl provides integration between the graph package and HITL checkpoint system
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+				<dd><a href="index.html#pkg-constants">Constants</a></dd>
+			
+			
+				<dd><a href="index.html#pkg-variables">Variables</a></dd>
+			
+			
+				
+				<dd><a href="index.html#DeserializeState">func DeserializeState(data []byte) (graph.State, error)</a></dd>
+			
+				
+				<dd><a href="index.html#ExecuteGraph">func ExecuteGraph(graphID, graphVersion string, initialState graph.State, executor ResumableExecutor, checkpointStore CheckpointStore, responseMgr *HumanResponseManager) (finalState graph.State, err error)</a></dd>
+			
+				
+				<dd><a href="index.html#ExecuteGraphWithMetrics">func ExecuteGraphWithMetrics(graphID, graphVersion string, initialState graph.State, executor ResumableExecutor, checkpointStore CheckpointStore, responseMgr *HumanResponseManager, metrics *HITLMetrics) (finalState graph.State, err error)</a></dd>
+			
+				
+				<dd><a href="index.html#IsDeadlockError">func IsDeadlockError(err error) bool</a></dd>
+			
+				
+				<dd><a href="index.html#IsRetryableError">func IsRetryableError(err error) bool</a></dd>
+			
+				
+				<dd><a href="index.html#IsSerializationError">func IsSerializationError(err error) bool</a></dd>
+			
+				
+				<dd><a href="index.html#ResumeGraphFromCheckpoint">func ResumeGraphFromCheckpoint(requestID string, response *HumanResponse, checkpointStore CheckpointStore, idempotencyStore IdempotencyStore, graphRegistry GraphRegistry, executorFactory func(graphID, graphVersion string) ResumableExecutor) error</a></dd>
+			
+			
+				
+				<dd><a href="index.html#Alert">type Alert</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AlertService">type AlertService</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewAlertService">func NewAlertService() *AlertService</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AlertService.CheckAlerts">func (a *AlertService) CheckAlerts(metrics *HITLMetrics) []Alert</a></dd>
+				
+			
+				
+				<dd><a href="index.html#AlertThresholds">type AlertThresholds</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#CallbackHandler">type CallbackHandler</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewCallbackHandler">func NewCallbackHandler(queue ResumptionQueue, idempotencyStore IdempotencyStore, graphRegistry GraphRegistry, callbackSecret []byte, metrics *HITLMetrics) *CallbackHandler</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#CallbackHandler.HandleHumanCallback">func (h *CallbackHandler) HandleHumanCallback(w http.ResponseWriter, r *http.Request, requestID string, timestamp int64, signature string, response *HumanResponse)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#CheckpointReplaceStore">type CheckpointReplaceStore</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#CheckpointStore">type CheckpointStore</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ExecutableGraphRegistry">type ExecutableGraphRegistry</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ExecutionCheckpoint">type ExecutionCheckpoint</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#GraphDefinition">type GraphDefinition</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#GraphRegistry">type GraphRegistry</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#HITLMetrics">type HITLMetrics</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.DecActiveWaitingWorkflows">func (m *HITLMetrics) DecActiveWaitingWorkflows()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.DecBlockingWaitsActive">func (m *HITLMetrics) DecBlockingWaitsActive()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.DecDLQSize">func (m *HITLMetrics) DecDLQSize()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.DecResumptionWorkerBusy">func (m *HITLMetrics) DecResumptionWorkerBusy()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncActiveWaitingWorkflows">func (m *HITLMetrics) IncActiveWaitingWorkflows()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncBlockingWaitsActive">func (m *HITLMetrics) IncBlockingWaitsActive()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncCallbackDuplicates">func (m *HITLMetrics) IncCallbackDuplicates()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncCallbackSecurityFailures">func (m *HITLMetrics) IncCallbackSecurityFailures()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncCallbacksEnqueued">func (m *HITLMetrics) IncCallbacksEnqueued()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncCallbacksReceived">func (m *HITLMetrics) IncCallbacksReceived()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncCallbacksSuccessful">func (m *HITLMetrics) IncCallbacksSuccessful()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncCheckpointCreations">func (m *HITLMetrics) IncCheckpointCreations()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncCheckpointsMovedToDLQ">func (m *HITLMetrics) IncCheckpointsMovedToDLQ()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncDLQSize">func (m *HITLMetrics) IncDLQSize()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncGraphVersionMismatches">func (m *HITLMetrics) IncGraphVersionMismatches()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncResumeFailures">func (m *HITLMetrics) IncResumeFailures()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncResumptionDequeueErrors">func (m *HITLMetrics) IncResumptionDequeueErrors()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncResumptionRetries">func (m *HITLMetrics) IncResumptionRetries()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncResumptionWorkerBusy">func (m *HITLMetrics) IncResumptionWorkerBusy()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.IncStateSerializationFailures">func (m *HITLMetrics) IncStateSerializationFailures()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.ObserveCallbackLatency">func (m *HITLMetrics) ObserveCallbackLatency(d time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.ObserveCheckpointCreationLatency">func (m *HITLMetrics) ObserveCheckpointCreationLatency(d time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.ObserveCheckpointSizeBytes">func (m *HITLMetrics) ObserveCheckpointSizeBytes(size int)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.ObserveHumanResponseTime">func (m *HITLMetrics) ObserveHumanResponseTime(d time.Duration)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.SetDLQSize">func (m *HITLMetrics) SetDLQSize(v float64)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HITLMetrics.SetResumptionQueueLength">func (m *HITLMetrics) SetResumptionQueueLength(v float64)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#HumanNode">type HumanNode</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewHumanNode">func NewHumanNode(config HumanNodeConfig) *HumanNode</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HumanNode.Execute">func (n *HumanNode) Execute(ctx context.Context, state graph.State) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#HumanNodeConfig">type HumanNodeConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#HumanRequest">type HumanRequest</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#HumanResponse">type HumanResponse</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#HumanResponseManager">type HumanResponseManager</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewHumanResponseManager">func NewHumanResponseManager() *HumanResponseManager</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HumanResponseManager.DeliverResponse">func (m *HumanResponseManager) DeliverResponse(requestID string, response *HumanResponse)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HumanResponseManager.NotifyHuman">func (m *HumanResponseManager) NotifyHuman(req *HumanRequest) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HumanResponseManager.RegisterCallback">func (m *HumanResponseManager) RegisterCallback(requestID string, callback func(*HumanResponse))</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HumanResponseManager.Unregister">func (m *HumanResponseManager) Unregister(requestID string)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#IdempotencyStore">type IdempotencyStore</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LoggingService">type LoggingService</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewLoggingService">func NewLoggingService() *LoggingService</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LoggingService.LogCallbackReceived">func (l *LoggingService) LogCallbackReceived(requestID string, latency time.Duration, isDuplicate bool, traceID string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LoggingService.LogCheckpointCreated">func (l *LoggingService) LogCheckpointCreated(requestID, graphID, graphVersion, nodeID string, stateSize int, traceID string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LoggingService.LogVersionMismatch">func (l *LoggingService) LogVersionMismatch(checkpointVersion, currentVersion, requestID string)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MetricsCollector">type MetricsCollector</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMetricsCollector">func NewMetricsCollector() *MetricsCollector</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MetricsCollector.GetMetrics">func (m *MetricsCollector) GetMetrics() *HITLMetrics</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MonitoringService">type MonitoringService</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMonitoringService">func NewMonitoringService(collector *MetricsCollector) *MonitoringService</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MonitoringService.HealthCheck">func (m *MonitoringService) HealthCheck() map[string]interface{}</a></dd>
+				
+			
+				
+				<dd><a href="index.html#OperationalToolService">type OperationalToolService</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewOperationalToolService">func NewOperationalToolService(checkpointStore CheckpointStore, idempotencyStore IdempotencyStore) *OperationalToolService</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OperationalToolService.CancelCheckpoint">func (o *OperationalToolService) CancelCheckpoint(requestID string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OperationalToolService.InspectCheckpoint">func (o *OperationalToolService) InspectCheckpoint(requestID string) (*ExecutionCheckpoint, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OperationalToolService.ListDLQ">func (o *OperationalToolService) ListDLQ() ([]*ExecutionCheckpoint, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OperationalToolService.ReplayCallback">func (o *OperationalToolService) ReplayCallback(requestID string, payload *HumanResponse) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#PostgresCheckpointStore">type PostgresCheckpointStore</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewPostgresCheckpointStore">func NewPostgresCheckpointStore(ctx context.Context, pool *pgxpool.Pool) (*PostgresCheckpointStore, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewPostgresCheckpointStoreFromURL">func NewPostgresCheckpointStoreFromURL(ctx context.Context, connString string) (*PostgresCheckpointStore, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.BeginSerializableTransaction">func (s *PostgresCheckpointStore) BeginSerializableTransaction(ctx context.Context) (Transaction, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.BeginTransaction">func (s *PostgresCheckpointStore) BeginTransaction(ctx context.Context) (Transaction, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.Close">func (s *PostgresCheckpointStore) Close() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.Create">func (s *PostgresCheckpointStore) Create(cp *ExecutionCheckpoint) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.CreateIfAbsentSerializable">func (s *PostgresCheckpointStore) CreateIfAbsentSerializable(cp *ExecutionCheckpoint, invariantCheck func(existing *ExecutionCheckpoint) error) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.CreateOrUpdateSerializable">func (s *PostgresCheckpointStore) CreateOrUpdateSerializable(cp *ExecutionCheckpoint, invariantCheck func(existing *ExecutionCheckpoint) error) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.CreateWithTransaction">func (s *PostgresCheckpointStore) CreateWithTransaction(tx Transaction, cp *ExecutionCheckpoint) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.Delete">func (s *PostgresCheckpointStore) Delete(requestID string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.GetByRequestID">func (s *PostgresCheckpointStore) GetByRequestID(requestID string) (*ExecutionCheckpoint, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.ListOrphaned">func (s *PostgresCheckpointStore) ListOrphaned(olderThan time.Duration) ([]*ExecutionCheckpoint, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.MoveToCheckpointDLQ">func (s *PostgresCheckpointStore) MoveToCheckpointDLQ(requestID string, finalError string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.MoveToCheckpointDLQSerializable">func (s *PostgresCheckpointStore) MoveToCheckpointDLQSerializable(requestID string, finalError string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.RecordFailure">func (s *PostgresCheckpointStore) RecordFailure(requestID string, err error) (*ExecutionCheckpoint, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.Replace">func (s *PostgresCheckpointStore) Replace(oldRequestID string, next *ExecutionCheckpoint) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresCheckpointStore.WithSerializableRetry">func (s *PostgresCheckpointStore) WithSerializableRetry(ctx context.Context, config SerializationConfig, op SerializableOperation) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#RedisCheckpointStore">type RedisCheckpointStore</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewRedisCheckpointStore">func NewRedisCheckpointStore() *RedisCheckpointStore</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisCheckpointStore.Create">func (r *RedisCheckpointStore) Create(cp *ExecutionCheckpoint) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisCheckpointStore.CreateWithTransaction">func (r *RedisCheckpointStore) CreateWithTransaction(tx Transaction, cp *ExecutionCheckpoint) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisCheckpointStore.Delete">func (r *RedisCheckpointStore) Delete(requestID string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisCheckpointStore.GetByRequestID">func (r *RedisCheckpointStore) GetByRequestID(requestID string) (*ExecutionCheckpoint, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisCheckpointStore.ListOrphaned">func (r *RedisCheckpointStore) ListOrphaned(olderThan time.Duration) ([]*ExecutionCheckpoint, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisCheckpointStore.MoveToCheckpointDLQ">func (r *RedisCheckpointStore) MoveToCheckpointDLQ(requestID string, finalError string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisCheckpointStore.RecordFailure">func (r *RedisCheckpointStore) RecordFailure(requestID string, err error) (*ExecutionCheckpoint, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisCheckpointStore.Replace">func (r *RedisCheckpointStore) Replace(oldRequestID string, next *ExecutionCheckpoint) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#RedisIdempotencyStore">type RedisIdempotencyStore</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewRedisIdempotencyStore">func NewRedisIdempotencyStore(client *redis.Client) *RedisIdempotencyStore</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisIdempotencyStore.Delete">func (r *RedisIdempotencyStore) Delete(key string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisIdempotencyStore.Exists">func (r *RedisIdempotencyStore) Exists(key string) (bool, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisIdempotencyStore.Set">func (r *RedisIdempotencyStore) Set(key string, ttl time.Duration) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisIdempotencyStore.SetNX">func (r *RedisIdempotencyStore) SetNX(key string, ttl time.Duration) (bool, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#RedisQueueConfig">type RedisQueueConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#RedisResumptionQueue">type RedisResumptionQueue</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewRedisResumptionQueue">func NewRedisResumptionQueue(client *redis.Client, cfg RedisQueueConfig) (*RedisResumptionQueue, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisResumptionQueue.Ack">func (q *RedisResumptionQueue) Ack(ctx context.Context, jobID string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisResumptionQueue.Dequeue">func (q *RedisResumptionQueue) Dequeue(ctx context.Context) (*ResumptionJob, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisResumptionQueue.Enqueue">func (q *RedisResumptionQueue) Enqueue(ctx context.Context, job *ResumptionJob) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RedisResumptionQueue.QueueLength">func (q *RedisResumptionQueue) QueueLength(ctx context.Context) (int64, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#ResumableExecutor">type ResumableExecutor</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ResumptionJob">type ResumptionJob</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ResumptionQueue">type ResumptionQueue</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ResumptionWorker">type ResumptionWorker</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewResumptionWorker">func NewResumptionWorker(queue ResumptionQueue, checkpointStore CheckpointStore, idempotencyStore IdempotencyStore, graphRegistry GraphRegistry, executorFactory func(graphID, graphVersion string) ResumableExecutor, metrics *HITLMetrics) *ResumptionWorker</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ResumptionWorker.Start">func (w *ResumptionWorker) Start(ctx context.Context, numWorkers int)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ResumptionWorker.Stop">func (w *ResumptionWorker) Stop()</a></dd>
+				
+			
+				
+				<dd><a href="index.html#RunbookService">type RunbookService</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewRunbookService">func NewRunbookService() *RunbookService</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RunbookService.GetRunbook">func (r *RunbookService) GetRunbook(issueType string) string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SecretRotationManager">type SecretRotationManager</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSecretRotationManager">func NewSecretRotationManager(currentSecret []byte) *SecretRotationManager</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SecretRotationManager.GetCurrentSecret">func (s *SecretRotationManager) GetCurrentSecret() []byte</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SecretRotationManager.GetPreviousSecret">func (s *SecretRotationManager) GetPreviousSecret() []byte</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SecretRotationManager.IsWithinRotationWindow">func (s *SecretRotationManager) IsWithinRotationWindow(requestTime time.Time) bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SecretRotationManager.RotateSecret">func (s *SecretRotationManager) RotateSecret(newSecret []byte)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SecurityManager">type SecurityManager</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSecurityManager">func NewSecurityManager(secret []byte) *SecurityManager</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SecurityManager.GenerateCallbackURL">func (s *SecurityManager) GenerateCallbackURL(baseURL, requestID string) string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SecurityManager.SignHMAC">func (s *SecurityManager) SignHMAC(payload string) string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SecurityManager.VerifyCallbackSignature">func (s *SecurityManager) VerifyCallbackSignature(requestID string, timestamp int64, signature string) bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SecurityManager.VerifyHMACSignature">func (s *SecurityManager) VerifyHMACSignature(payload, signature string) bool</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SerializableOperation">type SerializableOperation</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#SerializationConfig">type SerializationConfig</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DefaultSerializationConfig">func DefaultSerializationConfig() SerializationConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#SimpleGraphRegistry">type SimpleGraphRegistry</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSimpleGraphRegistry">func NewSimpleGraphRegistry() *SimpleGraphRegistry</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleGraphRegistry.GetExecutableGraph">func (s *SimpleGraphRegistry) GetExecutableGraph(graphID string) (*graph.Graph, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleGraphRegistry.GetGraph">func (s *SimpleGraphRegistry) GetGraph(graphID string) (GraphDefinition, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleGraphRegistry.RegisterExecutableGraph">func (s *SimpleGraphRegistry) RegisterExecutableGraph(g *graph.Graph, version string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleGraphRegistry.RegisterGraph">func (s *SimpleGraphRegistry) RegisterGraph(graphDef GraphDefinition)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SimpleInMemoryQueue">type SimpleInMemoryQueue</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSimpleInMemoryQueue">func NewSimpleInMemoryQueue(size int) *SimpleInMemoryQueue</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleInMemoryQueue.Ack">func (s *SimpleInMemoryQueue) Ack(ctx context.Context, jobID string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleInMemoryQueue.Dequeue">func (s *SimpleInMemoryQueue) Dequeue(ctx context.Context) (*ResumptionJob, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleInMemoryQueue.Enqueue">func (s *SimpleInMemoryQueue) Enqueue(ctx context.Context, job *ResumptionJob) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleInMemoryQueue.QueueLength">func (s *SimpleInMemoryQueue) QueueLength(ctx context.Context) (int64, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SimpleResumableExecutor">type SimpleResumableExecutor</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSimpleResumableExecutor">func NewSimpleResumableExecutor(graphID, graphVersion string, nodes map[string]graph.Node) *SimpleResumableExecutor</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleResumableExecutor.CurrentNodeID">func (s *SimpleResumableExecutor) CurrentNodeID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleResumableExecutor.ExecuteCurrent">func (s *SimpleResumableExecutor) ExecuteCurrent(state graph.State) (graph.State, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SimpleResumableExecutor.ResumeFromNode">func (s *SimpleResumableExecutor) ResumeFromNode(nodeID string, state graph.State) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#StateValidator">type StateValidator</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewStateValidator">func NewStateValidator() *StateValidator</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#StateValidator.ValidateState">func (s *StateValidator) ValidateState(state graph.State) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#StateValidator.ValidateStateSnapshot">func (s *StateValidator) ValidateStateSnapshot(snapshot *graph.StateSnapshot) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#StdioCheckpointNode">type StdioCheckpointNode</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewStdioCheckpointNode">func NewStdioCheckpointNode(config StdioCheckpointNodeConfig) *StdioCheckpointNode</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#StdioCheckpointNode.Execute">func (n *StdioCheckpointNode) Execute(ctx context.Context, state graph.State) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#StdioCheckpointNodeConfig">type StdioCheckpointNodeConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#System">type System</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewSystem">func NewSystem(config SystemConfig) *System</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#System.CreateCallbackHandler">func (s *System) CreateCallbackHandler() *CallbackHandler</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#System.CreateHumanNode">func (s *System) CreateHumanNode(config HumanNodeConfig) *HumanNode</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#System.GetMonitoringService">func (s *System) GetMonitoringService() *MonitoringService</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#System.GetOperationalTools">func (s *System) GetOperationalTools() *OperationalToolService</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#System.RunHealthCheck">func (s *System) RunHealthCheck() map[string]interface{}</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#System.Start">func (s *System) Start(ctx context.Context) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#System.Stop">func (s *System) Stop()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#System.ValidateStateSerialization">func (s *System) ValidateStateSerialization(state graph.State) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SystemConfig">type SystemConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#TracingService">type TracingService</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewTracingService">func NewTracingService() *TracingService</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#TracingService.AddTraceField">func (t *TracingService) AddTraceField(ctx context.Context, key, value string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#TracingService.StartTrace">func (t *TracingService) StartTrace(operationName string) (context.Context, func())</a></dd>
+				
+			
+				
+				<dd><a href="index.html#Transaction">type Transaction</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/callback_handler.go">callback_handler.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/constants.go">constants.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/graph_resume.go">graph_resume.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/human_node.go">human_node.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go">implementation.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/interfaces.go">interfaces.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/logging.go">logging.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go">metrics.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/models.go">models.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go">observability.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/orchestrator.go">orchestrator.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go">postgres_store.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/redis_store.go">redis_store.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/resumption_worker.go">resumption_worker.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go">security.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/stdio_integration.go">stdio_integration.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/system.go">system.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+			<h2 id="pkg-constants">Constants</h2>
+			
+				<p>System state key prefixes - all underscore-prefixed keys are reserved
+
+				<pre>const (
+    <span id="StateKeyHumanPendingFmt">StateKeyHumanPendingFmt</span> = &#34;_hitl_pending:%s&#34; <span class="comment">// Format: node ID</span>
+    <span id="StateKeyHumanRequestID">StateKeyHumanRequestID</span>  = &#34;_hitl_request_id&#34; <span class="comment">// Internal use only</span>
+    <span id="StateKeyHumanTimeout">StateKeyHumanTimeout</span>    = &#34;_hitl_timeout&#34;    <span class="comment">// Internal use only</span>
+    <span id="StateKeyReservedPrefix">StateKeyReservedPrefix</span>  = &#34;_&#34;                <span class="comment">// All _ keys are system-reserved</span>
+)</pre>
+			
+				<p>System-wide timeout and retry constants
+
+				<pre>const (
+    <span id="ProcessingLockTTL">ProcessingLockTTL</span>     = 5 * <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Minute">Minute</a> <span class="comment">// Lock duration for callback processing</span>
+    <span id="MaxResumptionAttempts">MaxResumptionAttempts</span> = 3               <span class="comment">// Max retry attempts for resumption</span>
+)</pre>
+			
+				<p>Serialization retry configuration
+
+				<pre>const (
+    <span class="comment">// DefaultMaxSerializationRetries is the default number of retries for serialization failures</span>
+    <span id="DefaultMaxSerializationRetries">DefaultMaxSerializationRetries</span> = 3
+    <span class="comment">// DefaultBaseBackoff is the base delay for exponential backoff</span>
+    <span id="DefaultBaseBackoff">DefaultBaseBackoff</span> = 10 * <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Millisecond">Millisecond</a>
+    <span class="comment">// DefaultMaxBackoff caps the maximum backoff delay</span>
+    <span id="DefaultMaxBackoff">DefaultMaxBackoff</span> = 500 * <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Millisecond">Millisecond</a>
+)</pre>
+			
+		
+		
+			<h2 id="pkg-variables">Variables</h2>
+			
+				<p>Errors
+
+				<pre>var (
+    <span id="ErrHumanInteractionPending">ErrHumanInteractionPending</span> = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;human interaction pending: checkpoint required&#34;)
+    <span id="ErrHumanTimeout">ErrHumanTimeout</span>            = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;human response timeout exceeded&#34;)
+    <span id="ErrCheckpointNotFound">ErrCheckpointNotFound</span>      = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;checkpoint not found&#34;)
+    <span id="ErrInvalidSignature">ErrInvalidSignature</span>        = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;invalid callback signature&#34;)
+    <span id="ErrGraphVersionMismatch">ErrGraphVersionMismatch</span>    = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;graph version mismatch: cannot resume&#34;)
+    <span id="ErrServiceOverloaded">ErrServiceOverloaded</span>       = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;resumption queue is full&#34;)
+)</pre>
+			
+				<p>ErrMaxRetriesExceeded is returned when serialization retries are exhausted
+
+				<pre>var <span id="ErrMaxRetriesExceeded">ErrMaxRetriesExceeded</span> = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;max serialization retries exceeded&#34;)</pre>
+			
+				
+				<pre>var <span id="ErrWorkflowPending">ErrWorkflowPending</span> = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;workflow pending human interaction&#34;)</pre>
+			
+		
+		
+			
+			
+			<h2 id="DeserializeState">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=6711:6766#L231">DeserializeState</a>
+				<a class="permalink" href="index.html#DeserializeState">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func DeserializeState(data []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>) (<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+			<p>DeserializeState properly implements the state deserialization
+
+			
+			
+
+		
+			
+			
+			<h2 id="ExecuteGraph">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/orchestrator.go?s=210:415#L4">ExecuteGraph</a>
+				<a class="permalink" href="index.html#ExecuteGraph">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func ExecuteGraph(graphID, graphVersion <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, initialState <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>, executor <a href="index.html#ResumableExecutor">ResumableExecutor</a>, checkpointStore <a href="index.html#CheckpointStore">CheckpointStore</a>, responseMgr *<a href="index.html#HumanResponseManager">HumanResponseManager</a>) (finalState <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>, err <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+			<p>ExecuteGraph orchestrates the execution of a graph, handling human interaction checkpoints
+
+			
+			
+
+		
+			
+			
+			<h2 id="ExecuteGraphWithMetrics">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/orchestrator.go?s=615:853#L9">ExecuteGraphWithMetrics</a>
+				<a class="permalink" href="index.html#ExecuteGraphWithMetrics">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func ExecuteGraphWithMetrics(graphID, graphVersion <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, initialState <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>, executor <a href="index.html#ResumableExecutor">ResumableExecutor</a>, checkpointStore <a href="index.html#CheckpointStore">CheckpointStore</a>, responseMgr *<a href="index.html#HumanResponseManager">HumanResponseManager</a>, metrics *<a href="index.html#HITLMetrics">HITLMetrics</a>) (finalState <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>, err <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+			<p>ExecuteGraphWithMetrics orchestrates execution with optional metrics wiring.
+
+			
+			
+
+		
+			
+			
+			<h2 id="IsDeadlockError">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=1350:1386#L39">IsDeadlockError</a>
+				<a class="permalink" href="index.html#IsDeadlockError">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func IsDeadlockError(err <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+			<p>IsDeadlockError checks if an error is a PostgreSQL deadlock (SQLSTATE 40P01)
+
+			
+			
+
+		
+			
+			
+			<h2 id="IsRetryableError">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=1564:1601#L45">IsRetryableError</a>
+				<a class="permalink" href="index.html#IsRetryableError">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func IsRetryableError(err <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+			<p>IsRetryableError returns true if the error is a serialization or deadlock error
+
+			
+			
+
+		
+			
+			
+			<h2 id="IsSerializationError">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=1134:1175#L33">IsSerializationError</a>
+				<a class="permalink" href="index.html#IsSerializationError">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func IsSerializationError(err <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+			<p>IsSerializationError checks if an error is a PostgreSQL serialization failure (SQLSTATE 40001)
+
+			
+			
+
+		
+			
+			
+			<h2 id="ResumeGraphFromCheckpoint">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/orchestrator.go?s=4288:4534#L95">ResumeGraphFromCheckpoint</a>
+				<a class="permalink" href="index.html#ResumeGraphFromCheckpoint">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func ResumeGraphFromCheckpoint(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, response *<a href="index.html#HumanResponse">HumanResponse</a>, checkpointStore <a href="index.html#CheckpointStore">CheckpointStore</a>, idempotencyStore <a href="index.html#IdempotencyStore">IdempotencyStore</a>, graphRegistry <a href="index.html#GraphRegistry">GraphRegistry</a>, executorFactory func(graphID, graphVersion <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="index.html#ResumableExecutor">ResumableExecutor</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+			<p>ResumeGraphFromCheckpoint resumes execution from a checkpoint
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="Alert">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=3093:3217#L103">Alert</a>
+				<a class="permalink" href="index.html#Alert">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Alert represents an alert
+
+			<pre>type Alert struct {
+<span id="Alert.Name"></span>    Name        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="Alert.Severity"></span>    Severity    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> <span class="comment">// P0, P1, P2, etc.</span>
+<span id="Alert.Description"></span>    Description <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="Alert.Timestamp"></span>    Timestamp   <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AlertService">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=1534:1680#L51">AlertService</a>
+				<a class="permalink" href="index.html#AlertService">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AlertService handles alerting for the HITL system
+
+			<pre>type AlertService struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewAlertService">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=2176:2212#L68">NewAlertService</a>
+					<a class="permalink" href="index.html#NewAlertService">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewAlertService() *<a href="index.html#AlertService">AlertService</a></pre>
+				<p>NewAlertService creates a new alert service
+
+				
+				
+			
+
+			
+				
+				<h3 id="AlertService.CheckAlerts">func (*AlertService) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=2611:2675#L83">CheckAlerts</a>
+					<a class="permalink" href="index.html#AlertService.CheckAlerts">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#AlertService">AlertService</a>) CheckAlerts(metrics *<a href="index.html#HITLMetrics">HITLMetrics</a>) []<a href="index.html#Alert">Alert</a></pre>
+				<p>CheckAlerts checks if any alerts should be triggered
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="AlertThresholds">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=1743:2127#L57">AlertThresholds</a>
+				<a class="permalink" href="index.html#AlertThresholds">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AlertThresholds defines the thresholds for various alerts
+
+			<pre>type AlertThresholds struct {
+<span id="AlertThresholds.OrphanedCheckpoints"></span>    OrphanedCheckpoints        <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>     <span class="comment">// &gt;100 older than 24 hours</span>
+<span id="AlertThresholds.GraphVersionMismatches"></span>    GraphVersionMismatches     <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>     <span class="comment">// Any occurrence</span>
+<span id="AlertThresholds.ResumeFailureRate"></span>    ResumeFailureRate          <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a> <span class="comment">// &gt;1% in 5 minutes</span>
+<span id="AlertThresholds.SecurityFailures"></span>    SecurityFailures           <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>     <span class="comment">// &gt;10 in 1 minute</span>
+<span id="AlertThresholds.StateSerializationFailures"></span>    StateSerializationFailures <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="AlertThresholds.DLQSize"></span>    DLQSize                    <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a> <span class="comment">// &gt;50 items</span>
+<span id="AlertThresholds.ProcessingQueueBacklog"></span>    ProcessingQueueBacklog     <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a> <span class="comment">// &gt;1000 items</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="CallbackHandler">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/callback_handler.go?s=251:439#L7">CallbackHandler</a>
+				<a class="permalink" href="index.html#CallbackHandler">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CallbackHandler validates incoming human responses and enqueues them for processing.
+
+			<pre>type CallbackHandler struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewCallbackHandler">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/callback_handler.go?s=508:688#L16">NewCallbackHandler</a>
+					<a class="permalink" href="index.html#NewCallbackHandler">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewCallbackHandler(
+    queue <a href="index.html#ResumptionQueue">ResumptionQueue</a>,
+    idempotencyStore <a href="index.html#IdempotencyStore">IdempotencyStore</a>,
+    graphRegistry <a href="index.html#GraphRegistry">GraphRegistry</a>,
+    callbackSecret []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>,
+    metrics *<a href="index.html#HITLMetrics">HITLMetrics</a>,
+) *<a href="index.html#CallbackHandler">CallbackHandler</a></pre>
+				<p>NewCallbackHandler creates a new, lightweight callback handler.
+
+				
+				
+			
+
+			
+				
+				<h3 id="CallbackHandler.HandleHumanCallback">func (*CallbackHandler) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/callback_handler.go?s=1029:1201#L34">HandleHumanCallback</a>
+					<a class="permalink" href="index.html#CallbackHandler.HandleHumanCallback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (h *<a href="index.html#CallbackHandler">CallbackHandler</a>) HandleHumanCallback(
+    w <a href="http://127.0.0.1:6060/pkg/net/http/">http</a>.<a href="http://127.0.0.1:6060/pkg/net/http/#ResponseWriter">ResponseWriter</a>,
+    r *<a href="http://127.0.0.1:6060/pkg/net/http/">http</a>.<a href="http://127.0.0.1:6060/pkg/net/http/#Request">Request</a>,
+    requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>,
+    timestamp <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>,
+    signature <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>,
+    response *<a href="index.html#HumanResponse">HumanResponse</a>,
+)</pre>
+				<p>HandleHumanCallback is the HTTP handler for human responses. It validates,
+acquires a lock, enqueues the job, and returns immediately.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="CheckpointReplaceStore">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/interfaces.go?s=1259:1363#L25">CheckpointReplaceStore</a>
+				<a class="permalink" href="index.html#CheckpointReplaceStore">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CheckpointReplaceStore is an optional CheckpointStore extension for atomic
+replacement of checkpoints during nested pause transitions.
+
+			<pre>type CheckpointReplaceStore interface {
+    Replace(oldRequestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, next *<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="CheckpointStore">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/interfaces.go?s=215:1116#L2">CheckpointStore</a>
+				<a class="permalink" href="index.html#CheckpointStore">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CheckpointStore is the interface for persistent storage of execution checkpoints.
+
+			<pre>type CheckpointStore interface {
+    <span class="comment">// Create checkpoint atomically with request registration</span>
+    CreateWithTransaction(tx <a href="index.html#Transaction">Transaction</a>, cp *<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+
+    Create(cp *<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    GetByRequestID(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+    Delete(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// List orphaned checkpoints for cleanup</span>
+    ListOrphaned(olderThan <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>) ([]*<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// RecordFailure increments the failure count and updates the last error message</span>
+    <span class="comment">// for a given checkpoint. This is called for transient errors.</span>
+    RecordFailure(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, err <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) (*<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// MoveToCheckpointDLQ atomically moves a checkpoint from the active table</span>
+    <span class="comment">// to a dead-letter table for manual inspection. This is for permanent failures</span>
+    <span class="comment">// or after exceeding the retry threshold.</span>
+    MoveToCheckpointDLQ(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, finalError <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ExecutableGraphRegistry">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/interfaces.go?s=2978:3078#L71">ExecutableGraphRegistry</a>
+				<a class="permalink" href="index.html#ExecutableGraphRegistry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ExecutableGraphRegistry is an optional GraphRegistry extension that provides
+access to executable graph instances for graph-native pause/resume semantics.
+
+			<pre>type ExecutableGraphRegistry interface {
+    GetExecutableGraph(graphID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#Graph">Graph</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ExecutionCheckpoint">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/models.go?s=97:687#L1">ExecutionCheckpoint</a>
+				<a class="permalink" href="index.html#ExecutionCheckpoint">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ExecutionCheckpoint holds the state of a paused graph execution.
+
+			<pre>type ExecutionCheckpoint struct {
+<span id="ExecutionCheckpoint.GraphID"></span>    GraphID      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>    `json:&#34;graph_id&#34;`
+<span id="ExecutionCheckpoint.GraphVersion"></span>    GraphVersion <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>    `json:&#34;graph_version&#34;`
+<span id="ExecutionCheckpoint.NodeID"></span>    NodeID       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>    `json:&#34;node_id&#34;`
+<span id="ExecutionCheckpoint.StateData"></span>    StateData    []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>    `json:&#34;state_data&#34;`
+<span id="ExecutionCheckpoint.RequestID"></span>    RequestID    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>    `json:&#34;request_id&#34;`
+<span id="ExecutionCheckpoint.JobID"></span>    JobID        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>    `json:&#34;job_id,omitempty&#34;`
+<span id="ExecutionCheckpoint.CreatedAt"></span>    CreatedAt    <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a> `json:&#34;created_at&#34;`
+<span id="ExecutionCheckpoint.ExpiresAt"></span>    ExpiresAt    <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a> `json:&#34;expires_at,omitempty&#34;`
+<span id="ExecutionCheckpoint.TraceID"></span>    TraceID      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>    `json:&#34;trace_id,omitempty&#34;`
+<span id="ExecutionCheckpoint.FailureCount"></span>    FailureCount <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>       `json:&#34;failure_count&#34;`
+<span id="ExecutionCheckpoint.LastError"></span>    LastError    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>    `json:&#34;last_error&#34;`
+<span id="ExecutionCheckpoint.LastAttempt"></span>    LastAttempt  <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a> `json:&#34;last_attempt&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="GraphDefinition">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/interfaces.go?s=3147:3210#L76">GraphDefinition</a>
+				<a class="permalink" href="index.html#GraphDefinition">&#xb6;</a>
+				
+				
+			</h2>
+			<p>GraphDefinition represents a graph definition with its version.
+
+			<pre>type GraphDefinition struct {
+<span id="GraphDefinition.ID"></span>    ID      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="GraphDefinition.Version"></span>    Version <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="GraphRegistry">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/interfaces.go?s=2732:2815#L65">GraphRegistry</a>
+				<a class="permalink" href="index.html#GraphRegistry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>GraphRegistry provides access to graph definitions.
+
+			<pre>type GraphRegistry interface {
+    GetGraph(graphID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="index.html#GraphDefinition">GraphDefinition</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="HITLMetrics">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=118:1416#L1">HITLMetrics</a>
+				<a class="permalink" href="index.html#HITLMetrics">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HITLMetrics defines the metrics for the Human-in-the-Loop system.
+
+			<pre>type HITLMetrics struct {
+    <span class="comment">// Checkpoint operations</span>
+<span id="HITLMetrics.CheckpointCreations"></span>    CheckpointCreations       counter
+<span id="HITLMetrics.CheckpointSizeBytes"></span>    CheckpointSizeBytes       histogram
+<span id="HITLMetrics.CheckpointCreationLatency"></span>    CheckpointCreationLatency histogram
+
+    <span class="comment">// Human response tracking</span>
+<span id="HITLMetrics.HumanResponseTime"></span>    HumanResponseTime      histogram <span class="comment">// Time from request to callback</span>
+<span id="HITLMetrics.ActiveWaitingWorkflows"></span>    ActiveWaitingWorkflows gauge     <span class="comment">// Current paused workflows</span>
+<span id="HITLMetrics.BlockingWaitsActive"></span>    BlockingWaitsActive    gauge     <span class="comment">// Current goroutines waiting</span>
+
+    <span class="comment">// Callback handler</span>
+<span id="HITLMetrics.CallbacksReceived"></span>    CallbacksReceived        counter
+<span id="HITLMetrics.CallbacksSuccessful"></span>    CallbacksSuccessful      counter
+<span id="HITLMetrics.CallbacksEnqueued"></span>    CallbacksEnqueued        counter <span class="comment">// NEW: Track enqueuing success</span>
+<span id="HITLMetrics.CallbackDuplicates"></span>    CallbackDuplicates       counter
+<span id="HITLMetrics.CallbackSecurityFailures"></span>    CallbackSecurityFailures counter
+<span id="HITLMetrics.CallbackLatency"></span>    CallbackLatency          histogram
+
+    <span class="comment">// Resumption worker metrics</span>
+<span id="HITLMetrics.ResumptionWorkerBusy"></span>    ResumptionWorkerBusy    gauge   <span class="comment">// NEW: Track worker utilization</span>
+<span id="HITLMetrics.ResumptionQueueLength"></span>    ResumptionQueueLength   gauge   <span class="comment">// NEW: Track queue length</span>
+<span id="HITLMetrics.ResumptionRetries"></span>    ResumptionRetries       counter <span class="comment">// NEW: Track retry attempts</span>
+<span id="HITLMetrics.ResumptionDequeueErrors"></span>    ResumptionDequeueErrors counter
+
+    <span class="comment">// Failures</span>
+<span id="HITLMetrics.ResumeFailures"></span>    ResumeFailures             counter
+<span id="HITLMetrics.GraphVersionMismatches"></span>    GraphVersionMismatches     counter
+<span id="HITLMetrics.StateSerializationFailures"></span>    StateSerializationFailures counter
+<span id="HITLMetrics.CheckpointOrphans"></span>    CheckpointOrphans          gauge
+
+    <span class="comment">// NEW: DLQ and failure handling metrics</span>
+<span id="HITLMetrics.CheckpointsMovedToDLQ"></span>    CheckpointsMovedToDLQ counter
+<span id="HITLMetrics.DLQSize"></span>    DLQSize               gauge
+
+    <span class="comment">// Resource usage</span>
+<span id="HITLMetrics.CheckpointStorageMB"></span>    CheckpointStorageMB  gauge
+<span id="HITLMetrics.IdempotencyStoreSize"></span>    IdempotencyStoreSize gauge
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="HITLMetrics.DecActiveWaitingWorkflows">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=4324:4373#L174">DecActiveWaitingWorkflows</a>
+					<a class="permalink" href="index.html#HITLMetrics.DecActiveWaitingWorkflows">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) DecActiveWaitingWorkflows()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.DecBlockingWaitsActive">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=4891:4937#L202">DecBlockingWaitsActive</a>
+					<a class="permalink" href="index.html#HITLMetrics.DecBlockingWaitsActive">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) DecBlockingWaitsActive()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.DecDLQSize">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=5473:5507#L230">DecDLQSize</a>
+					<a class="permalink" href="index.html#HITLMetrics.DecDLQSize">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) DecDLQSize()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.DecResumptionWorkerBusy">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=3352:3399#L134">DecResumptionWorkerBusy</a>
+					<a class="permalink" href="index.html#HITLMetrics.DecResumptionWorkerBusy">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) DecResumptionWorkerBusy()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncActiveWaitingWorkflows">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=4124:4173#L164">IncActiveWaitingWorkflows</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncActiveWaitingWorkflows">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncActiveWaitingWorkflows()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncBlockingWaitsActive">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=4759:4805#L196">IncBlockingWaitsActive</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncBlockingWaitsActive">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncBlockingWaitsActive()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncCallbackDuplicates">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=2121:2166#L80">IncCallbackDuplicates</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncCallbackDuplicates">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncCallbackDuplicates()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncCallbackSecurityFailures">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=2250:2301#L86">IncCallbackSecurityFailures</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncCallbackSecurityFailures">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncCallbackSecurityFailures()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncCallbacksEnqueued">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=1995:2039#L74">IncCallbacksEnqueued</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncCallbacksEnqueued">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncCallbacksEnqueued()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncCallbacksReceived">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=1737:1781#L62">IncCallbacksReceived</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncCallbacksReceived">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncCallbacksReceived()</pre>
+				<p>Helper methods for metrics
+
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncCallbacksSuccessful">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=1863:1909#L68">IncCallbacksSuccessful</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncCallbacksSuccessful">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncCallbacksSuccessful()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncCheckpointCreations">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=3487:3533#L140">IncCheckpointCreations</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncCheckpointCreations">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncCheckpointCreations()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncCheckpointsMovedToDLQ">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=2925:2973#L116">IncCheckpointsMovedToDLQ</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncCheckpointsMovedToDLQ">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncCheckpointsMovedToDLQ()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncDLQSize">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=5324:5358#L220">IncDLQSize</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncDLQSize">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncDLQSize()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncGraphVersionMismatches">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=2514:2563#L98">IncGraphVersionMismatches</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncGraphVersionMismatches">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncGraphVersionMismatches()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncResumeFailures">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=2397:2438#L92">IncResumeFailures</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncResumeFailures">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncResumeFailures()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncResumptionDequeueErrors">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=2781:2831#L110">IncResumptionDequeueErrors</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncResumptionDequeueErrors">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncResumptionDequeueErrors()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncResumptionRetries">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=2655:2699#L104">IncResumptionRetries</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncResumptionRetries">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncResumptionRetries()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncResumptionWorkerBusy">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=3217:3264#L128">IncResumptionWorkerBusy</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncResumptionWorkerBusy">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncResumptionWorkerBusy()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.IncStateSerializationFailures">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=5171:5224#L214">IncStateSerializationFailures</a>
+					<a class="permalink" href="index.html#HITLMetrics.IncStateSerializationFailures">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) IncStateSerializationFailures()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.ObserveCallbackLatency">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=3063:3124#L122">ObserveCallbackLatency</a>
+					<a class="permalink" href="index.html#HITLMetrics.ObserveCallbackLatency">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) ObserveCallbackLatency(d <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.ObserveCheckpointCreationLatency">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=3619:3690#L146">ObserveCheckpointCreationLatency</a>
+					<a class="permalink" href="index.html#HITLMetrics.ObserveCheckpointCreationLatency">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) ObserveCheckpointCreationLatency(d <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.ObserveCheckpointSizeBytes">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=3803:3861#L152">ObserveCheckpointSizeBytes</a>
+					<a class="permalink" href="index.html#HITLMetrics.ObserveCheckpointSizeBytes">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) ObserveCheckpointSizeBytes(size <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.ObserveHumanResponseTime">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=3964:4027#L158">ObserveHumanResponseTime</a>
+					<a class="permalink" href="index.html#HITLMetrics.ObserveHumanResponseTime">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) ObserveHumanResponseTime(d <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.SetDLQSize">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=5821:5864#L252">SetDLQSize</a>
+					<a class="permalink" href="index.html#HITLMetrics.SetDLQSize">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) SetDLQSize(v <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="HITLMetrics.SetResumptionQueueLength">func (*HITLMetrics) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/metrics.go?s=5023:5080#L208">SetResumptionQueueLength</a>
+					<a class="permalink" href="index.html#HITLMetrics.SetResumptionQueueLength">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HITLMetrics">HITLMetrics</a>) SetResumptionQueueLength(v <a href="http://127.0.0.1:6060/pkg/builtin/#float64">float64</a>)</pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="HumanNode">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/human_node.go?s=311:758#L10">HumanNode</a>
+				<a class="permalink" href="index.html#HumanNode">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HumanNode implements a node that can request human input either by blocking briefly
+or by checkpointing for longer waits.
+
+			<pre>type HumanNode struct {
+    *<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#BaseNode">BaseNode</a>
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewHumanNode">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/human_node.go?s=1210:1262#L42">NewHumanNode</a>
+					<a class="permalink" href="index.html#NewHumanNode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewHumanNode(config <a href="index.html#HumanNodeConfig">HumanNodeConfig</a>) *<a href="index.html#HumanNode">HumanNode</a></pre>
+				<p>NewHumanNode creates a new HumanNode
+
+				
+				
+			
+
+			
+				
+				<h3 id="HumanNode.Execute">func (*HumanNode) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/human_node.go?s=2010:2083#L67">Execute</a>
+					<a class="permalink" href="index.html#HumanNode.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (n *<a href="index.html#HumanNode">HumanNode</a>) Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, state <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Execute implements the Node interface
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="HumanNodeConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/human_node.go?s=824:1168#L28">HumanNodeConfig</a>
+				<a class="permalink" href="index.html#HumanNodeConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HumanNodeConfig holds configuration for creating a HumanNode
+
+			<pre>type HumanNodeConfig struct {
+<span id="HumanNodeConfig.ID"></span>    ID                 <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="HumanNodeConfig.Prompt"></span>    Prompt             <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="HumanNodeConfig.Options"></span>    Options            []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="HumanNodeConfig.Timeout"></span>    Timeout            <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="HumanNodeConfig.ShortWaitThreshold"></span>    ShortWaitThreshold <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="HumanNodeConfig.MaxConcurrentWaits"></span>    MaxConcurrentWaits <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="HumanNodeConfig.ResponseManager"></span>    ResponseManager    *<a href="index.html#HumanResponseManager">HumanResponseManager</a>
+<span id="HumanNodeConfig.CheckpointStore"></span>    CheckpointStore    <a href="index.html#CheckpointStore">CheckpointStore</a>
+<span id="HumanNodeConfig.CallbackSecret"></span>    CallbackSecret     []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>
+<span id="HumanNodeConfig.Metrics"></span>    Metrics            *<a href="index.html#HITLMetrics">HITLMetrics</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="HumanRequest">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/human_node.go?s=6850:7349#L212">HumanRequest</a>
+				<a class="permalink" href="index.html#HumanRequest">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HumanRequest represents a request sent to a human
+
+			<pre>type HumanRequest struct {
+<span id="HumanRequest.RequestID"></span>    RequestID   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;request_id&#34;`
+<span id="HumanRequest.AgentName"></span>    AgentName   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;agent_name&#34;`
+<span id="HumanRequest.Instruction"></span>    Instruction <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;instruction&#34;`
+<span id="HumanRequest.Options"></span>    Options     []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>               `json:&#34;options,omitempty&#34;`
+<span id="HumanRequest.CallbackURL"></span>    CallbackURL <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;callback_url,omitempty&#34;`
+<span id="HumanRequest.Timeout"></span>    Timeout     <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>          `json:&#34;timeout&#34;`
+<span id="HumanRequest.Timestamp"></span>    Timestamp   <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>              `json:&#34;timestamp&#34;`
+<span id="HumanRequest.Context"></span>    Context     map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;context,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="HumanResponse">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/models.go?s=772:1041#L12">HumanResponse</a>
+				<a class="permalink" href="index.html#HumanResponse">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HumanResponse represents the data received from the human-in-the-loop callback.
+
+			<pre>type HumanResponse struct {
+<span id="HumanResponse.SelectedOption"></span>    SelectedOption <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;selected_option&#34;`
+<span id="HumanResponse.FreeformText"></span>    FreeformText   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;freeform_text&#34;`
+<span id="HumanResponse.Payload"></span>    Payload        map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;payload&#34;`
+<span id="HumanResponse.Timestamp"></span>    Timestamp      <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>              `json:&#34;timestamp&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="HumanResponseManager">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/human_node.go?s=7422:7560#L224">HumanResponseManager</a>
+				<a class="permalink" href="index.html#HumanResponseManager">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HumanResponseManager manages human responses (simplified interface)
+
+			<pre>type HumanResponseManager struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewHumanResponseManager">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/human_node.go?s=7620:7672#L230">NewHumanResponseManager</a>
+					<a class="permalink" href="index.html#NewHumanResponseManager">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewHumanResponseManager() *<a href="index.html#HumanResponseManager">HumanResponseManager</a></pre>
+				<p>NewHumanResponseManager creates a new response manager
+
+				
+				
+			
+
+			
+				
+				<h3 id="HumanResponseManager.DeliverResponse">func (*HumanResponseManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/human_node.go?s=8518:8607#L259">DeliverResponse</a>
+					<a class="permalink" href="index.html#HumanResponseManager.DeliverResponse">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HumanResponseManager">HumanResponseManager</a>) DeliverResponse(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, response *<a href="index.html#HumanResponse">HumanResponse</a>)</pre>
+				<p>DeliverResponse delivers a response to the appropriate callback
+
+				
+				
+				
+			
+				
+				<h3 id="HumanResponseManager.NotifyHuman">func (*HumanResponseManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/human_node.go?s=8244:8311#L252">NotifyHuman</a>
+					<a class="permalink" href="index.html#HumanResponseManager.NotifyHuman">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HumanResponseManager">HumanResponseManager</a>) NotifyHuman(req *<a href="index.html#HumanRequest">HumanRequest</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>NotifyHuman sends the request to the human
+
+				
+				
+				
+			
+				
+				<h3 id="HumanResponseManager.RegisterCallback">func (*HumanResponseManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/human_node.go?s=7851:7947#L238">RegisterCallback</a>
+					<a class="permalink" href="index.html#HumanResponseManager.RegisterCallback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HumanResponseManager">HumanResponseManager</a>) RegisterCallback(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, callback func(*<a href="index.html#HumanResponse">HumanResponse</a>))</pre>
+				<p>RegisterCallback registers a callback for a request ID
+
+				
+				
+				
+			
+				
+				<h3 id="HumanResponseManager.Unregister">func (*HumanResponseManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/human_node.go?s=8061:8120#L245">Unregister</a>
+					<a class="permalink" href="index.html#HumanResponseManager.Unregister">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#HumanResponseManager">HumanResponseManager</a>) Unregister(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>Unregister removes a callback
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="IdempotencyStore">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/interfaces.go?s=1644:2105#L37">IdempotencyStore</a>
+				<a class="permalink" href="index.html#IdempotencyStore">&#xb6;</a>
+				
+				
+			</h2>
+			<p>IdempotencyStore prevents duplicate callback execution and supports processing locks.
+
+			<pre>type IdempotencyStore interface {
+    Exists(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+    Set(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, ttl <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// SetNX atomically sets a key if it does not already exist.</span>
+    <span class="comment">// Returns true if the key was set, false if it already existed.</span>
+    <span class="comment">// This is used for creating short-lived &#34;processing&#34; locks.</span>
+    SetNX(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, ttl <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// Delete removes a key, used to release a processing lock if enqueuing fails.</span>
+    Delete(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LoggingService">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=3265:3379#L111">LoggingService</a>
+				<a class="permalink" href="index.html#LoggingService">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LoggingService provides structured logging
+
+			<pre>type LoggingService struct {
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewLoggingService">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=3432:3472#L116">NewLoggingService</a>
+					<a class="permalink" href="index.html#NewLoggingService">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewLoggingService() *<a href="index.html#LoggingService">LoggingService</a></pre>
+				<p>NewLoggingService creates a new logging service
+
+				
+				
+			
+
+			
+				
+				<h3 id="LoggingService.LogCallbackReceived">func (*LoggingService) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=4094:4213#L134">LogCallbackReceived</a>
+					<a class="permalink" href="index.html#LoggingService.LogCallbackReceived">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#LoggingService">LoggingService</a>) LogCallbackReceived(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, latency <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>, isDuplicate <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>, traceID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>LogCallbackReceived logs when a callback is received
+
+				
+				
+				
+			
+				
+				<h3 id="LoggingService.LogCheckpointCreated">func (*LoggingService) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=3562:3687#L121">LogCheckpointCreated</a>
+					<a class="permalink" href="index.html#LoggingService.LogCheckpointCreated">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#LoggingService">LoggingService</a>) LogCheckpointCreated(requestID, graphID, graphVersion, nodeID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, stateSize <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>, traceID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>LogCheckpointCreated logs when a checkpoint is created
+
+				
+				
+				
+			
+				
+				<h3 id="LoggingService.LogVersionMismatch">func (*LoggingService) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=4567:4663#L145">LogVersionMismatch</a>
+					<a class="permalink" href="index.html#LoggingService.LogVersionMismatch">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#LoggingService">LoggingService</a>) LogVersionMismatch(checkpointVersion, currentVersion, requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>LogVersionMismatch logs when a graph version mismatch occurs
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MetricsCollector">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=114:302#L1">MetricsCollector</a>
+				<a class="permalink" href="index.html#MetricsCollector">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MetricsCollector collects and reports metrics for the HITL system
+
+			<pre>type MetricsCollector struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMetricsCollector">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=359:403#L6">NewMetricsCollector</a>
+					<a class="permalink" href="index.html#NewMetricsCollector">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMetricsCollector() *<a href="index.html#MetricsCollector">MetricsCollector</a></pre>
+				<p>NewMetricsCollector creates a new metrics collector
+
+				
+				
+			
+
+			
+				
+				<h3 id="MetricsCollector.GetMetrics">func (*MetricsCollector) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=508:560#L13">GetMetrics</a>
+					<a class="permalink" href="index.html#MetricsCollector.GetMetrics">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MetricsCollector">MetricsCollector</a>) GetMetrics() *<a href="index.html#HITLMetrics">HITLMetrics</a></pre>
+				<p>GetMetrics returns the current metrics
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MonitoringService">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=638:700#L18">MonitoringService</a>
+				<a class="permalink" href="index.html#MonitoringService">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MonitoringService provides monitoring capabilities
+
+			<pre>type MonitoringService struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMonitoringService">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=759:832#L23">NewMonitoringService</a>
+					<a class="permalink" href="index.html#NewMonitoringService">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMonitoringService(collector *<a href="index.html#MetricsCollector">MetricsCollector</a>) *<a href="index.html#MonitoringService">MonitoringService</a></pre>
+				<p>NewMonitoringService creates a new monitoring service
+
+				
+				
+			
+
+			
+				
+				<h3 id="MonitoringService.HealthCheck">func (*MonitoringService) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=951:1015#L30">HealthCheck</a>
+					<a class="permalink" href="index.html#MonitoringService.HealthCheck">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MonitoringService">MonitoringService</a>) HealthCheck() map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}</pre>
+				<p>HealthCheck performs a health check of the HITL system
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="OperationalToolService">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=6792:6899#L201">OperationalToolService</a>
+				<a class="permalink" href="index.html#OperationalToolService">&#xb6;</a>
+				
+				
+			</h2>
+			<p>OperationalToolService provides operational tools
+
+			<pre>type OperationalToolService struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewOperationalToolService">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=6969:7091#L207">NewOperationalToolService</a>
+					<a class="permalink" href="index.html#NewOperationalToolService">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewOperationalToolService(checkpointStore <a href="index.html#CheckpointStore">CheckpointStore</a>, idempotencyStore <a href="index.html#IdempotencyStore">IdempotencyStore</a>) *<a href="index.html#OperationalToolService">OperationalToolService</a></pre>
+				<p>NewOperationalToolService creates a new operational tool service
+
+				
+				
+			
+
+			
+				
+				<h3 id="OperationalToolService.CancelCheckpoint">func (*OperationalToolService) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=7487:7560#L220">CancelCheckpoint</a>
+					<a class="permalink" href="index.html#OperationalToolService.CancelCheckpoint">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (o *<a href="index.html#OperationalToolService">OperationalToolService</a>) CancelCheckpoint(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>CancelCheckpoint cancels a checkpoint that is no longer needed
+
+				
+				
+				
+			
+				
+				<h3 id="OperationalToolService.InspectCheckpoint">func (*OperationalToolService) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=7265:7363#L215">InspectCheckpoint</a>
+					<a class="permalink" href="index.html#OperationalToolService.InspectCheckpoint">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (o *<a href="index.html#OperationalToolService">OperationalToolService</a>) InspectCheckpoint(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>InspectCheckpoint inspects a checkpoint for debugging
+
+				
+				
+				
+			
+				
+				<h3 id="OperationalToolService.ListDLQ">func (*OperationalToolService) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=7972:8046#L232">ListDLQ</a>
+					<a class="permalink" href="index.html#OperationalToolService.ListDLQ">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (o *<a href="index.html#OperationalToolService">OperationalToolService</a>) ListDLQ() ([]*<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ListDLQ lists items in the dead letter queue
+
+				
+				
+				
+			
+				
+				<h3 id="OperationalToolService.ReplayCallback">func (*OperationalToolService) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=7686:7781#L225">ReplayCallback</a>
+					<a class="permalink" href="index.html#OperationalToolService.ReplayCallback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (o *<a href="index.html#OperationalToolService">OperationalToolService</a>) ReplayCallback(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, payload *<a href="index.html#HumanResponse">HumanResponse</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>ReplayCallback manually triggers resumption for a failed job after a fix
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="PostgresCheckpointStore">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=2258:2317#L63">PostgresCheckpointStore</a>
+				<a class="permalink" href="index.html#PostgresCheckpointStore">&#xb6;</a>
+				
+				
+			</h2>
+			<p>PostgresCheckpointStore implements CheckpointStore using PostgreSQL for durability.
+Tables are created automatically if they do not exist.
+
+			<pre>type PostgresCheckpointStore struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewPostgresCheckpointStore">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=2616:2722#L75">NewPostgresCheckpointStore</a>
+					<a class="permalink" href="index.html#NewPostgresCheckpointStore">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewPostgresCheckpointStore(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, pool *<a href="http://127.0.0.1:6060/pkg/github.com/jackc/pgx/v5/pgxpool/">pgxpool</a>.<a href="http://127.0.0.1:6060/pkg/github.com/jackc/pgx/v5/pgxpool/#Pool">Pool</a>) (*<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewPostgresCheckpointStore creates a store backed by an existing pgx pool and
+ensures the necessary tables exist.
+
+				
+				
+			
+				
+				<h3 id="NewPostgresCheckpointStoreFromURL">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=3014:3126#L85">NewPostgresCheckpointStoreFromURL</a>
+					<a class="permalink" href="index.html#NewPostgresCheckpointStoreFromURL">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewPostgresCheckpointStoreFromURL(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, connString <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewPostgresCheckpointStoreFromURL is a convenience constructor that creates
+a new connection pool from the provided Postgres connection string.
+
+				
+				
+			
+
+			
+				
+				<h3 id="PostgresCheckpointStore.BeginSerializableTransaction">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=6325:6429#L174">BeginSerializableTransaction</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.BeginSerializableTransaction">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) BeginSerializableTransaction(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) (<a href="index.html#Transaction">Transaction</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>BeginSerializableTransaction exposes a typed transaction helper for callers that need
+to coordinate multiple operations atomically with SERIALIZABLE isolation.
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresCheckpointStore.BeginTransaction">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=5919:6011#L164">BeginTransaction</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.BeginTransaction">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) BeginTransaction(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) (<a href="index.html#Transaction">Transaction</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>BeginTransaction exposes a typed transaction helper for callers that need
+to coordinate multiple operations atomically.
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresCheckpointStore.Close">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=3356:3403#L94">Close</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) Close() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Close releases the underlying pgx pool owned by the store.
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresCheckpointStore.Create">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=9056:9127#L255">Create</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.Create">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) Create(cp *<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Create inserts a checkpoint using the store&apos;s connection pool.
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresCheckpointStore.CreateIfAbsentSerializable">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=21186:21335#L632">CreateIfAbsentSerializable</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.CreateIfAbsentSerializable">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) CreateIfAbsentSerializable(cp *<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>, invariantCheck func(existing *<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>CreateIfAbsentSerializable creates a checkpoint if it does not already exist and
+validates any existing row with invariantCheck under SERIALIZABLE isolation.
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresCheckpointStore.CreateOrUpdateSerializable">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=18857:19006#L554">CreateOrUpdateSerializable</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.CreateOrUpdateSerializable">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) CreateOrUpdateSerializable(cp *<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>, invariantCheck func(existing *<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>CreateOrUpdateSerializable is a legacy compatibility helper for create-if-absent
+semantics under SERIALIZABLE isolation. It does not mutate an existing row; if a
+checkpoint already exists, invariantCheck can validate it and the method returns
+success without updating the stored checkpoint.
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresCheckpointStore.CreateWithTransaction">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=8712:8814#L246">CreateWithTransaction</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.CreateWithTransaction">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) CreateWithTransaction(tx <a href="index.html#Transaction">Transaction</a>, cp *<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>CreateWithTransaction inserts a checkpoint using the provided transaction.
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresCheckpointStore.Delete">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=11117:11181#L328">Delete</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.Delete">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) Delete(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Delete removes a checkpoint.
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresCheckpointStore.GetByRequestID">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=10135:10231#L288">GetByRequestID</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.GetByRequestID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) GetByRequestID(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetByRequestID retrieves a checkpoint by request ID.
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresCheckpointStore.ListOrphaned">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=12942:13045#L379">ListOrphaned</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.ListOrphaned">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) ListOrphaned(olderThan <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>) ([]*<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ListOrphaned returns checkpoints older than the provided duration.
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresCheckpointStore.MoveToCheckpointDLQ">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=15455:15551#L467">MoveToCheckpointDLQ</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.MoveToCheckpointDLQ">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) MoveToCheckpointDLQ(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, finalError <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>MoveToCheckpointDLQ moves a checkpoint to the DLQ table and deletes it from the active table.
+This uses READ COMMITTED isolation (default). For stronger guarantees, use MoveToCheckpointDLQSerializable.
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresCheckpointStore.MoveToCheckpointDLQSerializable">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=16965:17073#L506">MoveToCheckpointDLQSerializable</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.MoveToCheckpointDLQSerializable">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) MoveToCheckpointDLQSerializable(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, finalError <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>MoveToCheckpointDLQSerializable moves a checkpoint to the DLQ table using SERIALIZABLE
+isolation with automatic retry on serialization failures. This provides stronger guarantees
+for concurrent access scenarios.
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresCheckpointStore.RecordFailure">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=14168:14274#L424">RecordFailure</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.RecordFailure">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) RecordFailure(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, err <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) (*<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>RecordFailure increments failure count and captures last error/attempt timestamp.
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresCheckpointStore.Replace">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=11559:11654#L340">Replace</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.Replace">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) Replace(oldRequestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, next *<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Replace atomically replaces an existing checkpoint row with a new one.
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresCheckpointStore.WithSerializableRetry">func (*PostgresCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=7335:7471#L193">WithSerializableRetry</a>
+					<a class="permalink" href="index.html#PostgresCheckpointStore.WithSerializableRetry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#PostgresCheckpointStore">PostgresCheckpointStore</a>) WithSerializableRetry(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, config <a href="index.html#SerializationConfig">SerializationConfig</a>, op <a href="index.html#SerializableOperation">SerializableOperation</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>WithSerializableRetry executes an operation in a SERIALIZABLE transaction with automatic
+retry on serialization failures. This is the recommended pattern for operations that
+enforce logical invariants based on reads.
+<p>IMPORTANT: The provided SerializableOperation function MUST be idempotent, as it may be
+executed multiple times if serialization failures occur.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="RedisCheckpointStore">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=164:353#L2">RedisCheckpointStore</a>
+				<a class="permalink" href="index.html#RedisCheckpointStore">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RedisCheckpointStore is a Redis-based implementation of CheckpointStore
+
+			<pre>type RedisCheckpointStore struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewRedisCheckpointStore">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=425:477#L9">NewRedisCheckpointStore</a>
+					<a class="permalink" href="index.html#NewRedisCheckpointStore">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewRedisCheckpointStore() *<a href="index.html#RedisCheckpointStore">RedisCheckpointStore</a></pre>
+				<p>NewRedisCheckpointStore creates a new Redis-based checkpoint store
+
+				
+				
+			
+
+			
+				
+				<h3 id="RedisCheckpointStore.Create">func (*RedisCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=753:821#L20">Create</a>
+					<a class="permalink" href="index.html#RedisCheckpointStore.Create">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RedisCheckpointStore">RedisCheckpointStore</a>) Create(cp *<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RedisCheckpointStore.CreateWithTransaction">func (*RedisCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=565:664#L15">CreateWithTransaction</a>
+					<a class="permalink" href="index.html#RedisCheckpointStore.CreateWithTransaction">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RedisCheckpointStore">RedisCheckpointStore</a>) CreateWithTransaction(tx <a href="index.html#Transaction">Transaction</a>, cp *<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RedisCheckpointStore.Delete">func (*RedisCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=1069:1130#L33">Delete</a>
+					<a class="permalink" href="index.html#RedisCheckpointStore.Delete">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RedisCheckpointStore">RedisCheckpointStore</a>) Delete(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RedisCheckpointStore.GetByRequestID">func (*RedisCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=867:960#L25">GetByRequestID</a>
+					<a class="permalink" href="index.html#RedisCheckpointStore.GetByRequestID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RedisCheckpointStore">RedisCheckpointStore</a>) GetByRequestID(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RedisCheckpointStore.ListOrphaned">func (*RedisCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=1655:1755#L54">ListOrphaned</a>
+					<a class="permalink" href="index.html#RedisCheckpointStore.ListOrphaned">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RedisCheckpointStore">RedisCheckpointStore</a>) ListOrphaned(olderThan <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>) ([]*<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RedisCheckpointStore.MoveToCheckpointDLQ">func (*RedisCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=2257:2350#L80">MoveToCheckpointDLQ</a>
+					<a class="permalink" href="index.html#RedisCheckpointStore.MoveToCheckpointDLQ">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RedisCheckpointStore">RedisCheckpointStore</a>) MoveToCheckpointDLQ(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, finalError <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RedisCheckpointStore.RecordFailure">func (*RedisCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=1967:2070#L67">RecordFailure</a>
+					<a class="permalink" href="index.html#RedisCheckpointStore.RecordFailure">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RedisCheckpointStore">RedisCheckpointStore</a>) RecordFailure(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, err <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) (*<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RedisCheckpointStore.Replace">func (*RedisCheckpointStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=1256:1348#L39">Replace</a>
+					<a class="permalink" href="index.html#RedisCheckpointStore.Replace">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RedisCheckpointStore">RedisCheckpointStore</a>) Replace(oldRequestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, next *<a href="index.html#ExecutionCheckpoint">ExecutionCheckpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Replace atomically swaps an existing checkpoint with a new checkpoint entry.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="RedisIdempotencyStore">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/redis_store.go?s=180:239#L3">RedisIdempotencyStore</a>
+				<a class="permalink" href="index.html#RedisIdempotencyStore">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RedisIdempotencyStore implements IdempotencyStore using Redis string keys.
+
+			<pre>type RedisIdempotencyStore struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewRedisIdempotencyStore">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/redis_store.go?s=241:315#L7">NewRedisIdempotencyStore</a>
+					<a class="permalink" href="index.html#NewRedisIdempotencyStore">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewRedisIdempotencyStore(client *redis.<a href="index.html#Client">Client</a>) *<a href="index.html#RedisIdempotencyStore">RedisIdempotencyStore</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="RedisIdempotencyStore.Delete">func (*RedisIdempotencyStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/redis_store.go?s=1100:1156#L34">Delete</a>
+					<a class="permalink" href="index.html#RedisIdempotencyStore.Delete">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RedisIdempotencyStore">RedisIdempotencyStore</a>) Delete(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RedisIdempotencyStore.Exists">func (*RedisIdempotencyStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/redis_store.go?s=368:432#L11">Exists</a>
+					<a class="permalink" href="index.html#RedisIdempotencyStore.Exists">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RedisIdempotencyStore">RedisIdempotencyStore</a>) Exists(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RedisIdempotencyStore.Set">func (*RedisIdempotencyStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/redis_store.go?s=637:709#L21">Set</a>
+					<a class="permalink" href="index.html#RedisIdempotencyStore.Set">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RedisIdempotencyStore">RedisIdempotencyStore</a>) Set(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, ttl <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RedisIdempotencyStore.SetNX">func (*RedisIdempotencyStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/redis_store.go?s=851:933#L27">SetNX</a>
+					<a class="permalink" href="index.html#RedisIdempotencyStore.SetNX">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RedisIdempotencyStore">RedisIdempotencyStore</a>) SetNX(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, ttl <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="RedisQueueConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/redis_store.go?s=1740:1937#L53">RedisQueueConfig</a>
+				<a class="permalink" href="index.html#RedisQueueConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RedisQueueConfig holds tuning parameters.
+
+			<pre>type RedisQueueConfig struct {
+<span id="RedisQueueConfig.Stream"></span>    Stream          <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="RedisQueueConfig.Group"></span>    Group           <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="RedisQueueConfig.Consumer"></span>    Consumer        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="RedisQueueConfig.Block"></span>    Block           <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="RedisQueueConfig.ClaimIdle"></span>    ClaimIdle       <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="RedisQueueConfig.VisibilityGrace"></span>    VisibilityGrace <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="RedisResumptionQueue">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/redis_store.go?s=1461:1693#L42">RedisResumptionQueue</a>
+				<a class="permalink" href="index.html#RedisResumptionQueue">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RedisResumptionQueue implements ResumptionQueue using Redis Streams.
+Uses a consumer group for at-least-once delivery. Ack must be called after successful processing.
+
+			<pre>type RedisResumptionQueue struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewRedisResumptionQueue">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/redis_store.go?s=1939:2042#L62">NewRedisResumptionQueue</a>
+					<a class="permalink" href="index.html#NewRedisResumptionQueue">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewRedisResumptionQueue(client *redis.<a href="index.html#Client">Client</a>, cfg <a href="index.html#RedisQueueConfig">RedisQueueConfig</a>) (*<a href="index.html#RedisResumptionQueue">RedisResumptionQueue</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="RedisResumptionQueue.Ack">func (*RedisResumptionQueue) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/redis_store.go?s=4378:4453#L157">Ack</a>
+					<a class="permalink" href="index.html#RedisResumptionQueue.Ack">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (q *<a href="index.html#RedisResumptionQueue">RedisResumptionQueue</a>) Ack(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, jobID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RedisResumptionQueue.Dequeue">func (*RedisResumptionQueue) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/redis_store.go?s=3533:3616#L123">Dequeue</a>
+					<a class="permalink" href="index.html#RedisResumptionQueue.Dequeue">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (q *<a href="index.html#RedisResumptionQueue">RedisResumptionQueue</a>) Dequeue(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) (*<a href="index.html#ResumptionJob">ResumptionJob</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RedisResumptionQueue.Enqueue">func (*RedisResumptionQueue) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/redis_store.go?s=3135:3220#L106">Enqueue</a>
+					<a class="permalink" href="index.html#RedisResumptionQueue.Enqueue">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (q *<a href="index.html#RedisResumptionQueue">RedisResumptionQueue</a>) Enqueue(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, job *<a href="index.html#ResumptionJob">ResumptionJob</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="RedisResumptionQueue.QueueLength">func (*RedisResumptionQueue) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/redis_store.go?s=4604:4682#L162">QueueLength</a>
+					<a class="permalink" href="index.html#RedisResumptionQueue.QueueLength">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (q *<a href="index.html#RedisResumptionQueue">RedisResumptionQueue</a>) QueueLength(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>QueueLength returns the current stream length as a source-of-truth backlog signal.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="ResumableExecutor">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/interfaces.go?s=3289:3461#L82">ResumableExecutor</a>
+				<a class="permalink" href="index.html#ResumableExecutor">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ResumableExecutor executes graphs from arbitrary nodes after checkpoints.
+
+			<pre>type ResumableExecutor interface {
+    ExecuteCurrent(state <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>) (<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+    ResumeFromNode(nodeID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, state <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    CurrentNodeID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ResumptionJob">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/models.go?s=1151:1327#L21">ResumptionJob</a>
+				<a class="permalink" href="index.html#ResumptionJob">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ResumptionJob defines the payload that is enqueued for asynchronous processing
+by a ResumptionWorker.
+
+			<pre>type ResumptionJob struct {
+<span id="ResumptionJob.JobID"></span>    JobID       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="ResumptionJob.RequestID"></span>    RequestID   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="ResumptionJob.Timestamp"></span>    Timestamp   <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>
+<span id="ResumptionJob.Signature"></span>    Signature   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="ResumptionJob.TraceID"></span>    TraceID     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="ResumptionJob.TraceParent"></span>    TraceParent <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="ResumptionJob.Response"></span>    Response    *<a href="index.html#HumanResponse">HumanResponse</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ResumptionQueue">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/interfaces.go?s=2191:2675#L51">ResumptionQueue</a>
+				<a class="permalink" href="index.html#ResumptionQueue">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ResumptionQueue is the interface for a durable queue that holds resumption jobs.
+
+			<pre>type ResumptionQueue interface {
+    <span class="comment">// Enqueue adds a job to the queue.</span>
+    Enqueue(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, job *<a href="index.html#ResumptionJob">ResumptionJob</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// Dequeue retrieves a job from the queue, blocking until one is available</span>
+    <span class="comment">// or the context is canceled.</span>
+    Dequeue(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) (*<a href="index.html#ResumptionJob">ResumptionJob</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// Ack acknowledges successful processing of the job so it is not redelivered.</span>
+    <span class="comment">// Implementations that do not require ack (in-memory) may no-op.</span>
+    Ack(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, jobID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ResumptionWorker">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/resumption_worker.go?s=249:648#L7">ResumptionWorker</a>
+				<a class="permalink" href="index.html#ResumptionWorker">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ResumptionWorker pulls jobs from a queue and resumes graph execution.
+
+			<pre>type ResumptionWorker struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewResumptionWorker">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/resumption_worker.go?s=711:974#L21">NewResumptionWorker</a>
+					<a class="permalink" href="index.html#NewResumptionWorker">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewResumptionWorker(
+    queue <a href="index.html#ResumptionQueue">ResumptionQueue</a>,
+    checkpointStore <a href="index.html#CheckpointStore">CheckpointStore</a>,
+    idempotencyStore <a href="index.html#IdempotencyStore">IdempotencyStore</a>,
+    graphRegistry <a href="index.html#GraphRegistry">GraphRegistry</a>,
+    executorFactory func(graphID, graphVersion <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="index.html#ResumableExecutor">ResumableExecutor</a>,
+    metrics *<a href="index.html#HITLMetrics">HITLMetrics</a>,
+) *<a href="index.html#ResumptionWorker">ResumptionWorker</a></pre>
+				<p>NewResumptionWorker creates and initializes a new worker.
+
+				
+				
+			
+
+			
+				
+				<h3 id="ResumptionWorker.Start">func (*ResumptionWorker) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/resumption_worker.go?s=1267:1336#L40">Start</a>
+					<a class="permalink" href="index.html#ResumptionWorker.Start">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (w *<a href="index.html#ResumptionWorker">ResumptionWorker</a>) Start(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, numWorkers <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>)</pre>
+				<p>Start launches the worker loop in a new goroutine.
+
+				
+				
+				
+			
+				
+				<h3 id="ResumptionWorker.Stop">func (*ResumptionWorker) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/resumption_worker.go?s=1761:1794#L57">Stop</a>
+					<a class="permalink" href="index.html#ResumptionWorker.Stop">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (w *<a href="index.html#ResumptionWorker">ResumptionWorker</a>) Stop()</pre>
+				<p>Stop gracefully shuts down the worker.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="RunbookService">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=5745:5828#L177">RunbookService</a>
+				<a class="permalink" href="index.html#RunbookService">&#xb6;</a>
+				
+				
+			</h2>
+			<p>RunbookService provides access to operational runbooks
+
+			<pre>type RunbookService struct {
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewRunbookService">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=5881:5921#L182">NewRunbookService</a>
+					<a class="permalink" href="index.html#NewRunbookService">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewRunbookService() *<a href="index.html#RunbookService">RunbookService</a></pre>
+				<p>NewRunbookService creates a new runbook service
+
+				
+				
+			
+
+			
+				
+				<h3 id="RunbookService.GetRunbook">func (*RunbookService) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=6006:6066#L187">GetRunbook</a>
+					<a class="permalink" href="index.html#RunbookService.GetRunbook">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#RunbookService">RunbookService</a>) GetRunbook(issueType <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>GetRunbook returns a runbook for a specific issue
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SecretRotationManager">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=2287:2447#L67">SecretRotationManager</a>
+				<a class="permalink" href="index.html#SecretRotationManager">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SecretRotationManager handles secret rotation
+
+			<pre>type SecretRotationManager struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewSecretRotationManager">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=2515:2589#L74">NewSecretRotationManager</a>
+					<a class="permalink" href="index.html#NewSecretRotationManager">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSecretRotationManager(currentSecret []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>) *<a href="index.html#SecretRotationManager">SecretRotationManager</a></pre>
+				<p>NewSecretRotationManager creates a new secret rotation manager
+
+				
+				
+			
+
+			
+				
+				<h3 id="SecretRotationManager.GetCurrentSecret">func (*SecretRotationManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=2940:2997#L89">GetCurrentSecret</a>
+					<a class="permalink" href="index.html#SecretRotationManager.GetCurrentSecret">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SecretRotationManager">SecretRotationManager</a>) GetCurrentSecret() []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a></pre>
+				<p>GetCurrentSecret returns the current secret
+
+				
+				
+				
+			
+				
+				<h3 id="SecretRotationManager.GetPreviousSecret">func (*SecretRotationManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=3101:3159#L94">GetPreviousSecret</a>
+					<a class="permalink" href="index.html#SecretRotationManager.GetPreviousSecret">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SecretRotationManager">SecretRotationManager</a>) GetPreviousSecret() []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a></pre>
+				<p>GetPreviousSecret returns the previous secret (for in-flight requests)
+
+				
+				
+				
+			
+				
+				<h3 id="SecretRotationManager.IsWithinRotationWindow">func (*SecretRotationManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=3266:3348#L99">IsWithinRotationWindow</a>
+					<a class="permalink" href="index.html#SecretRotationManager.IsWithinRotationWindow">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SecretRotationManager">SecretRotationManager</a>) IsWithinRotationWindow(requestTime <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>IsWithinRotationWindow checks if a request is within the rotation window
+
+				
+				
+				
+			
+				
+				<h3 id="SecretRotationManager.RotateSecret">func (*SecretRotationManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=2731:2793#L82">RotateSecret</a>
+					<a class="permalink" href="index.html#SecretRotationManager.RotateSecret">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SecretRotationManager">SecretRotationManager</a>) RotateSecret(newSecret []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>)</pre>
+				<p>RotateSecret rotates to a new secret
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SecurityManager">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=213:267#L6">SecurityManager</a>
+				<a class="permalink" href="index.html#SecurityManager">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SecurityManager handles security-related operations
+
+			<pre>type SecurityManager struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewSecurityManager">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=322:377#L11">NewSecurityManager</a>
+					<a class="permalink" href="index.html#NewSecurityManager">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSecurityManager(secret []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>) *<a href="index.html#SecurityManager">SecurityManager</a></pre>
+				<p>NewSecurityManager creates a new security manager
+
+				
+				
+			
+
+			
+				
+				<h3 id="SecurityManager.GenerateCallbackURL">func (*SecurityManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=742:821#L25">GenerateCallbackURL</a>
+					<a class="permalink" href="index.html#SecurityManager.GenerateCallbackURL">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SecurityManager">SecurityManager</a>) GenerateCallbackURL(baseURL, requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>GenerateCallbackURL creates a secure, signed callback URL
+
+				
+				
+				
+			
+				
+				<h3 id="SecurityManager.SignHMAC">func (*SecurityManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=1886:1943#L56">SignHMAC</a>
+					<a class="permalink" href="index.html#SecurityManager.SignHMAC">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SecurityManager">SecurityManager</a>) SignHMAC(payload <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>SignHMAC signs a payload with HMAC
+
+				
+				
+				
+			
+				
+				<h3 id="SecurityManager.VerifyCallbackSignature">func (*SecurityManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=1130:1237#L35">VerifyCallbackSignature</a>
+					<a class="permalink" href="index.html#SecurityManager.VerifyCallbackSignature">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SecurityManager">SecurityManager</a>) VerifyCallbackSignature(requestID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, timestamp <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>, signature <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>VerifyCallbackSignature verifies the signature of a callback request
+
+				
+				
+				
+			
+				
+				<h3 id="SecurityManager.VerifyHMACSignature">func (*SecurityManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=2027:2104#L61">VerifyHMACSignature</a>
+					<a class="permalink" href="index.html#SecurityManager.VerifyHMACSignature">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SecurityManager">SecurityManager</a>) VerifyHMACSignature(payload, signature <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>VerifyHMACSignature verifies an HMAC signature
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SerializableOperation">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=6884:6953#L185">SerializableOperation</a>
+				<a class="permalink" href="index.html#SerializableOperation">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SerializableOperation represents an operation to be executed within a serializable transaction.
+The function receives a transaction and should return an error if the operation fails.
+The operation will be retried on serialization failures.
+
+			<pre>type SerializableOperation func(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, tx pgx.<a href="index.html#Tx">Tx</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="SerializationConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=641:747#L17">SerializationConfig</a>
+				<a class="permalink" href="index.html#SerializationConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SerializationConfig controls retry behavior for serializable transactions
+
+			<pre>type SerializationConfig struct {
+<span id="SerializationConfig.MaxRetries"></span>    MaxRetries  <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="SerializationConfig.BaseBackoff"></span>    BaseBackoff <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="SerializationConfig.MaxBackoff"></span>    MaxBackoff  <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="DefaultSerializationConfig">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/postgres_store.go?s=829:882#L24">DefaultSerializationConfig</a>
+					<a class="permalink" href="index.html#DefaultSerializationConfig">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func DefaultSerializationConfig() <a href="index.html#SerializationConfig">SerializationConfig</a></pre>
+				<p>DefaultSerializationConfig returns sensible defaults for serialization retry
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="SimpleGraphRegistry">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=4174:4286#L148">SimpleGraphRegistry</a>
+				<a class="permalink" href="index.html#SimpleGraphRegistry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SimpleGraphRegistry is a simple implementation of GraphRegistry
+
+			<pre>type SimpleGraphRegistry struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewSimpleGraphRegistry">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=4350:4400#L154">NewSimpleGraphRegistry</a>
+					<a class="permalink" href="index.html#NewSimpleGraphRegistry">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSimpleGraphRegistry() *<a href="index.html#SimpleGraphRegistry">SimpleGraphRegistry</a></pre>
+				<p>NewSimpleGraphRegistry creates a new simple graph registry
+
+				
+				
+			
+
+			
+				
+				<h3 id="SimpleGraphRegistry.GetExecutableGraph">func (*SimpleGraphRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=5242:5328#L183">GetExecutableGraph</a>
+					<a class="permalink" href="index.html#SimpleGraphRegistry.GetExecutableGraph">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleGraphRegistry">SimpleGraphRegistry</a>) GetExecutableGraph(graphID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#Graph">Graph</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetExecutableGraph returns the executable graph if it is registered.
+
+				
+				
+				
+			
+				
+				<h3 id="SimpleGraphRegistry.GetGraph">func (*SimpleGraphRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=4534:4613#L161">GetGraph</a>
+					<a class="permalink" href="index.html#SimpleGraphRegistry.GetGraph">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleGraphRegistry">SimpleGraphRegistry</a>) GetGraph(graphID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="index.html#GraphDefinition">GraphDefinition</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="SimpleGraphRegistry.RegisterExecutableGraph">func (*SimpleGraphRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=4959:5044#L174">RegisterExecutableGraph</a>
+					<a class="permalink" href="index.html#SimpleGraphRegistry.RegisterExecutableGraph">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleGraphRegistry">SimpleGraphRegistry</a>) RegisterExecutableGraph(g *<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#Graph">Graph</a>, version <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>RegisterExecutableGraph registers an executable graph for graph-native resume.
+
+				
+				
+				
+			
+				
+				<h3 id="SimpleGraphRegistry.RegisterGraph">func (*SimpleGraphRegistry) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=4768:4837#L169">RegisterGraph</a>
+					<a class="permalink" href="index.html#SimpleGraphRegistry.RegisterGraph">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleGraphRegistry">SimpleGraphRegistry</a>) RegisterGraph(graphDef <a href="index.html#GraphDefinition">GraphDefinition</a>)</pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SimpleInMemoryQueue">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=3016:3078#L103">SimpleInMemoryQueue</a>
+				<a class="permalink" href="index.html#SimpleInMemoryQueue">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SimpleInMemoryQueue is a simple in-memory implementation of ResumptionQueue
+In production, you&apos;d use Redis, RabbitMQ, or similar
+
+			<pre>type SimpleInMemoryQueue struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewSimpleInMemoryQueue">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=3136:3194#L108">NewSimpleInMemoryQueue</a>
+					<a class="permalink" href="index.html#NewSimpleInMemoryQueue">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSimpleInMemoryQueue(size <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) *<a href="index.html#SimpleInMemoryQueue">SimpleInMemoryQueue</a></pre>
+				<p>NewSimpleInMemoryQueue creates a new in-memory queue
+
+				
+				
+			
+
+			
+				
+				<h3 id="SimpleInMemoryQueue.Ack">func (*SimpleInMemoryQueue) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=3841:3915#L138">Ack</a>
+					<a class="permalink" href="index.html#SimpleInMemoryQueue.Ack">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleInMemoryQueue">SimpleInMemoryQueue</a>) Ack(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, jobID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Ack is a no-op for in-memory queue because items are removed on Dequeue.
+
+				
+				
+				
+			
+				
+				<h3 id="SimpleInMemoryQueue.Dequeue">func (*SimpleInMemoryQueue) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=3578:3660#L128">Dequeue</a>
+					<a class="permalink" href="index.html#SimpleInMemoryQueue.Dequeue">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleInMemoryQueue">SimpleInMemoryQueue</a>) Dequeue(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) (*<a href="index.html#ResumptionJob">ResumptionJob</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="SimpleInMemoryQueue.Enqueue">func (*SimpleInMemoryQueue) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=3275:3359#L114">Enqueue</a>
+					<a class="permalink" href="index.html#SimpleInMemoryQueue.Enqueue">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleInMemoryQueue">SimpleInMemoryQueue</a>) Enqueue(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, job *<a href="index.html#ResumptionJob">ResumptionJob</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="SimpleInMemoryQueue.QueueLength">func (*SimpleInMemoryQueue) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=3991:4068#L143">QueueLength</a>
+					<a class="permalink" href="index.html#SimpleInMemoryQueue.QueueLength">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleInMemoryQueue">SimpleInMemoryQueue</a>) QueueLength(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>QueueLength returns the current buffered queue length.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SimpleResumableExecutor">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=5546:5684#L192">SimpleResumableExecutor</a>
+				<a class="permalink" href="index.html#SimpleResumableExecutor">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SimpleResumableExecutor is a simple implementation of ResumableExecutor
+
+			<pre>type SimpleResumableExecutor struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewSimpleResumableExecutor">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=5756:5871#L200">NewSimpleResumableExecutor</a>
+					<a class="permalink" href="index.html#NewSimpleResumableExecutor">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSimpleResumableExecutor(graphID, graphVersion <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, nodes map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#Node">Node</a>) *<a href="index.html#SimpleResumableExecutor">SimpleResumableExecutor</a></pre>
+				<p>NewSimpleResumableExecutor creates a new simple resumable executor
+
+				
+				
+			
+
+			
+				
+				<h3 id="SimpleResumableExecutor.CurrentNodeID">func (*SimpleResumableExecutor) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=6561:6617#L226">CurrentNodeID</a>
+					<a class="permalink" href="index.html#SimpleResumableExecutor.CurrentNodeID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleResumableExecutor">SimpleResumableExecutor</a>) CurrentNodeID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="SimpleResumableExecutor.ExecuteCurrent">func (*SimpleResumableExecutor) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=6044:6132#L209">ExecuteCurrent</a>
+					<a class="permalink" href="index.html#SimpleResumableExecutor.ExecuteCurrent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleResumableExecutor">SimpleResumableExecutor</a>) ExecuteCurrent(state <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>) (<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="SimpleResumableExecutor.ResumeFromNode">func (*SimpleResumableExecutor) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/implementation.go?s=6283:6371#L215">ResumeFromNode</a>
+					<a class="permalink" href="index.html#SimpleResumableExecutor.ResumeFromNode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SimpleResumableExecutor">SimpleResumableExecutor</a>) ResumeFromNode(nodeID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, state <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="StateValidator">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=3606:3785#L106">StateValidator</a>
+				<a class="permalink" href="index.html#StateValidator">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StateValidator validates state serialization for security
+
+			<pre>type StateValidator struct {
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewStateValidator">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=3838:3878#L112">NewStateValidator</a>
+					<a class="permalink" href="index.html#NewStateValidator">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewStateValidator() *<a href="index.html#StateValidator">StateValidator</a></pre>
+				<p>NewStateValidator creates a new state validator
+
+				
+				
+			
+
+			
+				
+				<h3 id="StateValidator.ValidateState">func (*StateValidator) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=3973:4036#L117">ValidateState</a>
+					<a class="permalink" href="index.html#StateValidator.ValidateState">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#StateValidator">StateValidator</a>) ValidateState(state <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>ValidateState checks if the state is safe for serialization
+
+				
+				
+				
+			
+				
+				<h3 id="StateValidator.ValidateStateSnapshot">func (*StateValidator) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/security.go?s=4336:4419#L127">ValidateStateSnapshot</a>
+					<a class="permalink" href="index.html#StateValidator.ValidateStateSnapshot">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#StateValidator">StateValidator</a>) ValidateStateSnapshot(snapshot *<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#StateSnapshot">StateSnapshot</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>ValidateStateSnapshot checks if a state snapshot is safe
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="StdioCheckpointNode">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/stdio_integration.go?s=388:900#L9">StdioCheckpointNode</a>
+				<a class="permalink" href="index.html#StdioCheckpointNode">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StdioCheckpointNode integrates with the graph package to provide true durable checkpointing
+that survives process restart for stdin/stdout interactions.
+
+			<pre>type StdioCheckpointNode struct {
+    *<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#BaseNode">BaseNode</a>
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewStdioCheckpointNode">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/stdio_integration.go?s=1451:1533#L39">NewStdioCheckpointNode</a>
+					<a class="permalink" href="index.html#NewStdioCheckpointNode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewStdioCheckpointNode(config <a href="index.html#StdioCheckpointNodeConfig">StdioCheckpointNodeConfig</a>) *<a href="index.html#StdioCheckpointNode">StdioCheckpointNode</a></pre>
+				<p>NewStdioCheckpointNode creates a new StdioCheckpointNode with durable checkpointing
+
+				
+				
+			
+
+			
+				
+				<h3 id="StdioCheckpointNode.Execute">func (*StdioCheckpointNode) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/stdio_integration.go?s=2430:2513#L68">Execute</a>
+					<a class="permalink" href="index.html#StdioCheckpointNode.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (n *<a href="index.html#StdioCheckpointNode">StdioCheckpointNode</a>) Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, state <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Execute handles checkpointing with stdin/stdout interaction using durable checkpointing
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="StdioCheckpointNodeConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/stdio_integration.go?s=986:1362#L24">StdioCheckpointNodeConfig</a>
+				<a class="permalink" href="index.html#StdioCheckpointNodeConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StdioCheckpointNodeConfig holds configuration for creating a StdioCheckpointNode
+
+			<pre>type StdioCheckpointNodeConfig struct {
+<span id="StdioCheckpointNodeConfig.ID"></span>    ID                 <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="StdioCheckpointNodeConfig.Prompt"></span>    Prompt             <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="StdioCheckpointNodeConfig.StateKey"></span>    StateKey           <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="StdioCheckpointNodeConfig.ContinueKey"></span>    ContinueKey        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="StdioCheckpointNodeConfig.Timeout"></span>    Timeout            <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="StdioCheckpointNodeConfig.ShortWaitThreshold"></span>    ShortWaitThreshold <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="StdioCheckpointNodeConfig.CheckpointStore"></span>    CheckpointStore    <a href="index.html#CheckpointStore">CheckpointStore</a>
+<span id="StdioCheckpointNodeConfig.ResponseManager"></span>    ResponseManager    *<a href="index.html#HumanResponseManager">HumanResponseManager</a>
+<span id="StdioCheckpointNodeConfig.CallbackSecret"></span>    CallbackSecret     []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>
+<span id="StdioCheckpointNodeConfig.GraphID"></span>    GraphID            <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="StdioCheckpointNodeConfig.GraphVersion"></span>    GraphVersion       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="System">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/system.go?s=765:946#L29">System</a>
+				<a class="permalink" href="index.html#System">&#xb6;</a>
+				
+				
+			</h2>
+			<p>System represents the complete HITL system
+
+			<pre>type System struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewSystem">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/system.go?s=987:1030#L38">NewSystem</a>
+					<a class="permalink" href="index.html#NewSystem">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewSystem(config <a href="index.html#SystemConfig">SystemConfig</a>) *<a href="index.html#System">System</a></pre>
+				<p>NewSystem creates a new HITL system
+
+				
+				
+			
+
+			
+				
+				<h3 id="System.CreateCallbackHandler">func (*System) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/system.go?s=3919:3976#L141">CreateCallbackHandler</a>
+					<a class="permalink" href="index.html#System.CreateCallbackHandler">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#System">System</a>) CreateCallbackHandler() *<a href="index.html#CallbackHandler">CallbackHandler</a></pre>
+				<p>CreateCallbackHandler creates a CallbackHandler configured for the system
+
+				
+				
+				
+			
+				
+				<h3 id="System.CreateHumanNode">func (*System) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/system.go?s=3187:3254#L119">CreateHumanNode</a>
+					<a class="permalink" href="index.html#System.CreateHumanNode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#System">System</a>) CreateHumanNode(config <a href="index.html#HumanNodeConfig">HumanNodeConfig</a>) *<a href="index.html#HumanNode">HumanNode</a></pre>
+				<p>CreateHumanNode creates a HumanNode configured for the system
+
+				
+				
+				
+			
+				
+				<h3 id="System.GetMonitoringService">func (*System) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/system.go?s=4220:4278#L152">GetMonitoringService</a>
+					<a class="permalink" href="index.html#System.GetMonitoringService">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#System">System</a>) GetMonitoringService() *<a href="index.html#MonitoringService">MonitoringService</a></pre>
+				<p>GetMonitoringService returns the monitoring service
+
+				
+				
+				
+			
+				
+				<h3 id="System.GetOperationalTools">func (*System) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/system.go?s=4358:4420#L157">GetOperationalTools</a>
+					<a class="permalink" href="index.html#System.GetOperationalTools">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#System">System</a>) GetOperationalTools() *<a href="index.html#OperationalToolService">OperationalToolService</a></pre>
+				<p>GetOperationalTools returns the operational tools
+
+				
+				
+				
+			
+				
+				<h3 id="System.RunHealthCheck">func (*System) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/system.go?s=5242:5298#L186">RunHealthCheck</a>
+					<a class="permalink" href="index.html#System.RunHealthCheck">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#System">System</a>) RunHealthCheck() map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}</pre>
+				<p>RunHealthCheck performs a complete health check of the system
+
+				
+				
+				
+			
+				
+				<h3 id="System.Start">func (*System) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/system.go?s=2666:2715#L98">Start</a>
+					<a class="permalink" href="index.html#System.Start">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#System">System</a>) Start(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Start starts the HITL system
+
+				
+				
+				
+			
+				
+				<h3 id="System.Stop">func (*System) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/system.go?s=3017:3040#L111">Stop</a>
+					<a class="permalink" href="index.html#System.Stop">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#System">System</a>) Stop()</pre>
+				<p>Stop stops the HITL system gracefully
+
+				
+				
+				
+			
+				
+				<h3 id="System.ValidateStateSerialization">func (*System) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/system.go?s=4527:4595#L162">ValidateStateSerialization</a>
+					<a class="permalink" href="index.html#System.ValidateStateSerialization">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#System">System</a>) ValidateStateSerialization(state <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>ValidateStateSerialization validates that all state types can be serialized
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SystemConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/system.go?s=158:717#L2">SystemConfig</a>
+				<a class="permalink" href="index.html#SystemConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SystemConfig holds the configuration for the complete HITL system
+
+			<pre>type SystemConfig struct {
+    <span class="comment">// Core settings</span>
+<span id="SystemConfig.ShortWaitThreshold"></span>    ShortWaitThreshold <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="SystemConfig.MaxConcurrentWaits"></span>    MaxConcurrentWaits <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="SystemConfig.CallbackSecret"></span>    CallbackSecret     []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>
+
+    <span class="comment">// Infrastructure</span>
+<span id="SystemConfig.CheckpointStore"></span>    CheckpointStore  <a href="index.html#CheckpointStore">CheckpointStore</a>
+<span id="SystemConfig.IdempotencyStore"></span>    IdempotencyStore <a href="index.html#IdempotencyStore">IdempotencyStore</a>
+<span id="SystemConfig.ResumptionQueue"></span>    ResumptionQueue  <a href="index.html#ResumptionQueue">ResumptionQueue</a>
+<span id="SystemConfig.GraphRegistry"></span>    GraphRegistry    <a href="index.html#GraphRegistry">GraphRegistry</a>
+
+    <span class="comment">// Workers</span>
+<span id="SystemConfig.NumResumptionWorkers"></span>    NumResumptionWorkers <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+
+    <span class="comment">// Security</span>
+<span id="SystemConfig.SecretRotationEnabled"></span>    SecretRotationEnabled <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+<span id="SystemConfig.RotationInterval"></span>    RotationInterval      <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+
+    <span class="comment">// Observability</span>
+<span id="SystemConfig.MetricsCollector"></span>    MetricsCollector *<a href="index.html#MetricsCollector">MetricsCollector</a>
+<span id="SystemConfig.AlertService"></span>    AlertService     *<a href="index.html#AlertService">AlertService</a>
+<span id="SystemConfig.LoggingService"></span>    LoggingService   *<a href="index.html#LoggingService">LoggingService</a>
+<span id="SystemConfig.TracingService"></span>    TracingService   *<a href="index.html#TracingService">TracingService</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="TracingService">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=4990:5107#L155">TracingService</a>
+				<a class="permalink" href="index.html#TracingService">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TracingService provides distributed tracing
+
+			<pre>type TracingService struct {
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewTracingService">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=5160:5200#L160">NewTracingService</a>
+					<a class="permalink" href="index.html#NewTracingService">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewTracingService() *<a href="index.html#TracingService">TracingService</a></pre>
+				<p>NewTracingService creates a new tracing service
+
+				
+				
+			
+
+			
+				
+				<h3 id="TracingService.AddTraceField">func (*TracingService) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=5535:5613#L172">AddTraceField</a>
+					<a class="permalink" href="index.html#TracingService.AddTraceField">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (t *<a href="index.html#TracingService">TracingService</a>) AddTraceField(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, key, value <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>AddTraceField adds a field to the current trace
+
+				
+				
+				
+			
+				
+				<h3 id="TracingService.StartTrace">func (*TracingService) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/observability.go?s=5265:5348#L165">StartTrace</a>
+					<a class="permalink" href="index.html#TracingService.StartTrace">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (t *<a href="index.html#TracingService">TracingService</a>) StartTrace(operationName <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, func())</pre>
+				<p>StartTrace starts a new trace
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Transaction">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/hitl/interfaces.go?s=1415:1553#L30">Transaction</a>
+				<a class="permalink" href="index.html#Transaction">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Transaction represents a database transaction.
+
+			<pre>type Transaction interface {
+    Commit() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    Rollback() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    QueryRow(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, query <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, args ...interface{}) pgx.<a href="index.html#Row">Row</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

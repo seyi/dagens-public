@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>backend - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package backend
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/backend"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+			
+				
+				<dd><a href="index.html#Backend">type Backend</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ExecutionResult">type ExecutionResult</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewExecutionResult">func NewExecutionResult(executionID, graphID string) *ExecutionResult</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ExecutionResult.AddNode">func (r *ExecutionResult) AddNode(nodeID string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ExecutionResult.Cancel">func (r *ExecutionResult) Cancel()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ExecutionResult.Complete">func (r *ExecutionResult) Complete()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ExecutionResult.Fail">func (r *ExecutionResult) Fail(err error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ExecutionResult.GetMetadata">func (r *ExecutionResult) GetMetadata(key string) (interface{}, bool)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ExecutionResult.SetMetadata">func (r *ExecutionResult) SetMetadata(key string, value interface{})</a></dd>
+				
+			
+				
+				<dd><a href="index.html#ExecutionStatus">type ExecutionStatus</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LocalBackend">type LocalBackend</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewLocalBackend">func NewLocalBackend() *LocalBackend</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewLocalBackendWithConfig">func NewLocalBackendWithConfig(cfg LocalBackendConfig) *LocalBackend</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LocalBackend.AllResults">func (b *LocalBackend) AllResults() []*ExecutionResult</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LocalBackend.ClearResults">func (b *LocalBackend) ClearResults()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LocalBackend.Close">func (b *LocalBackend) Close() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LocalBackend.Execute">func (b *LocalBackend) Execute(ctx context.Context, g *graph.Graph, state graph.State) (*ExecutionResult, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LocalBackend.ExecuteAsync">func (b *LocalBackend) ExecuteAsync(ctx context.Context, g *graph.Graph, state graph.State) (string, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LocalBackend.GetResult">func (b *LocalBackend) GetResult(executionID string) (*ExecutionResult, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LocalBackend.Name">func (b *LocalBackend) Name() string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#LocalBackendConfig">type LocalBackendConfig</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/backend.go">backend.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/local.go">local.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+		
+			
+			
+			<h2 id="Backend">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/backend.go?s=214:802#L2">Backend</a>
+				<a class="permalink" href="index.html#Backend">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Backend defines the interface for executing graphs.
+Different backends can provide local, distributed, or cloud execution.
+
+			<pre>type Backend interface {
+    <span class="comment">// Execute runs the graph with the given state and returns the result.</span>
+    Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, g *<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#Graph">Graph</a>, state <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>) (*<a href="index.html#ExecutionResult">ExecutionResult</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// ExecuteAsync runs the graph asynchronously and returns an execution ID.</span>
+    ExecuteAsync(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, g *<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#Graph">Graph</a>, state <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// GetResult retrieves the result of an async execution.</span>
+    GetResult(executionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#ExecutionResult">ExecutionResult</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// Name returns the backend name.</span>
+    Name() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Close closes the backend and releases resources.</span>
+    Close() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ExecutionResult">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/backend.go?s=865:1698#L20">ExecutionResult</a>
+				<a class="permalink" href="index.html#ExecutionResult">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ExecutionResult contains the result of a graph execution.
+
+			<pre>type ExecutionResult struct {
+<span id="ExecutionResult.ExecutionID"></span>    <span class="comment">// ExecutionID is the unique identifier for this execution.</span>
+    ExecutionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+<span id="ExecutionResult.GraphID"></span>    <span class="comment">// GraphID is the ID of the executed graph.</span>
+    GraphID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+<span id="ExecutionResult.State"></span>    <span class="comment">// State is the final state after execution.</span>
+    State <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>
+
+<span id="ExecutionResult.Status"></span>    <span class="comment">// Status indicates the execution status.</span>
+    Status <a href="index.html#ExecutionStatus">ExecutionStatus</a>
+
+<span id="ExecutionResult.Error"></span>    <span class="comment">// Error contains any error that occurred during execution.</span>
+    Error <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+
+<span id="ExecutionResult.StartTime"></span>    <span class="comment">// StartTime is when execution started.</span>
+    StartTime <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+
+<span id="ExecutionResult.EndTime"></span>    <span class="comment">// EndTime is when execution completed.</span>
+    EndTime <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+
+<span id="ExecutionResult.Duration"></span>    <span class="comment">// Duration is the total execution time.</span>
+    Duration <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+
+<span id="ExecutionResult.NodesExecuted"></span>    <span class="comment">// NodesExecuted is the number of nodes that were executed.</span>
+    NodesExecuted <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+
+<span id="ExecutionResult.ExecutionPath"></span>    <span class="comment">// ExecutionPath is the sequence of node IDs that were executed.</span>
+    ExecutionPath []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+<span id="ExecutionResult.Metadata"></span>    <span class="comment">// Metadata contains additional execution metadata.</span>
+    Metadata map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewExecutionResult">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/backend.go?s=2411:2480#L76">NewExecutionResult</a>
+					<a class="permalink" href="index.html#NewExecutionResult">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewExecutionResult(executionID, graphID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) *<a href="index.html#ExecutionResult">ExecutionResult</a></pre>
+				<p>NewExecutionResult creates a new execution result.
+
+				
+				
+			
+
+			
+				
+				<h3 id="ExecutionResult.AddNode">func (*ExecutionResult) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/backend.go?s=3348:3396#L111">AddNode</a>
+					<a class="permalink" href="index.html#ExecutionResult.AddNode">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ExecutionResult">ExecutionResult</a>) AddNode(nodeID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>AddNode records that a node was executed.
+
+				
+				
+				
+			
+				
+				<h3 id="ExecutionResult.Cancel">func (*ExecutionResult) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/backend.go?s=3171:3205#L104">Cancel</a>
+					<a class="permalink" href="index.html#ExecutionResult.Cancel">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ExecutionResult">ExecutionResult</a>) Cancel()</pre>
+				<p>Cancel marks the execution as canceled.
+
+				
+				
+				
+			
+				
+				<h3 id="ExecutionResult.Complete">func (*ExecutionResult) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/backend.go?s=2781:2817#L89">Complete</a>
+					<a class="permalink" href="index.html#ExecutionResult.Complete">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ExecutionResult">ExecutionResult</a>) Complete()</pre>
+				<p>Complete marks the execution as completed.
+
+				
+				
+				
+			
+				
+				<h3 id="ExecutionResult.Fail">func (*ExecutionResult) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/backend.go?s=2976:3017#L96">Fail</a>
+					<a class="permalink" href="index.html#ExecutionResult.Fail">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ExecutionResult">ExecutionResult</a>) Fail(err <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Fail marks the execution as failed with the given error.
+
+				
+				
+				
+			
+				
+				<h3 id="ExecutionResult.GetMetadata">func (*ExecutionResult) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/backend.go?s=3652:3721#L122">GetMetadata</a>
+					<a class="permalink" href="index.html#ExecutionResult.GetMetadata">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ExecutionResult">ExecutionResult</a>) GetMetadata(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (interface{}, <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)</pre>
+				<p>GetMetadata retrieves a metadata value.
+
+				
+				
+				
+			
+				
+				<h3 id="ExecutionResult.SetMetadata">func (*ExecutionResult) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/backend.go?s=3510:3578#L117">SetMetadata</a>
+					<a class="permalink" href="index.html#ExecutionResult.SetMetadata">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ExecutionResult">ExecutionResult</a>) SetMetadata(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value interface{})</pre>
+				<p>SetMetadata sets a metadata value.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="ExecutionStatus">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/backend.go?s=1763:1790#L56">ExecutionStatus</a>
+				<a class="permalink" href="index.html#ExecutionStatus">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ExecutionStatus represents the status of a graph execution.
+
+			<pre>type ExecutionStatus <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span class="comment">// StatusPending indicates the execution has been queued but not started.</span>
+    <span id="StatusPending">StatusPending</span> <a href="index.html#ExecutionStatus">ExecutionStatus</a> = &#34;pending&#34;
+
+    <span class="comment">// StatusRunning indicates the execution is currently in progress.</span>
+    <span id="StatusRunning">StatusRunning</span> <a href="index.html#ExecutionStatus">ExecutionStatus</a> = &#34;running&#34;
+
+    <span class="comment">// StatusCompleted indicates the execution completed successfully.</span>
+    <span id="StatusCompleted">StatusCompleted</span> <a href="index.html#ExecutionStatus">ExecutionStatus</a> = &#34;completed&#34;
+
+    <span class="comment">// StatusFailed indicates the execution failed with an error.</span>
+    <span id="StatusFailed">StatusFailed</span> <a href="index.html#ExecutionStatus">ExecutionStatus</a> = &#34;failed&#34;
+
+    <span class="comment">// StatusCanceled indicates the execution was canceled.</span>
+    <span id="StatusCanceled">StatusCanceled</span> <a href="index.html#ExecutionStatus">ExecutionStatus</a> = &#34;canceled&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LocalBackend">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/local.go?s=243:387#L4">LocalBackend</a>
+				<a class="permalink" href="index.html#LocalBackend">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LocalBackend executes graphs in the current process.
+This is the simplest backend implementation with no distribution.
+
+			<pre>type LocalBackend struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewLocalBackend">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/local.go?s=631:667#L18">NewLocalBackend</a>
+					<a class="permalink" href="index.html#NewLocalBackend">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewLocalBackend() *<a href="index.html#LocalBackend">LocalBackend</a></pre>
+				<p>NewLocalBackend creates a new local backend.
+
+				
+				
+			
+				
+				<h3 id="NewLocalBackendWithConfig">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/local.go?s=880:948#L26">NewLocalBackendWithConfig</a>
+					<a class="permalink" href="index.html#NewLocalBackendWithConfig">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewLocalBackendWithConfig(cfg <a href="index.html#LocalBackendConfig">LocalBackendConfig</a>) *<a href="index.html#LocalBackend">LocalBackend</a></pre>
+				<p>NewLocalBackendWithConfig creates a new local backend with configuration.
+
+				
+				
+			
+
+			
+				
+				<h3 id="LocalBackend.AllResults">func (*LocalBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/local.go?s=6146:6200#L231">AllResults</a>
+					<a class="permalink" href="index.html#LocalBackend.AllResults">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#LocalBackend">LocalBackend</a>) AllResults() []*<a href="index.html#ExecutionResult">ExecutionResult</a></pre>
+				<p>AllResults returns all stored execution results.
+
+				
+				
+				
+			
+				
+				<h3 id="LocalBackend.ClearResults">func (*LocalBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/local.go?s=5956:5993#L224">ClearResults</a>
+					<a class="permalink" href="index.html#LocalBackend.ClearResults">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#LocalBackend">LocalBackend</a>) ClearResults()</pre>
+				<p>ClearResults removes all stored execution results.
+
+				
+				
+				
+			
+				
+				<h3 id="LocalBackend.Close">func (*LocalBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/local.go?s=3160:3196#L119">Close</a>
+					<a class="permalink" href="index.html#LocalBackend.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#LocalBackend">LocalBackend</a>) Close() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Close closes the backend and releases resources.
+
+				
+				
+				
+			
+				
+				<h3 id="LocalBackend.Execute">func (*LocalBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/local.go?s=1306:1418#L45">Execute</a>
+					<a class="permalink" href="index.html#LocalBackend.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#LocalBackend">LocalBackend</a>) Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, g *<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#Graph">Graph</a>, state <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>) (*<a href="index.html#ExecutionResult">ExecutionResult</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Execute runs the graph synchronously and returns the result.
+
+				
+				
+				
+			
+				
+				<h3 id="LocalBackend.ExecuteAsync">func (*LocalBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/local.go?s=2032:2139#L74">ExecuteAsync</a>
+					<a class="permalink" href="index.html#LocalBackend.ExecuteAsync">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#LocalBackend">LocalBackend</a>) ExecuteAsync(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, g *<a href="../graph/index.html">graph</a>.<a href="../graph/index.html#Graph">Graph</a>, state <a href="../graph/index.html">graph</a>.<a href="../graph/index.html#State">State</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ExecuteAsync runs the graph asynchronously and returns an execution ID.
+
+				
+				
+				
+			
+				
+				<h3 id="LocalBackend.GetResult">func (*LocalBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/local.go?s=2829:2907#L106">GetResult</a>
+					<a class="permalink" href="index.html#LocalBackend.GetResult">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#LocalBackend">LocalBackend</a>) GetResult(executionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#ExecutionResult">ExecutionResult</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetResult retrieves the result of an async execution.
+
+				
+				
+				
+			
+				
+				<h3 id="LocalBackend.Name">func (*LocalBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/local.go?s=1185:1221#L40">Name</a>
+					<a class="permalink" href="index.html#LocalBackend.Name">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (b *<a href="index.html#LocalBackend">LocalBackend</a>) Name() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>Name returns the backend name.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="LocalBackendConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/backend/local.go?s=449:581#L12">LocalBackendConfig</a>
+				<a class="permalink" href="index.html#LocalBackendConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LocalBackendConfig holds configuration for LocalBackend.
+
+			<pre>type LocalBackendConfig struct {
+<span id="LocalBackendConfig.Name"></span>    Name           <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="LocalBackendConfig.MaxConcurrency"></span>    MaxConcurrency <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a> <span class="comment">// Maximum concurrent graph executions (0 = unlimited)</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

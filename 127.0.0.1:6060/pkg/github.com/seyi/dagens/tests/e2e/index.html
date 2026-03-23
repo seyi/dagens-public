@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>e2e - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package e2e
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/tests/e2e"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package e2e provides end-to-end testing utilities for the Dagens agent server.
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+			
+				
+				<dd><a href="index.html#Agent">type Agent</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentsResponse">type AgentsResponse</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#BatchExecuteRequest">type BatchExecuteRequest</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BatchExecuteRequest.ToServerRequest">func (r *BatchExecuteRequest) ToServerRequest() map[string]interface{}</a></dd>
+				
+			
+				
+				<dd><a href="index.html#BatchExecuteResponse">type BatchExecuteResponse</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#Client">type Client</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewClient">func NewClient(baseURL string) *Client</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Client.BatchExecute">func (c *Client) BatchExecute(req *BatchExecuteRequest) (*BatchExecuteResponse, int, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Client.Execute">func (c *Client) Execute(req *ExecuteRequest) (*ExecuteResponse, int, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Client.Health">func (c *Client) Health() (*HealthResponse, int, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Client.ListAgents">func (c *Client) ListAgents() (*AgentsResponse, int, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#Client.Stream">func (c *Client) Stream(req *ExecuteRequest) (int, string, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#ErrorResponse">type ErrorResponse</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ExecuteRequest">type ExecuteRequest</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ExecuteRequest.ToServerRequest">func (r *ExecuteRequest) ToServerRequest() map[string]interface{}</a></dd>
+				
+			
+				
+				<dd><a href="index.html#ExecuteResponse">type ExecuteResponse</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#HealthResponse">type HealthResponse</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ServerRunner">type ServerRunner</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewServerRunner">func NewServerRunner(t *testing.T) *ServerRunner</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ServerRunner.Addr">func (r *ServerRunner) Addr() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ServerRunner.BaseURL">func (r *ServerRunner) BaseURL() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ServerRunner.Logs">func (r *ServerRunner) Logs() (stdout, stderr string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ServerRunner.Port">func (r *ServerRunner) Port() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ServerRunner.Start">func (r *ServerRunner) Start(t *testing.T)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ServerRunner.Stop">func (r *ServerRunner) Stop(t *testing.T)</a></dd>
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go">client.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/server_runner.go">server_runner.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+		
+			
+			
+			<h2 id="Agent">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=582:744#L24">Agent</a>
+				<a class="permalink" href="index.html#Agent">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Agent represents an agent in the list response.
+
+			<pre>type Agent struct {
+<span id="Agent.ID"></span>    ID          <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;id&#34;`
+<span id="Agent.Name"></span>    Name        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;name&#34;`
+<span id="Agent.Description"></span>    Description <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;description&#34;`
+<span id="Agent.Type"></span>    Type        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;type&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentsResponse">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=813:875#L32">AgentsResponse</a>
+				<a class="permalink" href="index.html#AgentsResponse">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentsResponse represents the /api/v1/agents endpoint response.
+
+			<pre>type AgentsResponse struct {
+<span id="AgentsResponse.Agents"></span>    Agents []<a href="index.html#Agent">Agent</a> `json:&#34;agents&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="BatchExecuteRequest">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=2076:2360#L68">BatchExecuteRequest</a>
+				<a class="permalink" href="index.html#BatchExecuteRequest">&#xb6;</a>
+				
+				
+			</h2>
+			<p>BatchExecuteRequest represents a request to /api/v1/agents/batch_execute.
+Note: The server expects a single agent_id with multiple inputs.
+
+			<pre>type BatchExecuteRequest struct {
+<span id="BatchExecuteRequest.AgentID"></span>    AgentID  <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>            `json:&#34;agent_id&#34;`
+<span id="BatchExecuteRequest.Inputs"></span>    Inputs   []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>          `json:&#34;inputs&#34;`
+<span id="BatchExecuteRequest.Context"></span>    Context  map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;context,omitempty&#34;`
+<span id="BatchExecuteRequest.Requests"></span>    Requests []<a href="index.html#ExecuteRequest">ExecuteRequest</a>  `json:&#34;-&#34;` <span class="comment">// For test convenience, converted to Inputs</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="BatchExecuteRequest.ToServerRequest">func (*BatchExecuteRequest) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=2408:2478#L76">ToServerRequest</a>
+					<a class="permalink" href="index.html#BatchExecuteRequest.ToServerRequest">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#BatchExecuteRequest">BatchExecuteRequest</a>) ToServerRequest() map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}</pre>
+				<p>ToServerRequest converts to server format.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="BatchExecuteResponse">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=3107:3187#L102">BatchExecuteResponse</a>
+				<a class="permalink" href="index.html#BatchExecuteResponse">&#xb6;</a>
+				
+				
+			</h2>
+			<p>BatchExecuteResponse represents the response from /api/v1/agents/batch_execute.
+
+			<pre>type BatchExecuteResponse struct {
+<span id="BatchExecuteResponse.Results"></span>    Results []<a href="index.html#ExecuteResponse">ExecuteResponse</a> `json:&#34;results&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Client">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=153:219#L3">Client</a>
+				<a class="permalink" href="index.html#Client">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Client provides typed helpers for calling agent server endpoints.
+
+			<pre>type Client struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewClient">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=261:299#L9">NewClient</a>
+					<a class="permalink" href="index.html#NewClient">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewClient(baseURL <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) *<a href="index.html#Client">Client</a></pre>
+				<p>NewClient creates a new test client.
+
+				
+				
+			
+
+			
+				
+				<h3 id="Client.BatchExecute">func (*Client) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=5565:5656#L180">BatchExecute</a>
+					<a class="permalink" href="index.html#Client.BatchExecute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#Client">Client</a>) BatchExecute(req *<a href="index.html#BatchExecuteRequest">BatchExecuteRequest</a>) (*<a href="index.html#BatchExecuteResponse">BatchExecuteResponse</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>BatchExecute calls POST /api/v1/agents/batch_execute with the given requests.
+
+				
+				
+				
+			
+				
+				<h3 id="Client.Execute">func (*Client) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=4447:4523#L145">Execute</a>
+					<a class="permalink" href="index.html#Client.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#Client">Client</a>) Execute(req *<a href="index.html#ExecuteRequest">ExecuteRequest</a>) (*<a href="index.html#ExecuteResponse">ExecuteResponse</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Execute calls POST /api/v1/agents/execute with the given request.
+
+				
+				
+				
+			
+				
+				<h3 id="Client.Health">func (*Client) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=3411:3466#L113">Health</a>
+					<a class="permalink" href="index.html#Client.Health">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#Client">Client</a>) Health() (*<a href="index.html#HealthResponse">HealthResponse</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Health calls GET /health and returns the response.
+
+				
+				
+				
+			
+				
+				<h3 id="Client.ListAgents">func (*Client) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=3922:3981#L129">ListAgents</a>
+					<a class="permalink" href="index.html#Client.ListAgents">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#Client">Client</a>) ListAgents() (*<a href="index.html#AgentsResponse">AgentsResponse</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ListAgents calls GET /api/v1/agents and returns the list of agents.
+
+				
+				
+				
+			
+				
+				<h3 id="Client.Stream">func (*Client) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=6771:6836#L217">Stream</a>
+					<a class="permalink" href="index.html#Client.Stream">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#Client">Client</a>) Stream(req *<a href="index.html#ExecuteRequest">ExecuteRequest</a>) (<a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Stream calls POST /api/v1/agents/stream and returns the raw response.
+Note: Streaming is not fully implemented; this returns status only.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="ErrorResponse">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=3252:3355#L107">ErrorResponse</a>
+				<a class="permalink" href="index.html#ErrorResponse">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ErrorResponse represents an error response from the server.
+
+			<pre>type ErrorResponse struct {
+<span id="ErrorResponse.Error"></span>    Error   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;error&#34;`
+<span id="ErrorResponse.Message"></span>    Message <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;message,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ExecuteRequest">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=943:1226#L37">ExecuteRequest</a>
+				<a class="permalink" href="index.html#ExecuteRequest">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ExecuteRequest represents a request to /api/v1/agents/execute.
+
+			<pre>type ExecuteRequest struct {
+<span id="ExecuteRequest.AgentID"></span>    AgentID     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;agent_id&#34;`
+<span id="ExecuteRequest.Instruction"></span>    Instruction <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;-&#34;` <span class="comment">// Mapped to Input for JSON</span>
+<span id="ExecuteRequest.Input"></span>    Input       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;input,omitempty&#34;`
+<span id="ExecuteRequest.Context"></span>    Context     map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;context,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="ExecuteRequest.ToServerRequest">func (*ExecuteRequest) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=1291:1356#L45">ToServerRequest</a>
+					<a class="permalink" href="index.html#ExecuteRequest.ToServerRequest">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ExecuteRequest">ExecuteRequest</a>) ToServerRequest() map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}</pre>
+				<p>ToServerRequest converts the test request to server format.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="ExecuteResponse">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=1626:1929#L58">ExecuteResponse</a>
+				<a class="permalink" href="index.html#ExecuteResponse">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ExecuteResponse represents the response from /api/v1/agents/execute.
+
+			<pre>type ExecuteResponse struct {
+<span id="ExecuteResponse.Output"></span>    Output     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;output&#34;`
+<span id="ExecuteResponse.Metadata"></span>    Metadata   map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;metadata&#34;`
+<span id="ExecuteResponse.Success"></span>    Success    <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>                   `json:&#34;success&#34;`
+<span id="ExecuteResponse.DurationMS"></span>    DurationMS <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>                  `json:&#34;duration_ms&#34;`
+<span id="ExecuteResponse.Error"></span>    Error      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;error,omitempty&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="HealthResponse">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/client.go?s=468:529#L19">HealthResponse</a>
+				<a class="permalink" href="index.html#HealthResponse">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HealthResponse represents the /health endpoint response.
+
+			<pre>type HealthResponse struct {
+<span id="HealthResponse.Status"></span>    Status <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;status&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ServerRunner">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/server_runner.go?s=294:502#L9">ServerRunner</a>
+				<a class="permalink" href="index.html#ServerRunner">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ServerRunner manages the lifecycle of the agent-server binary for E2E tests.
+
+			<pre>type ServerRunner struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewServerRunner">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/server_runner.go?s=561:609#L21">NewServerRunner</a>
+					<a class="permalink" href="index.html#NewServerRunner">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewServerRunner(t *<a href="http://127.0.0.1:6060/pkg/testing/">testing</a>.<a href="http://127.0.0.1:6060/pkg/testing/#T">T</a>) *<a href="index.html#ServerRunner">ServerRunner</a></pre>
+				<p>NewServerRunner creates a new server runner instance.
+
+				
+				
+			
+
+			
+				
+				<h3 id="ServerRunner.Addr">func (*ServerRunner) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/server_runner.go?s=4305:4341#L191">Addr</a>
+					<a class="permalink" href="index.html#ServerRunner.Addr">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ServerRunner">ServerRunner</a>) Addr() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>Addr returns the server address.
+
+				
+				
+				
+			
+				
+				<h3 id="ServerRunner.BaseURL">func (*ServerRunner) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/server_runner.go?s=4497:4536#L201">BaseURL</a>
+					<a class="permalink" href="index.html#ServerRunner.BaseURL">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ServerRunner">ServerRunner</a>) BaseURL() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>BaseURL returns the base URL for the server.
+
+				
+				
+				
+			
+				
+				<h3 id="ServerRunner.Logs">func (*ServerRunner) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/server_runner.go?s=4631:4684#L206">Logs</a>
+					<a class="permalink" href="index.html#ServerRunner.Logs">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ServerRunner">ServerRunner</a>) Logs() (stdout, stderr <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>Logs returns the captured stdout and stderr.
+
+				
+				
+				
+			
+				
+				<h3 id="ServerRunner.Port">func (*ServerRunner) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/server_runner.go?s=4395:4428#L196">Port</a>
+					<a class="permalink" href="index.html#ServerRunner.Port">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ServerRunner">ServerRunner</a>) Port() <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+				<p>Port returns the server port.
+
+				
+				
+				
+			
+				
+				<h3 id="ServerRunner.Start">func (*ServerRunner) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/server_runner.go?s=2057:2099#L90">Start</a>
+					<a class="permalink" href="index.html#ServerRunner.Start">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ServerRunner">ServerRunner</a>) Start(t *<a href="http://127.0.0.1:6060/pkg/testing/">testing</a>.<a href="http://127.0.0.1:6060/pkg/testing/#T">T</a>)</pre>
+				<p>Start starts the server on an available port.
+
+				
+				
+				
+			
+				
+				<h3 id="ServerRunner.Stop">func (*ServerRunner) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/tests/e2e/server_runner.go?s=3824:3865#L162">Stop</a>
+					<a class="permalink" href="index.html#ServerRunner.Stop">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="index.html#ServerRunner">ServerRunner</a>) Stop(t *<a href="http://127.0.0.1:6060/pkg/testing/">testing</a>.<a href="http://127.0.0.1:6060/pkg/testing/#T">T</a>)</pre>
+				<p>Stop stops the server gracefully.
+
+				
+				
+				
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>state - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package state
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/state"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package state provides state management backends for distributed agent systems.
+<p>Package state provides state management and checkpointing
+inspired by Spark&apos;s RDD checkpointing and lineage tracking.
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+				<dd><a href="index.html#pkg-variables">Variables</a></dd>
+			
+			
+			
+				
+				<dd><a href="index.html#Checkpoint">type Checkpoint</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#CheckpointBackend">type CheckpointBackend</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#CheckpointManager">type CheckpointManager</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#CheckpointMeta">type CheckpointMeta</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#CheckpointMetadata">type CheckpointMetadata</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#CheckpointStorage">type CheckpointStorage</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#CompositeStateStore">type CompositeStateStore</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMemoryStateStore">func NewMemoryStateStore() *CompositeStateStore</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#CompositeStateStore.Close">func (c *CompositeStateStore) Close() error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#FileCheckpointManager">type FileCheckpointManager</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewFileCheckpointManager">func NewFileCheckpointManager(storage CheckpointStorage) *FileCheckpointManager</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FileCheckpointManager.Checkpoint">func (f *FileCheckpointManager) Checkpoint(ctx context.Context, checkpoint *Checkpoint) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FileCheckpointManager.Delete">func (f *FileCheckpointManager) Delete(ctx context.Context, checkpointID string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FileCheckpointManager.List">func (f *FileCheckpointManager) List(ctx context.Context, jobID string) ([]*CheckpointMetadata, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FileCheckpointManager.Restore">func (f *FileCheckpointManager) Restore(ctx context.Context, checkpointID string) (*Checkpoint, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#HistoryBackend">type HistoryBackend</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#HistoryEntry">type HistoryEntry</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LineageNode">type LineageNode</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#LineageTracker">type LineageTracker</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewLineageTracker">func NewLineageTracker() *LineageTracker</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LineageTracker.GetLineage">func (lt *LineageTracker) GetLineage(nodeID string) (*LineageNode, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LineageTracker.RecomputeFrom">func (lt *LineageTracker) RecomputeFrom(ctx context.Context, nodeID string) (*agent.AgentOutput, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LineageTracker.RecordExecution">func (lt *LineageTracker) RecordExecution(agentID string, input *agent.AgentInput, output *agent.AgentOutput, dependencies []string) *LineageNode</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MemoryCheckpointBackend">type MemoryCheckpointBackend</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMemoryCheckpointBackend">func NewMemoryCheckpointBackend() *MemoryCheckpointBackend</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryCheckpointBackend.Delete">func (m *MemoryCheckpointBackend) Delete(ctx context.Context, id string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryCheckpointBackend.GetLatest">func (m *MemoryCheckpointBackend) GetLatest(ctx context.Context, agentID string) (*Checkpoint, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryCheckpointBackend.ListByAgent">func (m *MemoryCheckpointBackend) ListByAgent(ctx context.Context, agentID string, limit int) ([]*CheckpointMeta, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryCheckpointBackend.Load">func (m *MemoryCheckpointBackend) Load(ctx context.Context, id string) (*Checkpoint, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryCheckpointBackend.Save">func (m *MemoryCheckpointBackend) Save(ctx context.Context, checkpoint *Checkpoint) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MemoryCheckpointManager">type MemoryCheckpointManager</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMemoryCheckpointManager">func NewMemoryCheckpointManager() *MemoryCheckpointManager</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryCheckpointManager.Checkpoint">func (m *MemoryCheckpointManager) Checkpoint(ctx context.Context, checkpoint *Checkpoint) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryCheckpointManager.Delete">func (m *MemoryCheckpointManager) Delete(ctx context.Context, checkpointID string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryCheckpointManager.List">func (m *MemoryCheckpointManager) List(ctx context.Context, jobID string) ([]*CheckpointMetadata, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryCheckpointManager.Restore">func (m *MemoryCheckpointManager) Restore(ctx context.Context, checkpointID string) (*Checkpoint, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MemoryHistoryBackend">type MemoryHistoryBackend</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMemoryHistoryBackend">func NewMemoryHistoryBackend() *MemoryHistoryBackend</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryHistoryBackend.Append">func (m *MemoryHistoryBackend) Append(ctx context.Context, entry *HistoryEntry) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryHistoryBackend.Clear">func (m *MemoryHistoryBackend) Clear(ctx context.Context, sessionID string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryHistoryBackend.List">func (m *MemoryHistoryBackend) List(ctx context.Context, sessionID string, limit int) ([]*HistoryEntry, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MemorySessionBackend">type MemorySessionBackend</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMemorySessionBackend">func NewMemorySessionBackend() *MemorySessionBackend</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemorySessionBackend.Create">func (m *MemorySessionBackend) Create(ctx context.Context, session *SessionState) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemorySessionBackend.Delete">func (m *MemorySessionBackend) Delete(ctx context.Context, id string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemorySessionBackend.Get">func (m *MemorySessionBackend) Get(ctx context.Context, id string) (*SessionState, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemorySessionBackend.ListByAgent">func (m *MemorySessionBackend) ListByAgent(ctx context.Context, agentID string) ([]*SessionState, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemorySessionBackend.Update">func (m *MemorySessionBackend) Update(ctx context.Context, session *SessionState) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MemoryStateBackend">type MemoryStateBackend</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMemoryStateBackend">func NewMemoryStateBackend() *MemoryStateBackend</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryStateBackend.Close">func (m *MemoryStateBackend) Close() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryStateBackend.Delete">func (m *MemoryStateBackend) Delete(ctx context.Context, key string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryStateBackend.Get">func (m *MemoryStateBackend) Get(ctx context.Context, key string) ([]byte, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryStateBackend.List">func (m *MemoryStateBackend) List(ctx context.Context, pattern string) ([]string, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryStateBackend.Set">func (m *MemoryStateBackend) Set(ctx context.Context, key string, value []byte, ttl time.Duration) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#MemoryStorage">type MemoryStorage</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewMemoryStorage">func NewMemoryStorage() *MemoryStorage</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryStorage.Delete">func (m *MemoryStorage) Delete(ctx context.Context, key string) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryStorage.List">func (m *MemoryStorage) List(ctx context.Context, prefix string) ([]string, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryStorage.Load">func (m *MemoryStorage) Load(ctx context.Context, key string) ([]byte, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#MemoryStorage.Save">func (m *MemoryStorage) Save(ctx context.Context, key string, data []byte) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SerializableState">type SerializableState</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SerializableState.Deserialize">func (s *SerializableState) Deserialize(data []byte) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SerializableState.Serialize">func (s *SerializableState) Serialize() ([]byte, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SessionBackend">type SessionBackend</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#SessionState">type SessionState</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#StateBackend">type StateBackend</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#StateManager">type StateManager</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewStateManager">func NewStateManager(checkpointMgr CheckpointManager) *StateManager</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#StateManager.CheckpointManager">func (sm *StateManager) CheckpointManager() CheckpointManager</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#StateManager.LineageTracker">func (sm *StateManager) LineageTracker() *LineageTracker</a></dd>
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go">backends.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go">checkpoint.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+			<h2 id="pkg-variables">Variables</h2>
+			
+				<p>Common errors
+
+				<pre>var (
+    <span id="ErrNotFound">ErrNotFound</span>        = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;state not found&#34;)
+    <span id="ErrAlreadyExists">ErrAlreadyExists</span>   = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;state already exists&#34;)
+    <span id="ErrInvalidState">ErrInvalidState</span>    = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;invalid state&#34;)
+    <span id="ErrBackendClosed">ErrBackendClosed</span>   = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;backend is closed&#34;)
+    <span id="ErrVersionConflict">ErrVersionConflict</span> = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;version conflict&#34;)
+)</pre>
+			
+		
+		
+		
+			
+			
+			<h2 id="Checkpoint">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=1118:1352#L31">Checkpoint</a>
+				<a class="permalink" href="index.html#Checkpoint">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Checkpoint represents a saved agent state
+
+			<pre>type Checkpoint struct {
+<span id="Checkpoint.ID"></span>    ID        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="Checkpoint.JobID"></span>    JobID     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="Checkpoint.StageID"></span>    StageID   <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="Checkpoint.TaskID"></span>    TaskID    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="Checkpoint.Timestamp"></span>    Timestamp <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="Checkpoint.State"></span>    State     map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}
+<span id="Checkpoint.Lineage"></span>    Lineage   []*<a href="index.html#LineageNode">LineageNode</a>
+<span id="Checkpoint.Metadata"></span>    Metadata  map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="CheckpointBackend">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=10573:11120#L383">CheckpointBackend</a>
+				<a class="permalink" href="index.html#CheckpointBackend">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CheckpointBackend is the interface for checkpoint storage
+
+			<pre>type CheckpointBackend interface {
+    <span class="comment">// Save stores a checkpoint</span>
+    Save(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, checkpoint *<a href="index.html#Checkpoint">Checkpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    <span class="comment">// Load retrieves a checkpoint</span>
+    Load(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, id <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#Checkpoint">Checkpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+    <span class="comment">// Delete removes a checkpoint</span>
+    Delete(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, id <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    <span class="comment">// List returns checkpoints for an agent</span>
+    ListByAgent(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, limit <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) ([]*<a href="index.html#CheckpointMeta">CheckpointMeta</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+    <span class="comment">// GetLatest returns the latest checkpoint for an agent</span>
+    GetLatest(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#Checkpoint">Checkpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="CheckpointManager">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=612:1071#L16">CheckpointManager</a>
+				<a class="permalink" href="index.html#CheckpointManager">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CheckpointManager manages agent state checkpointing for fault tolerance
+
+			<pre>type CheckpointManager interface {
+    <span class="comment">// Checkpoint saves agent state</span>
+    Checkpoint(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, checkpoint *<a href="index.html#Checkpoint">Checkpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+
+    <span class="comment">// Restore restores agent state from checkpoint</span>
+    Restore(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, checkpointID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#Checkpoint">Checkpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// List returns all checkpoints for a job</span>
+    List(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, jobID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]*<a href="index.html#CheckpointMetadata">CheckpointMetadata</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// Delete removes a checkpoint</span>
+    Delete(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, checkpointID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="CheckpointMeta">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=8865:9086#L338">CheckpointMeta</a>
+				<a class="permalink" href="index.html#CheckpointMeta">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CheckpointMeta holds checkpoint metadata for listing
+
+			<pre>type CheckpointMeta struct {
+<span id="CheckpointMeta.ID"></span>    ID        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>    `json:&#34;id&#34;`
+<span id="CheckpointMeta.AgentID"></span>    AgentID   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>    `json:&#34;agent_id&#34;`
+<span id="CheckpointMeta.SessionID"></span>    SessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>    `json:&#34;session_id&#34;`
+<span id="CheckpointMeta.Timestamp"></span>    Timestamp <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a> `json:&#34;timestamp&#34;`
+<span id="CheckpointMeta.Version"></span>    Version   <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>     `json:&#34;version&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="CheckpointMetadata">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=1405:1513#L43">CheckpointMetadata</a>
+				<a class="permalink" href="index.html#CheckpointMetadata">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CheckpointMetadata holds checkpoint information
+
+			<pre>type CheckpointMetadata struct {
+<span id="CheckpointMetadata.ID"></span>    ID        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="CheckpointMetadata.JobID"></span>    JobID     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="CheckpointMetadata.Timestamp"></span>    Timestamp <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="CheckpointMetadata.Size"></span>    Size      <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="CheckpointStorage">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=1897:2153#L62">CheckpointStorage</a>
+				<a class="permalink" href="index.html#CheckpointStorage">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CheckpointStorage abstracts the storage backend for checkpoints
+
+			<pre>type CheckpointStorage interface {
+    Save(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, data []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    Load(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+    Delete(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    List(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, prefix <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="CompositeStateStore">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=9215:9359#L410">CompositeStateStore</a>
+				<a class="permalink" href="index.html#CompositeStateStore">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CompositeStateStore combines all state backends into a unified store
+
+			<pre>type CompositeStateStore struct {
+<span id="CompositeStateStore.State"></span>    State      <a href="index.html#StateBackend">StateBackend</a>
+<span id="CompositeStateStore.Checkpoint"></span>    Checkpoint <a href="index.html#CheckpointBackend">CheckpointBackend</a>
+<span id="CompositeStateStore.Session"></span>    Session    <a href="index.html#SessionBackend">SessionBackend</a>
+<span id="CompositeStateStore.History"></span>    History    <a href="index.html#HistoryBackend">HistoryBackend</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMemoryStateStore">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=9425:9472#L418">NewMemoryStateStore</a>
+					<a class="permalink" href="index.html#NewMemoryStateStore">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMemoryStateStore() *<a href="index.html#CompositeStateStore">CompositeStateStore</a></pre>
+				<p>NewMemoryStateStore creates a complete in-memory state store
+
+				
+				
+			
+
+			
+				
+				<h3 id="CompositeStateStore.Close">func (*CompositeStateStore) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=9705:9748#L428">Close</a>
+					<a class="permalink" href="index.html#CompositeStateStore.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (c *<a href="index.html#CompositeStateStore">CompositeStateStore</a>) Close() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Close closes all backends
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="FileCheckpointManager">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=3653:3717#L129">FileCheckpointManager</a>
+				<a class="permalink" href="index.html#FileCheckpointManager">&#xb6;</a>
+				
+				
+			</h2>
+			<p>FileCheckpointManager implements file-based checkpointing
+
+			<pre>type FileCheckpointManager struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewFileCheckpointManager">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=3719:3798#L133">NewFileCheckpointManager</a>
+					<a class="permalink" href="index.html#NewFileCheckpointManager">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewFileCheckpointManager(storage <a href="index.html#CheckpointStorage">CheckpointStorage</a>) *<a href="index.html#FileCheckpointManager">FileCheckpointManager</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="FileCheckpointManager.Checkpoint">func (*FileCheckpointManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=3859:3952#L139">Checkpoint</a>
+					<a class="permalink" href="index.html#FileCheckpointManager.Checkpoint">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f *<a href="index.html#FileCheckpointManager">FileCheckpointManager</a>) Checkpoint(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, checkpoint *<a href="index.html#Checkpoint">Checkpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="FileCheckpointManager.Delete">func (*FileCheckpointManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=5001:5087#L176">Delete</a>
+					<a class="permalink" href="index.html#FileCheckpointManager.Delete">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f *<a href="index.html#FileCheckpointManager">FileCheckpointManager</a>) Delete(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, checkpointID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="FileCheckpointManager.List">func (*FileCheckpointManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=4495:4597#L157">List</a>
+					<a class="permalink" href="index.html#FileCheckpointManager.List">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f *<a href="index.html#FileCheckpointManager">FileCheckpointManager</a>) List(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, jobID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]*<a href="index.html#CheckpointMetadata">CheckpointMetadata</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="FileCheckpointManager.Restore">func (*FileCheckpointManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=4228:4330#L151">Restore</a>
+					<a class="permalink" href="index.html#FileCheckpointManager.Restore">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f *<a href="index.html#FileCheckpointManager">FileCheckpointManager</a>) Restore(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, checkpointID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#Checkpoint">Checkpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="HistoryBackend">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=11764:12113#L411">HistoryBackend</a>
+				<a class="permalink" href="index.html#HistoryBackend">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HistoryBackend is the interface for execution history storage
+
+			<pre>type HistoryBackend interface {
+    <span class="comment">// Append adds an entry to history</span>
+    Append(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, entry *<a href="index.html#HistoryEntry">HistoryEntry</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    <span class="comment">// List returns history entries for a session</span>
+    List(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, limit <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) ([]*<a href="index.html#HistoryEntry">HistoryEntry</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+    <span class="comment">// Clear removes all history for a session</span>
+    Clear(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="HistoryEntry">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=9566:9978#L358">HistoryEntry</a>
+				<a class="permalink" href="index.html#HistoryEntry">&#xb6;</a>
+				
+				
+			</h2>
+			<p>HistoryEntry holds an execution history entry
+
+			<pre>type HistoryEntry struct {
+<span id="HistoryEntry.ID"></span>    ID        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>            `json:&#34;id&#34;`
+<span id="HistoryEntry.SessionID"></span>    SessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>            `json:&#34;session_id&#34;`
+<span id="HistoryEntry.Action"></span>    Action    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>            `json:&#34;action&#34;`
+<span id="HistoryEntry.Input"></span>    Input     interface{}       `json:&#34;input,omitempty&#34;`
+<span id="HistoryEntry.Output"></span>    Output    interface{}       `json:&#34;output,omitempty&#34;`
+<span id="HistoryEntry.Metadata"></span>    Metadata  map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;metadata,omitempty&#34;`
+<span id="HistoryEntry.Timestamp"></span>    Timestamp <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>         `json:&#34;timestamp&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LineageNode">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=1641:1828#L52">LineageNode</a>
+				<a class="permalink" href="index.html#LineageNode">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LineageNode represents a node in the execution lineage
+This enables recomputation on failure (like Spark&apos;s RDD lineage)
+
+			<pre>type LineageNode struct {
+<span id="LineageNode.ID"></span>    ID           <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="LineageNode.AgentID"></span>    AgentID      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="LineageNode.Input"></span>    Input        *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>
+<span id="LineageNode.Output"></span>    Output       *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>
+<span id="LineageNode.Dependencies"></span>    Dependencies []*<a href="index.html#LineageNode">LineageNode</a>
+<span id="LineageNode.Timestamp"></span>    Timestamp    <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="LineageTracker">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=5199:5280#L181">LineageTracker</a>
+				<a class="permalink" href="index.html#LineageTracker">&#xb6;</a>
+				
+				
+			</h2>
+			<p>LineageTracker tracks agent execution lineage for fault recovery
+
+			<pre>type LineageTracker struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewLineageTracker">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=5282:5322#L186">NewLineageTracker</a>
+					<a class="permalink" href="index.html#NewLineageTracker">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewLineageTracker() *<a href="index.html#LineageTracker">LineageTracker</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="LineageTracker.GetLineage">func (*LineageTracker) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=6162:6235#L223">GetLineage</a>
+					<a class="permalink" href="index.html#LineageTracker.GetLineage">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (lt *<a href="index.html#LineageTracker">LineageTracker</a>) GetLineage(nodeID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#LineageNode">LineageNode</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetLineage retrieves the execution lineage for a node
+
+				
+				
+				
+			
+				
+				<h3 id="LineageTracker.RecomputeFrom">func (*LineageTracker) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=6544:6647#L237">RecomputeFrom</a>
+					<a class="permalink" href="index.html#LineageTracker.RecomputeFrom">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (lt *<a href="index.html#LineageTracker">LineageTracker</a>) RecomputeFrom(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, nodeID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>RecomputeFrom recomputes execution from a lineage node
+This is used for fault recovery (similar to Spark&apos;s RDD recomputation)
+
+				
+				
+				
+			
+				
+				<h3 id="LineageTracker.RecordExecution">func (*LineageTracker) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=5457:5609#L193">RecordExecution</a>
+					<a class="permalink" href="index.html#LineageTracker.RecordExecution">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (lt *<a href="index.html#LineageTracker">LineageTracker</a>) RecordExecution(
+    agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>,
+    input *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentInput">AgentInput</a>,
+    output *<a href="../agent/index.html">agent</a>.<a href="../agent/index.html#AgentOutput">AgentOutput</a>,
+    dependencies []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>,
+) *<a href="index.html#LineageNode">LineageNode</a></pre>
+				<p>RecordExecution records an agent execution in the lineage
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MemoryCheckpointBackend">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=3322:3423#L165">MemoryCheckpointBackend</a>
+				<a class="permalink" href="index.html#MemoryCheckpointBackend">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MemoryCheckpointBackend implements CheckpointBackend with in-memory storage
+
+			<pre>type MemoryCheckpointBackend struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMemoryCheckpointBackend">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=3495:3553#L171">NewMemoryCheckpointBackend</a>
+					<a class="permalink" href="index.html#NewMemoryCheckpointBackend">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMemoryCheckpointBackend() *<a href="index.html#MemoryCheckpointBackend">MemoryCheckpointBackend</a></pre>
+				<p>NewMemoryCheckpointBackend creates a new memory checkpoint backend
+
+				
+				
+			
+
+			
+				
+				<h3 id="MemoryCheckpointBackend.Delete">func (*MemoryCheckpointBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=4178:4256#L201">Delete</a>
+					<a class="permalink" href="index.html#MemoryCheckpointBackend.Delete">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryCheckpointBackend">MemoryCheckpointBackend</a>) Delete(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, id <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Delete removes a checkpoint
+
+				
+				
+				
+			
+				
+				<h3 id="MemoryCheckpointBackend.GetLatest">func (*MemoryCheckpointBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=4910:5011#L232">GetLatest</a>
+					<a class="permalink" href="index.html#MemoryCheckpointBackend.GetLatest">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryCheckpointBackend">MemoryCheckpointBackend</a>) GetLatest(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#Checkpoint">Checkpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>GetLatest returns the latest checkpoint for an agent
+
+				
+				
+				
+			
+				
+				<h3 id="MemoryCheckpointBackend.ListByAgent">func (*MemoryCheckpointBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=4384:4504#L210">ListByAgent</a>
+					<a class="permalink" href="index.html#MemoryCheckpointBackend.ListByAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryCheckpointBackend">MemoryCheckpointBackend</a>) ListByAgent(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, limit <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) ([]*<a href="index.html#CheckpointMeta">CheckpointMeta</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ListByAgent returns checkpoints for an agent
+
+				
+				
+				
+			
+				
+				<h3 id="MemoryCheckpointBackend.Load">func (*MemoryCheckpointBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=3920:4011#L188">Load</a>
+					<a class="permalink" href="index.html#MemoryCheckpointBackend.Load">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryCheckpointBackend">MemoryCheckpointBackend</a>) Load(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, id <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#Checkpoint">Checkpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Load retrieves a checkpoint
+
+				
+				
+				
+			
+				
+				<h3 id="MemoryCheckpointBackend.Save">func (*MemoryCheckpointBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=3669:3758#L178">Save</a>
+					<a class="permalink" href="index.html#MemoryCheckpointBackend.Save">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryCheckpointBackend">MemoryCheckpointBackend</a>) Save(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, checkpoint *<a href="index.html#Checkpoint">Checkpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Save stores a checkpoint
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MemoryCheckpointManager">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=2217:2318#L70">MemoryCheckpointManager</a>
+				<a class="permalink" href="index.html#MemoryCheckpointManager">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MemoryCheckpointManager implements in-memory checkpointing
+
+			<pre>type MemoryCheckpointManager struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMemoryCheckpointManager">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=2320:2378#L75">NewMemoryCheckpointManager</a>
+					<a class="permalink" href="index.html#NewMemoryCheckpointManager">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMemoryCheckpointManager() *<a href="index.html#MemoryCheckpointManager">MemoryCheckpointManager</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="MemoryCheckpointManager.Checkpoint">func (*MemoryCheckpointManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=2466:2561#L81">Checkpoint</a>
+					<a class="permalink" href="index.html#MemoryCheckpointManager.Checkpoint">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryCheckpointManager">MemoryCheckpointManager</a>) Checkpoint(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, checkpoint *<a href="index.html#Checkpoint">Checkpoint</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MemoryCheckpointManager.Delete">func (*MemoryCheckpointManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=3414:3502#L120">Delete</a>
+					<a class="permalink" href="index.html#MemoryCheckpointManager.Delete">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryCheckpointManager">MemoryCheckpointManager</a>) Delete(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, checkpointID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MemoryCheckpointManager.List">func (*MemoryCheckpointManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=2998:3102#L102">List</a>
+					<a class="permalink" href="index.html#MemoryCheckpointManager.List">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryCheckpointManager">MemoryCheckpointManager</a>) List(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, jobID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]*<a href="index.html#CheckpointMetadata">CheckpointMetadata</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MemoryCheckpointManager.Restore">func (*MemoryCheckpointManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=2692:2796#L90">Restore</a>
+					<a class="permalink" href="index.html#MemoryCheckpointManager.Restore">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryCheckpointManager">MemoryCheckpointManager</a>) Restore(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, checkpointID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#Checkpoint">Checkpoint</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MemoryHistoryBackend">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=7836:7930#L356">MemoryHistoryBackend</a>
+				<a class="permalink" href="index.html#MemoryHistoryBackend">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MemoryHistoryBackend implements HistoryBackend with in-memory storage
+
+			<pre>type MemoryHistoryBackend struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMemoryHistoryBackend">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=7996:8048#L362">NewMemoryHistoryBackend</a>
+					<a class="permalink" href="index.html#NewMemoryHistoryBackend">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMemoryHistoryBackend() *<a href="index.html#MemoryHistoryBackend">MemoryHistoryBackend</a></pre>
+				<p>NewMemoryHistoryBackend creates a new memory history backend
+
+				
+				
+			
+
+			
+				
+				<h3 id="MemoryHistoryBackend.Append">func (*MemoryHistoryBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=8168:8253#L369">Append</a>
+					<a class="permalink" href="index.html#MemoryHistoryBackend.Append">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryHistoryBackend">MemoryHistoryBackend</a>) Append(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, entry *<a href="index.html#HistoryEntry">HistoryEntry</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Append adds an entry to history
+
+				
+				
+				
+			
+				
+				<h3 id="MemoryHistoryBackend.Clear">func (*MemoryHistoryBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=8979:9060#L401">Clear</a>
+					<a class="permalink" href="index.html#MemoryHistoryBackend.Clear">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryHistoryBackend">MemoryHistoryBackend</a>) Clear(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Clear removes all history for a session
+
+				
+				
+				
+			
+				
+				<h3 id="MemoryHistoryBackend.List">func (*MemoryHistoryBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=8553:8663#L383">List</a>
+					<a class="permalink" href="index.html#MemoryHistoryBackend.List">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryHistoryBackend">MemoryHistoryBackend</a>) List(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, limit <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) ([]*<a href="index.html#HistoryEntry">HistoryEntry</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>List returns history entries for a session
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MemorySessionBackend">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=5375:5469#L253">MemorySessionBackend</a>
+				<a class="permalink" href="index.html#MemorySessionBackend">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MemorySessionBackend implements SessionBackend with in-memory storage
+
+			<pre>type MemorySessionBackend struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMemorySessionBackend">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=5535:5587#L259">NewMemorySessionBackend</a>
+					<a class="permalink" href="index.html#NewMemorySessionBackend">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMemorySessionBackend() *<a href="index.html#MemorySessionBackend">MemorySessionBackend</a></pre>
+				<p>NewMemorySessionBackend creates a new memory session backend
+
+				
+				
+			
+
+			
+				
+				<h3 id="MemorySessionBackend.Create">func (*MemorySessionBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=5703:5790#L266">Create</a>
+					<a class="permalink" href="index.html#MemorySessionBackend.Create">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemorySessionBackend">MemorySessionBackend</a>) Create(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, session *<a href="index.html#SessionState">SessionState</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Create creates a new session
+
+				
+				
+				
+			
+				
+				<h3 id="MemorySessionBackend.Delete">func (*MemorySessionBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=7257:7332#L332">Delete</a>
+					<a class="permalink" href="index.html#MemorySessionBackend.Delete">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemorySessionBackend">MemorySessionBackend</a>) Delete(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, id <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Delete removes a session
+
+				
+				
+				
+			
+				
+				<h3 id="MemorySessionBackend.Get">func (*MemorySessionBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=6123:6212#L282">Get</a>
+					<a class="permalink" href="index.html#MemorySessionBackend.Get">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemorySessionBackend">MemorySessionBackend</a>) Get(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, id <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#SessionState">SessionState</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Get retrieves a session (returns a copy to support optimistic locking)
+
+				
+				
+				
+			
+				
+				<h3 id="MemorySessionBackend.ListByAgent">func (*MemorySessionBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=7454:7558#L341">ListByAgent</a>
+					<a class="permalink" href="index.html#MemorySessionBackend.ListByAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemorySessionBackend">MemorySessionBackend</a>) ListByAgent(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]*<a href="index.html#SessionState">SessionState</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ListByAgent returns sessions for an agent
+
+				
+				
+				
+			
+				
+				<h3 id="MemorySessionBackend.Update">func (*MemorySessionBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=6818:6905#L311">Update</a>
+					<a class="permalink" href="index.html#MemorySessionBackend.Update">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemorySessionBackend">MemorySessionBackend</a>) Update(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, session *<a href="index.html#SessionState">SessionState</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Update updates a session with optimistic locking
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MemoryStateBackend">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=241:340#L4">MemoryStateBackend</a>
+				<a class="permalink" href="index.html#MemoryStateBackend">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MemoryStateBackend implements StateBackend with in-memory storage
+
+			<pre>type MemoryStateBackend struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMemoryStateBackend">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=489:537#L17">NewMemoryStateBackend</a>
+					<a class="permalink" href="index.html#NewMemoryStateBackend">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMemoryStateBackend() *<a href="index.html#MemoryStateBackend">MemoryStateBackend</a></pre>
+				<p>NewMemoryStateBackend creates a new in-memory state backend
+
+				
+				
+			
+
+			
+				
+				<h3 id="MemoryStateBackend.Close">func (*MemoryStateBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=2612:2654#L133">Close</a>
+					<a class="permalink" href="index.html#MemoryStateBackend.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryStateBackend">MemoryStateBackend</a>) Close() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Close closes the backend
+
+				
+				
+				
+			
+				
+				<h3 id="MemoryStateBackend.Delete">func (*MemoryStateBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=1886:1960#L94">Delete</a>
+					<a class="permalink" href="index.html#MemoryStateBackend.Delete">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryStateBackend">MemoryStateBackend</a>) Delete(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Delete removes a value
+
+				
+				
+				
+			
+				
+				<h3 id="MemoryStateBackend.Get">func (*MemoryStateBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=1094:1175#L50">Get</a>
+					<a class="permalink" href="index.html#MemoryStateBackend.Get">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryStateBackend">MemoryStateBackend</a>) Get(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Get retrieves a value by key
+
+				
+				
+				
+			
+				
+				<h3 id="MemoryStateBackend.List">func (*MemoryStateBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=2141:2229#L107">List</a>
+					<a class="permalink" href="index.html#MemoryStateBackend.List">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryStateBackend">MemoryStateBackend</a>) List(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, pattern <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>List returns keys matching a pattern (supports * wildcard)
+
+				
+				
+				
+			
+				
+				<h3 id="MemoryStateBackend.Set">func (*MemoryStateBackend) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=1514:1618#L72">Set</a>
+					<a class="permalink" href="index.html#MemoryStateBackend.Set">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryStateBackend">MemoryStateBackend</a>) Set(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>, ttl <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Set stores a value with optional TTL
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="MemoryStorage">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=7230:7302#L260">MemoryStorage</a>
+				<a class="permalink" href="index.html#MemoryStorage">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MemoryStorage implements in-memory checkpoint storage
+
+			<pre>type MemoryStorage struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewMemoryStorage">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=7304:7342#L265">NewMemoryStorage</a>
+					<a class="permalink" href="index.html#NewMemoryStorage">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewMemoryStorage() *<a href="index.html#MemoryStorage">MemoryStorage</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="MemoryStorage.Delete">func (*MemoryStorage) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=7796:7865#L291">Delete</a>
+					<a class="permalink" href="index.html#MemoryStorage.Delete">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryStorage">MemoryStorage</a>) Delete(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MemoryStorage.List">func (*MemoryStorage) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=7939:8021#L299">List</a>
+					<a class="permalink" href="index.html#MemoryStorage.List">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryStorage">MemoryStorage</a>) List(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, prefix <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MemoryStorage.Load">func (*MemoryStorage) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=7561:7638#L279">Load</a>
+					<a class="permalink" href="index.html#MemoryStorage.Load">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryStorage">MemoryStorage</a>) Load(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="MemoryStorage.Save">func (*MemoryStorage) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=7408:7488#L271">Save</a>
+					<a class="permalink" href="index.html#MemoryStorage.Save">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (m *<a href="index.html#MemoryStorage">MemoryStorage</a>) Save(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, data []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SerializableState">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=9921:10271#L436">SerializableState</a>
+				<a class="permalink" href="index.html#SerializableState">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SerializableState provides JSON serialization helpers for state
+
+			<pre>type SerializableState struct {
+<span id="SerializableState.Key"></span>    Key       <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>            `json:&#34;key&#34;`
+<span id="SerializableState.Value"></span>    Value     interface{}       `json:&#34;value&#34;`
+<span id="SerializableState.Metadata"></span>    Metadata  map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> `json:&#34;metadata,omitempty&#34;`
+<span id="SerializableState.CreatedAt"></span>    CreatedAt <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>         `json:&#34;created_at&#34;`
+<span id="SerializableState.UpdatedAt"></span>    UpdatedAt <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>         `json:&#34;updated_at&#34;`
+<span id="SerializableState.Version"></span>    Version   <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>             `json:&#34;version&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="SerializableState.Deserialize">func (*SerializableState) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=10435:10493#L451">Deserialize</a>
+					<a class="permalink" href="index.html#SerializableState.Deserialize">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SerializableState">SerializableState</a>) Deserialize(data []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Deserialize populates state from JSON
+
+				
+				
+				
+			
+				
+				<h3 id="SerializableState.Serialize">func (*SerializableState) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/backends.go?s=10309:10364#L446">Serialize</a>
+					<a class="permalink" href="index.html#SerializableState.Serialize">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s *<a href="index.html#SerializableState">SerializableState</a>) Serialize() ([]<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Serialize converts state to JSON
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SessionBackend">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=11183:11697#L397">SessionBackend</a>
+				<a class="permalink" href="index.html#SessionBackend">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SessionBackend is the interface for session state storage
+
+			<pre>type SessionBackend interface {
+    <span class="comment">// Create creates a new session</span>
+    Create(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, session *<a href="index.html#SessionState">SessionState</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    <span class="comment">// Get retrieves a session</span>
+    Get(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, id <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#SessionState">SessionState</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+    <span class="comment">// Update updates a session (with optimistic locking)</span>
+    Update(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, session *<a href="index.html#SessionState">SessionState</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    <span class="comment">// Delete removes a session</span>
+    Delete(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, id <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    <span class="comment">// List returns sessions for an agent</span>
+    ListByAgent(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]*<a href="index.html#SessionState">SessionState</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="SessionState">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=9129:9515#L347">SessionState</a>
+				<a class="permalink" href="index.html#SessionState">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SessionState holds session state data
+
+			<pre>type SessionState struct {
+<span id="SessionState.ID"></span>    ID        <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;id&#34;`
+<span id="SessionState.AgentID"></span>    AgentID   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;agent_id&#34;`
+<span id="SessionState.State"></span>    State     map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;state&#34;`
+<span id="SessionState.Metadata"></span>    Metadata  map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>      `json:&#34;metadata&#34;`
+<span id="SessionState.CreatedAt"></span>    CreatedAt <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>              `json:&#34;created_at&#34;`
+<span id="SessionState.UpdatedAt"></span>    UpdatedAt <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>              `json:&#34;updated_at&#34;`
+<span id="SessionState.Version"></span>    Version   <a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>                  `json:&#34;version&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="StateBackend">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=10043:10510#L369">StateBackend</a>
+				<a class="permalink" href="index.html#StateBackend">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StateBackend is the interface for distributed state storage
+
+			<pre>type StateBackend interface {
+    <span class="comment">// Get retrieves a value by key</span>
+    Get(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+    <span class="comment">// Set stores a value with optional TTL</span>
+    Set(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>, ttl <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    <span class="comment">// Delete removes a value</span>
+    Delete(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+    <span class="comment">// List returns keys matching a pattern</span>
+    List(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, pattern <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) ([]<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+    <span class="comment">// Close closes the backend connection</span>
+    Close() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="StateManager">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=8282:8404#L314">StateManager</a>
+				<a class="permalink" href="index.html#StateManager">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StateManager manages distributed agent state
+
+			<pre>type StateManager struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewStateManager">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=8406:8473#L320">NewStateManager</a>
+					<a class="permalink" href="index.html#NewStateManager">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewStateManager(checkpointMgr <a href="index.html#CheckpointManager">CheckpointManager</a>) *<a href="index.html#StateManager">StateManager</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="StateManager.CheckpointManager">func (*StateManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=8577:8638#L327">CheckpointManager</a>
+					<a class="permalink" href="index.html#StateManager.CheckpointManager">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (sm *<a href="index.html#StateManager">StateManager</a>) CheckpointManager() <a href="index.html#CheckpointManager">CheckpointManager</a></pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="StateManager.LineageTracker">func (*StateManager) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/state/checkpoint.go?s=8669:8725#L331">LineageTracker</a>
+					<a class="permalink" href="index.html#StateManager.LineageTracker">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (sm *<a href="index.html#StateManager">StateManager</a>) LineageTracker() *<a href="index.html#LineageTracker">LineageTracker</a></pre>
+				
+				
+				
+				
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

@@ -1,0 +1,2474 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>agent - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package agent
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/agent"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package agent provides core abstractions for distributed AI agents
+inspired by Apache Spark&apos;s distributed computing model.
+
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+				<dd><a href="index.html#pkg-variables">Variables</a></dd>
+			
+			
+				
+				<dd><a href="index.html#EmitStateChange">func EmitStateChange(key string, oldValue, newValue interface{}, agentName, partition string)</a></dd>
+			
+				
+				<dd><a href="index.html#ExtractTemplateKeys">func ExtractTemplateKeys(instruction string) []string</a></dd>
+			
+				
+				<dd><a href="index.html#GetContextValue">func GetContextValue(input *AgentInput, key string) (interface{}, bool)</a></dd>
+			
+				
+				<dd><a href="index.html#HasTemplates">func HasTemplates(instruction string) bool</a></dd>
+			
+				
+				<dd><a href="index.html#InterpolateInstruction">func InterpolateInstruction(instruction string, context map[string]interface{}) (string, error)</a></dd>
+			
+				
+				<dd><a href="index.html#InterpolateInstructionStrict">func InterpolateInstructionStrict(instruction string, context map[string]interface{}) (string, error)</a></dd>
+			
+				
+				<dd><a href="index.html#MergeContext">func MergeContext(target *AgentInput, source *AgentInput, agentName string, publishEvents bool)</a></dd>
+			
+				
+				<dd><a href="index.html#MetricsCallback">func MetricsCallback(collector func(Agent, *AgentInput, *AgentOutput, time.Duration)) (AgentCallback, AgentOutputCallback)</a></dd>
+			
+				
+				<dd><a href="index.html#SetContextValue">func SetContextValue(input *AgentInput, key string, value interface{}, agentName string, publishEvent bool)</a></dd>
+			
+				
+				<dd><a href="index.html#TimingCallback">func TimingCallback() (AgentCallback, AgentOutputCallback)</a></dd>
+			
+				
+				<dd><a href="index.html#UpdateContext">func UpdateContext(input *AgentInput, updates map[string]interface{}, agentName string, publishEvents bool)</a></dd>
+			
+			
+				
+				<dd><a href="index.html#Agent">type Agent</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentCallback">type AgentCallback</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ChainCallbacks">func ChainCallbacks(callbacks ...AgentCallback) AgentCallback</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ConditionalCallback">func ConditionalCallback(condition func(Agent, *AgentInput) bool, callback AgentCallback) AgentCallback</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#LoggingCallback">func LoggingCallback(stage string) AgentCallback</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PartitionAwareCallback">func PartitionAwareCallback(targetPartition string, callback AgentCallback) AgentCallback</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#RetryCallback">func RetryCallback(callback AgentCallback, maxRetries int) AgentCallback</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#StateModificationCallback">func StateModificationCallback(modifier func(Agent, *AgentInput) error) AgentCallback</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#TransformInputCallback">func TransformInputCallback(transformer func(*AgentInput) error) AgentCallback</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ValidationCallback">func ValidationCallback(validator func(*AgentInput) error) AgentCallback</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentConfig">type AgentConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentDAG">type AgentDAG</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewAgentDAG">func NewAgentDAG(root Agent, input *AgentInput) (*AgentDAG, error)</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentExecutor">type AgentExecutor</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentInput">type AgentInput</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentOutput">type AgentOutput</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentOutputCallback">type AgentOutputCallback</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#TransformOutputCallback">func TransformOutputCallback(transformer func(*AgentOutput) error) AgentOutputCallback</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentStage">type AgentStage</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AgentTask">type AgentTask</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#AutoFlow">type AutoFlow</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewAutoFlow">func NewAutoFlow(rootAgent Agent, config AutoFlowConfig) *AutoFlow</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AutoFlow.CheckPartitionLocality">func (af *AutoFlow) CheckPartitionLocality(targetAgent Agent) (isLocal bool, sourcePartition, targetPartition string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AutoFlow.Execute">func (af *AutoFlow) Execute(ctx context.Context, agent Agent, input *AgentInput) (*AgentOutput, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AutoFlow.ExecuteRemote">func (af *AutoFlow) ExecuteRemote(ctx context.Context, targetAgent Agent, input *AgentInput, serializedCtx *SerializableInvocationContext) (*AgentOutput, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AutoFlow.GetConfig">func (af *AutoFlow) GetConfig() AutoFlowConfig</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AutoFlow.GetInvocationContext">func (af *AutoFlow) GetInvocationContext() *InvocationContext</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AutoFlow.SerializeContext">func (af *AutoFlow) SerializeContext() (*SerializableInvocationContext, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AutoFlow.SetAllowTransfer">func (af *AutoFlow) SetAllowTransfer(allow bool)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#AutoFlow.SetTransferScope">func (af *AutoFlow) SetTransferScope(scope TransferScope)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#AutoFlowConfig">type AutoFlowConfig</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DefaultAutoFlowConfig">func DefaultAutoFlowConfig() AutoFlowConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#BaseAgent">type BaseAgent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewAgent">func NewAgent(config AgentConfig) *BaseAgent</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.AddDependency">func (a *BaseAgent) AddDependency(dep Agent)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.AddSubAgent">func (a *BaseAgent) AddSubAgent(child Agent) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.Capabilities">func (a *BaseAgent) Capabilities() []string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.Dependencies">func (a *BaseAgent) Dependencies() []Agent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.Description">func (a *BaseAgent) Description() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.Execute">func (a *BaseAgent) Execute(ctx context.Context, input *AgentInput) (*AgentOutput, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.FindAgent">func (a *BaseAgent) FindAgent(name string) (Agent, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.FindAgentByID">func (a *BaseAgent) FindAgentByID(id string) (Agent, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.GetDepth">func (a *BaseAgent) GetDepth() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.GetPath">func (a *BaseAgent) GetPath() []Agent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.GetRoot">func (a *BaseAgent) GetRoot() Agent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.ID">func (a *BaseAgent) ID() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.Name">func (a *BaseAgent) Name() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.Parent">func (a *BaseAgent) Parent() Agent</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.Partition">func (a *BaseAgent) Partition() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.RemoveSubAgent">func (a *BaseAgent) RemoveSubAgent(child Agent) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#BaseAgent.SubAgents">func (a *BaseAgent) SubAgents() []Agent</a></dd>
+				
+			
+				
+				<dd><a href="index.html#CacheCallback">type CacheCallback</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewCacheCallback">func NewCacheCallback() *CacheCallback</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#CacheCallback.Clear">func (cc *CacheCallback) Clear()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#CacheCallback.Get">func (cc *CacheCallback) Get(key string) (interface{}, bool)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#CacheCallback.Set">func (cc *CacheCallback) Set(key string, value interface{})</a></dd>
+				
+			
+				
+				<dd><a href="index.html#CallbackExecutor">type CallbackExecutor</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewCallbackExecutor">func NewCallbackExecutor(stopOnError bool) *CallbackExecutor</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#CallbackExecutor.ExecuteAgentCallbacks">func (ce *CallbackExecutor) ExecuteAgentCallbacks(ctx context.Context, callbacks []AgentCallback, agent Agent, input *AgentInput) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#CallbackExecutor.ExecuteErrorCallbacks">func (ce *CallbackExecutor) ExecuteErrorCallbacks(ctx context.Context, callbacks []ErrorCallback, agent Agent, input *AgentInput, err error) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#CallbackExecutor.ExecuteOutputCallbacks">func (ce *CallbackExecutor) ExecuteOutputCallbacks(ctx context.Context, callbacks []AgentOutputCallback, agent Agent, input *AgentInput, output *AgentOutput) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#DistributedCallbackCoordinator">type DistributedCallbackCoordinator</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewDistributedCallbackCoordinator">func NewDistributedCallbackCoordinator() *DistributedCallbackCoordinator</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedCallbackCoordinator.GetCallbacks">func (dcc *DistributedCallbackCoordinator) GetCallbacks(partition string, isLocal bool) []AgentCallback</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedCallbackCoordinator.RegisterLocal">func (dcc *DistributedCallbackCoordinator) RegisterLocal(partition string, callback AgentCallback)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#DistributedCallbackCoordinator.RegisterRemote">func (dcc *DistributedCallbackCoordinator) RegisterRemote(partition string, callback AgentCallback)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#ErrorCallback">type ErrorCallback</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ExecutionMetrics">type ExecutionMetrics</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ExecutionStep">type ExecutionStep</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#ExecutorFunc">type ExecutorFunc</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#ExecutorFunc.Execute">func (f ExecutorFunc) Execute(ctx context.Context, agent Agent, input *AgentInput) (*AgentOutput, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#InvocationContext">type InvocationContext</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewInvocationContext">func NewInvocationContext(ctx context.Context, input *AgentInput, rootAgent Agent) *InvocationContext</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InvocationContext.Clone">func (ic *InvocationContext) Clone() *InvocationContext</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InvocationContext.GetLastTransfer">func (ic *InvocationContext) GetLastTransfer() *Transfer</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InvocationContext.GetPartitionTransferCount">func (ic *InvocationContext) GetPartitionTransferCount() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InvocationContext.GetTransferCount">func (ic *InvocationContext) GetTransferCount() int</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InvocationContext.GetTransferPath">func (ic *InvocationContext) GetTransferPath() []string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InvocationContext.HasTransferredAcrossPartitions">func (ic *InvocationContext) HasTransferredAcrossPartitions() bool</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InvocationContext.Serialize">func (ic *InvocationContext) Serialize() (*SerializableInvocationContext, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InvocationContext.SetMaxTransfers">func (ic *InvocationContext) SetMaxTransfers(max int)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InvocationContext.SetNodeID">func (ic *InvocationContext) SetNodeID(nodeID string)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InvocationContext.ToJSON">func (ic *InvocationContext) ToJSON() (string, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#InvocationContext.TransferTo">func (ic *InvocationContext) TransferTo(targetAgent Agent, reason string) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#SerializableInvocationContext">type SerializableInvocationContext</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#SerializableInvocationContext.Deserialize">func (sic *SerializableInvocationContext) Deserialize(ctx context.Context, agentResolver func(id string) (Agent, error)) (*InvocationContext, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#TaskState">type TaskState</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#TaskState.String">func (s TaskState) String() string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#Transfer">type Transfer</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#TransferScope">type TransferScope</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#TransferScope.String">func (ts TransferScope) String() string</a></dd>
+				
+			
+				
+				<dd><a href="index.html#TransferType">type TransferType</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go">agent.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go">autoflow.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go">callbacks.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/context_helpers.go">context_helpers.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go">invocation_context.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/template.go">template.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+			<h2 id="pkg-variables">Variables</h2>
+			
+				<p>ErrAgentNotFound is returned when a requested agent cannot be found
+
+				<pre>var <span id="ErrAgentNotFound">ErrAgentNotFound</span> = <a href="http://127.0.0.1:6060/pkg/errors/">errors</a>.<a href="http://127.0.0.1:6060/pkg/errors/#New">New</a>(&#34;agent not found&#34;)</pre>
+			
+		
+		
+			
+			
+			<h2 id="EmitStateChange">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/context_helpers.go?s=2199:2292#L67">EmitStateChange</a>
+				<a class="permalink" href="index.html#EmitStateChange">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func EmitStateChange(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, oldValue, newValue interface{}, agentName, partition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+			<p>EmitStateChange manually emits a state change event
+Useful when state is modified outside of SetContextValue
+
+			
+			
+
+		
+			
+			
+			<h2 id="ExtractTemplateKeys">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/template.go?s=2878:2931#L87">ExtractTemplateKeys</a>
+				<a class="permalink" href="index.html#ExtractTemplateKeys">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func ExtractTemplateKeys(instruction <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+			<p>ExtractTemplateKeys returns all template keys found in the instruction
+
+			
+			
+
+		
+			
+			
+			<h2 id="GetContextValue">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/context_helpers.go?s=838:909#L19">GetContextValue</a>
+				<a class="permalink" href="index.html#GetContextValue">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func GetContextValue(input *<a href="index.html#AgentInput">AgentInput</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (interface{}, <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)</pre>
+			<p>GetContextValue retrieves a value from the context
+
+			
+			
+
+		
+			
+			
+			<h2 id="HasTemplates">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/template.go?s=2709:2751#L82">HasTemplates</a>
+				<a class="permalink" href="index.html#HasTemplates">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func HasTemplates(instruction <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+			<p>HasTemplates returns true if the instruction contains {key} templates
+
+			
+			
+
+		
+			
+			
+			<h2 id="InterpolateInstruction">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/template.go?s=640:735#L14">InterpolateInstruction</a>
+				<a class="permalink" href="index.html#InterpolateInstruction">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func InterpolateInstruction(instruction <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, context map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}) (<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+			<p>InterpolateInstruction replaces {key} placeholders with values from context
+Supports both simple keys and nested keys (e.g., {data.field})
+<p>Example:
+<pre>context := map[string]interface{}{
+    &quot;data&quot;: &quot;processed_data&quot;,
+    &quot;count&quot;: 42,
+}
+InterpolateInstruction(&quot;Process {data} with count {count}&quot;, context)
+// Returns: &quot;Process processed_data with count 42&quot;
+</pre>
+
+			
+			
+
+		
+			
+			
+			<h2 id="InterpolateInstructionStrict">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/template.go?s=2234:2335#L67">InterpolateInstructionStrict</a>
+				<a class="permalink" href="index.html#InterpolateInstructionStrict">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func InterpolateInstructionStrict(instruction <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, context map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}) (<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+			<p>InterpolateInstructionStrict is like InterpolateInstruction but returns error on missing keys
+
+			
+			
+
+		
+			
+			
+			<h2 id="MergeContext">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/context_helpers.go?s=1644:1739#L46">MergeContext</a>
+				<a class="permalink" href="index.html#MergeContext">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func MergeContext(target *<a href="index.html#AgentInput">AgentInput</a>, source *<a href="index.html#AgentInput">AgentInput</a>, agentName <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, publishEvents <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)</pre>
+			<p>MergeContext merges context from one input to another (for distributed scenarios)
+Preserves both contexts and publishes merge events if requested
+
+			
+			
+
+		
+			
+			
+			<h2 id="MetricsCallback">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=4057:4179#L117">MetricsCallback</a>
+				<a class="permalink" href="index.html#MetricsCallback">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func MetricsCallback(collector func(<a href="index.html#Agent">Agent</a>, *<a href="index.html#AgentInput">AgentInput</a>, *<a href="index.html#AgentOutput">AgentOutput</a>, <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>)) (<a href="index.html#AgentCallback">AgentCallback</a>, <a href="index.html#AgentOutputCallback">AgentOutputCallback</a>)</pre>
+			<p>MetricsCallback collects execution metrics
+
+			
+			
+
+		
+			
+			
+			<h2 id="SetContextValue">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/context_helpers.go?s=378:485#L2">SetContextValue</a>
+				<a class="permalink" href="index.html#SetContextValue">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func SetContextValue(input *<a href="index.html#AgentInput">AgentInput</a>, key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value interface{}, agentName <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, publishEvent <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)</pre>
+			<p>SetContextValue sets a value in the context and optionally publishes a state change event
+This enables observability without breaking distributed execution
+
+			
+			
+
+		
+			
+			
+			<h2 id="TimingCallback">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=2616:2674#L72">TimingCallback</a>
+				<a class="permalink" href="index.html#TimingCallback">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func TimingCallback() (<a href="index.html#AgentCallback">AgentCallback</a>, <a href="index.html#AgentOutputCallback">AgentOutputCallback</a>)</pre>
+			<p>TimingCallback measures execution time
+
+			
+			
+
+		
+			
+			
+			<h2 id="UpdateContext">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/context_helpers.go?s=1096:1203#L29">UpdateContext</a>
+				<a class="permalink" href="index.html#UpdateContext">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func UpdateContext(input *<a href="index.html#AgentInput">AgentInput</a>, updates map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}, agentName <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, publishEvents <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)</pre>
+			<p>UpdateContext updates multiple context values at once with event publishing
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="Agent">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=603:1517#L13">Agent</a>
+				<a class="permalink" href="index.html#Agent">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Agent represents a distributed AI agent with specific capabilities.
+Inspired by Spark&apos;s RDD abstraction, agents are composable units of computation.
+
+			<pre>type Agent interface {
+    <span class="comment">// ID returns the unique identifier for this agent.</span>
+    ID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Name returns the human-readable name of the agent.</span>
+    Name() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Description returns a brief explanation of what this agent does.</span>
+    Description() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Capabilities returns a list of tools or other capabilities this agent possesses.</span>
+    Capabilities() []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Execute runs the agent with a given input and context. This is the primary</span>
+    <span class="comment">// method for invoking an agent&#39;s logic.</span>
+    Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, input *<a href="index.html#AgentInput">AgentInput</a>) (*<a href="index.html#AgentOutput">AgentOutput</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+
+    <span class="comment">// Dependencies returns a slice of Agents that must be successfully executed</span>
+    <span class="comment">// before this agent can run.</span>
+    Dependencies() []<a href="index.html#Agent">Agent</a>
+
+    <span class="comment">// Partition returns the partition key for locality-aware scheduling. Agents</span>
+    <span class="comment">// with the same partition key may be scheduled on the same node to improve</span>
+    <span class="comment">// data locality and reduce network overhead.</span>
+    Partition() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentCallback">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=232:314#L3">AgentCallback</a>
+				<a class="permalink" href="index.html#AgentCallback">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentCallback is called before or after agent execution
+
+			<pre>type AgentCallback func(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agent <a href="index.html#Agent">Agent</a>, input *<a href="index.html#AgentInput">AgentInput</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="ChainCallbacks">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=5397:5458#L158">ChainCallbacks</a>
+					<a class="permalink" href="index.html#ChainCallbacks">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func ChainCallbacks(callbacks ...<a href="index.html#AgentCallback">AgentCallback</a>) <a href="index.html#AgentCallback">AgentCallback</a></pre>
+				<p>ChainCallbacks combines multiple callbacks into one
+
+				
+				
+			
+				
+				<h3 id="ConditionalCallback">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=5070:5173#L148">ConditionalCallback</a>
+					<a class="permalink" href="index.html#ConditionalCallback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func ConditionalCallback(condition func(<a href="index.html#Agent">Agent</a>, *<a href="index.html#AgentInput">AgentInput</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>, callback <a href="index.html#AgentCallback">AgentCallback</a>) <a href="index.html#AgentCallback">AgentCallback</a></pre>
+				<p>ConditionalCallback executes callback based on condition
+
+				
+				
+			
+				
+				<h3 id="LoggingCallback">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=2340:2388#L64">LoggingCallback</a>
+					<a class="permalink" href="index.html#LoggingCallback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func LoggingCallback(stage <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="index.html#AgentCallback">AgentCallback</a></pre>
+				<p>LoggingCallback logs agent execution
+
+				
+				
+			
+				
+				<h3 id="PartitionAwareCallback">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=4739:4828#L138">PartitionAwareCallback</a>
+					<a class="permalink" href="index.html#PartitionAwareCallback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func PartitionAwareCallback(targetPartition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, callback <a href="index.html#AgentCallback">AgentCallback</a>) <a href="index.html#AgentCallback">AgentCallback</a></pre>
+				<p>PartitionAwareCallback executes callback only on specific partitions
+
+				
+				
+			
+				
+				<h3 id="RetryCallback">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=5761:5833#L170">RetryCallback</a>
+					<a class="permalink" href="index.html#RetryCallback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func RetryCallback(callback <a href="index.html#AgentCallback">AgentCallback</a>, maxRetries <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) <a href="index.html#AgentCallback">AgentCallback</a></pre>
+				<p>RetryCallback wraps a callback with retry logic
+
+				
+				
+			
+				
+				<h3 id="StateModificationCallback">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=6700:6785#L209">StateModificationCallback</a>
+					<a class="permalink" href="index.html#StateModificationCallback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func StateModificationCallback(modifier func(<a href="index.html#Agent">Agent</a>, *<a href="index.html#AgentInput">AgentInput</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="index.html#AgentCallback">AgentCallback</a></pre>
+				<p>StateModificationCallback modifies agent state
+
+				
+				
+			
+				
+				<h3 id="TransformInputCallback">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=3542:3620#L103">TransformInputCallback</a>
+					<a class="permalink" href="index.html#TransformInputCallback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func TransformInputCallback(transformer func(*<a href="index.html#AgentInput">AgentInput</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="index.html#AgentCallback">AgentCallback</a></pre>
+				<p>TransformInputCallback transforms input before execution
+
+				
+				
+			
+				
+				<h3 id="ValidationCallback">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=3301:3373#L96">ValidationCallback</a>
+					<a class="permalink" href="index.html#ValidationCallback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func ValidationCallback(validator func(*<a href="index.html#AgentInput">AgentInput</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="index.html#AgentCallback">AgentCallback</a></pre>
+				<p>ValidationCallback validates input
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="AgentConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=7663:8944#L215">AgentConfig</a>
+				<a class="permalink" href="index.html#AgentConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentConfig holds the configuration for creating a new agent.
+
+			<pre>type AgentConfig struct {
+<span id="AgentConfig.Name"></span>    <span class="comment">// Name is the human-readable name of the agent.</span>
+    Name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="AgentConfig.Description"></span>    <span class="comment">// Description is a brief explanation of what the agent does.</span>
+    Description <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="AgentConfig.Capabilities"></span>    <span class="comment">// Capabilities is a list of tools or other capabilities the agent possesses.</span>
+    Capabilities []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="AgentConfig.Dependencies"></span>    <span class="comment">// Dependencies is a slice of Agents that must be successfully executed</span>
+    <span class="comment">// before this agent can run.</span>
+    Dependencies []<a href="index.html#Agent">Agent</a>
+<span id="AgentConfig.Partition"></span>    <span class="comment">// Partition is the partition key for locality-aware scheduling.</span>
+    Partition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="AgentConfig.Executor"></span>    <span class="comment">// Executor is the concrete implementation of the agent&#39;s execution logic.</span>
+    Executor <a href="index.html#AgentExecutor">AgentExecutor</a>
+<span id="AgentConfig.SubAgents"></span>    <span class="comment">// SubAgents is a list of child agents, enabling hierarchical agent structures.</span>
+    SubAgents []<a href="index.html#Agent">Agent</a>
+<span id="AgentConfig.OutputKey"></span>    <span class="comment">// OutputKey is an ADK-compatible feature that automatically stores the agent&#39;s</span>
+    <span class="comment">// result in the context with the specified key.</span>
+    OutputKey <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Lifecycle callbacks (ADK-compatible)</span>
+<span id="AgentConfig.BeforeExecute"></span>    <span class="comment">// BeforeExecute is a slice of callbacks to be executed before the agent&#39;s</span>
+    <span class="comment">// main logic.</span>
+    BeforeExecute []<a href="index.html#AgentCallback">AgentCallback</a>
+<span id="AgentConfig.AfterExecute"></span>    <span class="comment">// AfterExecute is a slice of callbacks to be executed after the agent&#39;s</span>
+    <span class="comment">// main logic has completed successfully.</span>
+    AfterExecute []<a href="index.html#AgentOutputCallback">AgentOutputCallback</a>
+<span id="AgentConfig.OnError"></span>    <span class="comment">// OnError is a slice of callbacks to be executed if an error occurs during</span>
+    <span class="comment">// the agent&#39;s execution.</span>
+    OnError []<a href="index.html#ErrorCallback">ErrorCallback</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentDAG">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=19241:19331#L630">AgentDAG</a>
+				<a class="permalink" href="index.html#AgentDAG">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentDAG represents a directed acyclic graph of agent tasks
+Inspired by Spark&apos;s DAG scheduling
+
+			<pre>type AgentDAG struct {
+<span id="AgentDAG.ID"></span>    ID     <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="AgentDAG.Name"></span>    Name   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="AgentDAG.Stages"></span>    Stages []*<a href="index.html#AgentStage">AgentStage</a>
+<span id="AgentDAG.Root"></span>    Root   <a href="index.html#Agent">Agent</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewAgentDAG">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=19652:19718#L647">NewAgentDAG</a>
+					<a class="permalink" href="index.html#NewAgentDAG">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewAgentDAG(root <a href="index.html#Agent">Agent</a>, input *<a href="index.html#AgentInput">AgentInput</a>) (*<a href="index.html#AgentDAG">AgentDAG</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewAgentDAG creates a DAG from a root agent
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="AgentExecutor">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=5297:5486#L141">AgentExecutor</a>
+				<a class="permalink" href="index.html#AgentExecutor">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentExecutor is responsible for the concrete implementation of an agent&apos;s
+execution logic. This allows for different execution strategies (e.g., LLM-based,
+simple function calls) to be plugged into the agent.
+
+			<pre>type AgentExecutor interface {
+    <span class="comment">// Execute performs the agent&#39;s logic with the given input and context.</span>
+    Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agent <a href="index.html#Agent">Agent</a>, input *<a href="index.html#AgentInput">AgentInput</a>) (*<a href="index.html#AgentOutput">AgentOutput</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentInput">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=2393:3085#L66">AgentInput</a>
+				<a class="permalink" href="index.html#AgentInput">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentInput represents the input for an agent execution.
+
+			<pre>type AgentInput struct {
+<span id="AgentInput.TaskID"></span>    <span class="comment">// TaskID is a unique identifier for the specific task being executed.</span>
+    TaskID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="AgentInput.Instruction"></span>    <span class="comment">// Instruction is the primary directive or question for the agent.</span>
+    Instruction <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="AgentInput.Context"></span>    <span class="comment">// Context provides a key-value store for arbitrary data that can be passed</span>
+    <span class="comment">// between agents and tasks.</span>
+    Context map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}
+<span id="AgentInput.Tools"></span>    <span class="comment">// Tools is a list of tools available to the agent for this specific task.</span>
+    Tools []<a href="../types/index.html">types</a>.<a href="../types/index.html#ToolDefinition">ToolDefinition</a>
+<span id="AgentInput.Model"></span>    <span class="comment">// Model is the identifier for the language model to be used.</span>
+    Model <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="AgentInput.MaxRetries"></span>    <span class="comment">// MaxRetries is the maximum number of times to retry a failed execution.</span>
+    MaxRetries <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="AgentInput.Timeout"></span>    <span class="comment">// Timeout is the maximum duration for the execution.</span>
+    Timeout <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentOutput">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=3147:3829#L85">AgentOutput</a>
+				<a class="permalink" href="index.html#AgentOutput">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentOutput represents the result of an agent execution.
+
+			<pre>type AgentOutput struct {
+<span id="AgentOutput.TaskID"></span>    <span class="comment">// TaskID is the unique identifier for the task that produced this output.</span>
+    TaskID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="AgentOutput.Result"></span>    <span class="comment">// Result is the primary output of the agent&#39;s execution.</span>
+    Result interface{}
+<span id="AgentOutput.Metadata"></span>    <span class="comment">// Metadata provides a key-value store for any additional information about</span>
+    <span class="comment">// the execution, such as performance metrics or finish reasons.</span>
+    Metadata map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}
+<span id="AgentOutput.Error"></span>    <span class="comment">// Error holds any error that occurred during execution.</span>
+    Error <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>
+<span id="AgentOutput.ExecutionLog"></span>    <span class="comment">// ExecutionLog provides a step-by-step lineage of the execution, tracking</span>
+    <span class="comment">// actions, inputs, outputs, and durations.</span>
+    ExecutionLog []<a href="index.html#ExecutionStep">ExecutionStep</a>
+<span id="AgentOutput.Metrics"></span>    <span class="comment">// Metrics contains performance metrics for the execution.</span>
+    Metrics *<a href="index.html#ExecutionMetrics">ExecutionMetrics</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentOutputCallback">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=383:492#L6">AgentOutputCallback</a>
+				<a class="permalink" href="index.html#AgentOutputCallback">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentOutputCallback is called after agent execution with output
+
+			<pre>type AgentOutputCallback func(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agent <a href="index.html#Agent">Agent</a>, input *<a href="index.html#AgentInput">AgentInput</a>, output *<a href="index.html#AgentOutput">AgentOutput</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="TransformOutputCallback">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=3792:3878#L110">TransformOutputCallback</a>
+					<a class="permalink" href="index.html#TransformOutputCallback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func TransformOutputCallback(transformer func(*<a href="index.html#AgentOutput">AgentOutput</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="index.html#AgentOutputCallback">AgentOutputCallback</a></pre>
+				<p>TransformOutputCallback transforms output after execution
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="AgentStage">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=19433:19603#L639">AgentStage</a>
+				<a class="permalink" href="index.html#AgentStage">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentStage groups tasks that can be executed in parallel
+Similar to Spark&apos;s Stage abstraction
+
+			<pre>type AgentStage struct {
+<span id="AgentStage.ID"></span>    ID           <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="AgentStage.Tasks"></span>    Tasks        []*<a href="index.html#AgentTask">AgentTask</a>
+<span id="AgentStage.Dependencies"></span>    Dependencies []*<a href="index.html#AgentStage">AgentStage</a>
+<span id="AgentStage.IsShuffleMap"></span>    IsShuffleMap <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a> <span class="comment">// Indicates if stage produces intermediate results</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AgentTask">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=18461:18757#L589">AgentTask</a>
+				<a class="permalink" href="index.html#AgentTask">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AgentTask represents a unit of work to be executed by an agent
+Similar to Spark&apos;s Task abstraction
+
+			<pre>type AgentTask struct {
+<span id="AgentTask.ID"></span>    ID           <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="AgentTask.AgentID"></span>    AgentID      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="AgentTask.Input"></span>    Input        *<a href="index.html#AgentInput">AgentInput</a>
+<span id="AgentTask.Stage"></span>    Stage        <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="AgentTask.Attempt"></span>    Attempt      <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="AgentTask.PreferredLoc"></span>    PreferredLoc <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a> <span class="comment">// Locality preference</span>
+<span id="AgentTask.State"></span>    State        <a href="index.html#TaskState">TaskState</a>
+<span id="AgentTask.CreatedAt"></span>    CreatedAt    <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="AgentTask.StartedAt"></span>    StartedAt    <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="AgentTask.CompletedAt"></span>    CompletedAt  <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="AgentTask.Output"></span>    Output       *<a href="index.html#AgentOutput">AgentOutput</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="AutoFlow">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go?s=2194:2390#L77">AutoFlow</a>
+				<a class="permalink" href="index.html#AutoFlow">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AutoFlow intercepts tool calls and handles LLM-driven agent transfers
+Inspired by ADK&apos;s AutoFlow pattern with Spark distributed computing support
+
+			<pre>type AutoFlow struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewAutoFlow">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go?s=2442:2508#L89">NewAutoFlow</a>
+					<a class="permalink" href="index.html#NewAutoFlow">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewAutoFlow(rootAgent <a href="index.html#Agent">Agent</a>, config <a href="index.html#AutoFlowConfig">AutoFlowConfig</a>) *<a href="index.html#AutoFlow">AutoFlow</a></pre>
+				<p>NewAutoFlow creates a new AutoFlow interceptor
+
+				
+				
+			
+
+			
+				
+				<h3 id="AutoFlow.CheckPartitionLocality">func (*AutoFlow) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go?s=13043:13160#L443">CheckPartitionLocality</a>
+					<a class="permalink" href="index.html#AutoFlow.CheckPartitionLocality">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (af *<a href="index.html#AutoFlow">AutoFlow</a>) CheckPartitionLocality(targetAgent <a href="index.html#Agent">Agent</a>) (isLocal <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>, sourcePartition, targetPartition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>CheckPartitionLocality checks if a transfer would be local or remote
+
+				
+				
+				
+			
+				
+				<h3 id="AutoFlow.Execute">func (*AutoFlow) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go?s=2642:2744#L97">Execute</a>
+					<a class="permalink" href="index.html#AutoFlow.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (af *<a href="index.html#AutoFlow">AutoFlow</a>) Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agent <a href="index.html#Agent">Agent</a>, input *<a href="index.html#AgentInput">AgentInput</a>) (*<a href="index.html#AgentOutput">AgentOutput</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Execute runs an agent with AutoFlow transfer interception
+
+				
+				
+				
+			
+				
+				<h3 id="AutoFlow.ExecuteRemote">func (*AutoFlow) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go?s=12474:12634#L430">ExecuteRemote</a>
+					<a class="permalink" href="index.html#AutoFlow.ExecuteRemote">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (af *<a href="index.html#AutoFlow">AutoFlow</a>) ExecuteRemote(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, targetAgent <a href="index.html#Agent">Agent</a>, input *<a href="index.html#AgentInput">AgentInput</a>, serializedCtx *<a href="index.html#SerializableInvocationContext">SerializableInvocationContext</a>) (*<a href="index.html#AgentOutput">AgentOutput</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ExecuteRemote executes an agent on a remote partition
+In a real Spark implementation, this would use RPC to execute on the target node
+
+				
+				
+				
+			
+				
+				<h3 id="AutoFlow.GetConfig">func (*AutoFlow) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go?s=11644:11690#L404">GetConfig</a>
+					<a class="permalink" href="index.html#AutoFlow.GetConfig">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (af *<a href="index.html#AutoFlow">AutoFlow</a>) GetConfig() <a href="index.html#AutoFlowConfig">AutoFlowConfig</a></pre>
+				<p>GetConfig returns the AutoFlow configuration
+
+				
+				
+				
+			
+				
+				<h3 id="AutoFlow.GetInvocationContext">func (*AutoFlow) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go?s=11504:11565#L399">GetInvocationContext</a>
+					<a class="permalink" href="index.html#AutoFlow.GetInvocationContext">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (af *<a href="index.html#AutoFlow">AutoFlow</a>) GetInvocationContext() *<a href="index.html#InvocationContext">InvocationContext</a></pre>
+				<p>GetInvocationContext returns the current invocation context
+
+				
+				
+				
+			
+				
+				<h3 id="AutoFlow.SerializeContext">func (*AutoFlow) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go?s=12119:12197#L421">SerializeContext</a>
+					<a class="permalink" href="index.html#AutoFlow.SerializeContext">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (af *<a href="index.html#AutoFlow">AutoFlow</a>) SerializeContext() (*<a href="index.html#SerializableInvocationContext">SerializableInvocationContext</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>SerializeContext serializes the current invocation context for remote execution
+
+				
+				
+				
+			
+				
+				<h3 id="AutoFlow.SetAllowTransfer">func (*AutoFlow) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go?s=11907:11955#L414">SetAllowTransfer</a>
+					<a class="permalink" href="index.html#AutoFlow.SetAllowTransfer">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (af *<a href="index.html#AutoFlow">AutoFlow</a>) SetAllowTransfer(allow <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)</pre>
+				<p>SetAllowTransfer enables or disables transfers
+
+				
+				
+				
+			
+				
+				<h3 id="AutoFlow.SetTransferScope">func (*AutoFlow) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go?s=11761:11818#L409">SetTransferScope</a>
+					<a class="permalink" href="index.html#AutoFlow.SetTransferScope">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (af *<a href="index.html#AutoFlow">AutoFlow</a>) SetTransferScope(scope <a href="index.html#TransferScope">TransferScope</a>)</pre>
+				<p>SetTransferScope updates the transfer scope
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="AutoFlowConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go?s=1248:1757#L45">AutoFlowConfig</a>
+				<a class="permalink" href="index.html#AutoFlowConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>AutoFlowConfig configures AutoFlow behavior
+
+			<pre>type AutoFlowConfig struct {
+<span id="AutoFlowConfig.AllowTransfer"></span>    <span class="comment">// AllowTransfer enables or disables agent transfers</span>
+    AllowTransfer <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+
+<span id="AutoFlowConfig.TransferScope"></span>    <span class="comment">// TransferScope defines the scope of allowed transfers</span>
+    TransferScope <a href="index.html#TransferScope">TransferScope</a>
+
+<span id="AutoFlowConfig.MaxTransfers"></span>    <span class="comment">// MaxTransfers sets the maximum number of transfers allowed</span>
+    MaxTransfers <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+
+<span id="AutoFlowConfig.EventBus"></span>    <span class="comment">// EventBus for publishing transfer events (optional)</span>
+    EventBus <a href="../events/index.html">events</a>.<a href="../events/index.html#EventBus">EventBus</a>
+
+<span id="AutoFlowConfig.EnableDistributedSupport"></span>    <span class="comment">// EnableDistributedSupport enables cross-partition transfer handling</span>
+    EnableDistributedSupport <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+
+<span id="AutoFlowConfig.NodeID"></span>    <span class="comment">// NodeID for distributed tracking</span>
+    NodeID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="DefaultAutoFlowConfig">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go?s=1814:1857#L66">DefaultAutoFlowConfig</a>
+					<a class="permalink" href="index.html#DefaultAutoFlowConfig">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func DefaultAutoFlowConfig() <a href="index.html#AutoFlowConfig">AutoFlowConfig</a></pre>
+				<p>DefaultAutoFlowConfig returns default configuration
+
+				
+				
+			
+
+			
+		
+			
+			
+			<h2 id="BaseAgent">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=1675:2332#L42">BaseAgent</a>
+				<a class="permalink" href="index.html#BaseAgent">&#xb6;</a>
+				
+				
+			</h2>
+			<p>BaseAgent provides a concrete implementation of the Agent interface, handling
+common functionalities such as lifecycle callbacks and agent hierarchy.
+
+			<pre>type BaseAgent struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewAgent">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=6712:6756#L183">NewAgent</a>
+					<a class="permalink" href="index.html#NewAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewAgent(config <a href="index.html#AgentConfig">AgentConfig</a>) *<a href="index.html#BaseAgent">BaseAgent</a></pre>
+				<p>NewAgent creates a new BaseAgent with the specified configuration. It
+initializes the agent&apos;s properties, sets up its executor, and configures its
+lifecycle callbacks and sub-agents.
+
+				
+				
+			
+
+			
+				
+				<h3 id="BaseAgent.AddDependency">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=18226:18270#L581">AddDependency</a>
+					<a class="permalink" href="index.html#BaseAgent.AddDependency">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) AddDependency(dep <a href="index.html#Agent">Agent</a>)</pre>
+				<p>AddDependency adds a dependency agent to this agent.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.AddSubAgent">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=13384:13434#L371">AddSubAgent</a>
+					<a class="permalink" href="index.html#BaseAgent.AddSubAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) AddSubAgent(child <a href="index.html#Agent">Agent</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>AddSubAgent adds a child agent to this agent&apos;s list of sub-agents and sets
+this agent as the child&apos;s parent. It returns an error if the child agent
+already has a parent, enforcing a single-parent rule.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.Capabilities">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=9373:9416#L257">Capabilities</a>
+					<a class="permalink" href="index.html#BaseAgent.Capabilities">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) Capabilities() []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>Capabilities returns a list of tools or other capabilities this agent possesses.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.Dependencies">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=9551:9593#L261">Dependencies</a>
+					<a class="permalink" href="index.html#BaseAgent.Dependencies">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) Dependencies() []<a href="index.html#Agent">Agent</a></pre>
+				<p>Dependencies returns a slice of Agents that must be successfully executed
+before this agent can run.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.Description">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=9222:9262#L254">Description</a>
+					<a class="permalink" href="index.html#BaseAgent.Description">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) Description() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>Description returns a brief explanation of what this agent does.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.Execute">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=9893:9982#L268">Execute</a>
+					<a class="permalink" href="index.html#BaseAgent.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, input *<a href="index.html#AgentInput">AgentInput</a>) (*<a href="index.html#AgentOutput">AgentOutput</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Execute runs the agent&apos;s logic. It orchestrates the execution, including
+running callbacks, handling errors, and storing the output.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.FindAgent">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=15058:15115#L442">FindAgent</a>
+					<a class="permalink" href="index.html#BaseAgent.FindAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) FindAgent(name <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="index.html#Agent">Agent</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>FindAgent searches the agent hierarchy for a descendant agent with the given
+name. It returns the agent if found, or an error if not found.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.FindAgentByID">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=15962:16021#L475">FindAgentByID</a>
+					<a class="permalink" href="index.html#BaseAgent.FindAgentByID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) FindAgentByID(id <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="index.html#Agent">Agent</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>FindAgentByID searches the agent hierarchy for a descendant agent with the
+given ID. It returns the agent if found, or an error if not found.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.GetDepth">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=17772:17806#L555">GetDepth</a>
+					<a class="permalink" href="index.html#BaseAgent.GetDepth">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) GetDepth() <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+				<p>GetDepth returns the depth of this agent in the hierarchy, with the root
+agent being at depth 0.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.GetPath">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=17287:17324#L532">GetPath</a>
+					<a class="permalink" href="index.html#BaseAgent.GetPath">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) GetPath() []<a href="index.html#Agent">Agent</a></pre>
+				<p>GetPath returns the path from the root of the hierarchy to this agent as a
+slice of agents.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.GetRoot">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=16786:16821#L507">GetRoot</a>
+					<a class="permalink" href="index.html#BaseAgent.GetRoot">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) GetRoot() <a href="index.html#Agent">Agent</a></pre>
+				<p>GetRoot returns the root agent in the hierarchy.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.ID">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=8998:9029#L248">ID</a>
+					<a class="permalink" href="index.html#BaseAgent.ID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) ID() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>ID returns the unique identifier for this agent.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.Name">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=9101:9134#L251">Name</a>
+					<a class="permalink" href="index.html#BaseAgent.Name">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) Name() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>Name returns the human-readable name of the agent.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.Parent">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=12802:12836#L352">Parent</a>
+					<a class="permalink" href="index.html#BaseAgent.Parent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) Parent() <a href="index.html#Agent">Agent</a></pre>
+				<p>Parent returns the parent agent, or nil if this is a root agent.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.Partition">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=9691:9729#L264">Partition</a>
+					<a class="permalink" href="index.html#BaseAgent.Partition">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) Partition() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>Partition returns the partition key for locality-aware scheduling.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.RemoveSubAgent">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=14215:14268#L405">RemoveSubAgent</a>
+					<a class="permalink" href="index.html#BaseAgent.RemoveSubAgent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) RemoveSubAgent(child <a href="index.html#Agent">Agent</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>RemoveSubAgent removes a child agent from this agent&apos;s list of sub-agents
+and clears the child&apos;s parent reference.
+
+				
+				
+				
+			
+				
+				<h3 id="BaseAgent.SubAgents">func (*BaseAgent) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=12956:12995#L359">SubAgents</a>
+					<a class="permalink" href="index.html#BaseAgent.SubAgents">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (a *<a href="index.html#BaseAgent">BaseAgent</a>) SubAgents() []<a href="index.html#Agent">Agent</a></pre>
+				<p>SubAgents returns a slice of the agent&apos;s direct children.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="CacheCallback">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=6204:6263#L185">CacheCallback</a>
+				<a class="permalink" href="index.html#CacheCallback">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CacheCallback caches callback results
+
+			<pre>type CacheCallback struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewCacheCallback">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=6265:6303#L189">NewCacheCallback</a>
+					<a class="permalink" href="index.html#NewCacheCallback">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewCacheCallback() *<a href="index.html#CacheCallback">CacheCallback</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="CacheCallback.Clear">func (*CacheCallback) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=6571:6603#L204">Clear</a>
+					<a class="permalink" href="index.html#CacheCallback.Clear">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (cc *<a href="index.html#CacheCallback">CacheCallback</a>) Clear()</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="CacheCallback.Get">func (*CacheCallback) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=6375:6435#L195">Get</a>
+					<a class="permalink" href="index.html#CacheCallback.Get">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (cc *<a href="index.html#CacheCallback">CacheCallback</a>) Get(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (interface{}, <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>)</pre>
+				
+				
+				
+				
+			
+				
+				<h3 id="CacheCallback.Set">func (*CacheCallback) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=6483:6542#L200">Set</a>
+					<a class="permalink" href="index.html#CacheCallback.Set">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (cc *<a href="index.html#CacheCallback">CacheCallback</a>) Set(key <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, value interface{})</pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="CallbackExecutor">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=721:771#L12">CallbackExecutor</a>
+				<a class="permalink" href="index.html#CallbackExecutor">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CallbackExecutor manages callback execution with error handling
+
+			<pre>type CallbackExecutor struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewCallbackExecutor">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=828:888#L17">NewCallbackExecutor</a>
+					<a class="permalink" href="index.html#NewCallbackExecutor">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewCallbackExecutor(stopOnError <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>) *<a href="index.html#CallbackExecutor">CallbackExecutor</a></pre>
+				<p>NewCallbackExecutor creates a new callback executor
+
+				
+				
+			
+
+			
+				
+				<h3 id="CallbackExecutor.ExecuteAgentCallbacks">func (*CallbackExecutor) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=1012:1147#L24">ExecuteAgentCallbacks</a>
+					<a class="permalink" href="index.html#CallbackExecutor.ExecuteAgentCallbacks">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ce *<a href="index.html#CallbackExecutor">CallbackExecutor</a>) ExecuteAgentCallbacks(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, callbacks []<a href="index.html#AgentCallback">AgentCallback</a>, agent <a href="index.html#Agent">Agent</a>, input *<a href="index.html#AgentInput">AgentInput</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>ExecuteAgentCallbacks executes a list of agent callbacks
+
+				
+				
+				
+			
+				
+				<h3 id="CallbackExecutor.ExecuteErrorCallbacks">func (*CallbackExecutor) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=1902:2048#L50">ExecuteErrorCallbacks</a>
+					<a class="permalink" href="index.html#CallbackExecutor.ExecuteErrorCallbacks">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ce *<a href="index.html#CallbackExecutor">CallbackExecutor</a>) ExecuteErrorCallbacks(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, callbacks []<a href="index.html#ErrorCallback">ErrorCallback</a>, agent <a href="index.html#Agent">Agent</a>, input *<a href="index.html#AgentInput">AgentInput</a>, err <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>ExecuteErrorCallbacks executes error callbacks
+
+				
+				
+				
+			
+				
+				<h3 id="CallbackExecutor.ExecuteOutputCallbacks">func (*CallbackExecutor) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=1473:1636#L38">ExecuteOutputCallbacks</a>
+					<a class="permalink" href="index.html#CallbackExecutor.ExecuteOutputCallbacks">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ce *<a href="index.html#CallbackExecutor">CallbackExecutor</a>) ExecuteOutputCallbacks(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, callbacks []<a href="index.html#AgentOutputCallback">AgentOutputCallback</a>, agent <a href="index.html#Agent">Agent</a>, input *<a href="index.html#AgentInput">AgentInput</a>, output *<a href="index.html#AgentOutput">AgentOutput</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>ExecuteOutputCallbacks executes callbacks that receive output
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="DistributedCallbackCoordinator">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=6974:7108#L216">DistributedCallbackCoordinator</a>
+				<a class="permalink" href="index.html#DistributedCallbackCoordinator">&#xb6;</a>
+				
+				
+			</h2>
+			<p>DistributedCallbackCoordinator coordinates callbacks across partitions
+
+			<pre>type DistributedCallbackCoordinator struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewDistributedCallbackCoordinator">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=7110:7182#L221">NewDistributedCallbackCoordinator</a>
+					<a class="permalink" href="index.html#NewDistributedCallbackCoordinator">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewDistributedCallbackCoordinator() *<a href="index.html#DistributedCallbackCoordinator">DistributedCallbackCoordinator</a></pre>
+				
+				
+				
+			
+
+			
+				
+				<h3 id="DistributedCallbackCoordinator.GetCallbacks">func (*DistributedCallbackCoordinator) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=7921:8024#L239">GetCallbacks</a>
+					<a class="permalink" href="index.html#DistributedCallbackCoordinator.GetCallbacks">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (dcc *<a href="index.html#DistributedCallbackCoordinator">DistributedCallbackCoordinator</a>) GetCallbacks(partition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, isLocal <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>) []<a href="index.html#AgentCallback">AgentCallback</a></pre>
+				<p>GetCallbacks retrieves appropriate callbacks based on partition locality
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedCallbackCoordinator.RegisterLocal">func (*DistributedCallbackCoordinator) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=7404:7502#L229">RegisterLocal</a>
+					<a class="permalink" href="index.html#DistributedCallbackCoordinator.RegisterLocal">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (dcc *<a href="index.html#DistributedCallbackCoordinator">DistributedCallbackCoordinator</a>) RegisterLocal(partition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, callback <a href="index.html#AgentCallback">AgentCallback</a>)</pre>
+				<p>RegisterLocal registers callback for local partition execution
+
+				
+				
+				
+			
+				
+				<h3 id="DistributedCallbackCoordinator.RegisterRemote">func (*DistributedCallbackCoordinator) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=7657:7756#L234">RegisterRemote</a>
+					<a class="permalink" href="index.html#DistributedCallbackCoordinator.RegisterRemote">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (dcc *<a href="index.html#DistributedCallbackCoordinator">DistributedCallbackCoordinator</a>) RegisterRemote(partition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, callback <a href="index.html#AgentCallback">AgentCallback</a>)</pre>
+				<p>RegisterRemote registers callback for remote partition execution
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="ErrorCallback">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/callbacks.go?s=559:652#L9">ErrorCallback</a>
+				<a class="permalink" href="index.html#ErrorCallback">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ErrorCallback is called when an error occurs during execution
+
+			<pre>type ErrorCallback func(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agent <a href="index.html#Agent">Agent</a>, input *<a href="index.html#AgentInput">AgentInput</a>, err <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ExecutionMetrics">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=4491:5076#L120">ExecutionMetrics</a>
+				<a class="permalink" href="index.html#ExecutionMetrics">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ExecutionMetrics tracks performance and operational metrics for an agent execution.
+
+			<pre>type ExecutionMetrics struct {
+<span id="ExecutionMetrics.StartTime"></span>    <span class="comment">// StartTime is the time the execution started.</span>
+    StartTime <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="ExecutionMetrics.EndTime"></span>    <span class="comment">// EndTime is the time the execution finished.</span>
+    EndTime <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="ExecutionMetrics.Duration"></span>    <span class="comment">// Duration is the total execution time.</span>
+    Duration <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="ExecutionMetrics.ToolCallCount"></span>    <span class="comment">// ToolCallCount is the number of times a tool was called.</span>
+    ToolCallCount <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="ExecutionMetrics.TokensUsed"></span>    <span class="comment">// TokensUsed is the number of language model tokens used.</span>
+    TokensUsed <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="ExecutionMetrics.RetryCount"></span>    <span class="comment">// RetryCount is the number of times the execution was retried.</span>
+    RetryCount <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+<span id="ExecutionMetrics.PartitionHits"></span>    <span class="comment">// PartitionHits is the number of times the execution was able to leverage</span>
+    <span class="comment">// data locality.</span>
+    PartitionHits <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ExecutionStep">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=3936:4402#L104">ExecutionStep</a>
+				<a class="permalink" href="index.html#ExecutionStep">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ExecutionStep tracks a single step within an agent&apos;s execution for lineage
+and debugging purposes.
+
+			<pre>type ExecutionStep struct {
+<span id="ExecutionStep.StepID"></span>    <span class="comment">// StepID is a unique identifier for this step.</span>
+    StepID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="ExecutionStep.Timestamp"></span>    <span class="comment">// Timestamp is the time the step was executed.</span>
+    Timestamp <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+<span id="ExecutionStep.Action"></span>    <span class="comment">// Action is a description of the action being performed (e.g., &#34;call_tool&#34;, &#34;llm_generate&#34;).</span>
+    Action <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="ExecutionStep.Input"></span>    <span class="comment">// Input is the input to the action.</span>
+    Input interface{}
+<span id="ExecutionStep.Output"></span>    <span class="comment">// Output is the output of the action.</span>
+    Output interface{}
+<span id="ExecutionStep.Duration"></span>    <span class="comment">// Duration is the time taken to execute the step.</span>
+    Duration <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="ExecutorFunc">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=5591:5688#L148">ExecutorFunc</a>
+				<a class="permalink" href="index.html#ExecutorFunc">&#xb6;</a>
+				
+				
+			</h2>
+			<p>ExecutorFunc is a function adapter that allows a simple function to be used
+as an AgentExecutor.
+
+			<pre>type ExecutorFunc func(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agent <a href="index.html#Agent">Agent</a>, input *<a href="index.html#AgentInput">AgentInput</a>) (*<a href="index.html#AgentOutput">AgentOutput</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="ExecutorFunc.Execute">func (ExecutorFunc) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=5758:5862#L151">Execute</a>
+					<a class="permalink" href="index.html#ExecutorFunc.Execute">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (f <a href="index.html#ExecutorFunc">ExecutorFunc</a>) Execute(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, agent <a href="index.html#Agent">Agent</a>, input *<a href="index.html#AgentInput">AgentInput</a>) (*<a href="index.html#AgentOutput">AgentOutput</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Execute implements the AgentExecutor interface for ExecutorFunc.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="InvocationContext">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=304:987#L5">InvocationContext</a>
+				<a class="permalink" href="index.html#InvocationContext">&#xb6;</a>
+				
+				
+			</h2>
+			<p>InvocationContext tracks the execution state during agent invocations,
+including transfer history for LLM-driven agent delegation.
+Designed for Spark distributed environments with partition-aware tracking.
+
+			<pre>type InvocationContext struct {
+    <span class="comment">// Execution context</span>
+<span id="InvocationContext.Ctx"></span>    Ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>
+
+<span id="InvocationContext.Input"></span>    <span class="comment">// Input provided to the agent</span>
+    Input *<a href="index.html#AgentInput">AgentInput</a>
+
+    <span class="comment">// Current agent executing (changes with transfers)</span>
+<span id="InvocationContext.CurrentAgent"></span>    CurrentAgent <a href="index.html#Agent">Agent</a>
+
+    <span class="comment">// Root agent that started the invocation chain</span>
+<span id="InvocationContext.RootAgent"></span>    RootAgent <a href="index.html#Agent">Agent</a>
+
+    <span class="comment">// Transfer history for observability and debugging</span>
+<span id="InvocationContext.TransferHistory"></span>    TransferHistory []<a href="index.html#Transfer">Transfer</a>
+
+    <span class="comment">// Maximum number of transfers allowed (prevents infinite loops)</span>
+<span id="InvocationContext.MaxTransfers"></span>    MaxTransfers <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>
+
+    <span class="comment">// Current partition (for distributed execution tracking)</span>
+<span id="InvocationContext.CurrentPartition"></span>    CurrentPartition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Node ID for distributed scenarios</span>
+<span id="InvocationContext.NodeID"></span>    NodeID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+<span id="InvocationContext.Metadata"></span>    <span class="comment">// Metadata for custom tracking</span>
+    Metadata map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{}
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewInvocationContext">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=2044:2145#L85">NewInvocationContext</a>
+					<a class="permalink" href="index.html#NewInvocationContext">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewInvocationContext(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, input *<a href="index.html#AgentInput">AgentInput</a>, rootAgent <a href="index.html#Agent">Agent</a>) *<a href="index.html#InvocationContext">InvocationContext</a></pre>
+				<p>NewInvocationContext creates a new invocation context
+
+				
+				
+			
+
+			
+				
+				<h3 id="InvocationContext.Clone">func (*InvocationContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=10077:10132#L353">Clone</a>
+					<a class="permalink" href="index.html#InvocationContext.Clone">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ic *<a href="index.html#InvocationContext">InvocationContext</a>) Clone() *<a href="index.html#InvocationContext">InvocationContext</a></pre>
+				<p>Clone creates a deep copy of the invocation context
+Useful for branching execution paths or parallel transfers
+
+				
+				
+				
+			
+				
+				<h3 id="InvocationContext.GetLastTransfer">func (*InvocationContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=4828:4884#L181">GetLastTransfer</a>
+					<a class="permalink" href="index.html#InvocationContext.GetLastTransfer">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ic *<a href="index.html#InvocationContext">InvocationContext</a>) GetLastTransfer() *<a href="index.html#Transfer">Transfer</a></pre>
+				<p>GetLastTransfer returns the most recent transfer, or nil if none
+
+				
+				
+				
+			
+				
+				<h3 id="InvocationContext.GetPartitionTransferCount">func (*InvocationContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=5492:5552#L207">GetPartitionTransferCount</a>
+					<a class="permalink" href="index.html#InvocationContext.GetPartitionTransferCount">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ic *<a href="index.html#InvocationContext">InvocationContext</a>) GetPartitionTransferCount() <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+				<p>GetPartitionTransferCount returns count of cross-partition transfers
+
+				
+				
+				
+			
+				
+				<h3 id="InvocationContext.GetTransferCount">func (*InvocationContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=4243:4294#L157">GetTransferCount</a>
+					<a class="permalink" href="index.html#InvocationContext.GetTransferCount">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ic *<a href="index.html#InvocationContext">InvocationContext</a>) GetTransferCount() <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+				<p>GetTransferCount returns the number of transfers that have occurred
+
+				
+				
+				
+			
+				
+				<h3 id="InvocationContext.GetTransferPath">func (*InvocationContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=4439:4494#L164">GetTransferPath</a>
+					<a class="permalink" href="index.html#InvocationContext.GetTransferPath">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ic *<a href="index.html#InvocationContext">InvocationContext</a>) GetTransferPath() []<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>GetTransferPath returns the path of agent names in transfer order
+
+				
+				
+				
+			
+				
+				<h3 id="InvocationContext.HasTransferredAcrossPartitions">func (*InvocationContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=5124:5190#L193">HasTransferredAcrossPartitions</a>
+					<a class="permalink" href="index.html#InvocationContext.HasTransferredAcrossPartitions">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ic *<a href="index.html#InvocationContext">InvocationContext</a>) HasTransferredAcrossPartitions() <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a></pre>
+				<p>HasTransferredAcrossPartitions returns true if any cross-partition transfer occurred
+
+				
+				
+				
+			
+				
+				<h3 id="InvocationContext.Serialize">func (*InvocationContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=7104:7184#L254">Serialize</a>
+					<a class="permalink" href="index.html#InvocationContext.Serialize">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ic *<a href="index.html#InvocationContext">InvocationContext</a>) Serialize() (*<a href="index.html#SerializableInvocationContext">SerializableInvocationContext</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Serialize converts InvocationContext to serializable format
+for transmission across Spark partitions/nodes
+
+				
+				
+				
+			
+				
+				<h3 id="InvocationContext.SetMaxTransfers">func (*InvocationContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=6017:6070#L229">SetMaxTransfers</a>
+					<a class="permalink" href="index.html#InvocationContext.SetMaxTransfers">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ic *<a href="index.html#InvocationContext">InvocationContext</a>) SetMaxTransfers(max <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>)</pre>
+				<p>SetMaxTransfers updates the maximum allowed transfers
+
+				
+				
+				
+			
+				
+				<h3 id="InvocationContext.SetNodeID">func (*InvocationContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=5845:5898#L222">SetNodeID</a>
+					<a class="permalink" href="index.html#InvocationContext.SetNodeID">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ic *<a href="index.html#InvocationContext">InvocationContext</a>) SetNodeID(nodeID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>)</pre>
+				<p>SetNodeID sets the node ID for distributed tracking
+
+				
+				
+				
+			
+				
+				<h3 id="InvocationContext.ToJSON">func (*InvocationContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=9406:9459#L329">ToJSON</a>
+					<a class="permalink" href="index.html#InvocationContext.ToJSON">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ic *<a href="index.html#InvocationContext">InvocationContext</a>) ToJSON() (<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>ToJSON converts to JSON string for debugging/logging
+
+				
+				
+				
+			
+				
+				<h3 id="InvocationContext.TransferTo">func (*InvocationContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=2654:2733#L103">TransferTo</a>
+					<a class="permalink" href="index.html#InvocationContext.TransferTo">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ic *<a href="index.html#InvocationContext">InvocationContext</a>) TransferTo(targetAgent <a href="index.html#Agent">Agent</a>, reason <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>TransferTo transfers execution to a target agent
+Returns error if max transfers exceeded or target not found
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="SerializableInvocationContext">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=6328:6989#L239">SerializableInvocationContext</a>
+				<a class="permalink" href="index.html#SerializableInvocationContext">&#xb6;</a>
+				
+				
+			</h2>
+			<p>SerializableInvocationContext is the JSON-serializable version
+Used for cross-partition/cross-node communication in Spark environments
+
+			<pre>type SerializableInvocationContext struct {
+<span id="SerializableInvocationContext.InputJSON"></span>    InputJSON        []<a href="http://127.0.0.1:6060/pkg/builtin/#byte">byte</a>                 `json:&#34;input_json&#34;`
+<span id="SerializableInvocationContext.CurrentAgentID"></span>    CurrentAgentID   <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;current_agent_id&#34;`
+<span id="SerializableInvocationContext.CurrentAgentName"></span>    CurrentAgentName <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;current_agent_name&#34;`
+<span id="SerializableInvocationContext.RootAgentID"></span>    RootAgentID      <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;root_agent_id&#34;`
+<span id="SerializableInvocationContext.RootAgentName"></span>    RootAgentName    <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;root_agent_name&#34;`
+<span id="SerializableInvocationContext.TransferHistory"></span>    TransferHistory  []<a href="index.html#Transfer">Transfer</a>             `json:&#34;transfer_history&#34;`
+<span id="SerializableInvocationContext.MaxTransfers"></span>    MaxTransfers     <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>                    `json:&#34;max_transfers&#34;`
+<span id="SerializableInvocationContext.CurrentPartition"></span>    CurrentPartition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;current_partition&#34;`
+<span id="SerializableInvocationContext.NodeID"></span>    NodeID           <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>                 `json:&#34;node_id&#34;`
+<span id="SerializableInvocationContext.Metadata"></span>    Metadata         map[<a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>]interface{} `json:&#34;metadata&#34;`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="SerializableInvocationContext.Deserialize">func (*SerializableInvocationContext) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=8329:8482#L294">Deserialize</a>
+					<a class="permalink" href="index.html#SerializableInvocationContext.Deserialize">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (sic *<a href="index.html#SerializableInvocationContext">SerializableInvocationContext</a>) Deserialize(
+    ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>,
+    agentResolver func(id <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (<a href="index.html#Agent">Agent</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>),
+) (*<a href="index.html#InvocationContext">InvocationContext</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>Deserialize reconstructs InvocationContext from serializable format
+Note: Requires access to agent registry to resolve agent IDs
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="TaskState">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=18813:18831#L604">TaskState</a>
+				<a class="permalink" href="index.html#TaskState">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TaskState represents the execution state of a task
+
+			<pre>type TaskState <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+
+			
+				
+				<pre>const (
+    <span id="TaskPending">TaskPending</span> <a href="index.html#TaskState">TaskState</a> = <a href="http://127.0.0.1:6060/pkg/builtin/#iota">iota</a>
+    <span id="TaskScheduled">TaskScheduled</span>
+    <span id="TaskRunning">TaskRunning</span>
+    <span id="TaskCompleted">TaskCompleted</span>
+    <span id="TaskFailed">TaskFailed</span>
+    <span id="TaskRetrying">TaskRetrying</span>
+    <span id="TaskPolicyBlocked">TaskPolicyBlocked</span> <span class="comment">// Added</span>
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="TaskState.String">func (TaskState) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/agent.go?s=18971:19005#L616">String</a>
+					<a class="permalink" href="index.html#TaskState.String">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (s <a href="index.html#TaskState">TaskState</a>) String() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Transfer">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=1042:1535#L38">Transfer</a>
+				<a class="permalink" href="index.html#Transfer">&#xb6;</a>
+				
+				
+			</h2>
+			<p>Transfer represents a single agent transfer event
+
+			<pre>type Transfer struct {
+    <span class="comment">// Source agent name</span>
+<span id="Transfer.FromAgent"></span>    FromAgent <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Source agent ID</span>
+<span id="Transfer.FromAgentID"></span>    FromAgentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Source partition</span>
+<span id="Transfer.FromPartition"></span>    FromPartition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Target agent name</span>
+<span id="Transfer.ToAgent"></span>    ToAgent <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Target agent ID</span>
+<span id="Transfer.ToAgentID"></span>    ToAgentID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Target partition</span>
+<span id="Transfer.ToPartition"></span>    ToPartition <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+<span id="Transfer.Reason"></span>    <span class="comment">// Reason for transfer (optional, from LLM)</span>
+    Reason <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+
+    <span class="comment">// Transfer timestamp</span>
+<span id="Transfer.Timestamp"></span>    Timestamp <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>
+
+    <span class="comment">// Transfer type (local or remote)</span>
+<span id="Transfer.TransferType"></span>    TransferType <a href="index.html#TransferType">TransferType</a>
+
+    <span class="comment">// Node ID where transfer originated</span>
+<span id="Transfer.NodeID"></span>    NodeID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="TransferScope">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go?s=167:189#L2">TransferScope</a>
+				<a class="permalink" href="index.html#TransferScope">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TransferScope defines the scope within which agent transfers are allowed
+
+			<pre>type TransferScope <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a></pre>
+
+			
+				
+				<pre>const (
+    <span class="comment">// TransferScopeDisabled disables all transfers</span>
+    <span id="TransferScopeDisabled">TransferScopeDisabled</span> <a href="index.html#TransferScope">TransferScope</a> = <a href="http://127.0.0.1:6060/pkg/builtin/#iota">iota</a>
+
+    <span class="comment">// TransferScopeParent allows transfers only to the parent agent</span>
+    <span id="TransferScopeParent">TransferScopeParent</span>
+
+    <span class="comment">// TransferScopeSiblings allows transfers to sibling agents (same parent)</span>
+    <span id="TransferScopeSiblings">TransferScopeSiblings</span>
+
+    <span class="comment">// TransferScopeSubAgents allows transfers only to direct sub-agents</span>
+    <span id="TransferScopeSubAgents">TransferScopeSubAgents</span>
+
+    <span class="comment">// TransferScopeDescendants allows transfers to any descendant agent</span>
+    <span id="TransferScopeDescendants">TransferScopeDescendants</span>
+
+    <span class="comment">// TransferScopeAll allows transfers to any agent in the hierarchy</span>
+    <span id="TransferScopeAll">TransferScopeAll</span>
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="TransferScope.String">func (TransferScope) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/autoflow.go?s=822:861#L25">String</a>
+					<a class="permalink" href="index.html#TransferScope.String">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (ts <a href="index.html#TransferScope">TransferScope</a>) String() <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+				<p>String returns the string representation of TransferScope
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="TransferType">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/agent/invocation_context.go?s=1608:1632#L71">TransferType</a>
+				<a class="permalink" href="index.html#TransferType">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TransferType indicates whether transfer is local or cross-partition
+
+			<pre>type TransferType <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a></pre>
+
+			
+				
+				<pre>const (
+    <span class="comment">// TransferTypeLocal indicates transfer within same partition/node</span>
+    <span id="TransferTypeLocal">TransferTypeLocal</span> <a href="index.html#TransferType">TransferType</a> = &#34;local&#34;
+
+    <span class="comment">// TransferTypeRemote indicates cross-partition transfer</span>
+    <span id="TransferTypeRemote">TransferTypeRemote</span> <a href="index.html#TransferType">TransferType</a> = &#34;remote&#34;
+
+    <span class="comment">// TransferTypeCrossNode indicates cross-node transfer in distributed setup</span>
+    <span id="TransferTypeCrossNode">TransferTypeCrossNode</span> <a href="index.html#TransferType">TransferType</a> = &#34;cross_node&#34;
+)</pre>
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>

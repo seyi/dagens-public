@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>audit - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../../../lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="../../../../../../../lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.25.2";</script>
+<script src="../../../../../../../lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://127.0.0.1:6060/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://127.0.0.1:6060/pkg/">GoDoc</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://127.0.0.1:6060/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package audit
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/seyi/dagens/pkg/policy/audit"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+				<dd><a href="index.html#pkg-constants">Constants</a></dd>
+			
+			
+			
+			
+				
+				<dd><a href="index.html#CompositeAuditLogger">type CompositeAuditLogger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewCompositeAuditLogger">func NewCompositeAuditLogger(loggers ...policy.AuditLogger) *CompositeAuditLogger</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#CompositeAuditLogger.Log">func (l *CompositeAuditLogger) Log(ctx context.Context, event *policy.AuditEvent) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#FileAuditLogger">type FileAuditLogger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewFileAuditLogger">func NewFileAuditLogger(path string) (*FileAuditLogger, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FileAuditLogger.Close">func (l *FileAuditLogger) Close() error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FileAuditLogger.Log">func (l *FileAuditLogger) Log(ctx context.Context, event *policy.AuditEvent) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#NoOpAuditLogger">type NoOpAuditLogger</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NoOpAuditLogger.Log">func (l *NoOpAuditLogger) Log(ctx context.Context, event *policy.AuditEvent) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#OTELAuditLogger">type OTELAuditLogger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewOTELAuditLogger">func NewOTELAuditLogger(tracer telemetry.Tracer, verbose bool) *OTELAuditLogger</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#OTELAuditLogger.Log">func (l *OTELAuditLogger) Log(ctx context.Context, event *policy.AuditEvent) error</a></dd>
+				
+			
+				
+				<dd><a href="index.html#PostgresAuditLogger">type PostgresAuditLogger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewPostgresAuditLogger">func NewPostgresAuditLogger(ctx context.Context, pool *pgxpool.Pool, cfg PostgresConfig, logger *slog.Logger) (*PostgresAuditLogger, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewPostgresAuditLoggerFromURL">func NewPostgresAuditLoggerFromURL(ctx context.Context, cfg PostgresConfig, logger *slog.Logger) (*PostgresAuditLogger, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresAuditLogger.Close">func (l *PostgresAuditLogger) Close()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresAuditLogger.CountByAction">func (l *PostgresAuditLogger) CountByAction(ctx context.Context, since time.Time) (map[policy.Action]int64, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresAuditLogger.Log">func (l *PostgresAuditLogger) Log(ctx context.Context, event *policy.AuditEvent) error</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresAuditLogger.QueryByAction">func (l *PostgresAuditLogger) QueryByAction(ctx context.Context, action policy.Action, since time.Time, limit int) ([]*policy.AuditEvent, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresAuditLogger.QueryBySession">func (l *PostgresAuditLogger) QueryBySession(ctx context.Context, sessionID string, limit int) ([]*policy.AuditEvent, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#PostgresAuditLogger.QueryViolations">func (l *PostgresAuditLogger) QueryViolations(ctx context.Context, since time.Time, limit int) ([]*policy.AuditEvent, error)</a></dd>
+				
+			
+				
+				<dd><a href="index.html#PostgresConfig">type PostgresConfig</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#StdoutAuditLogger">type StdoutAuditLogger</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#NewStdoutAuditLogger">func NewStdoutAuditLogger(verbose bool) *StdoutAuditLogger</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#StdoutAuditLogger.Log">func (l *StdoutAuditLogger) Log(ctx context.Context, event *policy.AuditEvent) error</a></dd>
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go">logger.go</a>
+			
+				<a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/postgres.go">postgres.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+			<h2 id="pkg-constants">Constants</h2>
+			
+				
+				<pre>const (
+    <span class="comment">// AuditTable is the name of the policy audit table</span>
+    <span id="AuditTable">AuditTable</span> = &#34;policy_audit_log&#34;
+
+    <span class="comment">// DefaultInsertTimeout is the default timeout for insert operations</span>
+    <span id="DefaultInsertTimeout">DefaultInsertTimeout</span> = 5 * <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Second">Second</a>
+)</pre>
+			
+		
+		
+		
+		
+			
+			
+			<h2 id="CompositeAuditLogger">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=5283:5349#L160">CompositeAuditLogger</a>
+				<a class="permalink" href="index.html#CompositeAuditLogger">&#xb6;</a>
+				
+				
+			</h2>
+			<p>CompositeAuditLogger logs to multiple backends simultaneously
+
+			<pre>type CompositeAuditLogger struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewCompositeAuditLogger">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=5428:5509#L165">NewCompositeAuditLogger</a>
+					<a class="permalink" href="index.html#NewCompositeAuditLogger">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewCompositeAuditLogger(loggers ...<a href="../index.html">policy</a>.<a href="../index.html#AuditLogger">AuditLogger</a>) *<a href="index.html#CompositeAuditLogger">CompositeAuditLogger</a></pre>
+				<p>NewCompositeAuditLogger creates a logger that writes to multiple backends
+
+				
+				
+			
+
+			
+				
+				<h3 id="CompositeAuditLogger.Log">func (*CompositeAuditLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=5613:5700#L170">Log</a>
+					<a class="permalink" href="index.html#CompositeAuditLogger.Log">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#CompositeAuditLogger">CompositeAuditLogger</a>) Log(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, event *<a href="../index.html">policy</a>.<a href="../index.html#AuditEvent">AuditEvent</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Log writes the event to all configured loggers
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="FileAuditLogger">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=221:284#L6">FileAuditLogger</a>
+				<a class="permalink" href="index.html#FileAuditLogger">&#xb6;</a>
+				
+				
+			</h2>
+			<p>FileAuditLogger writes audit events to a JSON-lines file
+
+			<pre>type FileAuditLogger struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewFileAuditLogger">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=346:408#L12">NewFileAuditLogger</a>
+					<a class="permalink" href="index.html#NewFileAuditLogger">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewFileAuditLogger(path <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>) (*<a href="index.html#FileAuditLogger">FileAuditLogger</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewFileAuditLogger creates a new file-based audit logger
+
+				
+				
+			
+
+			
+				
+				<h3 id="FileAuditLogger.Close">func (*FileAuditLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=1052:1091#L42">Close</a>
+					<a class="permalink" href="index.html#FileAuditLogger.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#FileAuditLogger">FileAuditLogger</a>) Close() <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Close closes the log file
+
+				
+				
+				
+			
+				
+				<h3 id="FileAuditLogger.Log">func (*FileAuditLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=604:686#L21">Log</a>
+					<a class="permalink" href="index.html#FileAuditLogger.Log">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#FileAuditLogger">FileAuditLogger</a>) Log(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, event *<a href="../index.html">policy</a>.<a href="../index.html#AuditEvent">AuditEvent</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Log writes an audit event to the file
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="NoOpAuditLogger">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=1901:1930#L69">NoOpAuditLogger</a>
+				<a class="permalink" href="index.html#NoOpAuditLogger">&#xb6;</a>
+				
+				
+			</h2>
+			<p>NoOpAuditLogger does nothing (for testing or when audit is disabled)
+
+			<pre>type NoOpAuditLogger struct{}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="NoOpAuditLogger.Log">func (*NoOpAuditLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=1952:2034#L72">Log</a>
+					<a class="permalink" href="index.html#NoOpAuditLogger.Log">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#NoOpAuditLogger">NoOpAuditLogger</a>) Log(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, event *<a href="../index.html">policy</a>.<a href="../index.html#AuditEvent">AuditEvent</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Log does nothing
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="OTELAuditLogger">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=2587:2658#L85">OTELAuditLogger</a>
+				<a class="permalink" href="index.html#OTELAuditLogger">&#xb6;</a>
+				
+				
+			</h2>
+			<p>OTELAuditLogger sends audit events as span events to the distributed tracing system.
+This centralizes audit logs in Jaeger/Prometheus instead of fragmenting them across
+container filesystems in a distributed cluster.
+<p>IMPORTANT: For events to appear in Jaeger, ensure OTEL is configured:
+<ul>
+<li>Set OTEL_EXPORTER_OTLP_ENDPOINT=<a href="http://jaeger:4317">http://jaeger:4317</a> (or your Jaeger OTLP endpoint)
+<li>Or set OTEL_EXPORTER_TYPE=otlp with the endpoint
+</ul>
+<p>When properly configured, span.AddEvent() sends data to Jaeger, not just console.
+
+			<pre>type OTELAuditLogger struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewOTELAuditLogger">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=2802:2881#L92">NewOTELAuditLogger</a>
+					<a class="permalink" href="index.html#NewOTELAuditLogger">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewOTELAuditLogger(tracer <a href="../../telemetry/index.html">telemetry</a>.<a href="../../telemetry/index.html#Tracer">Tracer</a>, verbose <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>) *<a href="index.html#OTELAuditLogger">OTELAuditLogger</a></pre>
+				<p>NewOTELAuditLogger creates a new OTEL-based audit logger.
+The tracer should be obtained from telemetry.GetGlobalTelemetry().GetTracer()
+
+				
+				
+			
+
+			
+				
+				<h3 id="OTELAuditLogger.Log">func (*OTELAuditLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=3185:3267#L102">Log</a>
+					<a class="permalink" href="index.html#OTELAuditLogger.Log">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#OTELAuditLogger">OTELAuditLogger</a>) Log(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, event *<a href="../index.html">policy</a>.<a href="../index.html#AuditEvent">AuditEvent</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Log sends an audit event as a span event to the distributed tracing system.
+The event is attached to the current span and will be exported to Jaeger
+when the span ends (assuming OTEL is configured with an OTLP exporter).
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="PostgresAuditLogger">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/postgres.go?s=1361:1488#L34">PostgresAuditLogger</a>
+				<a class="permalink" href="index.html#PostgresAuditLogger">&#xb6;</a>
+				
+				
+			</h2>
+			<p>PostgresAuditLogger persists audit events to PostgreSQL for compliance and queryability.
+
+			<pre>type PostgresAuditLogger struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewPostgresAuditLogger">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/postgres.go?s=1584:1723#L42">NewPostgresAuditLogger</a>
+					<a class="permalink" href="index.html#NewPostgresAuditLogger">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewPostgresAuditLogger(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, pool *<a href="http://127.0.0.1:6060/pkg/github.com/jackc/pgx/v5/pgxpool/">pgxpool</a>.<a href="http://127.0.0.1:6060/pkg/github.com/jackc/pgx/v5/pgxpool/#Pool">Pool</a>, cfg <a href="index.html#PostgresConfig">PostgresConfig</a>, logger *<a href="http://127.0.0.1:6060/pkg/log/slog/">slog</a>.<a href="http://127.0.0.1:6060/pkg/log/slog/#Logger">Logger</a>) (*<a href="index.html#PostgresAuditLogger">PostgresAuditLogger</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewPostgresAuditLogger creates a new PostgreSQL-backed audit logger from an existing pool.
+
+				
+				
+			
+				
+				<h3 id="NewPostgresAuditLoggerFromURL">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/postgres.go?s=2527:2653#L78">NewPostgresAuditLoggerFromURL</a>
+					<a class="permalink" href="index.html#NewPostgresAuditLoggerFromURL">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewPostgresAuditLoggerFromURL(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, cfg <a href="index.html#PostgresConfig">PostgresConfig</a>, logger *<a href="http://127.0.0.1:6060/pkg/log/slog/">slog</a>.<a href="http://127.0.0.1:6060/pkg/log/slog/#Logger">Logger</a>) (*<a href="index.html#PostgresAuditLogger">PostgresAuditLogger</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>NewPostgresAuditLoggerFromURL creates a new connection pool and logger.
+
+				
+				
+			
+
+			
+				
+				<h3 id="PostgresAuditLogger.Close">func (*PostgresAuditLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/postgres.go?s=6957:6994#L208">Close</a>
+					<a class="permalink" href="index.html#PostgresAuditLogger.Close">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#PostgresAuditLogger">PostgresAuditLogger</a>) Close()</pre>
+				<p>Close closes the database connection pool
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresAuditLogger.CountByAction">func (*PostgresAuditLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/postgres.go?s=9332:9446#L291">CountByAction</a>
+					<a class="permalink" href="index.html#PostgresAuditLogger.CountByAction">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#PostgresAuditLogger">PostgresAuditLogger</a>) CountByAction(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, since <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>) (map[<a href="../index.html">policy</a>.<a href="../index.html#Action">Action</a>]<a href="http://127.0.0.1:6060/pkg/builtin/#int64">int64</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>CountByAction returns counts of each action type since a given time
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresAuditLogger.Log">func (*PostgresAuditLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/postgres.go?s=5366:5452#L152">Log</a>
+					<a class="permalink" href="index.html#PostgresAuditLogger.Log">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#PostgresAuditLogger">PostgresAuditLogger</a>) Log(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, event *<a href="../index.html">policy</a>.<a href="../index.html#AuditEvent">AuditEvent</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Log persists an audit event to PostgreSQL
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresAuditLogger.QueryByAction">func (*PostgresAuditLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/postgres.go?s=7842:7986#L241">QueryByAction</a>
+					<a class="permalink" href="index.html#PostgresAuditLogger.QueryByAction">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#PostgresAuditLogger">PostgresAuditLogger</a>) QueryByAction(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, action <a href="../index.html">policy</a>.<a href="../index.html#Action">Action</a>, since <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>, limit <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) ([]*<a href="../index.html">policy</a>.<a href="../index.html#AuditEvent">AuditEvent</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>QueryByAction retrieves audit events by action type
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresAuditLogger.QueryBySession">func (*PostgresAuditLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/postgres.go?s=7159:7283#L216">QueryBySession</a>
+					<a class="permalink" href="index.html#PostgresAuditLogger.QueryBySession">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#PostgresAuditLogger">PostgresAuditLogger</a>) QueryBySession(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, sessionID <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>, limit <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) ([]*<a href="../index.html">policy</a>.<a href="../index.html#AuditEvent">AuditEvent</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>QueryBySession retrieves audit events for a specific session
+
+				
+				
+				
+			
+				
+				<h3 id="PostgresAuditLogger.QueryViolations">func (*PostgresAuditLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/postgres.go?s=8596:8720#L266">QueryViolations</a>
+					<a class="permalink" href="index.html#PostgresAuditLogger.QueryViolations">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#PostgresAuditLogger">PostgresAuditLogger</a>) QueryViolations(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, since <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Time">Time</a>, limit <a href="http://127.0.0.1:6060/pkg/builtin/#int">int</a>) ([]*<a href="../index.html">policy</a>.<a href="../index.html#AuditEvent">AuditEvent</a>, <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a>)</pre>
+				<p>QueryViolations retrieves all block/redact events since a given time
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="PostgresConfig">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/postgres.go?s=861:1267#L22">PostgresConfig</a>
+				<a class="permalink" href="index.html#PostgresConfig">&#xb6;</a>
+				
+				
+			</h2>
+			<p>PostgresConfig holds configuration for the PostgresAuditLogger
+
+			<pre>type PostgresConfig struct {
+<span id="PostgresConfig.ConnectionString"></span>    <span class="comment">// ConnectionString is the Postgres connection string (used if pool is not provided)</span>
+    ConnectionString <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="PostgresConfig.TableName"></span>    <span class="comment">// TableName overrides the default table name (optional)</span>
+    TableName <a href="http://127.0.0.1:6060/pkg/builtin/#string">string</a>
+<span id="PostgresConfig.InsertTimeout"></span>    <span class="comment">// InsertTimeout overrides the default insert timeout (optional)</span>
+    InsertTimeout <a href="http://127.0.0.1:6060/pkg/time/">time</a>.<a href="http://127.0.0.1:6060/pkg/time/#Duration">Duration</a>
+<span id="PostgresConfig.MigrateOnStart"></span>    <span class="comment">// MigrateOnStart determines if the schema should be created on startup</span>
+    MigrateOnStart <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="StdoutAuditLogger">type <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=1187:1234#L47">StdoutAuditLogger</a>
+				<a class="permalink" href="index.html#StdoutAuditLogger">&#xb6;</a>
+				
+				
+			</h2>
+			<p>StdoutAuditLogger logs audit events to stdout (for development)
+
+			<pre>type StdoutAuditLogger struct {
+<span id="StdoutAuditLogger.Verbose"></span>    Verbose <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewStdoutAuditLogger">func <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=1300:1358#L52">NewStdoutAuditLogger</a>
+					<a class="permalink" href="index.html#NewStdoutAuditLogger">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func NewStdoutAuditLogger(verbose <a href="http://127.0.0.1:6060/pkg/builtin/#bool">bool</a>) *<a href="index.html#StdoutAuditLogger">StdoutAuditLogger</a></pre>
+				<p>NewStdoutAuditLogger creates a new stdout-based audit logger
+
+				
+				
+			
+
+			
+				
+				<h3 id="StdoutAuditLogger.Log">func (*StdoutAuditLogger) <a href="http://127.0.0.1:6060/src/github.com/seyi/dagens/pkg/policy/audit/logger.go?s=1448:1532#L57">Log</a>
+					<a class="permalink" href="index.html#StdoutAuditLogger.Log">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (l *<a href="index.html#StdoutAuditLogger">StdoutAuditLogger</a>) Log(ctx <a href="http://127.0.0.1:6060/pkg/context/">context</a>.<a href="http://127.0.0.1:6060/pkg/context/#Context">Context</a>, event *<a href="../index.html">policy</a>.<a href="../index.html#AuditEvent">AuditEvent</a>) <a href="http://127.0.0.1:6060/pkg/builtin/#error">error</a></pre>
+				<p>Log writes an audit event to stdout
+
+				
+				
+				
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.25.2.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://127.0.0.1:6060/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>
