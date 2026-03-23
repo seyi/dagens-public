@@ -25,17 +25,34 @@ jobs:
 
       - name: Generate docs
         run: |
-          godoc -http=:6060 &
-          sleep 2
+          set -euo pipefail
+          godoc -http=:6060 >godoc.log 2>&1 &
+          godoc_pid=$!
+          trap 'kill ${godoc_pid} 2>/dev/null || true' EXIT
+          deadline=$(( $(date +%s) + 30 ))
+          until curl -fsS http://127.0.0.1:6060/ >/dev/null; do
+            if ! kill -0 "${godoc_pid}" 2>/dev/null; then
+              cat godoc.log
+              exit 1
+            fi
+            if [[ $(date +%s) -ge ${deadline} ]]; then
+              cat godoc.log
+              exit 1
+            fi
+            sleep 1
+          done
           set +e
-          wget -e robots=off -r -np -N -E -p -k http://localhost:6060/pkg/github.com/seyi/dagens/
+          wget -e robots=off -r -np -N -E -p -k http://127.0.0.1:6060/pkg/github.com/seyi/dagens/
           wget_status=$?
           set -e
           if [ "${wget_status}" -ne 0 ] && [ "${wget_status}" -ne 8 ]; then
+            cat godoc.log
             exit "${wget_status}"
           fi
-          kill $!
-          mv localhost:6060 docs
+          kill "${godoc_pid}"
+          wait "${godoc_pid}" || true
+          trap - EXIT
+          mv 127.0.0.1:6060 docs
           touch docs/.nojekyll
 
       - name: Deploy to GitHub Pages
