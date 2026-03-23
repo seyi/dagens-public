@@ -2549,10 +2549,12 @@ func seedHydratedQueuedRuntimeJobForReconcileTest(s *Scheduler, jobID string) {
 
 func jobStatusForTest(s *Scheduler, jobID string) (JobStatus, error) {
 	s.mu.RLock()
-	defer s.mu.RUnlock()
 	job, ok := s.jobs[jobID]
+	s.mu.RUnlock()
 	if !ok {
 		return "", fmt.Errorf("job %s not found", jobID)
 	}
+	job.mu.Lock()
+	defer job.mu.Unlock()
 	return job.Status, nil
 }
