@@ -6,128 +6,13 @@ Dagens is a distributed control plane with a dedicated execution-plane worker fa
 
 Designed as enterprise infrastructure with an OSS core, Dagens runs in fixed-topology mode or becomes cluster-aware via etcd-backed registry for dynamic scaling and health-based routing.
 
-## Security Notice
-
-The local Docker Compose and HA Compose environments are for development and drill validation only:
-
-- database credentials are hardcoded for localhost use
-- inter-service traffic is not TLS protected
-- authentication is disabled when `DEV_MODE=true`
-- HA helper ports are published on the host by default
-
-Do not expose these environments to untrusted networks.
-
-## Why Dagens?
-
-Most agent frameworks are in-process orchestration layers. Dagens is a runtime substrate:
+Dagens is for teams that need orchestration to survive beyond a single process:
 
 - Central push scheduler (control plane)
 - Horizontally scalable gRPC workers (execution plane)
-- Optional dynamic cluster awareness via etcd
-- Evented lifecycle model with observability (OTEL-native)
-- Human-in-the-loop pause/resume as a first-class primitive
-- Resilience wrappers (retry, monitoring, circuit-breaker)
-
-This is infrastructure, not an in-process agent library. It treats orchestration as a distributed systems problem, not a local graph execution concern.
-
-Control-plane saturation model (v0.2):
-- [Backpressure Design](docs/BACKPRESSURE.md)
-
-Durability and recovery model (v0.2):
-- [State Machine](docs/STATE_MACHINE.md)
-- [Execution Model](docs/execution-model.md)
-- [Durability](docs/DURABILITY.md)
-- [Recovery Runbook](docs/RECOVERY_RUNBOOK.md)
-- [Control Plane HA Design](docs/CONTROL_PLANE_HA.md)
-- [Transition Retention Strategy](docs/TRANSITION_RETENTION_STRATEGY.md)
-
-Recent control-plane hardening:
-- Durable scheduler transition sequences support per-job monotonic allocation (memory or Postgres-backed).
-- Explicit `AWAITING_HUMAN -> RUNNING` resume lifecycle is recorded as `JOB_RESUMED`.
-- Transition writes reject illegal lifecycle moves before append.
-- Replay/recovery is fail-fast for malformed non-initial transitions missing `previous_state`.
-- Export-only retention/archive flow for aged terminal history is now validated with manifest, report, and live metrics evidence.
-
-## Integrations (Bring Your Own Agent Framework)
-
-Dagens supports A2A adapters that allow external agent frameworks to participate in distributed orchestration.
-
-Currently supported:
-
-- **LangGraph** - Wrap a `StateGraph` or `CompiledGraph` as an A2A agent
-- **CrewAI** - Expose a `Crew` as a distributed agent
-- More adapters planned
-
-Example (LangGraph):
-
-```python
-from langgraph.graph import StateGraph, END
-from dagens_a2a import A2AServer
-from dagens_a2a.adapters import LangGraphAdapter
-
-graph = StateGraph(...)
-graph.set_entry_point("process")
-
-adapter = LangGraphAdapter(
-    graph=graph,
-    agent_id="processor",
-    name="Text Processor"
-)
-
-server = A2AServer(adapter, port=8082)
-server.run()
-```
-
-This allows Dagens to orchestrate Go-native agents and Python agents in the same workflow.
-
-## Architecture Overview
-
-Dagens uses a layered model.
-
-```text
-Client -> API Server (Control Plane)
-             |
-             v
-      Push Scheduler
-             |
-             v
-      gRPC Workers
-             |
-             v
-   Event Bus + OTEL
-             |
-             v
-   Optional HITL Checkpoint
-```
-
-### Control Plane
-
-- API server
-- Graph compiler
-- Scheduler (push-based dispatch)
-- Registry (static or etcd-backed)
-- Auth plus optional Vault integration
-
-### Execution Plane
-
-- gRPC workers
-- Horizontal scaling
-- Transfer/autoflow semantics
-- Optional agent-to-agent (A2A) streaming
-
-### System Services
-
-- Event bus plus event recorder
-- OTEL tracing integration
-- Postgres (Compose mode)
-- Jaeger for tracing
-
-### HITL Control Plane
-
-- HumanNode checkpoint
-- Callback validation (idempotent)
-- Resumption worker
-- Graph version validation
+- Durable recovery and replay
+- HA failover and dispatch fencing
+- First-class HITL pause/resume
 
 ## Quickstart (Full Stack - Recommended)
 
@@ -157,6 +42,30 @@ Verify:
 
 ```bash
 curl http://localhost:8080/health
+```
+
+Run a first control-plane request:
+
+```bash
+curl -X POST http://localhost:8080/v1/jobs \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "hello-graph",
+    "nodes": [
+      {"id": "start", "type": "function", "name": "Start"},
+      {"id": "end", "type": "function", "name": "End"}
+    ],
+    "edges": [{"from": "start", "to": "end"}],
+    "entry_node": "start",
+    "finish_nodes": ["end"],
+    "input": {"instruction": "Hello from Dagens"}
+  }'
+```
+
+Then inspect job state:
+
+```bash
+curl http://localhost:8080/v1/jobs
 ```
 
 If `OPENROUTER_API_KEY` is not provided, workers simulate execution for development and testing.
@@ -211,6 +120,99 @@ Runtime semantics in v0.2:
 Reference:
 - [Control Plane HA Design](docs/CONTROL_PLANE_HA.md)
 
+## Security Notice
+
+The local Docker Compose and HA Compose environments are for development and drill validation only:
+
+- database credentials are hardcoded for localhost use
+- inter-service traffic is not TLS protected
+- authentication is disabled when `DEV_MODE=true`
+- HA helper ports are published on the host by default
+
+Do not expose these environments to untrusted networks.
+
+## Why Dagens?
+
+Most agent frameworks are in-process orchestration layers. Dagens is a runtime substrate:
+
+- Central push scheduler (control plane)
+- Horizontally scalable gRPC workers (execution plane)
+- Optional dynamic cluster awareness via etcd
+- Evented lifecycle model with observability (OTEL-native)
+- Human-in-the-loop pause/resume as a first-class primitive
+- Resilience wrappers (retry, monitoring, circuit-breaker)
+
+This is infrastructure, not an in-process agent library. It treats orchestration as a distributed systems problem, not a local graph execution concern.
+
+Control-plane saturation model (v0.2):
+- [Backpressure Design](docs/BACKPRESSURE.md)
+
+Durability and recovery model (v0.2):
+- [State Machine](docs/STATE_MACHINE.md)
+- [Execution Model](docs/execution-model.md)
+- [Durability](docs/DURABILITY.md)
+- [Recovery Runbook](docs/RECOVERY_RUNBOOK.md)
+- [Control Plane HA Design](docs/CONTROL_PLANE_HA.md)
+- [Transition Retention Strategy](docs/TRANSITION_RETENTION_STRATEGY.md)
+
+Recent control-plane hardening:
+- Durable scheduler transition sequences support per-job monotonic allocation (memory or Postgres-backed).
+- Explicit `AWAITING_HUMAN -> RUNNING` resume lifecycle is recorded as `JOB_RESUMED`.
+- Transition writes reject illegal lifecycle moves before append.
+- Replay/recovery is fail-fast for malformed non-initial transitions missing `previous_state`.
+- Export-only retention/archive flow for aged terminal history is now validated with manifest, report, and live metrics evidence.
+
+## Architecture Overview
+
+Dagens uses a layered model.
+
+```text
+Client -> API Server (Control Plane)
+             |
+             v
+      Push Scheduler
+             |
+             v
+      gRPC Workers
+             |
+             v
+   Event Bus + OTEL
+             |
+             v
+   Optional HITL Checkpoint
+```
+
+### Control Plane
+
+- API server
+- Graph compiler
+- Scheduler (push-based dispatch)
+- Registry (static or etcd-backed)
+- Auth plus optional Vault integration
+
+### Execution Plane
+
+- gRPC workers
+- Horizontal scaling
+- Transfer/autoflow semantics
+- Optional agent-to-agent (A2A) streaming
+
+### System Services
+
+- Event bus plus event recorder
+- OTEL tracing integration
+- Postgres (Compose mode)
+- Jaeger for tracing
+
+### HITL Control Plane
+
+- HumanNode checkpoint
+- Callback validation (idempotent)
+- Resumption worker
+- Graph version validation
+
+## Alternative Entry Paths
+
 ### Scheduler Validation Commands
 
 ```bash
@@ -239,7 +241,7 @@ DATABASE_URL="postgres://postgres:postgres@localhost:55432/dagens?sslmode=disabl
 See the operator procedure and pass/fail criteria in:
 - [Recovery Runbook](docs/RECOVERY_RUNBOOK.md)
 
-## Python SDK (Run a Distributed Job in 2 Minutes)
+### Python SDK (Run a Distributed Job in 2 Minutes)
 
 Once the Compose stack is running:
 
@@ -278,7 +280,7 @@ print(status)
 
 Note: If `OPENROUTER_API_KEY` is not set, workers simulate responses.
 
-## First Demo (Control Plane Execution)
+### First Demo (Control Plane Execution)
 
 Submit a simple graph execution request to the API server:
 
@@ -310,7 +312,7 @@ Get specific job status:
 curl http://localhost:8080/v1/jobs/<job-id>
 ```
 
-## 5-Minute Local Smoke Test (Single Binary)
+### 5-Minute Local Smoke Test (Single Binary)
 
 For quick validation:
 
@@ -339,6 +341,38 @@ This mode is ideal for:
 - API exploration
 - SDK testing
 - CI smoke validation
+
+## Integrations (Bring Your Own Agent Framework)
+
+Dagens supports A2A adapters that allow external agent frameworks to participate in distributed orchestration.
+
+Currently supported:
+
+- **LangGraph** - Wrap a `StateGraph` or `CompiledGraph` as an A2A agent
+- **CrewAI** - Expose a `Crew` as a distributed agent
+- More adapters planned
+
+Example (LangGraph):
+
+```python
+from langgraph.graph import StateGraph, END
+from dagens_a2a import A2AServer
+from dagens_a2a.adapters import LangGraphAdapter
+
+graph = StateGraph(...)
+graph.set_entry_point("process")
+
+adapter = LangGraphAdapter(
+    graph=graph,
+    agent_id="processor",
+    name="Text Processor"
+)
+
+server = A2AServer(adapter, port=8082)
+server.run()
+```
+
+This allows Dagens to orchestrate Go-native agents and Python agents in the same workflow.
 
 ## Scaling Modes
 
